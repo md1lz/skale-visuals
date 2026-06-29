@@ -546,25 +546,29 @@ function HowItWorks() {
                 </a>
               </div>
               <div className="h-[260px] overflow-hidden">
-                <div className="marquee overflow-hidden h-full relative" style={{
-                  WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-                  maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-                }}>
-                  <div className="flex flex-col gap-3 marquee-y-track">
-                    {[...Array(2)].flatMap(() => [0,1,2,3,4]).map((k, i) => (
-                      <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
-                        <div className="absolute inset-0 grid place-items-center">
-                          <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
-                            <Play className="w-4 h-4 fill-white text-white ml-0.5" />
+                <div className="grid grid-cols-2 gap-2 h-full">
+                  {[0, 1].map((col) => (
+                    <div key={col} className="marquee overflow-hidden h-full relative" style={{
+                      WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                      maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                    }}>
+                      <div className={`flex flex-col gap-2 ${col === 1 ? "marquee-y-track-reverse" : "marquee-y-track"}`}>
+                        {[...Array(2)].flatMap(() => [0, 1, 2, 3, 4]).map((k, i) => (
+                          <div key={i} className="relative aspect-video rounded-md overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
+                            <div className="absolute inset-0 grid place-items-center">
+                              <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+                                <Play className="w-3 h-3 fill-white text-white ml-0.5" />
+                              </div>
+                            </div>
+                            <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
+                              <span className="text-[8px] px-1 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
+                              <span className="text-[8px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
