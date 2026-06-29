@@ -98,6 +98,33 @@ export type Database = {
         }
         Relationships: []
       }
+      site_carousels: {
+        Row: {
+          created_at: string
+          description: string | null
+          key: string
+          label: string
+          position: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          key: string
+          label: string
+          position?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          key?: string
+          label?: string
+          position?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_events: {
         Row: {
           country: string | null
@@ -142,6 +169,53 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      site_videos: {
+        Row: {
+          carousel_key: string
+          created_at: string
+          format: string
+          id: string
+          position: number
+          source_url: string
+          thumbnail_url: string | null
+          title: string
+          updated_at: string
+          visible: boolean
+        }
+        Insert: {
+          carousel_key: string
+          created_at?: string
+          format?: string
+          id?: string
+          position?: number
+          source_url?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Update: {
+          carousel_key?: string
+          created_at?: string
+          format?: string
+          id?: string
+          position?: number
+          source_url?: string
+          thumbnail_url?: string | null
+          title?: string
+          updated_at?: string
+          visible?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "site_videos_carousel_key_fkey"
+            columns: ["carousel_key"]
+            isOneToOne: false
+            referencedRelation: "site_carousels"
+            referencedColumns: ["key"]
+          },
+        ]
       }
     }
     Views: {
