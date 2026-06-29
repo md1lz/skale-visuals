@@ -755,17 +755,16 @@ function AdsSection() {
                 const i = ((idx + offset) % slides.length + slides.length) % slides.length;
                 const s = slides[i];
                 const abs = Math.abs(offset);
-                if (abs > 2) return null;
-                const translate = offset * 130;
-                const scale = abs === 0 ? 1 : abs === 1 ? 0.82 : 0.66;
-                const opacity = abs === 0 ? 1 : abs === 1 ? 0.7 : 0.35;
+                const translate = offset * 220;
+                const scale = abs === 0 ? 1 : 0.78;
+                const opacity = abs === 0 ? 1 : 0.5;
                 const z = 10 - abs;
                 return (
                   <motion.div
                     key={`${i}-${offset}`}
                     initial={false}
                     animate={{ x: `calc(-50% + ${translate}px)`, y: "-50%", scale, opacity }}
-                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                     style={{ zIndex: z, position: "absolute", top: "50%", left: "50%" }}
                     className="cursor-pointer"
                     onClick={() => offset !== 0 && setIdx(i)}
