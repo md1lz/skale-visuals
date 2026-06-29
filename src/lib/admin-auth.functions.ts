@@ -92,6 +92,65 @@ export const loginAdmin = createServerFn({ method: "POST" })
     return { ok: true as const, user: match.username };
   });
 
+const profileSchema = z.object({
+  firstName: z.string().trim().max(64).optional().nullable(),
+  lastName: z.string().trim().max(64).optional().nullable(),
+  avatarDataUrl: z
+    .string()
+    .max(2_000_000)
+    .regex(/^data:image\/(png|jpeg|jpg|webp|gif);base64,/)
+    .optional()
+    .nullable(),
+  removeAvatar: z.boolean().optional().default(false),
+});
+
+async function requireSessionUser() {
+  const session = await useSession<AdminSessionData>(sessionConfig());
+  if (!session.data.user) throw new Error("Unauthorized");
+  return session.data.user;
+}
+
+export const getAdminProfile = createServerFn({ method: "GET" }).handler(async () => {
+  const username = await requireSessionUser();
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data } = await supabaseAdmin
+    .from("admins")
+    .select("username, first_name, last_name, avatar_url")
+    .eq("username", username)
+    .maybeSingle();
+  return {
+    username,
+    firstName: data?.first_name ?? null,
+    lastName: data?.last_name ?? null,
+    avatarUrl: data?.avatar_url ?? null,
+  };
+});
+
+export const updateAdminProfile = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => profileSchema.parse(d))
+  .handler(async ({ data }) => {
+    const username = await requireSessionUser();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const patch: {
+      first_name: string | null;
+      last_name: string | null;
+      avatar_url?: string | null;
+    } = {
+      first_name: data.firstName?.trim() || null,
+      last_name: data.lastName?.trim() || null,
+    };
+    if (data.removeAvatar) patch.avatar_url = null;
+    else if (data.avatarDataUrl) patch.avatar_url = data.avatarDataUrl;
+    const { error } = await supabaseAdmin
+      .from("admins")
+      .update(patch)
+      .eq("username", username);
+
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+
 export const tryAutoLoginByIp = createServerFn({ method: "POST" }).handler(async () => {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const ip = getClientIp();

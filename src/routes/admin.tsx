@@ -2,13 +2,11 @@ import {
   Outlet,
   createFileRoute,
   redirect,
-  useNavigate,
-  useRouter,
   Link,
   useRouterState,
 } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
+
 import {
   BarChart3,
   Video,
@@ -17,9 +15,10 @@ import {
   FileSignature,
   Star,
   Settings,
-  LogOut,
 } from "lucide-react";
-import { getAdminSessionFn, logoutAdminFn } from "@/lib/admin-auth.functions";
+import { getAdminSessionFn } from "@/lib/admin-auth.functions";
+import { AdminProfileMenu } from "@/components/AdminProfileMenu";
+
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async () => {
@@ -51,28 +50,17 @@ const NAV: { to: string; label: string; icon: typeof BarChart3; exact?: boolean 
 ];
 
 function AdminLayout() {
-  const navigate = useNavigate();
-  const router = useRouter();
-  const logout = useServerFn(logoutAdminFn);
   const session = Route.useRouteContext().session;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-
-  async function handleLogout() {
-    await logout();
-    await router.invalidate();
-    navigate({ to: "/" });
-  }
 
   return (
     <div className="min-h-screen flex bg-neutral-950 text-white">
       <aside className="w-60 shrink-0 border-r border-white/10 bg-neutral-950 flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5 border-b border-white/10">
           <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
-          <div className="leading-tight">
-            <p className="text-sm font-semibold">Skale Admin</p>
-            <p className="text-[10px] text-neutral-500 truncate">{session?.user}</p>
-          </div>
+          <p className="text-sm font-semibold">Skale Admin</p>
         </div>
+
 
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {NAV.map((item) => {
@@ -101,13 +89,10 @@ function AdminLayout() {
           })}
         </nav>
 
-        <button
-          onClick={handleLogout}
-          className="m-3 flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs text-neutral-300 hover:bg-white/5 transition"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-          Déconnexion
-        </button>
+        <div className="m-3">
+          {session?.user && <AdminProfileMenu initialUsername={session.user} />}
+        </div>
+
       </aside>
 
       <main className="flex-1 min-w-0 overflow-x-hidden">
