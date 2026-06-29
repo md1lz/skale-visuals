@@ -183,7 +183,7 @@ function AnalyticsPage() {
 
       <Panel
         title="Visites"
-        subtitle={range === "today" ? "Sessions par heure" : "Sessions par jour"}
+        subtitle={range === "today" ? "Sessions par heure" : range === "custom" && customFrom && customTo && (customTo.getTime() - customFrom.getTime()) <= 2 * 86400000 ? "Sessions par heure" : "Sessions par jour"}
         icon={<TrendingUp className="h-4 w-4 text-red-500" />}
       >
         <div className="h-72">
