@@ -41,6 +41,27 @@ export type Database = {
         }
         Relationships: []
       }
+      admin_remembered_ips: {
+        Row: {
+          created_at: string
+          ip: string
+          last_seen_at: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          ip: string
+          last_seen_at?: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          ip?: string
+          last_seen_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
       admins: {
         Row: {
           created_at: string
