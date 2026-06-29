@@ -14,7 +14,57 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      admin_login_events: {
+        Row: {
+          created_at: string
+          id: string
+          ip: string | null
+          success: boolean
+          user_agent: string | null
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          ip?: string | null
+          success: boolean
+          user_agent?: string | null
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          ip?: string | null
+          success?: boolean
+          user_agent?: string | null
+          username?: string
+        }
+        Relationships: []
+      }
+      admins: {
+        Row: {
+          created_at: string
+          id: string
+          last_login_at: string | null
+          password_hash: string
+          username: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          last_login_at?: string | null
+          password_hash: string
+          username: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          last_login_at?: string | null
+          password_hash?: string
+          username?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
