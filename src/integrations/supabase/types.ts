@@ -64,23 +64,32 @@ export type Database = {
       }
       admins: {
         Row: {
+          avatar_url: string | null
           created_at: string
+          first_name: string | null
           id: string
           last_login_at: string | null
+          last_name: string | null
           password_hash: string
           username: string
         }
         Insert: {
+          avatar_url?: string | null
           created_at?: string
+          first_name?: string | null
           id?: string
           last_login_at?: string | null
+          last_name?: string | null
           password_hash: string
           username: string
         }
         Update: {
+          avatar_url?: string | null
           created_at?: string
+          first_name?: string | null
           id?: string
           last_login_at?: string | null
+          last_name?: string | null
           password_hash?: string
           username?: string
         }
