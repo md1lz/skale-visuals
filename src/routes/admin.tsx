@@ -56,7 +56,7 @@ function AdminLayout() {
   return (
     <div className="min-h-screen flex bg-neutral-950 text-white">
       <aside className="w-60 shrink-0 border-r border-white/10 bg-neutral-950 flex flex-col">
-        <div className="px-5 py-5 flex items-center gap-2.5 border-b border-white/10">
+        <div className="px-5 py-5 flex items-center gap-2.5">
           <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
           <p className="text-sm font-semibold">Skale Admin</p>
         </div>
