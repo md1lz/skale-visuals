@@ -124,95 +124,94 @@ function AdminHome() {
         </div>
       </motion.div>
 
-      {/* 24h chart + side KPIs */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-10">
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="lg:col-span-2 rounded-xl border border-white/10 bg-neutral-900/50 p-4 flex flex-col"
-        >
-          <div className="flex items-baseline justify-between mb-3">
-            <div>
-              <p className="text-[11px] uppercase tracking-wider text-neutral-500">
-                Connexions au site — 24h
-              </p>
-              <p className="text-2xl font-semibold text-white mt-1">
-                {dayQ.isLoading ? "…" : totalVisits24h}
-                <span className="text-xs text-neutral-500 font-normal ml-2">visites</span>
-              </p>
-            </div>
+      {/* 24h chart */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 mb-3"
+      >
+        <div className="flex items-baseline justify-between mb-4">
+          <div>
+            <p className="text-[11px] uppercase tracking-wider text-neutral-500">
+              Connexions au site — 24h
+            </p>
+            <p className="text-2xl font-semibold text-white mt-1">
+              {dayQ.isLoading ? "…" : totalVisits24h}
+              <span className="text-xs text-neutral-500 font-normal ml-2">visites</span>
+            </p>
           </div>
-          <div className="flex-1 min-h-0">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dayQ.data?.timeseries ?? []} margin={{ top: 4, right: 8, bottom: 0, left: -12 }}>
-                <defs>
-                  <linearGradient id="visitsHomeGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.5} />
-                    <stop offset="100%" stopColor="#ef4444" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#262626" vertical={false} />
-                <XAxis
-                  dataKey="bucket"
-                  stroke="#525252"
-                  fontSize={10}
-                  tickLine={false}
-                  axisLine={false}
-                />
-                <YAxis
-                  stroke="#525252"
-                  fontSize={10}
-                  tickLine={false}
-                  axisLine={false}
-                  allowDecimals={false}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: "#0a0a0a",
-                    border: "1px solid #262626",
-                    borderRadius: 8,
-                    fontSize: 12,
-                  }}
-                  labelStyle={{ color: "#a3a3a3" }}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="visits"
-                  stroke="#ef4444"
-                  strokeWidth={2}
-                  fill="url(#visitsHomeGrad)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
-
-        <div className="flex flex-col gap-3">
-          {sideKpis.map((c, i) => {
-            const Icon = c.icon;
-            return (
-              <motion.div
-                key={c.label}
-                initial={{ opacity: 0, y: 6 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: 0.05 * (i + 1) }}
-                className="flex-1 rounded-xl border border-white/10 bg-neutral-900/50 p-4 flex flex-col justify-between"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] uppercase tracking-wider text-neutral-500">
-                    {c.label}
-                  </span>
-                  <Icon className="h-3.5 w-3.5 text-neutral-500" />
-                </div>
-                <div>
-                  <p className="text-2xl font-semibold text-white">{c.value}</p>
-                  <p className="text-[11px] text-neutral-500 mt-0.5">{c.hint}</p>
-                </div>
-              </motion.div>
-            );
-          })}
         </div>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={dayQ.data?.timeseries ?? []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <defs>
+                <linearGradient id="visitsHomeGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0%" stopColor="#ef4444" stopOpacity={0.5} />
+                  <stop offset="100%" stopColor="#ef4444" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+              <XAxis
+                dataKey="bucket"
+                stroke="#737373"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+              />
+              <YAxis
+                stroke="#737373"
+                fontSize={11}
+                tickLine={false}
+                axisLine={false}
+                allowDecimals={false}
+              />
+              <Tooltip
+                contentStyle={{
+                  background: "#0a0a0a",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 8,
+                  fontSize: 12,
+                }}
+                labelStyle={{ color: "#a3a3a3" }}
+              />
+              <Area
+                type="monotone"
+                dataKey="visits"
+                stroke="#ef4444"
+                strokeWidth={2}
+                fill="url(#visitsHomeGrad)"
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </motion.div>
+
+      {/* Side KPIs */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
+        {sideKpis.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <motion.div
+              key={c.label}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.05 * (i + 1) }}
+              className="rounded-2xl border border-white/10 bg-neutral-900/40 p-4 flex flex-col justify-between"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase tracking-wider text-neutral-500">
+                  {c.label}
+                </span>
+                <Icon className="h-3.5 w-3.5 text-neutral-500" />
+              </div>
+              <div>
+                <p className="text-2xl font-semibold text-white">{c.value}</p>
+                <p className="text-[11px] text-neutral-500 mt-0.5">{c.hint}</p>
+              </div>
+            </motion.div>
+          );
+        })}
       </div>
 
       {/* Quick navigation */}
