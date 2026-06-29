@@ -41,7 +41,7 @@ const RANGES: { value: Range; label: string }[] = [
 
 const DEVICE_COLORS = ["#ef4444", "#f97316", "#fbbf24"];
 
-export const Route = createFileRoute("/admin/")({
+export const Route = createFileRoute("/admin/analytiques")({
   component: AnalyticsPage,
 });
 
