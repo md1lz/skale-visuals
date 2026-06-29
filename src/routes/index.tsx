@@ -940,7 +940,7 @@ function Testimonials() {
   );
 
   return (
-    <section id="avis" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section id="avis" data-section="avis" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto mb-8">
