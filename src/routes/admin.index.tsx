@@ -57,6 +57,8 @@ function AdminHome() {
   const activityQ = useQuery({
     queryKey: ["admin", "activity"],
     queryFn: () => fetchActivity(),
+    initialData: [] as Awaited<ReturnType<typeof fetchActivity>>,
+    refetchOnMount: "always",
   });
 
   const p = profileQ.data;
@@ -219,9 +221,7 @@ function AdminHome() {
           </h2>
         </div>
         <div className="space-y-2">
-          {activityQ.isLoading ? (
-            <div className="text-sm text-neutral-500">Chargement…</div>
-          ) : !(activityQ.data ?? []).length ? (
+          {!(activityQ.data ?? []).length ? (
             <div className="text-sm text-neutral-400 bg-neutral-800/50 rounded-xl px-4 py-3 text-center">
               Aucune activité récente
             </div>
