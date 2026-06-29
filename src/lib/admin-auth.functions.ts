@@ -131,7 +131,11 @@ export const updateAdminProfile = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const username = await requireSessionUser();
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, string | null> = {
+    const patch: {
+      first_name: string | null;
+      last_name: string | null;
+      avatar_url?: string | null;
+    } = {
       first_name: data.firstName?.trim() || null,
       last_name: data.lastName?.trim() || null,
     };
@@ -141,6 +145,7 @@ export const updateAdminProfile = createServerFn({ method: "POST" })
       .from("admins")
       .update(patch)
       .eq("username", username);
+
     if (error) throw new Error(error.message);
     return { ok: true as const };
   });
