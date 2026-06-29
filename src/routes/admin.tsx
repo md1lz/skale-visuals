@@ -2,13 +2,11 @@ import {
   Outlet,
   createFileRoute,
   redirect,
-  useNavigate,
-  useRouter,
   Link,
   useRouterState,
 } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { motion } from "framer-motion";
+
 import {
   BarChart3,
   Video,
