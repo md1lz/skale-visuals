@@ -127,6 +127,7 @@ function Logo({ size = 36 }: { size?: number }) {
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [adminMobileOpen, setAdminMobileOpen] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -178,29 +179,88 @@ function Navbar() {
         </div>
 
         {/* Mobile menu */}
-        {open && (
-          <div className="lg:hidden absolute top-full left-4 right-4 mt-2 liquid-glass rounded-2xl p-3 flex flex-col gap-1">
-            {NAV_LINKS.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="px-3 py-2.5 text-sm text-white/90 hover:bg-white/10 rounded-lg"
-              >
-                {l.label}
-              </a>
-            ))}
-            <a
-              href={CTA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-semibold"
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              key="mobile-menu"
+              initial={{ opacity: 0, y: -10, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:hidden absolute top-full left-4 right-4 mt-2 liquid-glass rounded-2xl p-3 flex flex-col gap-1 origin-top"
             >
-              Obtenir un devis <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-        )}
+              {NAV_LINKS.map((l, i) => (
+                <motion.a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.04 * i, duration: 0.2 }}
+                  className="px-3 py-2.5 text-sm text-white/90 hover:bg-white/10 rounded-lg"
+                >
+                  {l.label}
+                </motion.a>
+              ))}
+              <motion.button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setAdminMobileOpen(true);
+                }}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.04 * NAV_LINKS.length, duration: 0.2 }}
+                className="px-3 py-2.5 text-sm text-left text-white/90 hover:bg-white/10 rounded-lg flex items-center gap-2"
+              >
+                <span className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
+                Je suis admin
+              </motion.button>
+              <a
+                href={CTA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-semibold"
+              >
+                Obtenir un devis <ArrowRight className="w-4 h-4" />
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+      <AnimatePresence>
+        {adminMobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setAdminMobileOpen(false)}
+            className="fixed inset-0 z-[100] grid place-items-center bg-black/70 backdrop-blur-sm p-6 lg:hidden"
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 20, scale: 0.92 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.92 }}
+              transition={{ type: "spring", stiffness: 260, damping: 22 }}
+              className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl text-center"
+            >
+              <div className="mx-auto mb-3 grid place-items-center h-10 w-10 rounded-full bg-red-600/15 border border-red-600/30">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
+              </div>
+              <h3 className="text-white text-lg font-semibold mb-1">Accès admin</h3>
+              <p className="text-sm text-neutral-400 mb-5">Gestion admin uniquement sur PC.</p>
+              <button
+                onClick={() => setAdminMobileOpen(false)}
+                className="w-full rounded-lg bg-red-600 hover:bg-red-500 px-3 py-2.5 text-sm font-medium text-white transition-colors"
+              >
+                Compris
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
