@@ -408,7 +408,7 @@ function HowItWorks() {
       n: "Étape 2",
       title: "Montage & peaufinage",
       icon: BarChart3,
-      desc: "Notre équipe monte ta vidéo : cuts dynamiques, color grading cinématique, sous-titres, motion et sound design. Chaque détail est optimisé pour la rétention et le clic.",
+      desc: "Notre équipe monte ta vidéo : cuts dynamiques, color grading cinématique, sous-titres, motion et sound design. Chaque détail est optimisé pour maximiser le watchtime.",
     },
     {
       n: "Étape 3",
