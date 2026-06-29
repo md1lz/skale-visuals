@@ -720,22 +720,12 @@ function AdsSection() {
               <div className="flex-1">
                 <div className="text-sm text-white/70">Alexis · Fondateur D2C</div>
                 <p className="mt-1 text-lg sm:text-xl font-semibold text-white text-balance">
-                  « +<span className="text-primary">120k€</span> de CA généré grâce à nos Ads vidéo, en moins de 60 jours. »
+                  « Grâce aux Ads vidéo, j'ai généré plus de <span className="text-primary">120 000 €</span> de CA depuis qu'on travaille ensemble. »
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center shrink-0">
-                <div>
-                  <div className="text-2xl font-black text-primary">+120k€</div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-primary">x4,8</div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">ROAS</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-primary">60j</div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">Setup</div>
-                </div>
+              <div className="text-center shrink-0">
+                <div className="text-3xl sm:text-4xl font-black text-primary">+120k€</div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
               </div>
             </div>
           </div>
