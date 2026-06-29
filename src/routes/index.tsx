@@ -290,12 +290,7 @@ function Hero() {
 // ---------- social proof ----------
 
 function SocialProof() {
-  const reviews = [
-    { name: "Maxime D.", role: "Coach business · 80k abonnés", text: "Skale a transformé ma chaîne. +120% de watchtime en 2 mois, et mes vidéos sont enfin à la hauteur de mon contenu." },
-    { name: "Clara B.", role: "Fondatrice e-commerce", text: "Délais respectés, montage propre, communication fluide sur WhatsApp. Je ne reviendrai jamais en arrière." },
-    { name: "Yanis K.", role: "Créateur YouTube tech", text: "Le seul prestataire qui a vraiment compris mon univers. Mes vues ont doublé sans changer la stratégie." },
-    { name: "Inès M.", role: "Formatrice en ligne", text: "Sérieux, rapides, créatifs. Les révisions illimitées font toute la différence quand on est exigeant." },
-  ];
+  const videoSlots = [0, 1];
   return (
     <section className="relative py-12 lg:py-16">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
