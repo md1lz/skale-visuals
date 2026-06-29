@@ -148,6 +148,18 @@ export function AdminBubble() {
                 </button>
               </div>
 
+              <label className="flex items-center gap-2 mb-4 text-xs text-neutral-300 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  disabled={pending}
+                  className="h-3.5 w-3.5 accent-red-600 cursor-pointer"
+                />
+                Se souvenir de moi sur cet appareil
+              </label>
+
+
               <AnimatePresence>
                 {error && (
                   <motion.p
