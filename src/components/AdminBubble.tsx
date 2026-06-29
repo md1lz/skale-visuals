@@ -2,10 +2,11 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
 import { Eye, EyeOff } from "lucide-react";
-import { loginAdmin } from "@/lib/admin-auth.functions";
+import { loginAdmin, tryAutoLoginByIp } from "@/lib/admin-auth.functions";
 
 export function AdminBubble() {
   const login = useServerFn(loginAdmin);
+  const autoLogin = useServerFn(tryAutoLoginByIp);
   const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(false);
@@ -13,6 +14,24 @@ export function AdminBubble() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
+
+  async function handleBubbleClick() {
+    if (pending) return;
+    setPending(true);
+    try {
+      const res = await autoLogin();
+      if (res.ok) {
+        window.location.assign("/admin");
+        return;
+      }
+    } catch {
+      // ignore, fall through to manual login
+    } finally {
+      setPending(false);
+    }
+    setOpen(true);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,7 +39,7 @@ export function AdminBubble() {
     setPending(true);
     setError(false);
     try {
-      const res = await login({ data: { username, password } });
+      const res = await login({ data: { username, password, remember } });
       if (res.ok) {
         setOpen(false);
         setUsername("");
@@ -35,6 +54,7 @@ export function AdminBubble() {
       setPending(false);
     }
   }
+
 
   return (
     <>
@@ -58,7 +78,7 @@ export function AdminBubble() {
         </AnimatePresence>
         <motion.button
           aria-label="Admin login"
-          onClick={() => setOpen(true)}
+          onClick={handleBubbleClick}
           initial={{ opacity: 0.35, scale: 0.85 }}
           animate={{
             opacity: hovered ? 1 : 0.35,
@@ -127,6 +147,18 @@ export function AdminBubble() {
                   {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
                 </button>
               </div>
+
+              <label className="flex items-center gap-2 mb-4 text-xs text-neutral-300 cursor-pointer select-none">
+                <input
+                  type="checkbox"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.target.checked)}
+                  disabled={pending}
+                  className="h-3.5 w-3.5 accent-red-600 cursor-pointer"
+                />
+                Se souvenir de moi sur cet appareil
+              </label>
+
 
               <AnimatePresence>
                 {error && (
