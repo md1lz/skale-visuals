@@ -91,23 +91,6 @@ function AdminHome() {
     },
   ];
 
-  const sections = [
-    {
-      to: "/admin/analytiques",
-      label: "Analytiques",
-      desc: "Visites, CTA, conversions",
-      icon: BarChart3,
-    },
-    { to: "/admin/videos", label: "Vidéos", desc: "Gérer le contenu vidéo", icon: Video },
-    { to: "/admin/clients", label: "Clients", desc: "Base de clients", icon: Users },
-    {
-      to: "/admin/devis",
-      label: "Devis Tally",
-      desc: "Devis reçus via le site",
-      icon: FileSignature,
-    },
-    { to: "/admin/avis", label: "Avis clients", desc: "Témoignages", icon: Star },
-  ];
 
   return (
     <div className="px-8 pt-10 pb-8 max-w-6xl mx-auto">
