@@ -3,14 +3,24 @@ import { motion, useInView, useMotionValue, useTransform, animate } from "framer
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Play, Film, Sparkles, Zap, Palette, Check, Star, ChevronDown,
-  ArrowRight, Clock, Users, Award, MessageCircle, Type, Music,
+  ArrowRight, Type, Music, MessageCircle, Mail, Instagram, X,
+  Upload, BarChart3, Send, Menu,
 } from "lucide-react";
+import logoAsset from "@/assets/skale-logo.png.asset.json";
+
+const CTA_URL = "https://tally.so/r/PdPXRQ";
+const WA_URL = "https://wa.me/33766766153?text=" + encodeURIComponent("Bonjour, je souhaite obtenir un devis pour mes vidéos.");
+const MAIL_URL = "mailto:skalevisuals086@gmail.com";
+const IG_URL = "https://instagram.com/skalevisuals";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Skale Visuals — Agence de Montage Vidéo" },
-      { name: "description", content: "Montage vidéo qui captive, convertit et scale ton business. Livraison en 72h, color grading, sous-titres et motion design inclus." },
+      { name: "description", content: "Montage vidéo qui captive, convertit et scale ton business. Livraison rapide, color grading, sous-titres et motion design inclus." },
+      { property: "og:title", content: "Skale Visuals — Agence de Montage Vidéo" },
+      { property: "og:description", content: "Montage vidéo qui scale ton business. Devis gratuit." },
+      { property: "og:type", content: "website" },
     ],
   }),
   component: Index,
@@ -49,14 +59,12 @@ function CountUp({ to, suffix = "", duration = 2 }: { to: number; suffix?: strin
 // ---------- portfolio thumbnail ----------
 
 const THUMB_GRADIENTS = [
-  "from-indigo-600/40 via-purple-700/30 to-pink-600/40",
-  "from-orange-500/40 via-rose-500/30 to-amber-500/40",
-  "from-cyan-500/40 via-blue-600/30 to-indigo-700/40",
-  "from-emerald-500/30 via-teal-600/30 to-cyan-600/40",
-  "from-fuchsia-600/40 via-purple-700/30 to-indigo-700/40",
-  "from-amber-500/40 via-orange-600/30 to-red-600/40",
-  "from-violet-700/40 via-blue-700/30 to-cyan-600/40",
-  "from-rose-600/40 via-pink-700/30 to-purple-700/40",
+  "from-rose-700/40 via-red-800/30 to-rose-900/40",
+  "from-red-600/40 via-rose-700/30 to-red-900/40",
+  "from-rose-500/30 via-red-700/30 to-rose-900/40",
+  "from-red-700/40 via-rose-800/30 to-red-950/40",
+  "from-rose-600/40 via-red-700/30 to-rose-900/40",
+  "from-red-500/40 via-rose-600/30 to-red-800/40",
 ];
 
 function VideoThumb({ title, category, idx, size = "md" }: { title: string; category: string; idx: number; size?: "sm" | "md" | "lg" }) {
@@ -79,7 +87,6 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
         <div className="absolute bottom-3 left-3 right-3">
           <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{title}</p>
         </div>
-        {/* faint scanlines on thumb */}
         <div className="absolute inset-0 pointer-events-none opacity-30" style={{
           backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.04) 3px, transparent 4px)"
         }}/>
@@ -88,52 +95,113 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
   );
 }
 
-// ---------- sections ----------
+// ---------- shared bits ----------
+
+const NAV_LINKS = [
+  { label: "Nos réalisations", href: "#realisations" },
+  { label: "Comment ça marche", href: "#methode" },
+  { label: "Avis", href: "#avis" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Nous contacter", href: "#contact" },
+];
+
+function Logo({ size = 36 }: { size?: number }) {
+  return (
+    <img
+      src={logoAsset.url}
+      alt="Skale Visuals"
+      width={size}
+      height={size}
+      style={{ filter: "drop-shadow(0 0 12px rgba(226,75,74,0.6))" }}
+      className="object-contain"
+    />
+  );
+}
+
+// ---------- navbar ----------
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [open, setOpen] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  const links = [
-    { label: "Nos réalisations", href: "#realisations" },
-    { label: "Comment ça marche", href: "#methode" },
-    { label: "Avis clients", href: "#avis" },
-    { label: "Tarifs", href: "#tarifs" },
-    { label: "FAQ", href: "#faq" },
-  ];
-
   return (
-    <>
-      <div className="relative z-50 w-full text-center py-2 text-xs text-muted-foreground border-b border-white/5 bg-black/40 backdrop-blur">
-        🎬 <span className="text-white/80">2 places disponibles ce mois-ci</span>
-      </div>
-      <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? "bg-black/80 backdrop-blur-xl border-b border-white/10" : "bg-black/30 backdrop-blur-sm"}`}>
-        <nav className="max-w-7xl mx-auto px-6 py-4 grid grid-cols-[minmax(0,1fr)_auto] lg:grid-cols-3 items-center gap-4">
-          <a href="#" className="flex items-center gap-2 min-w-0">
-            <div className="w-9 h-9 rounded-lg bg-primary/15 border border-primary/40 grid place-items-center shrink-0">
-              <Play className="w-4 h-4 text-primary fill-primary" />
-            </div>
-            <span className="font-extrabold text-lg tracking-tight truncate">Skale Visuals</span>
-          </a>
-          <div className="hidden lg:flex items-center justify-center gap-7 text-sm text-muted-foreground">
-            {links.map((l) => (
-              <a key={l.href} href={l.href} className="hover:text-white transition-colors">{l.label}</a>
+    <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? "py-3" : "py-4"}`}>
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
+        {/* Left: logo */}
+        <a href="#" className="flex items-center gap-2.5 shrink-0">
+          <Logo size={36} />
+          <span className="font-extrabold text-lg tracking-tight">Skale Visuals</span>
+        </a>
+
+        {/* Center: pill nav (absolute centered on desktop) */}
+        <nav className="hidden lg:flex liquid-glass rounded-full px-2 py-1.5 absolute left-1/2 -translate-x-1/2">
+          <ul className="flex items-center gap-1 whitespace-nowrap leading-none">
+            {NAV_LINKS.map((l) => (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  className="block px-3.5 py-1.5 text-sm text-white/85 hover:text-white rounded-full hover:bg-white/10 transition-colors"
+                >
+                  {l.label}
+                </a>
+              </li>
             ))}
-          </div>
-          <div className="flex justify-end">
-            <a href="#contact" className="hidden sm:inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-4 py-2.5 rounded-lg text-sm btn-glow">
+          </ul>
+        </nav>
+
+        {/* Right: CTA */}
+        <div className="flex items-center gap-2 shrink-0">
+          <a
+            href={CTA_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
+          >
+            Obtenir un devis <ArrowRight className="w-4 h-4 text-primary" />
+          </a>
+          <button
+            onClick={() => setOpen((v) => !v)}
+            aria-label="Menu"
+            className="lg:hidden liquid-glass rounded-full p-2.5 text-white"
+          >
+            {open ? <X className="w-4 h-4" /> : <Menu className="w-4 h-4" />}
+          </button>
+        </div>
+
+        {/* Mobile menu */}
+        {open && (
+          <div className="lg:hidden absolute top-full left-4 right-4 mt-2 liquid-glass rounded-2xl p-3 flex flex-col gap-1">
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                onClick={() => setOpen(false)}
+                className="px-3 py-2.5 text-sm text-white/90 hover:bg-white/10 rounded-lg"
+              >
+                {l.label}
+              </a>
+            ))}
+            <a
+              href={CTA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-semibold"
+            >
               Obtenir un devis <ArrowRight className="w-4 h-4" />
             </a>
           </div>
-        </nav>
-      </header>
-    </>
+        )}
+      </div>
+    </header>
   );
 }
+
+// ---------- hero ----------
 
 function Hero() {
   const heroThumbs = [
@@ -150,55 +218,64 @@ function Hero() {
   return (
     <section className="relative overflow-hidden">
       <div className="absolute inset-0 cinematic-glow pointer-events-none" />
-      <div className="relative max-w-7xl mx-auto px-6 pt-20 pb-16 lg:pt-32 lg:pb-24 text-center">
+      <div className="relative max-w-7xl mx-auto px-6 pt-10 pb-6 lg:pt-16 lg:pb-8 text-center">
         <FadeIn>
-          <span className="inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-widest text-primary bg-primary/10 border border-primary/30 px-3 py-1.5 rounded-full">
-            <Film className="w-3.5 h-3.5" /> Agence de Montage Vidéo
-          </span>
+          <div className="inline-flex items-center gap-2.5 text-sm text-white/85">
+            <span className="relative flex h-2.5 w-2.5">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+            </span>
+            Disponible dès maintenant
+          </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h1 className="mt-8 text-4xl sm:text-5xl lg:text-7xl font-black text-balance max-w-5xl mx-auto leading-[1.05]">
+          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-black text-balance max-w-5xl mx-auto leading-[1.05]">
             On monte tes vidéos pour qu'elles{" "}
-            <span className="text-primary">captivent</span>,{" "}
-            <span className="text-primary">convertissent</span> et{" "}
-            <span className="text-primary">scalent</span>.
+            <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">captivent</span>,{" "}
+            <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">convertissent</span> et{" "}
+            <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">scalent</span>.
           </h1>
         </FadeIn>
         <FadeIn delay={0.2}>
-          <p className="mt-6 max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground text-balance">
-            Livraison en 72h. Montage professionnel, color grading, sous-titres, motion design — on s'occupe de tout pour que ton contenu soit irrésistible.
+          <p className="mt-5 max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground text-balance">
+            Montage professionnel, color grading, sous-titres, motion design — on s'occupe de tout pour que ton contenu soit irrésistible.
           </p>
         </FadeIn>
         <FadeIn delay={0.3}>
-          <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href="#contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-lg btn-glow">
+          <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a href={CTA_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow">
               Lancer mon projet <ArrowRight className="w-4 h-4" />
             </a>
-            <a href="#realisations" className="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/15 text-white font-semibold px-6 py-3.5 rounded-lg transition-colors">
+            <a href="#realisations" className="inline-flex items-center gap-2 liquid-glass text-white font-semibold px-6 py-3.5 rounded-full">
               Voir nos réalisations
             </a>
           </div>
         </FadeIn>
         <FadeIn delay={0.45}>
-          <div className="mt-14 grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-3xl mx-auto">
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
             {[
-              { n: 120, s: "+", l: "clients accompagnés" },
-              { n: 850, s: "+", l: "vidéos montées" },
-              { n: 4.9, s: "/5", l: "satisfaction client" },
+              { n: 20, s: "+", l: "clients" },
+              { n: 70, s: "+", l: "vidéos montées" },
+              { n: 4.8, s: "/5", l: "satisfaction client" },
             ].map((stat, i) => (
-              <div key={i} className="text-center">
+              <div
+                key={i}
+                className="rounded-[2.5rem] border border-white/10 bg-white/[0.03] backdrop-blur px-6 py-6 text-center card-hover"
+              >
                 <div className="text-4xl lg:text-5xl font-black text-primary">
-                  {Number.isInteger(stat.n) ? <CountUp to={stat.n} suffix={stat.s} /> : <>{stat.n}{stat.s}</>}
+                  {Number.isInteger(stat.n)
+                    ? <><CountUp to={stat.n} />{stat.s}</>
+                    : <>{stat.n}{stat.s}</>}
                 </div>
-                <div className="mt-2 text-sm text-muted-foreground">{stat.l}</div>
+                <div className="mt-1.5 text-sm text-muted-foreground">{stat.l}</div>
               </div>
             ))}
           </div>
         </FadeIn>
       </div>
 
-      {/* hero thumbnail strip */}
-      <div className="relative marquee overflow-hidden py-6 mask-fade">
+      {/* hero thumbnail strip — tight spacing */}
+      <div className="relative marquee overflow-hidden py-2 mask-fade">
         <div className="flex gap-4 marquee-track w-max">
           {[...heroThumbs, ...heroThumbs].map((t, i) => (
             <VideoThumb key={i} title={t.t} category={t.c} idx={i} size="md" />
@@ -209,13 +286,15 @@ function Hero() {
   );
 }
 
+// ---------- trust bar ----------
+
 function TrustBar() {
   const items = ["YouTubeurs", "Coachs", "E-commerçants", "Agences", "Podcasts", "Influenceurs", "Formateurs", "Startups"];
   return (
-    <section className="relative py-12">
+    <section className="relative py-6">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur cinematic-glow-soft py-8 px-6">
-          <p className="text-center text-xs uppercase tracking-[0.2em] text-muted-foreground mb-6">
+        <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur cinematic-glow-soft py-5 px-6">
+          <p className="text-center text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
             Ils nous font confiance
           </p>
           <div className="marquee overflow-hidden mask-fade">
@@ -233,20 +312,22 @@ function TrustBar() {
   );
 }
 
+// ---------- featured testimonial ----------
+
 function FeaturedTestimonial() {
   return (
-    <section className="relative py-20 lg:py-28">
+    <section className="relative py-10 lg:py-12">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
       <div className="relative max-w-4xl mx-auto px-6 text-center">
         <FadeIn>
-          <div className="flex justify-center gap-1 text-primary mb-6">
+          <div className="flex justify-center gap-1 text-primary mb-4">
             {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-current" />)}
           </div>
           <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-medium italic text-white leading-snug text-balance">
-            « Depuis qu'on travaille avec Skale Visuals, mes vidéos ont doublé leur rétention. Le montage est tellement propre que même mes concurrents me demandent qui je travaille avec. »
+            « Depuis qu'on travaille avec Skale Visuals, mes vidéos ont doublé leur rétention. Le montage est tellement propre que même mes concurrents me demandent avec qui je travaille. »
           </blockquote>
-          <div className="mt-8 flex items-center justify-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-rose-500 grid place-items-center font-bold">T</div>
+          <div className="mt-6 flex items-center justify-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-rose-600 grid place-items-center font-bold">T</div>
             <div className="text-left">
               <div className="font-semibold">Thomas R.</div>
               <div className="text-sm text-muted-foreground">Créateur YouTube, 45k abonnés</div>
@@ -258,11 +339,13 @@ function FeaturedTestimonial() {
   );
 }
 
+// ---------- why ----------
+
 function WhySkale() {
   const features = [
     { icon: Film, title: "Montage Premium", desc: "Cuts dynamiques, transitions fluides, rythme maîtrisé. Tes spectateurs ne décrochent pas." },
     { icon: Palette, title: "Color Grading Cinématique", desc: "Une colorimétrie qui reflète ton univers de marque et donne du relief à chaque plan." },
-    { icon: Zap, title: "Livraison Rapide", desc: "Fichier livré en 72h maximum avec révisions illimitées incluses." },
+    { icon: Zap, title: "Livraison Rapide", desc: "Fichier livré sous 24–48h pour les formats courts, avec révisions illimitées incluses." },
   ];
   const pills = [
     { icon: Sparkles, label: "Motion Design inclus" },
@@ -270,23 +353,24 @@ function WhySkale() {
     { icon: Music, label: "Musique & sound design" },
   ];
   return (
-    <section className="relative py-20 lg:py-28">
+    <section className="relative py-12 lg:py-16">
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
-              On ne monte pas juste des vidéos. <span className="text-primary">On crée de l'impact.</span>
+              On ne monte pas juste des vidéos.{" "}
+              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">On crée de l'impact.</span>
             </h2>
-            <p className="mt-4 text-muted-foreground text-lg">
+            <p className="mt-3 text-muted-foreground text-lg">
               Chaque seconde de ta vidéo est pensée pour retenir l'attention et déclencher l'action.
             </p>
           </div>
         </FadeIn>
-        <div className="mt-14 grid md:grid-cols-3 gap-5">
+        <div className="mt-8 grid md:grid-cols-3 gap-4">
           {features.map((f, i) => (
             <FadeIn key={f.title} delay={i * 0.1}>
-              <div className="h-full p-7 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
-                <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-5">
+              <div className="h-full p-6 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
+                <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-4">
                   <f.icon className="w-5 h-5 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold">{f.title}</h3>
@@ -296,7 +380,7 @@ function WhySkale() {
           ))}
         </div>
         <FadeIn delay={0.3}>
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
             {pills.map((p) => (
               <div key={p.label} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-white/10 bg-white/[0.03] text-sm text-white/80">
                 <p.icon className="w-4 h-4 text-primary" /> {p.label}
@@ -309,46 +393,147 @@ function WhySkale() {
   );
 }
 
+// ---------- how it works (recreated from screenshot) ----------
+
 function HowItWorks() {
   const steps = [
-    { n: "01", title: "Onboarding", desc: "Tu remplis notre brief en 5 minutes. On analyse ton style, ton audience et tes objectifs.", icon: Users },
-    { n: "02", title: "Production & Montage", desc: "Notre équipe monte ta vidéo avec les assets que tu nous fournis. Color grading, sous-titres, musique — tout est inclus.", icon: Film },
-    { n: "03", title: "Livraison & Révisions", desc: "Tu reçois ta vidéo en 72h. Les retouches sont illimitées jusqu'à satisfaction complète.", icon: Clock },
+    {
+      n: "Étape 1",
+      title: "Onboarding",
+      icon: Upload,
+      desc: "Tu nous envoies tes rushs, ton brief et tes références via notre formulaire. On analyse ta chaîne, ton ton et ton audience pour démarrer la production sur des bases solides.",
+    },
+    {
+      n: "Étape 2",
+      title: "Montage & peaufinage",
+      icon: BarChart3,
+      desc: "Notre équipe monte ta vidéo : cuts dynamiques, color grading cinématique, sous-titres, motion et sound design. Chaque détail est optimisé pour la rétention et le clic.",
+    },
+    {
+      n: "Étape 3",
+      title: "Livraison & révisions",
+      icon: Send,
+      desc: "En 24 à 48h, tu reçois ta vidéo prête à publier. Les révisions sont illimitées via une plateforme commentable, jusqu'à ce que ce soit parfait.",
+    },
   ];
+
+  const stepArtwork = (i: number) => {
+    if (i === 0) {
+      return (
+        <div className="relative w-full h-full grid place-items-center">
+          {/* stacked card placeholders */}
+          <div className="absolute w-44 h-28 rounded-xl border border-primary/40 bg-primary/10 rotate-[-10deg] translate-x-[-30px] translate-y-[-6px]" />
+          <div className="absolute w-44 h-28 rounded-xl border border-primary/40 bg-primary/[0.08] rotate-[8deg] translate-x-[20px] translate-y-[-10px]" />
+          <div className="relative w-48 h-28 rounded-xl border-2 border-dashed border-primary/60 bg-black/40 grid place-items-center">
+            <div className="w-10 h-10 rounded-full bg-primary/20 border border-primary/50 grid place-items-center">
+              <Upload className="w-4 h-4 text-primary" />
+            </div>
+          </div>
+          <div className="absolute right-4 bottom-2 w-24 h-16 rounded-md overflow-hidden border border-primary/40 bg-gradient-to-br from-primary/40 to-rose-900/60 grid place-items-center rotate-6">
+            <Play className="w-5 h-5 fill-white text-white" />
+          </div>
+        </div>
+      );
+    }
+    if (i === 1) {
+      return (
+        <div className="relative w-full h-full grid place-items-center">
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">CTR · x3.6</div>
+          <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Impact</div>
+          <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">A/B Testing</div>
+          <svg viewBox="0 0 200 80" className="w-[80%] h-20 mt-6" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="cg" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.6" />
+                <stop offset="100%" stopColor="rgb(226,75,74)" stopOpacity="0" />
+              </linearGradient>
+            </defs>
+            <path d="M0 60 L30 55 L55 50 L80 30 L100 10 L120 35 L150 25 L175 45 L200 35 L200 80 L0 80 Z" fill="url(#cg)" />
+            <path d="M0 60 L30 55 L55 50 L80 30 L100 10 L120 35 L150 25 L175 45 L200 35" fill="none" stroke="rgb(226,75,74)" strokeWidth="1.5" />
+          </svg>
+        </div>
+      );
+    }
+    return (
+      <div className="relative w-full h-full grid place-items-center">
+        <div className="relative w-48 h-28 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-900 via-rose-800 to-red-950">
+          <div className="absolute inset-0 grid place-items-center text-white text-center">
+            <div>
+              <div className="text-[10px] tracking-[0.3em] opacity-70">TU N'ES PAS</div>
+              <div className="text-2xl font-black tracking-widest">FLEMMARD</div>
+            </div>
+          </div>
+        </div>
+        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">1920 × 1080</div>
+      </div>
+    );
+  };
+
   return (
-    <section id="methode" className="relative py-20 lg:py-28 border-t border-white/5">
+    <section id="methode" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
+        {/* Hero banner */}
         <FadeIn>
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">Notre méthode en 3 étapes</h2>
-            <p className="mt-4 text-muted-foreground text-lg">Un processus fluide pensé pour te faire gagner du temps.</p>
+          <div className="relative rounded-[2rem] border border-primary/30 overflow-hidden p-8 lg:p-10 bg-gradient-to-br from-red-950/80 via-black to-black">
+            <div className="absolute inset-0 pointer-events-none" style={{
+              background: "radial-gradient(ellipse 60% 80% at 30% 50%, rgba(226,75,74,0.35), transparent 60%)"
+            }} />
+            <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
+              <div>
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white">
+                  Notre méthode en{" "}
+                  <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">3 étapes</span>
+                </h2>
+                <p className="mt-3 text-white/70 max-w-md">
+                  Chaque étape est pensée pour faire de YouTube ton canal d'acquisition #1.
+                </p>
+                <a
+                  href={CTA_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-6 inline-flex items-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-full hover:scale-[1.02] transition-transform"
+                >
+                  Je veux ma vidéo en 48h <ArrowRight className="w-4 h-4" />
+                </a>
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                {[0, 1, 2, 3].map((i) => (
+                  <div key={i} className="relative aspect-[3/4] rounded-xl overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black">
+                    <div className="absolute inset-0 grid place-items-center">
+                      <Play className="w-6 h-6 fill-white text-white opacity-80" />
+                    </div>
+                    <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-white">12:00</span>
+                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </FadeIn>
-        <div className="mt-14 grid md:grid-cols-3 gap-5">
+
+        {/* Step cards */}
+        <div className="mt-5 grid md:grid-cols-3 gap-4">
           {steps.map((s, i) => (
-            <FadeIn key={s.n} delay={i * 0.1}>
-              <div className="relative h-full p-7 rounded-2xl border border-white/10 bg-card/60 card-hover">
-                <div className="text-5xl font-black text-primary/30">{s.n}</div>
-                <div className="mt-4 flex items-center gap-3">
-                  <s.icon className="w-5 h-5 text-primary" />
-                  <h3 className="text-xl font-bold">{s.title}</h3>
-                </div>
-                <p className="mt-3 text-muted-foreground">{s.desc}</p>
+            <FadeIn key={s.title} delay={i * 0.1}>
+              <div className="relative h-full p-6 rounded-[1.75rem] border border-primary/25 bg-gradient-to-b from-red-950/40 via-black to-black overflow-hidden card-hover">
+                <div className="absolute inset-0 pointer-events-none opacity-60" style={{
+                  background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226,75,74,0.18), transparent 70%)"
+                }} />
+                <div className="relative h-48 mb-5">{stepArtwork(i)}</div>
+                <h3 className="relative text-xl font-bold text-white">{s.n} — {s.title}</h3>
+                <p className="relative mt-3 text-white/70 leading-relaxed">{s.desc}</p>
               </div>
             </FadeIn>
           ))}
         </div>
-        <FadeIn delay={0.3}>
-          <div className="mt-12 text-center">
-            <a href="#contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-lg btn-glow">
-              Démarrer maintenant <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-        </FadeIn>
       </div>
     </section>
   );
 }
+
+// ---------- portfolio ----------
 
 function Portfolio() {
   const row1 = [
@@ -387,16 +572,18 @@ function Portfolio() {
   );
 
   return (
-    <section id="realisations" className="relative py-20 lg:py-28 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6 mb-12">
+    <section id="realisations" className="relative py-12 lg:py-16 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6 mb-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">Nos réalisations</h2>
-            <p className="mt-4 text-muted-foreground text-lg">Un aperçu de ce qu'on crée pour nos clients.</p>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
+              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Nos</span> réalisations
+            </h2>
+            <p className="mt-3 text-muted-foreground text-lg">Un aperçu de ce qu'on crée pour nos clients.</p>
           </div>
         </FadeIn>
       </div>
-      <div className="space-y-5">
+      <div className="space-y-4">
         <Row items={row1} offset={0} />
         <Row items={row2} reverse offset={3} />
         <Row items={row3} offset={6} />
@@ -404,6 +591,8 @@ function Portfolio() {
     </section>
   );
 }
+
+// ---------- testimonials (vertical) ----------
 
 function Testimonials() {
   const reviews = [
@@ -421,105 +610,125 @@ function Testimonials() {
     { name: "Bastien O.", role: "Agence marketing", text: "Notre prestataire montage officiel pour tous nos clients. Indispensable." },
   ];
 
-  const Card = ({ r }: { r: typeof reviews[0] }) => (
-    <div className="w-80 shrink-0 p-6 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
+  type R = typeof reviews[number];
+  const Card = ({ r }: { r: R }) => (
+    <div className="w-full p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/80 to-rose-500 grid place-items-center font-bold text-sm">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-sm">
           {r.name.charAt(0)}
         </div>
         <div className="min-w-0">
-          <div className="font-semibold truncate">{r.name}</div>
+          <div className="font-semibold truncate text-sm">{r.name}</div>
           <div className="text-xs text-muted-foreground truncate">{r.role}</div>
         </div>
       </div>
-      <div className="mt-3 flex gap-0.5 text-primary">
+      <div className="mt-2.5 flex gap-0.5 text-primary">
         {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
       </div>
-      <p className="mt-3 text-sm text-white/80 leading-relaxed">{r.text}</p>
+      <p className="mt-2.5 text-sm text-white/80 leading-relaxed">{r.text}</p>
     </div>
   );
 
-  const first = reviews.slice(0, 6);
-  const second = reviews.slice(6);
+  const cols = [
+    reviews.slice(0, 4),
+    reviews.slice(4, 8),
+    reviews.slice(8, 12),
+  ];
+
+  const Column = ({ items, reverse }: { items: R[]; reverse?: boolean }) => (
+    <div className="marquee overflow-hidden h-[560px] mask-fade-y relative">
+      <div className={`flex flex-col gap-4 ${reverse ? "marquee-y-track-reverse" : "marquee-y-track"}`}>
+        {[...items, ...items].map((r, i) => <Card key={i} r={r} />)}
+      </div>
+    </div>
+  );
 
   return (
-    <section id="avis" className="relative py-20 lg:py-28 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6 mb-12">
+    <section id="avis" className="relative py-12 lg:py-16 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">Ce qu'ils pensent de Skale Visuals</h2>
-            <p className="mt-4 text-muted-foreground text-lg">+120 clients, et autant d'histoires de croissance.</p>
+          <div className="text-center max-w-3xl mx-auto mb-8">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
+              Ce qu'ils pensent de{" "}
+              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Skale Visuals</span>
+            </h2>
+            <p className="mt-3 text-muted-foreground text-lg">Des créateurs qui ont vu leur audience et leur business décoller.</p>
           </div>
         </FadeIn>
-      </div>
-      <div className="space-y-5">
-        <div className="marquee overflow-hidden mask-fade">
-          <div className="flex gap-4 marquee-track w-max">
-            {[...first, ...first].map((r, i) => <Card key={i} r={r} />)}
-          </div>
-        </div>
-        <div className="marquee overflow-hidden mask-fade">
-          <div className="flex gap-4 marquee-track-reverse w-max">
-            {[...second, ...second].map((r, i) => <Card key={i} r={r} />)}
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Column items={cols[0]} />
+          <Column items={cols[1]} reverse />
+          <Column items={cols[2]} />
         </div>
       </div>
     </section>
   );
 }
 
+// ---------- comparison ----------
+
 function Comparison() {
   const rows = [
-    { feature: "Qualité cinématique", skale: true, freelance: "Variable", agency: true },
-    { feature: "Délai de livraison", skale: "72h", freelance: "5-10 jours", agency: "1-3 semaines" },
-    { feature: "Suivi client", skale: "Dédié", freelance: "Limité", agency: "Standard" },
-    { feature: "Révisions", skale: "Illimitées", freelance: "1-2 incluses", agency: "Facturées" },
-    { feature: "Compréhension de votre audience", skale: true, freelance: false, agency: "Partielle" },
-    { feature: "Tarif transparent", skale: true, freelance: "Variable", agency: false },
+    { feature: "Qualité cinématique", skale: true, freelance: "Variable" },
+    { feature: "Délai de livraison", skale: "24–48h", freelance: "5–10 jours" },
+    { feature: "Suivi client", skale: "WhatsApp dédié", freelance: "Limité" },
+    { feature: "Révisions", skale: "Illimitées", freelance: "1–2 incluses" },
+    { feature: "Compréhension de votre audience", skale: true, freelance: false },
+    { feature: "Équipe de 10 monteurs spécialisés", skale: true, freelance: false },
+    { feature: "Tarif transparent", skale: true, freelance: "Variable" },
   ];
 
   const renderCell = (v: boolean | string, highlight?: boolean) => {
     if (v === true) return <Check className={`w-5 h-5 mx-auto ${highlight ? "text-primary" : "text-emerald-400"}`} />;
-    if (v === false) return <span className="text-white/30">—</span>;
+    if (v === false) return <X className="w-4 h-4 mx-auto text-white/30" />;
     return <span className={`text-sm ${highlight ? "text-primary font-semibold" : "text-white/70"}`}>{v}</span>;
   };
 
   return (
-    <section className="relative py-20 lg:py-28 border-t border-white/5">
-      <div className="max-w-5xl mx-auto px-6">
+    <section className="relative py-12 lg:py-16 border-t border-white/5">
+      <div className="max-w-4xl mx-auto px-6">
         <FadeIn>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-center text-balance">
-            Ce qui fait de Skale Visuals votre <span className="text-primary">partenaire montage #1</span>
+            Ce qui fait de Skale Visuals votre{" "}
+            <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">partenaire #1</span>
           </h2>
         </FadeIn>
         <FadeIn delay={0.15}>
-          <div className="mt-12 overflow-x-auto">
-            <table className="w-full min-w-[640px] border-separate border-spacing-0">
-              <thead>
-                <tr>
-                  <th className="text-left text-xs uppercase tracking-widest text-muted-foreground font-medium p-4"></th>
-                  <th className="p-4 text-center">
-                    <div className="rounded-t-xl border-2 border-b-0 border-primary bg-primary/10 py-3 px-2 font-bold text-primary">
-                      Skale Visuals
-                    </div>
-                  </th>
-                  <th className="p-4 text-center text-muted-foreground font-medium text-sm">Monteur freelance</th>
-                  <th className="p-4 text-center text-muted-foreground font-medium text-sm">Agence classique</th>
-                </tr>
-              </thead>
-              <tbody>
-                {rows.map((r, i) => (
-                  <tr key={r.feature} className="border-t border-white/10">
-                    <td className="p-4 text-sm font-medium text-white/80">{r.feature}</td>
-                    <td className={`p-4 text-center border-l-2 border-r-2 border-primary bg-primary/[0.04] ${i === rows.length - 1 ? "rounded-b-xl border-b-2" : ""}`}>
-                      {renderCell(r.skale, true)}
-                    </td>
-                    <td className="p-4 text-center">{renderCell(r.freelance)}</td>
-                    <td className="p-4 text-center">{renderCell(r.agency)}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="mt-8 rounded-2xl border border-white/10 bg-card/40 backdrop-blur overflow-hidden">
+            <div className="grid grid-cols-[1.4fr_1fr_1fr]">
+              <div className="p-4 text-xs uppercase tracking-widest text-muted-foreground font-medium border-b border-white/10" />
+              <div className="p-4 text-center font-bold text-primary bg-primary/10 border-b border-primary/30 border-x border-primary/30">
+                Skale Visuals
+              </div>
+              <div className="p-4 text-center text-muted-foreground font-medium text-sm border-b border-white/10">
+                Monteur freelance
+              </div>
+              {rows.map((r, i) => (
+                <div key={r.feature} className="contents">
+                  <div className={`p-4 text-sm font-medium text-white/80 ${i === rows.length - 1 ? "" : "border-b border-white/10"}`}>
+                    {r.feature}
+                  </div>
+                  <div className={`p-4 text-center bg-primary/[0.06] border-x border-primary/30 ${i === rows.length - 1 ? "border-b border-primary/30" : "border-b border-primary/20"}`}>
+                    {renderCell(r.skale, true)}
+                  </div>
+                  <div className={`p-4 text-center ${i === rows.length - 1 ? "" : "border-b border-white/10"}`}>
+                    {renderCell(r.freelance)}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+        <FadeIn delay={0.25}>
+          <div className="mt-8 text-center">
+            <a
+              href={CTA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
+            >
+              Obtenir mon devis gratuit <ArrowRight className="w-4 h-4" />
+            </a>
           </div>
         </FadeIn>
       </div>
@@ -527,97 +736,52 @@ function Comparison() {
   );
 }
 
-function Pricing() {
-  const plans = [
-    {
-      name: "Starter", desc: "1 vidéo", price: "249€", suffix: "",
-      features: ["1 montage professionnel", "Color grading inclus", "Sous-titres dynamiques", "1 révision incluse", "Livraison 72h"],
-      cta: "Commencer", featured: false,
-    },
-    {
-      name: "Pro", desc: "5 vidéos", price: "999€", suffix: "soit 199€/vidéo",
-      features: ["5 montages premium", "Color grading cinématique", "Sous-titres dynamiques", "Motion intro/outro", "Révisions illimitées", "Support WhatsApp prioritaire"],
-      cta: "Choisir Pro", featured: true,
-    },
-    {
-      name: "Studio", desc: "Sur mesure", price: "Parlons-en", suffix: "",
-      features: ["Volume personnalisé", "Gestionnaire de compte dédié", "Reporting mensuel", "SLA garanti", "Onboarding équipe"],
-      cta: "Nous contacter", featured: false,
-    },
-  ];
-  return (
-    <section id="tarifs" className="relative py-20 lg:py-28 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6">
-        <FadeIn>
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">Une offre pour chaque besoin</h2>
-            <p className="mt-4 text-muted-foreground text-lg">Tarifs clairs, sans surprise.</p>
-          </div>
-        </FadeIn>
-        <div className="mt-14 grid md:grid-cols-3 gap-5 items-stretch">
-          {plans.map((p, i) => (
-            <FadeIn key={p.name} delay={i * 0.1}>
-              <div className={`relative h-full p-8 rounded-2xl border bg-card/60 backdrop-blur card-hover flex flex-col ${
-                p.featured ? "border-primary shadow-[0_0_60px_-20px_rgba(255,107,43,0.45)]" : "border-white/10"
-              }`}>
-                {p.featured && (
-                  <span className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold uppercase tracking-widest bg-primary text-primary-foreground px-3 py-1 rounded-full">
-                    Le plus populaire
-                  </span>
-                )}
-                <div className="text-sm text-muted-foreground">{p.desc}</div>
-                <div className="mt-1 text-2xl font-bold">{p.name}</div>
-                <div className="mt-5 flex items-baseline gap-2">
-                  <span className="text-4xl font-black">{p.price}</span>
-                </div>
-                {p.suffix && <div className="mt-1 text-xs text-muted-foreground">{p.suffix}</div>}
-                <ul className="mt-6 space-y-3 flex-1">
-                  {p.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2 text-sm text-white/80">
-                      <Check className="w-4 h-4 text-primary shrink-0 mt-0.5" />
-                      <span>{f}</span>
-                    </li>
-                  ))}
-                </ul>
-                <a href="#contact" className={`mt-8 inline-flex items-center justify-center gap-2 font-semibold px-5 py-3 rounded-lg transition-all ${
-                  p.featured
-                    ? "bg-primary text-primary-foreground btn-glow"
-                    : "bg-white/5 hover:bg-white/10 border border-white/15 text-white"
-                }`}>
-                  {p.cta} <ArrowRight className="w-4 h-4" />
-                </a>
-              </div>
-            </FadeIn>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
+// ---------- FAQ ----------
 
 function FAQ() {
   const items = [
-    { q: "Quels types de vidéos montez-vous ?", a: "YouTube long-format, Shorts/Reels, podcasts, formations en ligne, publicités e-commerce (UGC, VSL), interviews, aftermovies. On s'adapte à ton univers." },
-    { q: "Quels fichiers dois-je vous envoyer ?", a: "Tes rushes (vidéo + audio), un brief rempli (5 min), et des références si tu en as. On gère le reste : musique, sound design, color grading." },
-    { q: "Combien de temps dure le montage ?", a: "72h maximum après réception complète de tes fichiers. Pour les volumes importants, on planifie ensemble un calendrier." },
-    { q: "Les révisions sont-elles vraiment illimitées ?", a: "Oui, dans le périmètre du projet. Tant que tu n'es pas 100% satisfait, on retravaille. Pas de petites lignes." },
-    { q: "Puis-je avoir un chef de projet attitré ?", a: "Inclus dans les offres Pro et Studio. Tu communiques avec une seule personne, par WhatsApp ou Slack." },
-    { q: "Travaillez-vous avec des petites chaînes ?", a: "Bien sûr. On accompagne aussi bien des créateurs en lancement que des comptes à plusieurs millions d'abonnés." },
-    { q: "Comment se passe le paiement ?", a: "Paiement en ligne sécurisé (CB, virement). Pour les forfaits, 50% à la commande, 50% à la livraison du premier asset." },
-    { q: "Y a-t-il un engagement de durée ?", a: "Aucun engagement. Les forfaits sont valables 3 mois, et tu reprends quand tu veux. Zéro friction." },
+    {
+      q: "Que faut-il fournir ?",
+      a: "Tes rushes (vidéo + audio), un brief rempli (5 min), et des références si tu en as. On gère le reste : musique, sound design, color grading.",
+    },
+    {
+      q: "Combien de temps pour recevoir ma vidéo ?",
+      a: "En moyenne, 24 à 48h pour les formats courts. Pour les formats longs, comptez environ 3 à 4 jours.",
+    },
+    {
+      q: "Combien de révisions sont incluses ?",
+      a: "Les révisions sont illimitées. On t'envoie la vidéo sur une plateforme qui permet de laisser des commentaires directement sous chaque minute de la vidéo, pour peaufiner à l'infini jusqu'à ce que ce soit parfait.",
+    },
+    {
+      q: "Est-ce que je communique directement avec un monteur ?",
+      a: "Non, mais tu es en contact direct sur WhatsApp avec nos managers, qui font le lien avec les monteurs. On a une équipe solide de 10 monteurs, chacun fort dans son domaine, pour garantir la meilleure qualité selon le type de vidéo.",
+    },
+    {
+      q: "Travaillez-vous avec les petites chaînes ?",
+      a: "Bien sûr. On accompagne aussi bien des créateurs en lancement que des comptes à plusieurs millions d'abonnés.",
+    },
+    {
+      q: "Quels sont les tarifs ?",
+      a: "Nos tarifs sont flexibles et personnalisés en fonction de ta demande et du volume. Tout sera discuté après ton devis, directement avec l'équipe sur WhatsApp.",
+    },
+    {
+      q: "Possible de travailler sur le long terme ?",
+      a: "Absolument. On peut proposer des contrats sur la durée pour travailler sereinement avec des créateurs, avec des montages récurrents, des délais prioritaires et un suivi personnalisé.",
+    },
   ];
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <section id="faq" className="relative py-20 lg:py-28 border-t border-white/5">
+    <section id="faq" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-3xl mx-auto px-6">
         <FadeIn>
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
-              Tes questions. <span className="text-primary">Nos réponses.</span>
+              Tes questions.{" "}
+              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Nos réponses.</span>
             </h2>
           </div>
         </FadeIn>
-        <div className="mt-12 space-y-3">
+        <div className="mt-8 space-y-3">
           {items.map((it, i) => (
             <FadeIn key={it.q} delay={i * 0.04}>
               <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden">
@@ -645,92 +809,130 @@ function FAQ() {
   );
 }
 
+// ---------- final contact ----------
+
 function FinalCTA() {
-  const thumbs = [
-    { t: "Réel viral 2M vues", c: "Reels" },
-    { t: "Masterclass premium", c: "Formation" },
-    { t: "Pub Q4 e-com", c: "E-commerce" },
-    { t: "Podcast season 2", c: "Podcast" },
-    { t: "Lancement produit", c: "YouTube" },
-    { t: "Aftermovie event", c: "Branding" },
+  const contacts = [
+    {
+      icon: MessageCircle,
+      label: "WhatsApp",
+      value: "+33 7 66 76 61 53",
+      href: WA_URL,
+      external: true,
+    },
+    {
+      icon: Mail,
+      label: "Email",
+      value: "skalevisuals086@gmail.com",
+      href: MAIL_URL,
+      external: false,
+    },
+    {
+      icon: Instagram,
+      label: "Instagram",
+      value: "@skalevisuals",
+      href: IG_URL,
+      external: true,
+    },
   ];
+
   return (
-    <section id="contact" className="relative py-24 lg:py-32 border-t border-white/5 overflow-hidden">
-      <div className="absolute inset-0 cinematic-glow opacity-150 pointer-events-none" />
-      <div className="relative max-w-4xl mx-auto px-6 text-center">
+    <section id="contact" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+      <div className="absolute inset-0 cinematic-glow pointer-events-none" />
+      <div className="relative max-w-5xl mx-auto px-6 text-center">
         <FadeIn>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-balance">
-            Prêt à passer au niveau supérieur avec des vidéos qui{" "}
-            <span className="text-primary">convertissent</span> ?
+          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-script text-primary leading-tight">
+            Prêt à passer au niveau supérieur ?
           </h2>
+          <p className="mt-3 text-muted-foreground text-lg max-w-2xl mx-auto">
+            On répond rapidement. Choisis le canal qui te convient.
+          </p>
         </FadeIn>
         <FadeIn delay={0.15}>
-          <div className="mt-9 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href="#contact" className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-lg btn-glow">
+          <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {contacts.map((c) => (
+              <a
+                key={c.label}
+                href={c.href}
+                {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
+                className="group p-6 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover text-left"
+              >
+                <div className="w-11 h-11 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-4 group-hover:bg-primary/30 transition-colors">
+                  <c.icon className="w-5 h-5 text-primary" />
+                </div>
+                <div className="text-xs uppercase tracking-widest text-muted-foreground">{c.label}</div>
+                <div className="mt-1 font-semibold text-white break-all">{c.value}</div>
+              </a>
+            ))}
+          </div>
+        </FadeIn>
+        <FadeIn delay={0.25}>
+          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+            <a
+              href={CTA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
+            >
               Lancer mon projet <ArrowRight className="w-4 h-4" />
             </a>
-            <a href="#realisations" className="inline-flex items-center gap-2 bg-white/5 hover:bg-white/10 border border-white/15 text-white font-semibold px-6 py-3.5 rounded-lg transition-colors">
+            <a
+              href="#realisations"
+              className="inline-flex items-center gap-2 liquid-glass text-white font-semibold px-6 py-3.5 rounded-full"
+            >
               Voir nos réalisations
             </a>
           </div>
         </FadeIn>
       </div>
-      <div className="relative mt-16 marquee overflow-hidden mask-fade">
-        <div className="flex gap-4 marquee-track w-max">
-          {[...thumbs, ...thumbs].map((t, i) => (
-            <VideoThumb key={i} title={t.t} category={t.c} idx={i} />
-          ))}
-        </div>
-      </div>
     </section>
   );
 }
 
+// ---------- footer ----------
+
 function Footer() {
   return (
-    <footer className="relative border-t border-white/10 py-14">
-      <div className="max-w-7xl mx-auto px-6 grid gap-10 md:grid-cols-[1.5fr_1fr_1fr]">
+    <footer className="relative border-t border-white/10 py-10">
+      <div className="max-w-7xl mx-auto px-6 grid gap-8 md:grid-cols-[1.2fr_2fr]">
         <div>
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-lg bg-primary/15 border border-primary/40 grid place-items-center">
-              <Play className="w-4 h-4 text-primary fill-primary" />
-            </div>
+          <div className="flex items-center gap-2.5">
+            <Logo size={36} />
             <span className="font-extrabold text-lg">Skale Visuals</span>
           </div>
-          <p className="mt-4 text-muted-foreground text-sm max-w-sm">
-            Le montage vidéo qui scale ton business.
-          </p>
-          <div className="mt-4 inline-flex items-center gap-2 text-sm">
-            <MessageCircle className="w-4 h-4 text-primary" />
-            <a href="mailto:hello@skalevisuals.com" className="text-white/80 hover:text-primary transition">hello@skalevisuals.com</a>
-          </div>
-        </div>
-        <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Navigation</div>
-          <ul className="space-y-2 text-sm">
-            <li><a href="#realisations" className="text-white/80 hover:text-primary transition">Nos réalisations</a></li>
-            <li><a href="#methode" className="text-white/80 hover:text-primary transition">Comment ça marche</a></li>
-            <li><a href="#avis" className="text-white/80 hover:text-primary transition">Avis clients</a></li>
-            <li><a href="#tarifs" className="text-white/80 hover:text-primary transition">Tarifs</a></li>
-            <li><a href="#faq" className="text-white/80 hover:text-primary transition">FAQ</a></li>
+          <ul className="mt-4 space-y-2 text-sm">
+            <li className="flex items-center gap-2 text-white/80">
+              <MessageCircle className="w-4 h-4 text-primary shrink-0" />
+              <a href={WA_URL} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">+33 7 66 76 61 53</a>
+            </li>
+            <li className="flex items-center gap-2 text-white/80">
+              <Mail className="w-4 h-4 text-primary shrink-0" />
+              <a href={MAIL_URL} className="hover:text-primary transition break-all">skalevisuals086@gmail.com</a>
+            </li>
+            <li className="flex items-center gap-2 text-white/80">
+              <Instagram className="w-4 h-4 text-primary shrink-0" />
+              <a href={IG_URL} target="_blank" rel="noopener noreferrer" className="hover:text-primary transition">@skalevisuals</a>
+            </li>
           </ul>
         </div>
-        <div>
-          <div className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Légal</div>
-          <ul className="space-y-2 text-sm">
-            <li><a href="#" className="text-white/80 hover:text-primary transition">Politique de confidentialité</a></li>
-            <li><a href="#" className="text-white/80 hover:text-primary transition">Mentions légales</a></li>
-            <li><a href="#" className="text-white/80 hover:text-primary transition">CGV</a></li>
+        <div className="md:text-right">
+          <div className="text-xs uppercase tracking-widest text-muted-foreground mb-3">Navigation</div>
+          <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm md:justify-end">
+            {NAV_LINKS.map((l) => (
+              <li key={l.href}><a href={l.href} className="text-white/80 hover:text-primary transition">{l.label}</a></li>
+            ))}
           </ul>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-6 mt-10 pt-6 border-t border-white/5 flex flex-col sm:flex-row justify-between gap-3 text-xs text-muted-foreground">
+      <div className="max-w-7xl mx-auto px-6 mt-8 pt-5 border-t border-white/5 flex flex-col sm:flex-row justify-between gap-3 text-xs text-muted-foreground">
         <div>© 2026 Skale Visuals. Tous droits réservés.</div>
-        <div className="flex items-center gap-2"><Award className="w-3.5 h-3.5 text-primary" /> Made with cinematic care in France</div>
+        <div>Made in France by md1lz and lorenz.dio</div>
       </div>
     </footer>
   );
 }
+
+// ---------- root ----------
 
 function Index() {
   return (
@@ -745,7 +947,6 @@ function Index() {
         <Portfolio />
         <Testimonials />
         <Comparison />
-        <Pricing />
         <FAQ />
         <FinalCTA />
       </main>
@@ -754,6 +955,10 @@ function Index() {
         .mask-fade {
           -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
                   mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+        }
+        .mask-fade-y {
+          -webkit-mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
+                  mask-image: linear-gradient(to bottom, transparent, black 8%, black 92%, transparent);
         }
       `}</style>
     </div>
