@@ -61,6 +61,9 @@ function AdminLayout() {
           <p className="text-sm font-semibold">Skale Admin</p>
         </div>
 
+        <div className="px-5 py-3 border-b border-white/10">
+          {session?.user && <AdminProfileMenu initialUsername={session.user} />}
+        </div>
 
         <nav className="flex-1 px-3 py-4 space-y-0.5">
           {NAV.map((item) => {
@@ -88,10 +91,6 @@ function AdminLayout() {
             );
           })}
         </nav>
-
-        <div className="m-3">
-          {session?.user && <AdminProfileMenu initialUsername={session.user} />}
-        </div>
 
       </aside>
 
