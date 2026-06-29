@@ -697,7 +697,7 @@ function AdsSection() {
   const positions = [-1, 0, 1];
 
   return (
-    <section className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+    <section data-section="ads" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
       <div className="relative max-w-6xl mx-auto px-6">
         <FadeIn>
