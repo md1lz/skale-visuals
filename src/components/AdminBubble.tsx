@@ -1,12 +1,10 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { Eye, EyeOff } from "lucide-react";
 import { loginAdmin } from "@/lib/admin-auth.functions";
 
 export function AdminBubble() {
-  const navigate = useNavigate();
   const login = useServerFn(loginAdmin);
   const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);
@@ -27,7 +25,7 @@ export function AdminBubble() {
         setOpen(false);
         setUsername("");
         setPassword("");
-        navigate({ to: "/admin" });
+        window.location.assign("/admin");
       } else {
         setError(true);
       }
