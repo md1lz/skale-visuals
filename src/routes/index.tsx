@@ -484,11 +484,11 @@ function HowItWorks() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Hero banner */}
         <FadeIn>
-          <div className="relative rounded-[2rem] border border-primary/30 overflow-hidden p-8 lg:p-10 bg-gradient-to-br from-red-950/80 via-black to-black">
+          <div className="relative rounded-[2rem] border border-primary/30 overflow-hidden p-6 lg:p-8 bg-gradient-to-br from-red-950/80 via-black to-black">
             <div className="absolute inset-0 pointer-events-none" style={{
               background: "radial-gradient(ellipse 60% 80% at 30% 50%, rgba(226,75,74,0.35), transparent 60%)"
             }} />
-            <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
+            <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-6 items-center">
               <div>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white">
                   Notre méthode en{" "}
@@ -501,23 +501,35 @@ function HowItWorks() {
                   href={CTA_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-6 inline-flex items-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-full hover:scale-[1.02] transition-transform"
+                  className="mt-5 inline-flex items-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-full hover:scale-[1.02] transition-transform"
                 >
                   Je veux ma vidéo en 48h <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                {[0, 1, 2, 3].map((i) => (
-                  <div key={i} className="relative aspect-[3/4] rounded-xl overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black">
-                    <div className="absolute inset-0 grid place-items-center">
-                      <Play className="w-6 h-6 fill-white text-white opacity-80" />
+              <div className="grid grid-cols-2 gap-3 h-[220px] overflow-hidden">
+                {[false, true].map((reverse, colIdx) => {
+                  const tiles = [0, 1, 2, 3, 4].map((k) => k + colIdx * 5);
+                  return (
+                    <div key={colIdx} className="marquee overflow-hidden h-full relative" style={{
+                      WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                      maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                    }}>
+                      <div className={`flex flex-col gap-3 ${reverse ? "marquee-y-track-reverse" : "marquee-y-track"}`}>
+                        {[...tiles, ...tiles].map((k, i) => (
+                          <div key={i} className="relative aspect-[3/4] rounded-lg overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
+                            <div className="absolute inset-0 grid place-items-center">
+                              <Play className="w-5 h-5 fill-white text-white opacity-80" />
+                            </div>
+                            <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
+                              <span className="text-[9px] px-1 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
+                              <span className="text-[9px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-white">12:00</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
