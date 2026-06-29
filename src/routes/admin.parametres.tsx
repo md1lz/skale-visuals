@@ -15,6 +15,8 @@ import {
   Check,
   Eye,
   EyeOff,
+  Pencil,
+  X,
 } from "lucide-react";
 import {
   ADMIN_THEMES,
@@ -24,10 +26,12 @@ import {
 import {
   listRememberedIps,
   forgetRememberedIp,
+  renameRememberedIp,
   listAdmins,
   updateAdminCredentials,
   createAdminAccount,
 } from "@/lib/admin-settings.functions";
+
 
 export const Route = createFileRoute("/admin/parametres")({
   component: ParametresPage,
