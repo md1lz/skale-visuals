@@ -1,27 +1,38 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "@tanstack/react-router";
-import { tryLogin } from "@/lib/admin-auth";
+import { useServerFn } from "@tanstack/react-start";
+import { loginAdmin } from "@/lib/admin-auth.functions";
 
 export function AdminBubble() {
   const navigate = useNavigate();
+  const login = useServerFn(loginAdmin);
   const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(false);
+  const [pending, setPending] = useState(false);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (tryLogin(username, password)) {
-      setOpen(false);
-      setUsername("");
-      setPassword("");
-      setError(false);
-      navigate({ to: "/admin" });
-    } else {
+    if (pending) return;
+    setPending(true);
+    setError(false);
+    try {
+      const res = await login({ data: { username, password } });
+      if (res.ok) {
+        setOpen(false);
+        setUsername("");
+        setPassword("");
+        navigate({ to: "/admin" });
+      } else {
+        setError(true);
+      }
+    } catch {
       setError(true);
-      setTimeout(() => setError(false), 1800);
+    } finally {
+      setPending(false);
     }
   }
 
@@ -69,7 +80,7 @@ export function AdminBubble() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 z-[100] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
-            onClick={() => setOpen(false)}
+            onClick={() => !pending && setOpen(false)}
           >
             <motion.form
               onClick={(e) => e.stopPropagation()}
@@ -92,7 +103,8 @@ export function AdminBubble() {
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
-                className="w-full mb-3 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition-colors"
+                disabled={pending}
+                className="w-full mb-3 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition-colors disabled:opacity-60"
               />
 
               <label className="block text-xs text-neutral-300 mb-1">Mot de passe</label>
@@ -101,7 +113,8 @@ export function AdminBubble() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
-                className="w-full mb-4 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition-colors"
+                disabled={pending}
+                className="w-full mb-4 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition-colors disabled:opacity-60"
               />
 
               <AnimatePresence>
@@ -121,17 +134,19 @@ export function AdminBubble() {
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-sm text-neutral-300 hover:bg-white/5 transition-colors"
+                  disabled={pending}
+                  className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-sm text-neutral-300 hover:bg-white/5 transition-colors disabled:opacity-60"
                 >
                   Annuler
                 </button>
                 <motion.button
                   type="submit"
-                  whileHover={{ scale: 1.02 }}
-                  whileTap={{ scale: 0.97 }}
-                  className="flex-1 rounded-lg bg-red-600 hover:bg-red-500 px-3 py-2 text-sm font-medium text-white transition-colors"
+                  disabled={pending}
+                  whileHover={pending ? undefined : { scale: 1.02 }}
+                  whileTap={pending ? undefined : { scale: 0.97 }}
+                  className="flex-1 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-70 px-3 py-2 text-sm font-medium text-white transition-colors"
                 >
-                  Se connecter
+                  {pending ? "Vérification…" : "Se connecter"}
                 </motion.button>
               </div>
             </motion.form>

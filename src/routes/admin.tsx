@@ -1,5 +1,7 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
-import { useEffect, useMemo, useState } from "react";
+import { createFileRoute, redirect, useNavigate, useRouter } from "@tanstack/react-router";
+import { useMemo } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { useSuspenseQuery, queryOptions } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
   Activity,
@@ -10,6 +12,8 @@ import {
   Users,
   Clock,
   Globe,
+  ShieldCheck,
+  ShieldAlert,
 } from "lucide-react";
 import {
   Area,
@@ -22,37 +26,52 @@ import {
   BarChart,
   Bar,
 } from "recharts";
-import { getAdminSession, logoutAdmin } from "@/lib/admin-auth";
+import {
+  getAdminAnalytics,
+  getAdminSessionFn,
+  logoutAdminFn,
+} from "@/lib/admin-auth.functions";
+
+const analyticsQuery = queryOptions({
+  queryKey: ["admin-analytics"],
+  queryFn: () => getAdminAnalytics(),
+});
 
 export const Route = createFileRoute("/admin")({
-  ssr: false,
+  beforeLoad: async () => {
+    const session = await getAdminSessionFn();
+    if (!session) throw redirect({ to: "/" });
+    return { session };
+  },
+  loader: ({ context }) => context.queryClient.ensureQueryData(analyticsQuery),
+  errorComponent: ({ error }) => (
+    <div className="min-h-screen flex items-center justify-center bg-neutral-950 text-white p-6">
+      <p className="text-sm text-neutral-400">Impossible de charger le panneau ({error.message}).</p>
+    </div>
+  ),
+  notFoundComponent: () => (
+    <div className="min-h-screen flex items-center justify-center bg-neutral-950 text-white p-6">
+      <p className="text-sm text-neutral-400">Introuvable.</p>
+    </div>
+  ),
   component: AdminPanel,
 });
 
-type Session = { user: string; at: number } | null;
-
 function AdminPanel() {
   const navigate = useNavigate();
-  const [session, setSession] = useState<Session>(null);
-  const [ready, setReady] = useState(false);
+  const router = useRouter();
+  const logout = useServerFn(logoutAdminFn);
+  const { data } = useSuspenseQuery(analyticsQuery);
+  const mock = useMemo(() => generateTrafficMock(), []);
 
-  useEffect(() => {
-    const s = getAdminSession();
-    if (!s) {
-      navigate({ to: "/" });
-      return;
-    }
-    setSession(s);
-    setReady(true);
-  }, [navigate]);
-
-  const data = useMemo(() => generateMockData(), []);
-
-  if (!ready || !session) return null;
+  async function handleLogout() {
+    await logout();
+    await router.invalidate();
+    navigate({ to: "/" });
+  }
 
   return (
     <div className="min-h-screen bg-neutral-950 text-white">
-      {/* Header */}
       <header className="sticky top-0 z-40 border-b border-white/10 bg-neutral-950/80 backdrop-blur">
         <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -60,15 +79,12 @@ function AdminPanel() {
             <div>
               <h1 className="text-lg font-semibold">Skale Admin</h1>
               <p className="text-[11px] text-neutral-400">
-                Connecté en tant que <span className="text-neutral-200">{session.user}</span>
+                Connecté en tant que <span className="text-neutral-200">{data.currentUser}</span>
               </p>
             </div>
           </div>
           <button
-            onClick={() => {
-              logoutAdmin();
-              navigate({ to: "/" });
-            }}
+            onClick={handleLogout}
             className="flex items-center gap-2 rounded-lg border border-white/10 px-3 py-1.5 text-xs text-neutral-300 hover:bg-white/5 transition"
           >
             <LogOut className="h-3.5 w-3.5" />
@@ -81,19 +97,38 @@ function AdminPanel() {
         <div>
           <h2 className="text-2xl font-bold">Analyses</h2>
           <p className="text-sm text-neutral-400 mt-1">
-            Vue d'ensemble des connexions et de l'activité des 30 derniers jours.
+            Activité du site et historique d'accès au panneau (30 derniers jours).
           </p>
         </div>
 
-        {/* Stat cards */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatCard icon={<Users className="h-4 w-4" />} label="Visiteurs uniques" value={data.totals.visitors.toLocaleString("fr-FR")} delta="+12.4%" trend="up" />
-          <StatCard icon={<Eye className="h-4 w-4" />} label="Pages vues" value={data.totals.pageViews.toLocaleString("fr-FR")} delta="+8.1%" trend="up" />
-          <StatCard icon={<MousePointerClick className="h-4 w-4" />} label="Sessions" value={data.totals.sessions.toLocaleString("fr-FR")} delta="+5.7%" trend="up" />
-          <StatCard icon={<Clock className="h-4 w-4" />} label="Durée moy." value={data.totals.avgDuration} delta="-1.2%" trend="down" />
+          <StatCard
+            icon={<ShieldCheck className="h-4 w-4" />}
+            label="Connexions réussies"
+            value={data.totals.successful.toLocaleString("fr-FR")}
+            sub={`${data.totals.uniqueUsers} admin${data.totals.uniqueUsers > 1 ? "s" : ""}`}
+          />
+          <StatCard
+            icon={<ShieldAlert className="h-4 w-4" />}
+            label="Tentatives échouées"
+            value={data.totals.failed.toLocaleString("fr-FR")}
+            sub={`sur ${data.totals.totalAttempts} tentatives`}
+            tone={data.totals.failed > 0 ? "warn" : "ok"}
+          />
+          <StatCard
+            icon={<Users className="h-4 w-4" />}
+            label="Visiteurs uniques"
+            value={mock.totals.visitors.toLocaleString("fr-FR")}
+            sub="+12.4% vs. 30j"
+          />
+          <StatCard
+            icon={<Eye className="h-4 w-4" />}
+            label="Pages vues"
+            value={mock.totals.pageViews.toLocaleString("fr-FR")}
+            sub="+8.1% vs. 30j"
+          />
         </div>
 
-        {/* Traffic chart */}
         <Panel
           title="Trafic — 30 derniers jours"
           subtitle="Visiteurs uniques par jour"
@@ -101,7 +136,7 @@ function AdminPanel() {
         >
           <div className="h-72">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={data.timeseries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+              <AreaChart data={mock.timeseries} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                 <defs>
                   <linearGradient id="visGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#ef4444" stopOpacity={0.5} />
@@ -126,11 +161,10 @@ function AdminPanel() {
           </div>
         </Panel>
 
-        {/* Two-col: Top pages + Sources */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Panel title="Pages les plus vues" icon={<Eye className="h-4 w-4 text-red-500" />}>
             <ul className="divide-y divide-white/5">
-              {data.topPages.map((p) => (
+              {mock.topPages.map((p) => (
                 <li key={p.path} className="flex items-center justify-between py-2.5 text-sm">
                   <span className="text-neutral-200 truncate">{p.path}</span>
                   <span className="text-neutral-400 tabular-nums">{p.views.toLocaleString("fr-FR")}</span>
@@ -142,7 +176,7 @@ function AdminPanel() {
           <Panel title="Sources de trafic" icon={<Globe className="h-4 w-4 text-red-500" />}>
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.sources} layout="vertical" margin={{ top: 5, right: 10, left: 20, bottom: 0 }}>
+                <BarChart data={mock.sources} layout="vertical" margin={{ top: 5, right: 10, left: 20, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                   <XAxis type="number" stroke="#737373" fontSize={11} tickLine={false} axisLine={false} />
                   <YAxis type="category" dataKey="name" stroke="#a3a3a3" fontSize={12} tickLine={false} axisLine={false} width={80} />
@@ -161,11 +195,10 @@ function AdminPanel() {
           </Panel>
         </div>
 
-        {/* Devices + Recent logins */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Panel title="Répartition par appareil" icon={<Activity className="h-4 w-4 text-red-500" />}>
             <div className="space-y-4">
-              {data.devices.map((d) => (
+              {mock.devices.map((d) => (
                 <div key={d.name}>
                   <div className="flex justify-between text-sm mb-1.5">
                     <span className="text-neutral-200">{d.name}</span>
@@ -184,18 +217,36 @@ function AdminPanel() {
             </div>
           </Panel>
 
-          <Panel title="Connexions admin récentes" icon={<Users className="h-4 w-4 text-red-500" />}>
-            <ul className="divide-y divide-white/5">
-              {data.recentLogins.map((l, i) => (
-                <li key={i} className="flex items-center justify-between py-2.5 text-sm">
-                  <div>
-                    <p className="text-neutral-200">{l.user}</p>
-                    <p className="text-[11px] text-neutral-500">{l.ip} · {l.location}</p>
-                  </div>
-                  <span className="text-xs text-neutral-400">{l.when}</span>
-                </li>
-              ))}
-            </ul>
+          <Panel title="Connexions admin récentes" icon={<MousePointerClick className="h-4 w-4 text-red-500" />}>
+            {data.recent.length === 0 ? (
+              <p className="text-sm text-neutral-500 py-4">Aucune connexion enregistrée pour l'instant.</p>
+            ) : (
+              <ul className="divide-y divide-white/5 max-h-80 overflow-y-auto">
+                {data.recent.map((l, i) => (
+                  <li key={i} className="flex items-center justify-between py-2.5 text-sm gap-3">
+                    <div className="min-w-0 flex-1">
+                      <p className="flex items-center gap-2">
+                        <span
+                          className={`h-1.5 w-1.5 rounded-full ${l.success ? "bg-emerald-400" : "bg-red-500"}`}
+                        />
+                        <span className="text-neutral-200 truncate">{l.username}</span>
+                        {!l.success && (
+                          <span className="text-[10px] uppercase tracking-wide text-red-400">échec</span>
+                        )}
+                      </p>
+                      <p className="text-[11px] text-neutral-500 truncate">
+                        {l.ip ?? "IP inconnue"}
+                        {l.user_agent ? ` · ${shortUA(l.user_agent)}` : ""}
+                      </p>
+                    </div>
+                    <span className="text-xs text-neutral-400 whitespace-nowrap flex items-center gap-1">
+                      <Clock className="h-3 w-3" />
+                      {formatWhen(l.created_at)}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
           </Panel>
         </div>
       </main>
@@ -207,14 +258,14 @@ function StatCard({
   icon,
   label,
   value,
-  delta,
-  trend,
+  sub,
+  tone = "ok",
 }: {
   icon: React.ReactNode;
   label: string;
   value: string;
-  delta: string;
-  trend: "up" | "down";
+  sub?: string;
+  tone?: "ok" | "warn";
 }) {
   return (
     <motion.div
@@ -224,12 +275,12 @@ function StatCard({
     >
       <div className="flex items-center justify-between text-neutral-400 text-xs">
         <div className="flex items-center gap-2">
-          <span className="text-red-500">{icon}</span>
+          <span className={tone === "warn" ? "text-amber-400" : "text-red-500"}>{icon}</span>
           {label}
         </div>
-        <span className={trend === "up" ? "text-emerald-400" : "text-red-400"}>{delta}</span>
       </div>
       <div className="mt-3 text-2xl font-semibold tabular-nums">{value}</div>
+      {sub && <p className="mt-1 text-[11px] text-neutral-500">{sub}</p>}
     </motion.div>
   );
 }
@@ -263,7 +314,25 @@ function Panel({
   );
 }
 
-function generateMockData() {
+function shortUA(ua: string): string {
+  if (/iPhone|iPad/i.test(ua)) return "iOS";
+  if (/Android/i.test(ua)) return "Android";
+  if (/Macintosh/i.test(ua)) return "macOS";
+  if (/Windows/i.test(ua)) return "Windows";
+  if (/Linux/i.test(ua)) return "Linux";
+  return "Autre";
+}
+
+function formatWhen(iso: string): string {
+  const d = new Date(iso);
+  const diffMin = Math.round((Date.now() - d.getTime()) / 60000);
+  if (diffMin < 1) return "à l'instant";
+  if (diffMin < 60) return `il y a ${diffMin} min`;
+  if (diffMin < 24 * 60) return `il y a ${Math.round(diffMin / 60)} h`;
+  return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" });
+}
+
+function generateTrafficMock() {
   const days = 30;
   let seed = 42;
   const rand = () => {
@@ -288,8 +357,6 @@ function generateMockData() {
     totals: {
       visitors: totalVisitors,
       pageViews: Math.round(totalVisitors * 2.7),
-      sessions: Math.round(totalVisitors * 1.3),
-      avgDuration: "2 min 47 s",
     },
     timeseries,
     topPages: [
@@ -310,12 +377,6 @@ function generateMockData() {
       { name: "Mobile", pct: 62 },
       { name: "Desktop", pct: 31 },
       { name: "Tablette", pct: 7 },
-    ],
-    recentLogins: [
-      { user: "didiolorenzo", ip: "82.66.14.221", location: "Paris, FR", when: "il y a 2 min" },
-      { user: "harroismadi", ip: "92.184.97.12", location: "Lyon, FR", when: "il y a 1 h" },
-      { user: "didiolorenzo", ip: "82.66.14.221", location: "Paris, FR", when: "Hier, 18:42" },
-      { user: "harroismadi", ip: "92.184.97.12", location: "Lyon, FR", when: "Hier, 09:15" },
     ],
   };
 }
