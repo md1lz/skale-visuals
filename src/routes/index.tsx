@@ -294,7 +294,8 @@ function Hero() {
 function SocialProof() {
   const videoSlots = [0, 1];
   return (
-    <section className="relative py-12 lg:py-16">
+    <section data-section="social-proof" className="relative py-12 lg:py-16">
+
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
       <div className="relative max-w-6xl mx-auto px-6 text-center">
         <FadeIn>
