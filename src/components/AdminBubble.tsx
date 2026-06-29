@@ -1,15 +1,28 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { useNavigate } from "@tanstack/react-router";
+import { tryLogin } from "@/lib/admin-auth";
 
 export function AdminBubble() {
+  const navigate = useNavigate();
   const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    setError(true);
-    setTimeout(() => setError(false), 1500);
+    if (tryLogin(username, password)) {
+      setOpen(false);
+      setUsername("");
+      setPassword("");
+      setError(false);
+      navigate({ to: "/admin" });
+    } else {
+      setError(true);
+      setTimeout(() => setError(false), 1800);
+    }
   }
 
   return (
@@ -76,6 +89,8 @@ export function AdminBubble() {
               <label className="block text-xs text-neutral-300 mb-1">Identifiant</label>
               <input
                 type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 autoComplete="username"
                 className="w-full mb-3 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition-colors"
               />
@@ -83,6 +98,8 @@ export function AdminBubble() {
               <label className="block text-xs text-neutral-300 mb-1">Mot de passe</label>
               <input
                 type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 autoComplete="current-password"
                 className="w-full mb-4 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition-colors"
               />
