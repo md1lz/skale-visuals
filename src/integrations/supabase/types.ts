@@ -100,27 +100,39 @@ export type Database = {
       }
       site_carousels: {
         Row: {
+          aspect: string
           created_at: string
           description: string | null
           key: string
           label: string
+          media_kind: string
           position: number
+          show_source: boolean
+          show_title: boolean
           updated_at: string
         }
         Insert: {
+          aspect?: string
           created_at?: string
           description?: string | null
           key: string
           label: string
+          media_kind?: string
           position?: number
+          show_source?: boolean
+          show_title?: boolean
           updated_at?: string
         }
         Update: {
+          aspect?: string
           created_at?: string
           description?: string | null
           key?: string
           label?: string
+          media_kind?: string
           position?: number
+          show_source?: boolean
+          show_title?: boolean
           updated_at?: string
         }
         Relationships: []
