@@ -7,6 +7,7 @@ export type PublicVideo = {
   carousel_key: string;
   title: string;
   source_url: string;
+  source_label: string;
   thumbnail_url: string | null;
   format: "court" | "long" | "miniature";
   position: number;
@@ -21,7 +22,7 @@ export const listPublicVideos = createServerFn({ method: "GET" }).handler(async 
   });
   const { data } = await sb
     .from("site_videos")
-    .select("id, carousel_key, title, source_url, thumbnail_url, format, position")
+    .select("id, carousel_key, title, source_url, source_label, thumbnail_url, format, position")
     .eq("visible", true)
     .order("position");
   return { videos: (data ?? []) as PublicVideo[] };

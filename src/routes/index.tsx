@@ -137,6 +137,13 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
             <Play className="w-5 h-5 text-white fill-white ml-0.5" />
           </div>
         </div>
+        {video.source_label && (
+          <div className="absolute top-3 left-3 pointer-events-none">
+            <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
+              {video.source_label}
+            </span>
+          </div>
+        )}
         {video.title && (
           <div className="absolute bottom-3 left-3 right-3 pointer-events-none">
             <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>

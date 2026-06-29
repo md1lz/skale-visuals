@@ -29,11 +29,11 @@ export const listAllVideos = createServerFn({ method: "GET" }).handler(async () 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: carousels } = await supabaseAdmin
     .from("site_carousels")
-    .select("key, label, description, position")
+    .select("key, label, description, position, media_kind, aspect, show_title, show_source")
     .order("position");
   const { data: videos } = await supabaseAdmin
     .from("site_videos")
-    .select("id, carousel_key, title, source_url, thumbnail_url, format, visible, position")
+    .select("id, carousel_key, title, source_url, source_label, thumbnail_url, format, visible, position")
     .order("position");
   return { carousels: carousels ?? [], videos: videos ?? [] };
 });
@@ -75,6 +75,7 @@ const updateSchema = z.object({
   id: z.string().uuid(),
   title: z.string().trim().max(200).optional(),
   source_url: z.string().trim().max(2000).optional(),
+  source_label: z.string().trim().max(200).optional(),
   thumbnail_url: z.string().trim().max(2000).optional().nullable(),
   format: FormatEnum.optional(),
   visible: z.boolean().optional(),
