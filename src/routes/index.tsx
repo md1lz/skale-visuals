@@ -233,7 +233,7 @@ function Hero() {
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-black text-balance max-w-5xl mx-auto leading-[1.15]">
+          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-black text-balance max-w-5xl mx-auto leading-[1.05]">
             On monte tes vidéos pour qu'elles{" "}
             <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">captivent</span>,{" "}
             <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">convertissent</span> et{" "}
