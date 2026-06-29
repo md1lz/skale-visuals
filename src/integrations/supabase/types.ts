@@ -145,6 +145,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      create_admin: {
+        Args: { _password: string; _username: string }
+        Returns: string
+      }
+      rename_admin: {
+        Args: { _new_username: string; _old_username: string }
+        Returns: boolean
+      }
+      set_admin_password: {
+        Args: { _new_password: string; _username: string }
+        Returns: boolean
+      }
       verify_admin: {
         Args: { _password: string; _username: string }
         Returns: {
