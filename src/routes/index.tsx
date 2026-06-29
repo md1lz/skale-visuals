@@ -8,6 +8,7 @@ import {
   TrendingUp, Mic, Target, Briefcase,
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
+import arrowAsset from "@/assets/arrow-curl.png.asset.json";
 
 const CTA_URL = "https://tally.so/r/PdPXRQ";
 const WA_URL = "https://wa.me/33766766153?text=" + encodeURIComponent("Bonjour, je souhaite obtenir un devis pour mes vidéos.");
