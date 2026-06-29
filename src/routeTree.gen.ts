@@ -18,6 +18,7 @@ import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminDevisRouteImport } from './routes/admin.devis'
 import { Route as AdminClientsRouteImport } from './routes/admin.clients'
 import { Route as AdminAvisRouteImport } from './routes/admin.avis'
+import { Route as AdminAnalytiquesRouteImport } from './routes/admin.analytiques'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 
 const AdminRoute = AdminRouteImport.update({
@@ -65,6 +66,11 @@ const AdminAvisRoute = AdminAvisRouteImport.update({
   path: '/avis',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAnalytiquesRoute = AdminAnalytiquesRouteImport.update({
+  id: '/analytiques',
+  path: '/analytiques',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
@@ -74,6 +80,7 @@ const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/devis': typeof AdminDevisRoute
@@ -85,6 +92,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/devis': typeof AdminDevisRoute
@@ -98,6 +106,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/devis': typeof AdminDevisRoute
@@ -112,6 +121,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
     | '/admin/devis'
@@ -123,6 +133,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
     | '/admin/devis'
@@ -135,6 +146,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
     | '/admin/devis'
@@ -216,6 +228,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAvisRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/analytiques': {
+      id: '/admin/analytiques'
+      path: '/analytiques'
+      fullPath: '/admin/analytiques'
+      preLoaderRoute: typeof AdminAnalytiquesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/track': {
       id: '/api/public/track'
       path: '/api/public/track'
@@ -227,6 +246,7 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAnalytiquesRoute: typeof AdminAnalytiquesRoute
   AdminAvisRoute: typeof AdminAvisRoute
   AdminClientsRoute: typeof AdminClientsRoute
   AdminDevisRoute: typeof AdminDevisRoute
@@ -237,6 +257,7 @@ interface AdminRouteChildren {
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalytiquesRoute: AdminAnalytiquesRoute,
   AdminAvisRoute: AdminAvisRoute,
   AdminClientsRoute: AdminClientsRoute,
   AdminDevisRoute: AdminDevisRoute,
