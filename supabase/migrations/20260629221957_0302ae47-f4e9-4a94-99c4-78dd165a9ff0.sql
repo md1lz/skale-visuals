@@ -1,0 +1,1 @@
+ALTER TABLE public.admin_remembered_ips ADD COLUMN IF NOT EXISTS label text;

@@ -15,6 +15,8 @@ import {
   Check,
   Eye,
   EyeOff,
+  Pencil,
+  X,
 } from "lucide-react";
 import {
   ADMIN_THEMES,
@@ -24,10 +26,12 @@ import {
 import {
   listRememberedIps,
   forgetRememberedIp,
+  renameRememberedIp,
   listAdmins,
   updateAdminCredentials,
   createAdminAccount,
 } from "@/lib/admin-settings.functions";
+
 
 export const Route = createFileRoute("/admin/parametres")({
   component: ParametresPage,
@@ -194,14 +198,25 @@ function BackgroundSection() {
 function ConnectionsSection() {
   const fetchList = useServerFn(listRememberedIps);
   const forget = useServerFn(forgetRememberedIp);
+  const rename = useServerFn(renameRememberedIp);
   const q = useQuery({
     queryKey: ["admin", "remembered-ips"],
     queryFn: () => fetchList(),
-    initialData: [],
+    initialData: [] as Array<{ ip: string; username: string; label: string | null; created_at: string; last_seen_at: string }>,
   });
+
+  const [editingIp, setEditingIp] = useState<string | null>(null);
+  const [draft, setDraft] = useState("");
 
   async function onForget(ip: string) {
     await forget({ data: { ip } });
+    q.refetch();
+  }
+
+  async function onSaveRename(ip: string) {
+    await rename({ data: { ip, label: draft.trim() || null } });
+    setEditingIp(null);
+    setDraft("");
     q.refetch();
   }
 
@@ -217,35 +232,88 @@ function ConnectionsSection() {
         </div>
       ) : (
         <div className="space-y-2">
-          {q.data.map((row) => (
-            <div
-              key={row.ip}
-              className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5"
-            >
-              <span className="grid place-items-center h-8 w-8 rounded-lg bg-red-500/15 text-red-400 shrink-0">
-                <Wifi className="h-4 w-4" />
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-white font-mono truncate">{row.ip}</p>
-                <p className="text-[11px] text-neutral-500">
-                  @{row.username} · vu{" "}
-                  {new Date(row.last_seen_at).toLocaleString("fr-FR")}
-                </p>
-              </div>
-              <button
-                onClick={() => onForget(row.ip)}
-                className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition"
-                title="Oublier cet appareil"
+          {q.data.map((row) => {
+            const isEditing = editingIp === row.ip;
+            return (
+              <div
+                key={row.ip}
+                className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5"
               >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
+                <span className="grid place-items-center h-8 w-8 rounded-lg bg-red-500/15 text-red-400 shrink-0">
+                  <Wifi className="h-4 w-4" />
+                </span>
+                <div className="flex-1 min-w-0">
+                  {isEditing ? (
+                    <input
+                      autoFocus
+                      value={draft}
+                      onChange={(e) => setDraft(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") onSaveRename(row.ip);
+                        if (e.key === "Escape") { setEditingIp(null); setDraft(""); }
+                      }}
+                      placeholder="Nom de l'appareil"
+                      className="w-full bg-neutral-900/80 border border-white/10 rounded-md px-2 py-1 text-sm text-white outline-none focus:border-red-400/60"
+                    />
+                  ) : (
+                    <p className="text-sm text-white truncate">
+                      {row.label ? (
+                        <>
+                          <span className="font-medium">{row.label}</span>{" "}
+                          <span className="font-mono text-neutral-500 text-xs">· {row.ip}</span>
+                        </>
+                      ) : (
+                        <span className="font-mono">{row.ip}</span>
+                      )}
+                    </p>
+                  )}
+                  <p className="text-[11px] text-neutral-500">
+                    @{row.username} · vu{" "}
+                    {new Date(row.last_seen_at).toLocaleString("fr-FR")}
+                  </p>
+                </div>
+                {isEditing ? (
+                  <>
+                    <button
+                      onClick={() => onSaveRename(row.ip)}
+                      className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition"
+                      title="Enregistrer"
+                    >
+                      <Check className="h-4 w-4" />
+                    </button>
+                    <button
+                      onClick={() => { setEditingIp(null); setDraft(""); }}
+                      className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
+                      title="Annuler"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => { setEditingIp(row.ip); setDraft(row.label ?? ""); }}
+                    className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
+                    title="Renommer"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </button>
+                )}
+                <button
+                  onClick={() => onForget(row.ip)}
+                  className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition"
+                  title="Oublier cet appareil"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            );
+          })}
         </div>
       )}
     </Section>
   );
 }
+
 
 /* ---------- ACCOUNTS ---------- */
 function AccountsSection() {

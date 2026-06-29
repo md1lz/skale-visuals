@@ -32,10 +32,26 @@ export const listRememberedIps = createServerFn({ method: "GET" }).handler(async
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin
     .from("admin_remembered_ips")
-    .select("ip, username, created_at, last_seen_at")
+    .select("ip, username, label, created_at, last_seen_at")
     .order("last_seen_at", { ascending: false });
   return data ?? [];
 });
+
+export const renameRememberedIp = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ ip: z.string().min(1), label: z.string().trim().max(64).nullable() }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    await requireSession();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("admin_remembered_ips")
+      .update({ label: data.label && data.label.length > 0 ? data.label : null })
+      .eq("ip", data.ip);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
 
 export const forgetRememberedIp = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ ip: z.string().min(1) }).parse(d))
