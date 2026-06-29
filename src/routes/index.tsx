@@ -283,27 +283,31 @@ function Hero() {
   );
 }
 
-// ---------- trust bar ----------
+// ---------- social proof ----------
 
-function TrustBar() {
-  const items = ["YouTubeurs", "Coachs", "E-commerçants", "Agences", "Podcasts", "Influenceurs", "Formateurs", "Startups"];
+function SocialProof() {
   return (
-    <section className="relative py-6">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur cinematic-glow-soft py-5 px-6">
-          <p className="text-center text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
-            Ils nous font confiance
-          </p>
-          <div className="marquee overflow-hidden mask-fade">
-            <div className="flex gap-12 marquee-track-fast w-max">
-              {[...items, ...items, ...items].map((it, i) => (
-                <span key={i} className="text-lg lg:text-xl font-semibold text-white/60 hover:text-white whitespace-nowrap transition-colors">
-                  {it}
-                </span>
-              ))}
+    <section className="relative py-12 lg:py-16">
+      <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
+      <div className="relative max-w-4xl mx-auto px-6 text-center">
+        <FadeIn>
+          <div className="flex items-center justify-center gap-2 text-sm text-white/80">
+            <div className="flex gap-0.5 text-primary">
+              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
             </div>
+            <span>Noté 4,8 sur 5 avec +80 avis</span>
           </div>
-        </div>
+        </FadeIn>
+        <FadeIn delay={0.1}>
+          <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-black text-balance leading-[1.05]">
+            Plus de <CountUp to={20} /> entrepreneurs<br className="hidden sm:block" /> nous ont déjà fait confiance.
+          </h2>
+        </FadeIn>
+        <FadeIn delay={0.2}>
+          <p className="mt-5 text-base sm:text-lg text-muted-foreground text-balance">
+            Et leur watchtime n'a jamais été aussi haut depuis qu'on monte leurs vidéos.
+          </p>
+        </FadeIn>
       </div>
     </section>
   );
