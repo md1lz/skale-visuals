@@ -252,22 +252,19 @@ function Hero() {
           </div>
         </FadeIn>
         <FadeIn delay={0.45}>
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-16 gap-y-6 max-w-3xl mx-auto">
             {[
               { n: 20, s: "+", l: "clients" },
               { n: 70, s: "+", l: "vidéos montées" },
               { n: 4.8, s: "/5", l: "satisfaction client" },
             ].map((stat, i) => (
-              <div
-                key={i}
-                className="rounded-[2.5rem] border border-white/10 bg-white/[0.03] backdrop-blur px-6 py-6 text-center card-hover"
-              >
-                <div className="text-4xl lg:text-5xl font-black text-primary">
+              <div key={i} className="text-center">
+                <div className="text-2xl lg:text-3xl font-black text-primary">
                   {Number.isInteger(stat.n)
                     ? <><CountUp to={stat.n} />{stat.s}</>
                     : <>{stat.n}{stat.s}</>}
                 </div>
-                <div className="mt-1.5 text-sm text-muted-foreground">{stat.l}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{stat.l}</div>
               </div>
             ))}
           </div>
