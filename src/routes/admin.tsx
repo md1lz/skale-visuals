@@ -91,13 +91,10 @@ function AdminLayout() {
           })}
         </nav>
 
-        <button
-          onClick={handleLogout}
-          className="m-3 flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs text-neutral-300 hover:bg-white/5 transition"
-        >
-          <LogOut className="h-3.5 w-3.5" />
-          Déconnexion
-        </button>
+        <div className="m-3">
+          {session?.user && <AdminProfileMenu initialUsername={session.user} />}
+        </div>
+
       </aside>
 
       <main className="flex-1 min-w-0 overflow-x-hidden">
