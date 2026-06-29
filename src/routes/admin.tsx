@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { AdminProfileMenu } from "@/components/AdminProfileMenu";
+import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 
 
 export const Route = createFileRoute("/admin")({
