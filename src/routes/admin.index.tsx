@@ -221,6 +221,10 @@ function AdminHome() {
         <div className="space-y-2">
           {activityQ.isLoading ? (
             <div className="text-sm text-neutral-500">Chargement…</div>
+          ) : !(activityQ.data ?? []).length ? (
+            <div className="text-sm text-neutral-400 bg-neutral-800/50 rounded-xl px-4 py-3 text-center">
+              Aucune activité récente
+            </div>
           ) : (
             (activityQ.data ?? []).map((a, i) => {
               const icons: Record<string, React.ElementType> = {
