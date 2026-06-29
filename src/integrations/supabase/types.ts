@@ -189,6 +189,7 @@ export type Database = {
           format: string
           id: string
           position: number
+          source_label: string
           source_url: string
           thumbnail_url: string | null
           title: string
@@ -201,6 +202,7 @@ export type Database = {
           format?: string
           id?: string
           position?: number
+          source_label?: string
           source_url?: string
           thumbnail_url?: string | null
           title?: string
@@ -213,6 +215,7 @@ export type Database = {
           format?: string
           id?: string
           position?: number
+          source_label?: string
           source_url?: string
           thumbnail_url?: string | null
           title?: string
