@@ -58,6 +58,11 @@ function AdminHome() {
     queryFn: () => fetchAnalytics({ data: { range: "24h" } }),
   });
 
+  const activityQ = useQuery({
+    queryKey: ["admin", "activity"],
+    queryFn: () => fetchActivity(),
+  });
+
   const p = profileQ.data;
   const greetingName = p?.firstName?.trim() || p?.username || "";
   const k = dayQ.data?.kpis;
