@@ -286,10 +286,16 @@ function Hero() {
 // ---------- social proof ----------
 
 function SocialProof() {
+  const reviews = [
+    { name: "Maxime D.", role: "Coach business · 80k abonnés", text: "Skale a transformé ma chaîne. +120% de watchtime en 2 mois, et mes vidéos sont enfin à la hauteur de mon contenu." },
+    { name: "Clara B.", role: "Fondatrice e-commerce", text: "Délais respectés, montage propre, communication fluide sur WhatsApp. Je ne reviendrai jamais en arrière." },
+    { name: "Yanis K.", role: "Créateur YouTube tech", text: "Le seul prestataire qui a vraiment compris mon univers. Mes vues ont doublé sans changer la stratégie." },
+    { name: "Inès M.", role: "Formatrice en ligne", text: "Sérieux, rapides, créatifs. Les révisions illimitées font toute la différence quand on est exigeant." },
+  ];
   return (
     <section className="relative py-12 lg:py-16">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
-      <div className="relative max-w-4xl mx-auto px-6 text-center">
+      <div className="relative max-w-6xl mx-auto px-6 text-center">
         <FadeIn>
           <div className="flex items-center justify-center gap-2 text-sm text-white/80">
             <div className="flex gap-0.5 text-primary">
@@ -300,13 +306,32 @@ function SocialProof() {
         </FadeIn>
         <FadeIn delay={0.1}>
           <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-black text-balance leading-[1.05]">
-            Plus de <CountUp to={20} /> entrepreneurs<br className="hidden sm:block" /> nous ont déjà fait confiance.
+            Plus de <CountUp to={30} /> clients<br className="hidden sm:block" /> nous ont déjà fait confiance.
           </h2>
         </FadeIn>
         <FadeIn delay={0.2}>
           <p className="mt-5 text-base sm:text-lg text-muted-foreground text-balance">
             Et leur watchtime n'a jamais été aussi haut depuis qu'on monte leurs vidéos.
           </p>
+        </FadeIn>
+        <FadeIn delay={0.3}>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+            {reviews.map((r) => (
+              <div key={r.name} className="p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-sm">{r.name.charAt(0)}</div>
+                  <div className="min-w-0">
+                    <div className="font-semibold truncate text-sm">{r.name}</div>
+                    <div className="text-xs text-muted-foreground truncate">{r.role}</div>
+                  </div>
+                </div>
+                <div className="mt-2.5 flex gap-0.5 text-primary">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
+                </div>
+                <p className="mt-2.5 text-sm text-white/80 leading-relaxed">{r.text}</p>
+              </div>
+            ))}
+          </div>
         </FadeIn>
       </div>
     </section>
@@ -442,39 +467,56 @@ function HowItWorks() {
           <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">Watchtime · x3</div>
           <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Rétention</div>
           <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Engagement</div>
-          <svg viewBox="0 0 200 80" className="w-[80%] h-24 mt-6" preserveAspectRatio="none">
+          <svg viewBox="0 0 200 80" className="w-[82%] h-20 mt-10" preserveAspectRatio="none">
             <defs>
               <linearGradient id="cg" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.7" />
+                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.65" />
                 <stop offset="100%" stopColor="rgb(226,75,74)" stopOpacity="0" />
               </linearGradient>
             </defs>
-            <path d="M0 75 L25 72 L50 65 L80 50 L110 28 L140 14 L170 6 L200 0 L200 80 L0 80 Z" fill="url(#cg)" />
-            <path d="M0 75 L25 72 L50 65 L80 50 L110 28 L140 14 L170 6 L200 0" fill="none" stroke="rgb(226,75,74)" strokeWidth="2" />
+            {/* organic curve: ups and downs, plafond ~y=22 */}
+            <path d="M0 72 C 12 70, 20 60, 30 64 S 48 50, 60 46 S 78 56, 90 42 S 108 26, 122 34 S 142 22, 158 28 S 178 18, 200 22 L200 80 L0 80 Z" fill="url(#cg)" />
+            <path d="M0 72 C 12 70, 20 60, 30 64 S 48 50, 60 46 S 78 56, 90 42 S 108 26, 122 34 S 142 22, 158 28 S 178 18, 200 22" fill="none" stroke="rgb(226,75,74)" strokeWidth="2" />
           </svg>
         </div>
       );
     }
     return (
       <div className="relative w-full h-full grid place-items-center">
-        <div className="relative w-52 h-32 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-950 via-rose-900/60 to-black">
-          {/* film scanlines */}
+        <div className="relative w-56 h-32 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-950 via-rose-900/60 to-black">
+          {/* scanlines */}
           <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.08) 3px, transparent 4px)" }} />
-          {/* subtitle bar */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px] font-bold tracking-wider">VIDÉO MONTÉE</div>
-          <div className="absolute inset-0 grid place-items-center">
-            <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
-              <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+          {/* preview area */}
+          <div className="absolute inset-x-0 top-0 h-[58%] grid place-items-center">
+            <div className="w-9 h-9 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+              <Play className="w-3.5 h-3.5 fill-white text-white ml-0.5" />
             </div>
           </div>
-          {/* duration */}
-          <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/80 text-white text-[10px] font-semibold tabular-nums">04:32</div>
-          {/* progress bar */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
-            <div className="h-full w-2/3 bg-primary" />
+          {/* timeline editor area */}
+          <div className="absolute inset-x-0 bottom-0 h-[42%] bg-black/70 backdrop-blur border-t border-white/15 px-1.5 py-1 flex flex-col gap-0.5">
+            <div className="flex items-center gap-1 text-[8px] text-white/70">
+              <Sparkles className="w-2.5 h-2.5 text-primary" />
+              <span className="font-semibold tracking-wider">PEAUFINAGE</span>
+              <span className="ml-auto tabular-nums">04:32</span>
+            </div>
+            {/* tracks with cut markers */}
+            <div className="relative h-2 rounded-sm bg-gradient-to-r from-primary/70 via-rose-500/60 to-primary/70">
+              <div className="absolute inset-y-0 left-[30%] w-[2px] bg-white" />
+              <div className="absolute inset-y-0 left-[55%] w-[2px] bg-white" />
+              <div className="absolute inset-y-0 left-[78%] w-[2px] bg-white" />
+            </div>
+            <div className="relative h-1.5 rounded-sm bg-white/25">
+              <div className="absolute inset-y-0 left-0 w-[40%] bg-emerald-400/80 rounded-sm" />
+              <div className="absolute inset-y-0 left-[48%] w-[28%] bg-amber-400/80 rounded-sm" />
+            </div>
+            <div className="relative h-1 rounded-sm bg-white/15">
+              <div className="absolute inset-y-0 left-[20%] w-[50%] bg-sky-400/70 rounded-sm" />
+            </div>
+            {/* playhead */}
+            <div className="absolute top-2 bottom-1 left-[42%] w-[1px] bg-primary shadow-[0_0_6px_rgba(226,75,74,0.9)]" />
           </div>
         </div>
-        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">1080p · 60fps</div>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">Révisions illimitées</div>
       </div>
     );
   };
@@ -506,30 +548,27 @@ function HowItWorks() {
                   Je veux ma vidéo en 48h <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
-              <div className="grid grid-cols-2 gap-3 h-[220px] overflow-hidden">
-                {[false, true].map((reverse, colIdx) => {
-                  const tiles = [0, 1, 2, 3, 4].map((k) => k + colIdx * 5);
-                  return (
-                    <div key={colIdx} className="marquee overflow-hidden h-full relative" style={{
-                      WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-                      maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-                    }}>
-                      <div className={`flex flex-col gap-3 ${reverse ? "marquee-y-track-reverse" : "marquee-y-track"}`}>
-                        {[...tiles, ...tiles].map((k, i) => (
-                          <div key={i} className="relative aspect-[3/4] rounded-lg overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
-                            <div className="absolute inset-0 grid place-items-center">
-                              <Play className="w-5 h-5 fill-white text-white opacity-80" />
-                            </div>
-                            <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
-                              <span className="text-[9px] px-1 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
-                              <span className="text-[9px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
-                            </div>
+              <div className="h-[260px] overflow-hidden">
+                <div className="marquee overflow-hidden h-full relative" style={{
+                  WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                  maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                }}>
+                  <div className="flex flex-col gap-3 marquee-y-track">
+                    {[...Array(2)].flatMap(() => [0,1,2,3,4]).map((k, i) => (
+                      <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
+                        <div className="absolute inset-0 grid place-items-center">
+                          <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+                            <Play className="w-4 h-4 fill-white text-white ml-0.5" />
                           </div>
-                        ))}
+                        </div>
+                        <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
