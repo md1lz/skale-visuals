@@ -167,7 +167,12 @@ function ProfileEditor({
   const [draft, setDraft] = useState<Profile>(profile);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [mounted, setMounted] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   function pickFile(file: File) {
     if (file.size > 1_500_000) {
@@ -196,7 +201,7 @@ function ProfileEditor({
     }
   }
 
-  return (
+  const modal = (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
@@ -212,6 +217,7 @@ function ProfileEditor({
         exit={{ opacity: 0, y: 20, scale: 0.92 }}
         transition={{ type: "spring", stiffness: 260, damping: 22 }}
         className="w-[92vw] max-w-4xl rounded-2xl border border-white/10 bg-neutral-950 p-8 shadow-2xl"
+        style={{ zoom: 1.25 }}
       >
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-white text-xl font-semibold">Mon profil</h2>
@@ -309,4 +315,7 @@ function ProfileEditor({
       </motion.form>
     </motion.div>
   );
+
+  if (!mounted || typeof document === "undefined") return null;
+  return createPortal(modal, document.body);
 }
