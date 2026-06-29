@@ -981,7 +981,7 @@ function Comparison() {
   };
 
   return (
-    <section className="relative py-12 lg:py-16 border-t border-white/5">
+    <section data-section="partenaire" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-4xl mx-auto px-6">
         <FadeIn>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-center text-balance">
