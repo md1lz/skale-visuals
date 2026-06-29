@@ -599,7 +599,7 @@ function Portfolio() {
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
-              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Nos</span> réalisations
+              <span className="text-white">Nos</span> <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">réalisations</span>
             </h2>
             <p className="mt-3 text-muted-foreground text-lg">Un aperçu de ce qu'on crée pour nos clients.</p>
           </div>
