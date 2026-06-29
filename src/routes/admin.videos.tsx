@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
-  ArrowLeft, ChevronDown, Upload, Link as LinkIcon, Loader2, Check, Video as VideoIcon, Image as ImageIcon,
+  ArrowLeft, ChevronDown, Upload, Link as LinkIcon, Loader2, Check, Video as VideoIcon, Image as ImageIcon, Plus,
 } from "lucide-react";
 import { listAllVideos, updateVideo, createVideoUploadUrl } from "@/lib/admin-videos.functions";
 import { supabase } from "@/integrations/supabase/client";
@@ -86,27 +87,37 @@ function AdminVideosPage() {
 
   return (
     <div className="p-8 mx-auto max-w-[1400px] w-full">
-      <header className="mb-8">
-        <div className="flex items-center gap-3">
-          {selected && (
-            <button
-              onClick={() => setSelectedKey(null)}
-              className="inline-flex items-center gap-2 text-sm text-neutral-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
-            >
-              <ArrowLeft className="h-4 w-4" /> Changer de carrousel
-            </button>
+      <header className="mb-8 flex items-start justify-between gap-4">
+        <div>
+          <div className="flex items-center gap-3">
+            {selected && (
+              <button
+                onClick={() => setSelectedKey(null)}
+                className="inline-flex items-center gap-2 text-sm text-neutral-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
+              >
+                <ArrowLeft className="h-4 w-4" /> Changer de carrousel
+              </button>
+            )}
+          </div>
+          <h1 className="mt-2 text-3xl font-bold flex items-center gap-3">
+            <VideoIcon className="h-7 w-7 text-red-500" /> {selected ? selected.label : "Vidéos"}
+          </h1>
+          {!selected && (
+            <p className="mt-1 text-sm text-neutral-400">
+              Panneau de contrôle des carrousels affichés sur le site public. Chaque modification se reflète immédiatement.
+            </p>
+          )}
+          {selected?.description && (
+            <p className="mt-1 text-sm text-neutral-400 max-w-2xl">{selected.description}</p>
           )}
         </div>
-        <h1 className="mt-2 text-3xl font-bold flex items-center gap-3">
-          <VideoIcon className="h-7 w-7 text-red-500" /> {selected ? selected.label : "Vidéos"}
-        </h1>
-        {!selected && (
-          <p className="mt-1 text-sm text-neutral-400">
-            Panneau de contrôle des carrousels affichés sur le site public. Chaque modification se reflète immédiatement.
-          </p>
-        )}
-        {selected?.description && (
-          <p className="mt-1 text-sm text-neutral-400 max-w-2xl">{selected.description}</p>
+        {selected && (
+          <button
+            onClick={() => toast("Bientôt disponible", { description: "L'ajout de nouvelles sources arrive prochainement." })}
+            className="inline-flex items-center gap-2 bg-red-600 hover:bg-red-500 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-lg shadow-red-900/20 shrink-0"
+          >
+            <Plus className="h-4 w-4" /> Ajouter une source
+          </button>
         )}
       </header>
 
