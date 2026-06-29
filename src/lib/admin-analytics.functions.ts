@@ -237,7 +237,7 @@ export const getRecentActivity = createServerFn({ method: "POST" })
       {
         id: "mock-1",
         type: "deadline",
-        message: "Deadline bientôt atteinte : Projet "Lancement été"",
+        message: "Deadline bientôt atteinte : Projet 'Lancement été'",
         time: new Date(now.getTime() - 1000 * 60 * 45).toISOString(),
         variant: "amber",
       },
@@ -251,7 +251,7 @@ export const getRecentActivity = createServerFn({ method: "POST" })
       {
         id: "mock-3",
         type: "video",
-        message: "Vidéo "Promo Q3" modifiée et republiée",
+        message: "Vidéo 'Promo Q3' modifiée et republiée",
         time: new Date(now.getTime() - 1000 * 60 * 60 * 3).toISOString(),
         variant: "neutral",
       },
@@ -265,14 +265,14 @@ export const getRecentActivity = createServerFn({ method: "POST" })
       {
         id: "mock-5",
         type: "devis",
-        message: "Devis accepté — Projet "Série Web"",
+        message: "Devis accepté — Projet 'Série Web'",
         time: new Date(now.getTime() - 1000 * 60 * 60 * 8).toISOString(),
         variant: "green",
       },
       {
         id: "mock-6",
         type: "projet",
-        message: "Projet "Teaser Event" passé en review",
+        message: "Projet 'Teaser Event' passé en review",
         time: new Date(now.getTime() - 1000 * 60 * 60 * 12).toISOString(),
         variant: "neutral",
       }
