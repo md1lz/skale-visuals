@@ -200,48 +200,48 @@ function ProfileEditor({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[120] flex items-center justify-center bg-black/70 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[120] flex items-center justify-center bg-black/80 backdrop-blur-sm p-6"
       onClick={() => !saving && onClose()}
     >
       <motion.form
         onClick={(e) => e.stopPropagation()}
         onSubmit={handleSubmit}
-        initial={{ opacity: 0, y: 16, scale: 0.95 }}
+        initial={{ opacity: 0, y: 20, scale: 0.92 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 16, scale: 0.95 }}
+        exit={{ opacity: 0, y: 20, scale: 0.92 }}
         transition={{ type: "spring", stiffness: 260, damping: 22 }}
-        className="w-full max-w-md rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl"
+        className="w-[92vw] max-w-4xl rounded-2xl border border-white/10 bg-neutral-950 p-8 shadow-2xl"
       >
-        <div className="flex items-center justify-between mb-5">
-          <h2 className="text-white text-base font-semibold">Mon profil</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-white text-xl font-semibold">Mon profil</h2>
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
             className="text-neutral-500 hover:text-white transition"
           >
-            <X className="h-4 w-4" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        <div className="flex items-center gap-4 mb-5">
-          <Avatar p={draft} size={64} />
-          <div className="flex flex-col gap-1.5">
+        <div className="flex items-center gap-5 mb-6">
+          <Avatar p={draft} size={80} />
+          <div className="flex flex-col gap-2">
             <button
               type="button"
               onClick={() => fileRef.current?.click()}
-              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-neutral-900 hover:bg-white/5 px-2.5 py-1.5 text-[11px] text-neutral-200 transition"
+              className="flex items-center gap-1.5 rounded-lg border border-white/10 bg-neutral-900 hover:bg-white/5 px-3 py-2 text-xs text-neutral-200 transition"
             >
-              <Upload className="h-3 w-3" />
+              <Upload className="h-3.5 w-3.5" />
               Importer une photo
             </button>
             {draft.avatarUrl && (
               <button
                 type="button"
                 onClick={() => setDraft((d) => ({ ...d, avatarUrl: null }))}
-                className="flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[11px] text-red-400 hover:text-red-300 transition"
+                className="flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs text-red-400 hover:text-red-300 transition"
               >
-                <Trash2 className="h-3 w-3" />
+                <Trash2 className="h-3.5 w-3.5" />
                 Retirer
               </button>
             )}
@@ -259,48 +259,48 @@ function ProfileEditor({
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mb-4">
+        <div className="grid grid-cols-2 gap-4 mb-5">
           <label className="block">
-            <span className="block text-[11px] text-neutral-400 mb-1">Prénom</span>
+            <span className="block text-xs text-neutral-400 mb-1.5">Prénom</span>
             <input
               type="text"
               value={draft.firstName ?? ""}
               onChange={(e) => setDraft((d) => ({ ...d, firstName: e.target.value }))}
               disabled={saving}
-              className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition disabled:opacity-60"
+              className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition disabled:opacity-60"
             />
           </label>
           <label className="block">
-            <span className="block text-[11px] text-neutral-400 mb-1">Nom</span>
+            <span className="block text-xs text-neutral-400 mb-1.5">Nom</span>
             <input
               type="text"
               value={draft.lastName ?? ""}
               onChange={(e) => setDraft((d) => ({ ...d, lastName: e.target.value }))}
               disabled={saving}
-              className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition disabled:opacity-60"
+              className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2.5 text-sm text-white focus:outline-none focus:border-red-500 transition disabled:opacity-60"
             />
           </label>
         </div>
 
-        <p className="text-[10px] text-neutral-500 mb-4">
+        <p className="text-xs text-neutral-500 mb-5">
           Identifiant : <span className="text-neutral-300">@{draft.username}</span>
         </p>
 
-        {error && <p className="text-xs text-red-400 mb-3">{error}</p>}
+        {error && <p className="text-sm text-red-400 mb-4">{error}</p>}
 
-        <div className="flex gap-2">
+        <div className="flex gap-3">
           <button
             type="button"
             onClick={onClose}
             disabled={saving}
-            className="flex-1 rounded-lg border border-white/10 px-3 py-2 text-sm text-neutral-300 hover:bg-white/5 transition disabled:opacity-60"
+            className="flex-1 rounded-lg border border-white/10 px-4 py-2.5 text-sm text-neutral-300 hover:bg-white/5 transition disabled:opacity-60"
           >
             Annuler
           </button>
           <button
             type="submit"
             disabled={saving}
-            className="flex-1 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-70 px-3 py-2 text-sm font-medium text-white transition"
+            className="flex-1 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-70 px-4 py-2.5 text-sm font-medium text-white transition"
           >
             {saving ? "Enregistrement…" : "Enregistrer"}
           </button>
