@@ -342,7 +342,7 @@ function SocialProof() {
 
 function FeaturedTestimonial() {
   return (
-    <section className="relative py-10 lg:py-12">
+    <section data-section="temoignage" className="relative py-10 lg:py-12">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
       <div className="relative max-w-4xl mx-auto px-6 text-center">
         <FadeIn>
