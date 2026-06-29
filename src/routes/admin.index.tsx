@@ -205,31 +205,79 @@ function AdminHome() {
         })}
       </div>
 
-      {/* Quick navigation */}
-      <h2 className="text-sm font-semibold text-neutral-300 mb-3 uppercase tracking-wider">
-        Rubriques
-      </h2>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-        {sections.map((s) => {
-          const Icon = s.icon;
-          return (
-            <Link
-              key={s.to}
-              to={s.to as "/admin"}
-              className="group rounded-xl border border-white/10 bg-neutral-900/50 hover:bg-neutral-900 hover:border-red-600/40 p-4 transition flex items-center gap-3"
-            >
-              <span className="grid place-items-center h-10 w-10 rounded-lg bg-red-600/15 text-red-400 group-hover:bg-red-600/25 transition">
-                <Icon className="h-4 w-4" />
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm font-medium text-white">{s.label}</p>
-                <p className="text-xs text-neutral-500 truncate">{s.desc}</p>
-              </div>
-              <ArrowRight className="h-4 w-4 text-neutral-600 group-hover:text-red-400 group-hover:translate-x-0.5 transition" />
-            </Link>
-          );
-        })}
-      </div>
+      {/* Recent Activity */}
+      <motion.div
+        initial={{ opacity: 0, y: 6 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3, delay: 0.1 }}
+        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5"
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Clock className="h-4 w-4 text-red-400" />
+          <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
+            Activité récente
+          </h2>
+        </div>
+        <div className="space-y-2">
+          {activityQ.isLoading ? (
+            <div className="text-sm text-neutral-500">Chargement…</div>
+          ) : (
+            (activityQ.data ?? []).map((a, i) => {
+              const icons: Record<string, React.ElementType> = {
+                deadline: AlertTriangle,
+                avis: MessageSquare,
+                video: Video,
+                client: Users,
+                devis: FileSignature,
+                projet: FolderOpen,
+              };
+              const Icon = icons[a.type] || Clock;
+              const colors: Record<string, string> = {
+                red: "bg-red-500/15 text-red-400",
+                amber: "bg-amber-500/15 text-amber-400",
+                green: "bg-emerald-500/15 text-emerald-400",
+                neutral: "bg-neutral-500/15 text-neutral-400",
+              };
+              const dotColors: Record<string, string> = {
+                red: "bg-red-500",
+                amber: "bg-amber-500",
+                green: "bg-emerald-500",
+                neutral: "bg-neutral-500",
+              };
+              const relTime = (iso: string) => {
+                const diff = Date.now() - new Date(iso).getTime();
+                const m = Math.floor(diff / 60000);
+                const h = Math.floor(diff / 3600000);
+                const d = Math.floor(diff / 86400000);
+                if (m < 1) return "À l'instant";
+                if (m < 60) return `Il y a ${m} min`;
+                if (h < 24) return `Il y a ${h} h`;
+                return `Il y a ${d} j`;
+              };
+              return (
+                <motion.div
+                  key={a.id}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.25, delay: 0.05 * i }}
+                  className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5 hover:bg-white/[0.04] transition"
+                >
+                  <span className={`grid place-items-center h-8 w-8 rounded-lg shrink-0 ${colors[a.variant]}`}>
+                    <Icon className="h-4 w-4" />
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-white truncate">{a.message}</p>
+                  </div>
+                  <span className="flex items-center gap-1.5 shrink-0">
+                    <span className={`h-1.5 w-1.5 rounded-full ${dotColors[a.variant]}`} />
+                    <span className="text-xs text-neutral-500">{relTime(a.time)}</span>
+                  </span>
+                </motion.div>
+              );
+            })
+          )}
+        </div>
+      </motion.div>
     </div>
   );
 }
