@@ -20,8 +20,13 @@ import {
   Users,
   Star,
   Video,
+  Clock,
+  AlertTriangle,
+  MessageSquare,
+  CheckCircle2,
+  FolderOpen,
 } from "lucide-react";
-import { getSiteAnalytics } from "@/lib/admin-analytics.functions";
+import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.functions";
 import { getAdminProfile } from "@/lib/admin-auth.functions";
 
 export const Route = createFileRoute("/admin/")({
