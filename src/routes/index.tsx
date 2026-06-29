@@ -1071,7 +1071,7 @@ function FAQ() {
   ];
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <section id="faq" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section id="faq" data-section="faq" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-6xl mx-auto px-6">
         <FadeIn>
           <div className="text-center">
