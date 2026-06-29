@@ -1,11 +1,11 @@
 {
-  "version": 1,
   "asset_id": "0239f4ae-7292-4260-9398-98a213894bfd",
-  "project_id": "b2671d23-9490-4363-bfc0-aecd2bf36530",
-  "url": "/__l5e/assets-v1/0239f4ae-7292-4260-9398-98a213894bfd/skale-logo.png",
-  "r2_key": "a/v1/b2671d23-9490-4363-bfc0-aecd2bf36530/0239f4ae-7292-4260-9398-98a213894bfd/skale-logo.png",
-  "original_filename": "skale-logo.png",
-  "size": 128319,
   "content_type": "image/png",
-  "created_at": "2026-06-29T16:14:29Z"
+  "created_at": "2026-06-29T16:14:29Z",
+  "original_filename": "skale-logo.png",
+  "project_id": "a32e06b4-f147-41ab-818d-90cfa6ef57a0",
+  "r2_key": "a/v1/a32e06b4-f147-41ab-818d-90cfa6ef57a0/0239f4ae-7292-4260-9398-98a213894bfd/skale-logo.png",
+  "size": 128319,
+  "url": "/__l5e/assets-v1/0239f4ae-7292-4260-9398-98a213894bfd/skale-logo.png",
+  "version": 1
 }
