@@ -32,12 +32,12 @@ export const Route = createFileRoute("/")({
 
 function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.15 });
+  const inView = useInView(ref, { amount: 0.08, margin: "0px 0px -12% 0px" });
   return (
     <motion.div
       ref={ref}
-      initial={{ opacity: 0, y: 30 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      initial={false}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0.82, y: 18 }}
       transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
       className={className}
     >
