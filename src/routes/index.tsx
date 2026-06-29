@@ -625,7 +625,8 @@ function ContentFunnel() {
     },
   ];
   return (
-    <section className="relative py-12 lg:py-16 border-t border-white/5">
+    <section data-section="funnel" className="relative py-12 lg:py-16 border-t border-white/5">
+
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
