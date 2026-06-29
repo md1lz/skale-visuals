@@ -56,7 +56,7 @@ function AdminLayout() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   return (
-    <div className="min-h-screen flex bg-neutral-950 text-white">
+    <div className="min-h-screen flex bg-neutral-950 text-white" style={{ zoom: 1.25 }}>
       <aside className="w-60 shrink-0 border-r border-white/10 bg-neutral-950 flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5">
           <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
