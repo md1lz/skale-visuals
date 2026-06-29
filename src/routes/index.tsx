@@ -941,8 +941,7 @@ function Index() {
       <Navbar />
       <main className="relative z-10">
         <Hero />
-        <TrustBar />
-        <FeaturedTestimonial />
+        <SocialProof />
         <WhySkale />
         <HowItWorks />
         <Portfolio />
