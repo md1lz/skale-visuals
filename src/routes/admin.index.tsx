@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
@@ -12,18 +12,14 @@ import {
   YAxis,
 } from "recharts";
 import {
-  BarChart3,
   MousePointerClick,
   FileSignature,
   TrendingUp,
-  ArrowRight,
   Users,
-  Star,
   Video,
   Clock,
   AlertTriangle,
   MessageSquare,
-  CheckCircle2,
   FolderOpen,
 } from "lucide-react";
 import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.functions";
