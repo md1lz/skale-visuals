@@ -685,14 +685,12 @@ function AdsSection() {
     { label: "Hook scroll-stop", duration: "0:08", tone: "from-rose-700/70 via-red-900/50" },
     { label: "Témoignage client", duration: "0:24", tone: "from-red-600/70 via-rose-800/50" },
     { label: "Démo produit", duration: "0:18", tone: "from-rose-500/70 via-red-700/50" },
-    { label: "Offre & CTA", duration: "0:12", tone: "from-red-700/70 via-rose-900/50" },
-    { label: "UGC raw", duration: "0:30", tone: "from-rose-600/70 via-red-800/50" },
   ];
   const [idx, setIdx] = useState(0);
   const next = () => setIdx((i) => (i + 1) % slides.length);
   const prev = () => setIdx((i) => (i - 1 + slides.length) % slides.length);
 
-  const positions = [-2, -1, 0, 1, 2];
+  const positions = [-1, 0, 1];
 
   return (
     <section className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
