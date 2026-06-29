@@ -522,7 +522,7 @@ function HowItWorks() {
   };
 
   return (
-    <section id="methode" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section id="methode" data-section="methode" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         {/* Hero banner */}
         <FadeIn>
