@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useInView, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, AnimatePresence, useInView, useMotionValue, useTransform, animate } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Play, Film, Sparkles, Zap, Palette, Check, Star, ChevronDown,
@@ -127,6 +127,7 @@ function Logo({ size = 36 }: { size?: number }) {
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [adminMobileOpen, setAdminMobileOpen] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -178,29 +179,88 @@ function Navbar() {
         </div>
 
         {/* Mobile menu */}
-        {open && (
-          <div className="lg:hidden absolute top-full left-4 right-4 mt-2 liquid-glass rounded-2xl p-3 flex flex-col gap-1">
-            {NAV_LINKS.map((l) => (
-              <a
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className="px-3 py-2.5 text-sm text-white/90 hover:bg-white/10 rounded-lg"
-              >
-                {l.label}
-              </a>
-            ))}
-            <a
-              href={CTA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-semibold"
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              key="mobile-menu"
+              initial={{ opacity: 0, y: -10, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -10, scale: 0.96 }}
+              transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+              className="lg:hidden absolute top-full left-4 right-4 mt-2 liquid-glass rounded-2xl p-3 flex flex-col gap-1 origin-top"
             >
-              Obtenir un devis <ArrowRight className="w-4 h-4" />
-            </a>
-          </div>
-        )}
+              {NAV_LINKS.map((l, i) => (
+                <motion.a
+                  key={l.href}
+                  href={l.href}
+                  onClick={() => setOpen(false)}
+                  initial={{ opacity: 0, x: -8 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.04 * i, duration: 0.2 }}
+                  className="px-3 py-2.5 text-sm text-white/90 hover:bg-white/10 rounded-lg"
+                >
+                  {l.label}
+                </motion.a>
+              ))}
+              <motion.button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setAdminMobileOpen(true);
+                }}
+                initial={{ opacity: 0, x: -8 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.04 * NAV_LINKS.length, duration: 0.2 }}
+                className="px-3 py-2.5 text-sm text-left text-white/90 hover:bg-white/10 rounded-lg flex items-center gap-2"
+              >
+                <span className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
+                Je suis admin
+              </motion.button>
+              <a
+                href={CTA_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-semibold"
+              >
+                Obtenir un devis <ArrowRight className="w-4 h-4" />
+              </a>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
+      <AnimatePresence>
+        {adminMobileOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            onClick={() => setAdminMobileOpen(false)}
+            className="fixed inset-0 z-[100] grid place-items-center bg-black/70 backdrop-blur-sm p-6 lg:hidden"
+          >
+            <motion.div
+              onClick={(e) => e.stopPropagation()}
+              initial={{ opacity: 0, y: 20, scale: 0.92 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.92 }}
+              transition={{ type: "spring", stiffness: 260, damping: 22 }}
+              className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl text-center"
+            >
+              <div className="mx-auto mb-3 grid place-items-center h-10 w-10 rounded-full bg-red-600/15 border border-red-600/30">
+                <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
+              </div>
+              <h3 className="text-white text-lg font-semibold mb-1">Accès admin</h3>
+              <p className="text-sm text-neutral-400 mb-5">Gestion admin uniquement sur PC.</p>
+              <button
+                onClick={() => setAdminMobileOpen(false)}
+                className="w-full rounded-lg bg-red-600 hover:bg-red-500 px-3 py-2.5 text-sm font-medium text-white transition-colors"
+              >
+                Compris
+              </button>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }
@@ -317,7 +377,7 @@ function SocialProof() {
           </p>
         </FadeIn>
         <FadeIn delay={0.3}>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 max-w-xs sm:max-w-3xl mx-auto">
             {videoSlots.map((i) => (
               <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-primary/25 bg-gradient-to-br from-red-950/60 via-rose-900/30 to-black card-hover cursor-pointer">
                 <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
@@ -925,6 +985,24 @@ function Testimonials() {
     </div>
   );
 
+  const MobileCard = ({ r }: { r: R }) => (
+    <div className="w-60 shrink-0 p-3.5 rounded-xl border border-white/10 bg-card/60 backdrop-blur">
+      <div className="flex items-center gap-2">
+        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-xs">
+          {r.name.charAt(0)}
+        </div>
+        <div className="min-w-0">
+          <div className="font-semibold truncate text-xs">{r.name}</div>
+          <div className="text-[10px] text-muted-foreground truncate">{r.role}</div>
+        </div>
+      </div>
+      <div className="mt-1.5 flex gap-0.5 text-primary">
+        {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-current" />)}
+      </div>
+      <p className="mt-1.5 text-xs text-white/80 leading-relaxed line-clamp-4">{r.text}</p>
+    </div>
+  );
+
   const cols = [
     reviews.slice(0, 4),
     reviews.slice(4, 8),
@@ -939,6 +1017,17 @@ function Testimonials() {
     </div>
   );
 
+  const MobileRow = ({ items, reverse }: { items: R[]; reverse?: boolean }) => (
+    <div className="marquee overflow-hidden mask-fade relative">
+      <div className={`flex gap-3 w-max ${reverse ? "marquee-track-reverse" : "marquee-track"}`}>
+        {[...items, ...items].map((r, i) => <MobileCard key={i} r={r} />)}
+      </div>
+    </div>
+  );
+
+  const mobileRow1 = reviews.slice(0, 6);
+  const mobileRow2 = reviews.slice(6, 12);
+
   return (
     <section id="avis" data-section="avis" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
@@ -951,10 +1040,14 @@ function Testimonials() {
             <p className="mt-3 text-muted-foreground text-lg">Des créateurs qui ont vu leur audience et leur business décoller.</p>
           </div>
         </FadeIn>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Column items={cols[0]} />
           <Column items={cols[1]} reverse />
           <Column items={cols[2]} />
+        </div>
+        <div className="md:hidden space-y-3">
+          <MobileRow items={mobileRow1} />
+          <MobileRow items={mobileRow2} reverse />
         </div>
       </div>
     </section>
@@ -1242,9 +1335,46 @@ function Footer() {
 // ---------- root ----------
 
 function Index() {
+  const [psstOpen, setPsstOpen] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth >= 768) return;
+    const showT = setTimeout(() => setPsstOpen(true), 800);
+    const hideT = setTimeout(() => setPsstOpen(false), 5800);
+    return () => {
+      clearTimeout(showT);
+      clearTimeout(hideT);
+    };
+  }, []);
   return (
     <div className="relative">
       <Navbar />
+      <AnimatePresence>
+        {psstOpen && (
+          <motion.div
+            initial={{ x: "-110%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "-110%", opacity: 0 }}
+            transition={{ type: "spring", stiffness: 220, damping: 24 }}
+            className="md:hidden fixed left-3 right-3 top-[72px] z-[55] liquid-glass rounded-2xl px-4 py-3 flex items-center gap-3 shadow-xl border border-white/15"
+          >
+            <span className="relative flex h-2.5 w-2.5 shrink-0">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+            </span>
+            <p className="text-sm text-white/95 flex-1">
+              Psst, notre site est plus joli sur PC&nbsp;!
+            </p>
+            <button
+              onClick={() => setPsstOpen(false)}
+              aria-label="Fermer"
+              className="text-white/60 hover:text-white shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <main className="relative z-10">
         <Hero />
         <SocialProof />
