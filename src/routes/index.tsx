@@ -5,9 +5,10 @@ import {
   Play, Film, Sparkles, Zap, Palette, Check, Star, ChevronDown,
   ArrowRight, Type, Music, MessageCircle, Mail, Instagram, X,
   Upload, BarChart3, Send, Menu, ChevronLeft, ChevronRight,
-  TrendingUp, Mic, Target, Briefcase,
+  TrendingUp, Mic, Target,
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
+import arrowAsset from "@/assets/arrow-curl.png.asset.json";
 
 const CTA_URL = "https://tally.so/r/PdPXRQ";
 const WA_URL = "https://wa.me/33766766153?text=" + encodeURIComponent("Bonjour, je souhaite obtenir un devis pour mes vidéos.");
@@ -29,8 +30,20 @@ export const Route = createFileRoute("/")({
 
 // ---------- helpers ----------
 
-function FadeIn({ children, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
-  return <div className={className}>{children}</div>;
+function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.15 });
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 30 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+      transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+      className={className}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 function CountUp({ to, suffix = "", duration = 2 }: { to: number; suffix?: string; duration?: number }) {
@@ -277,12 +290,7 @@ function Hero() {
 // ---------- social proof ----------
 
 function SocialProof() {
-  const reviews = [
-    { name: "Maxime D.", role: "Coach business · 80k abonnés", text: "Skale a transformé ma chaîne. +120% de watchtime en 2 mois, et mes vidéos sont enfin à la hauteur de mon contenu." },
-    { name: "Clara B.", role: "Fondatrice e-commerce", text: "Délais respectés, montage propre, communication fluide sur WhatsApp. Je ne reviendrai jamais en arrière." },
-    { name: "Yanis K.", role: "Créateur YouTube tech", text: "Le seul prestataire qui a vraiment compris mon univers. Mes vues ont doublé sans changer la stratégie." },
-    { name: "Inès M.", role: "Formatrice en ligne", text: "Sérieux, rapides, créatifs. Les révisions illimitées font toute la différence quand on est exigeant." },
-  ];
+  const videoSlots = [0, 1];
   return (
     <section className="relative py-12 lg:py-16">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
@@ -306,20 +314,18 @@ function SocialProof() {
           </p>
         </FadeIn>
         <FadeIn delay={0.3}>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-            {reviews.map((r) => (
-              <div key={r.name} className="p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-sm">{r.name.charAt(0)}</div>
-                  <div className="min-w-0">
-                    <div className="font-semibold truncate text-sm">{r.name}</div>
-                    <div className="text-xs text-muted-foreground truncate">{r.role}</div>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+            {videoSlots.map((i) => (
+              <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-primary/25 bg-gradient-to-br from-red-950/60 via-rose-900/30 to-black card-hover cursor-pointer">
+                <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
+                <div className="absolute inset-0 grid place-items-center">
+                  <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/25 grid place-items-center group-hover:bg-primary/90 group-hover:scale-110 transition-all duration-300">
+                    <Play className="w-6 h-6 text-white fill-white ml-0.5" />
                   </div>
                 </div>
-                <div className="mt-2.5 flex gap-0.5 text-primary">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
+                <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-bold text-white uppercase tracking-widest border border-white/15">
+                  Avis client {i + 1}
                 </div>
-                <p className="mt-2.5 text-sm text-white/80 leading-relaxed">{r.text}</p>
               </div>
             ))}
           </div>
@@ -540,25 +546,29 @@ function HowItWorks() {
                 </a>
               </div>
               <div className="h-[260px] overflow-hidden">
-                <div className="marquee overflow-hidden h-full relative" style={{
-                  WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-                  maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-                }}>
-                  <div className="flex flex-col gap-3 marquee-y-track">
-                    {[...Array(2)].flatMap(() => [0,1,2,3,4]).map((k, i) => (
-                      <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
-                        <div className="absolute inset-0 grid place-items-center">
-                          <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
-                            <Play className="w-4 h-4 fill-white text-white ml-0.5" />
+                <div className="grid grid-cols-2 gap-2 h-full">
+                  {[0, 1].map((col) => (
+                    <div key={col} className="marquee overflow-hidden h-full relative" style={{
+                      WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                      maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                    }}>
+                      <div className={`flex flex-col gap-2 ${col === 1 ? "marquee-y-track-reverse" : "marquee-y-track"}`}>
+                        {[...Array(2)].flatMap(() => [0, 1, 2, 3, 4]).map((k, i) => (
+                          <div key={i} className="relative aspect-video rounded-md overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
+                            <div className="absolute inset-0 grid place-items-center">
+                              <div className="w-8 h-8 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+                                <Play className="w-3 h-3 fill-white text-white ml-0.5" />
+                              </div>
+                            </div>
+                            <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
+                              <span className="text-[8px] px-1 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
+                              <span className="text-[8px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
+                            </div>
                           </div>
-                        </div>
-                        <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
-                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -616,11 +626,8 @@ function ContentFunnel() {
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-xs uppercase tracking-widest text-primary font-semibold">
-              <Briefcase className="w-3.5 h-3.5" /> Pour les entrepreneurs
-            </div>
-            <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
-              <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Vous êtes dans l'entrepreneuriat ?</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance text-white">
+              Vous êtes dans l'<span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">entrepreneuriat</span> ?
             </h2>
             <p className="mt-4 text-muted-foreground text-lg text-balance">
               On travaille avec différentes méthodes et on s'adapte à chaque étape de votre <span className="text-primary font-semibold">Content Funnel</span> — du premier scroll jusqu'à la vente.
@@ -639,18 +646,33 @@ function ContentFunnel() {
                     <s.icon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-widest text-primary font-bold">{s.tag}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-white/60 font-bold">{s.tag}</div>
                     <div className="text-lg font-black text-white">{s.goal}</div>
                   </div>
                 </div>
-                <p className="relative mt-4 text-sm text-white/60">{s.formats}</p>
+                <p className="relative mt-4 text-sm text-white/70">{s.formats}</p>
                 <div className="relative mt-3 pt-3 border-t border-white/10">
-                  <p className="font-script text-primary text-2xl leading-tight text-balance">{s.headline}</p>
+                  <p className="text-base text-white leading-snug text-balance">{s.headline}</p>
                 </div>
               </div>
             </FadeIn>
           ))}
         </div>
+
+        {/* Arrow + closing text */}
+        <FadeIn delay={0.2}>
+          <div className="mt-8 relative max-w-3xl mx-auto">
+            <img
+              src={arrowAsset.url}
+              alt=""
+              aria-hidden="true"
+              className="absolute -top-4 left-1/2 -translate-x-[140%] w-28 sm:w-36 opacity-90 pointer-events-none select-none"
+            />
+            <p className="text-center text-base sm:text-lg text-white/85 leading-relaxed max-w-2xl mx-auto px-4">
+              En 2026, ceux qui captent l'attention captent leur réussite. On ne fait pas que monter vos vidéos — on vous fait gagner un temps précieux, et donc de l'argent. Vous nous confiez vos rushs, <span className="text-primary font-semibold">on s'occupe de tout</span>.
+            </p>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );
@@ -663,14 +685,12 @@ function AdsSection() {
     { label: "Hook scroll-stop", duration: "0:08", tone: "from-rose-700/70 via-red-900/50" },
     { label: "Témoignage client", duration: "0:24", tone: "from-red-600/70 via-rose-800/50" },
     { label: "Démo produit", duration: "0:18", tone: "from-rose-500/70 via-red-700/50" },
-    { label: "Offre & CTA", duration: "0:12", tone: "from-red-700/70 via-rose-900/50" },
-    { label: "UGC raw", duration: "0:30", tone: "from-rose-600/70 via-red-800/50" },
   ];
   const [idx, setIdx] = useState(0);
   const next = () => setIdx((i) => (i + 1) % slides.length);
   const prev = () => setIdx((i) => (i - 1 + slides.length) % slides.length);
 
-  const positions = [-2, -1, 0, 1, 2];
+  const positions = [-1, 0, 1];
 
   return (
     <section className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
@@ -700,22 +720,12 @@ function AdsSection() {
               <div className="flex-1">
                 <div className="text-sm text-white/70">Alexis · Fondateur D2C</div>
                 <p className="mt-1 text-lg sm:text-xl font-semibold text-white text-balance">
-                  « +<span className="text-primary">120k€</span> de CA généré grâce à nos Ads vidéo, en moins de 60 jours. »
+                  « Grâce aux Ads vidéo, j'ai généré plus de <span className="text-primary">120 000 €</span> de CA depuis qu'on travaille ensemble. »
                 </p>
               </div>
-              <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center shrink-0">
-                <div>
-                  <div className="text-2xl font-black text-primary">+120k€</div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-primary">x4,8</div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">ROAS</div>
-                </div>
-                <div>
-                  <div className="text-2xl font-black text-primary">60j</div>
-                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">Setup</div>
-                </div>
+              <div className="text-center shrink-0">
+                <div className="text-3xl sm:text-4xl font-black text-primary">+120k€</div>
+                <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
               </div>
             </div>
           </div>
@@ -745,17 +755,16 @@ function AdsSection() {
                 const i = ((idx + offset) % slides.length + slides.length) % slides.length;
                 const s = slides[i];
                 const abs = Math.abs(offset);
-                if (abs > 2) return null;
-                const translate = offset * 130;
-                const scale = abs === 0 ? 1 : abs === 1 ? 0.82 : 0.66;
-                const opacity = abs === 0 ? 1 : abs === 1 ? 0.7 : 0.35;
+                const translate = offset * 220;
+                const scale = abs === 0 ? 1 : 0.78;
+                const opacity = abs === 0 ? 1 : 0.5;
                 const z = 10 - abs;
                 return (
                   <motion.div
                     key={`${i}-${offset}`}
                     initial={false}
                     animate={{ x: `calc(-50% + ${translate}px)`, y: "-50%", scale, opacity }}
-                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
                     style={{ zIndex: z, position: "absolute", top: "50%", left: "50%" }}
                     className="cursor-pointer"
                     onClick={() => offset !== 0 && setIdx(i)}
@@ -1068,27 +1077,34 @@ function FAQ() {
             </h2>
           </div>
         </FadeIn>
-        <div className="mt-8 grid md:grid-cols-2 gap-3">
-          {items.map((it, i) => (
-            <FadeIn key={it.q} delay={i * 0.04}>
-              <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden h-full">
-                <button
-                  onClick={() => setOpen(open === i ? null : i)}
-                  className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
-                >
-                  <span className="font-semibold">{it.q}</span>
-                  <ChevronDown className={`w-5 h-5 text-primary shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
-                </button>
-                <motion.div
-                  initial={false}
-                  animate={{ height: open === i ? "auto" : 0, opacity: open === i ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <p className="px-5 pb-5 text-muted-foreground leading-relaxed">{it.a}</p>
-                </motion.div>
-              </div>
-            </FadeIn>
+        <div className="mt-8 grid md:grid-cols-2 gap-3 items-start">
+          {[0, 1].map((col) => (
+            <div key={col} className="flex flex-col gap-3">
+              {items.filter((_, i) => i % 2 === col).map((it) => {
+                const i = items.indexOf(it);
+                return (
+                  <FadeIn key={it.q} delay={i * 0.04}>
+                    <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden">
+                      <button
+                        onClick={() => setOpen(open === i ? null : i)}
+                        className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
+                      >
+                        <span className="font-semibold">{it.q}</span>
+                        <ChevronDown className={`w-5 h-5 text-primary shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
+                      </button>
+                      <motion.div
+                        initial={false}
+                        animate={{ height: open === i ? "auto" : 0, opacity: open === i ? 1 : 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-muted-foreground leading-relaxed">{it.a}</p>
+                      </motion.div>
+                    </div>
+                  </FadeIn>
+                );
+              })}
+            </div>
           ))}
         </div>
       </div>
