@@ -868,7 +868,7 @@ function Portfolio() {
   );
 
   return (
-    <section id="realisations" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section id="realisations" data-section="realisations" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 mb-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
