@@ -65,6 +65,51 @@ export type Database = {
         }
         Relationships: []
       }
+      site_events: {
+        Row: {
+          country: string | null
+          created_at: string
+          cta_id: string | null
+          device: string | null
+          duration_ms: number | null
+          id: string
+          path: string | null
+          referrer: string | null
+          session_id: string
+          source: string | null
+          type: string
+          user_agent: string | null
+        }
+        Insert: {
+          country?: string | null
+          created_at?: string
+          cta_id?: string | null
+          device?: string | null
+          duration_ms?: number | null
+          id?: string
+          path?: string | null
+          referrer?: string | null
+          session_id: string
+          source?: string | null
+          type: string
+          user_agent?: string | null
+        }
+        Update: {
+          country?: string | null
+          created_at?: string
+          cta_id?: string | null
+          device?: string | null
+          duration_ms?: number | null
+          id?: string
+          path?: string | null
+          referrer?: string | null
+          session_id?: string
+          source?: string | null
+          type?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
