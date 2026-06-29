@@ -5,7 +5,7 @@ import {
   Link,
   useRouterState,
 } from "@tanstack/react-router";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 
 import {
   Home,
