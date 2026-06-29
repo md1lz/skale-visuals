@@ -3,8 +3,16 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import {
+  Area,
+  AreaChart,
+  CartesianGrid,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
+import {
   BarChart3,
-  Eye,
   MousePointerClick,
   FileSignature,
   TrendingUp,
@@ -39,20 +47,37 @@ function AdminHome() {
     queryFn: () => fetchProfile(),
   });
 
-  const analyticsQ = useQuery({
-    queryKey: ["admin", "analytics", "30d", "home"],
-    queryFn: () => fetchAnalytics({ data: { range: "30d" } }),
+  const dayQ = useQuery({
+    queryKey: ["admin", "analytics", "24h", "home"],
+    queryFn: () => fetchAnalytics({ data: { range: "24h" } }),
   });
 
   const p = profileQ.data;
   const greetingName = p?.firstName?.trim() || p?.username || "";
-  const k = analyticsQ.data?.kpis;
+  const k = dayQ.data?.kpis;
 
-  const kpiCards = [
-    { label: "Visites (30j)", value: k?.visits ?? 0, icon: Eye },
-    { label: "Clics CTA", value: k?.ctaClicks ?? 0, icon: MousePointerClick },
-    { label: "Devis soumis", value: k?.devisSubmitted ?? 0, icon: FileSignature },
-    { label: "Conversion", value: `${k?.conversionRate ?? 0}%`, icon: TrendingUp },
+  const totalVisits24h = dayQ.data?.timeseries.reduce((s, b) => s + b.visits, 0) ?? 0;
+  const ctaRate = k && k.visits > 0 ? Math.round((k.ctaClicks / k.visits) * 1000) / 10 : 0;
+
+  const sideKpis = [
+    {
+      label: "Taux de conversion",
+      value: dayQ.isLoading ? "…" : `${k?.conversionRate ?? 0}%`,
+      hint: "Visiteurs → CTA",
+      icon: TrendingUp,
+    },
+    {
+      label: "% Clics CTA",
+      value: dayQ.isLoading ? "…" : `${ctaRate}%`,
+      hint: `${k?.ctaClicks ?? 0} clics / ${k?.visits ?? 0} visites`,
+      icon: MousePointerClick,
+    },
+    {
+      label: "Devis soumis",
+      value: dayQ.isLoading ? "…" : (k?.devisSubmitted ?? 0),
+      hint: "Sur 24h",
+      icon: FileSignature,
+    },
   ];
 
   const sections = [
@@ -99,30 +124,95 @@ function AdminHome() {
         </div>
       </motion.div>
 
-      {/* KPIs */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10">
-        {kpiCards.map((c, i) => {
-          const Icon = c.icon;
-          return (
-            <motion.div
-              key={c.label}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.05 * i }}
-              className="rounded-xl border border-white/10 bg-neutral-900/50 p-4"
-            >
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[11px] uppercase tracking-wider text-neutral-500">
-                  {c.label}
-                </span>
-                <Icon className="h-3.5 w-3.5 text-neutral-500" />
-              </div>
-              <p className="text-2xl font-semibold text-white">
-                {analyticsQ.isLoading ? "…" : c.value}
+      {/* 24h chart + side KPIs */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-3 mb-10">
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="lg:col-span-2 rounded-xl border border-white/10 bg-neutral-900/50 p-4"
+        >
+          <div className="flex items-baseline justify-between mb-3">
+            <div>
+              <p className="text-[11px] uppercase tracking-wider text-neutral-500">
+                Connexions au site — 24h
               </p>
-            </motion.div>
-          );
-        })}
+              <p className="text-2xl font-semibold text-white mt-1">
+                {dayQ.isLoading ? "…" : totalVisits24h}
+                <span className="text-xs text-neutral-500 font-normal ml-2">visites</span>
+              </p>
+            </div>
+          </div>
+          <div className="h-48">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={dayQ.data?.timeseries ?? []}>
+                <defs>
+                  <linearGradient id="visitsHomeGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.5} />
+                    <stop offset="100%" stopColor="#ef4444" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#262626" vertical={false} />
+                <XAxis
+                  dataKey="bucket"
+                  stroke="#525252"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                />
+                <YAxis
+                  stroke="#525252"
+                  fontSize={10}
+                  tickLine={false}
+                  axisLine={false}
+                  allowDecimals={false}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#0a0a0a",
+                    border: "1px solid #262626",
+                    borderRadius: 8,
+                    fontSize: 12,
+                  }}
+                  labelStyle={{ color: "#a3a3a3" }}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="visits"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  fill="url(#visitsHomeGrad)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        <div className="flex flex-col gap-3">
+          {sideKpis.map((c, i) => {
+            const Icon = c.icon;
+            return (
+              <motion.div
+                key={c.label}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: 0.05 * (i + 1) }}
+                className="flex-1 rounded-xl border border-white/10 bg-neutral-900/50 p-4 flex flex-col justify-between"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] uppercase tracking-wider text-neutral-500">
+                    {c.label}
+                  </span>
+                  <Icon className="h-3.5 w-3.5 text-neutral-500" />
+                </div>
+                <div>
+                  <p className="text-2xl font-semibold text-white">{c.value}</p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5">{c.hint}</p>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
       </div>
 
       {/* Quick navigation */}
