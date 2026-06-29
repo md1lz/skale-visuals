@@ -661,14 +661,14 @@ function ContentFunnel() {
 
         {/* Arrow + closing text */}
         <FadeIn delay={0.2}>
-          <div className="mt-8 relative max-w-3xl mx-auto">
+          <div className="mt-8 max-w-3xl mx-auto flex items-start gap-4 sm:gap-6 px-4">
             <img
               src={arrowAsset.url}
               alt=""
               aria-hidden="true"
-              className="absolute -top-4 left-1/2 -translate-x-[140%] w-28 sm:w-36 opacity-90 pointer-events-none select-none"
+              className="w-20 sm:w-28 shrink-0 opacity-90 pointer-events-none select-none -rotate-12"
             />
-            <p className="text-center text-base sm:text-lg text-white/85 leading-relaxed max-w-2xl mx-auto px-4">
+            <p className="text-base sm:text-lg text-white/85 leading-relaxed">
               En 2026, ceux qui captent l'attention captent leur réussite. On ne fait pas que monter vos vidéos — on vous fait gagner un temps précieux, et donc de l'argent. Vous nous confiez vos rushs, <span className="text-primary font-semibold">on s'occupe de tout</span>.
             </p>
           </div>
