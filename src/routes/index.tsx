@@ -4,7 +4,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Play, Film, Sparkles, Zap, Palette, Check, Star, ChevronDown,
   ArrowRight, Type, Music, MessageCircle, Mail, Instagram, X,
-  Upload, BarChart3, Send, Menu,
+  Upload, BarChart3, Send, Menu, ChevronLeft, ChevronRight,
+  TrendingUp, Mic, Target, Briefcase,
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
 
@@ -286,10 +287,16 @@ function Hero() {
 // ---------- social proof ----------
 
 function SocialProof() {
+  const reviews = [
+    { name: "Maxime D.", role: "Coach business · 80k abonnés", text: "Skale a transformé ma chaîne. +120% de watchtime en 2 mois, et mes vidéos sont enfin à la hauteur de mon contenu." },
+    { name: "Clara B.", role: "Fondatrice e-commerce", text: "Délais respectés, montage propre, communication fluide sur WhatsApp. Je ne reviendrai jamais en arrière." },
+    { name: "Yanis K.", role: "Créateur YouTube tech", text: "Le seul prestataire qui a vraiment compris mon univers. Mes vues ont doublé sans changer la stratégie." },
+    { name: "Inès M.", role: "Formatrice en ligne", text: "Sérieux, rapides, créatifs. Les révisions illimitées font toute la différence quand on est exigeant." },
+  ];
   return (
     <section className="relative py-12 lg:py-16">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
-      <div className="relative max-w-4xl mx-auto px-6 text-center">
+      <div className="relative max-w-6xl mx-auto px-6 text-center">
         <FadeIn>
           <div className="flex items-center justify-center gap-2 text-sm text-white/80">
             <div className="flex gap-0.5 text-primary">
@@ -300,13 +307,32 @@ function SocialProof() {
         </FadeIn>
         <FadeIn delay={0.1}>
           <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-black text-balance leading-[1.05]">
-            Plus de <CountUp to={20} /> entrepreneurs<br className="hidden sm:block" /> nous ont déjà fait confiance.
+            Plus de <CountUp to={30} /> clients<br className="hidden sm:block" /> nous ont déjà fait confiance.
           </h2>
         </FadeIn>
         <FadeIn delay={0.2}>
           <p className="mt-5 text-base sm:text-lg text-muted-foreground text-balance">
             Et leur watchtime n'a jamais été aussi haut depuis qu'on monte leurs vidéos.
           </p>
+        </FadeIn>
+        <FadeIn delay={0.3}>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
+            {reviews.map((r) => (
+              <div key={r.name} className="p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-sm">{r.name.charAt(0)}</div>
+                  <div className="min-w-0">
+                    <div className="font-semibold truncate text-sm">{r.name}</div>
+                    <div className="text-xs text-muted-foreground truncate">{r.role}</div>
+                  </div>
+                </div>
+                <div className="mt-2.5 flex gap-0.5 text-primary">
+                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
+                </div>
+                <p className="mt-2.5 text-sm text-white/80 leading-relaxed">{r.text}</p>
+              </div>
+            ))}
+          </div>
         </FadeIn>
       </div>
     </section>
@@ -442,39 +468,56 @@ function HowItWorks() {
           <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">Watchtime · x3</div>
           <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Rétention</div>
           <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Engagement</div>
-          <svg viewBox="0 0 200 80" className="w-[80%] h-24 mt-6" preserveAspectRatio="none">
+          <svg viewBox="0 0 200 80" className="w-[82%] h-20 mt-10" preserveAspectRatio="none">
             <defs>
               <linearGradient id="cg" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.7" />
+                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.65" />
                 <stop offset="100%" stopColor="rgb(226,75,74)" stopOpacity="0" />
               </linearGradient>
             </defs>
-            <path d="M0 75 L25 72 L50 65 L80 50 L110 28 L140 14 L170 6 L200 0 L200 80 L0 80 Z" fill="url(#cg)" />
-            <path d="M0 75 L25 72 L50 65 L80 50 L110 28 L140 14 L170 6 L200 0" fill="none" stroke="rgb(226,75,74)" strokeWidth="2" />
+            {/* organic curve: ups and downs, plafond ~y=22 */}
+            <path d="M0 72 C 12 70, 20 60, 30 64 S 48 50, 60 46 S 78 56, 90 42 S 108 26, 122 34 S 142 22, 158 28 S 178 18, 200 22 L200 80 L0 80 Z" fill="url(#cg)" />
+            <path d="M0 72 C 12 70, 20 60, 30 64 S 48 50, 60 46 S 78 56, 90 42 S 108 26, 122 34 S 142 22, 158 28 S 178 18, 200 22" fill="none" stroke="rgb(226,75,74)" strokeWidth="2" />
           </svg>
         </div>
       );
     }
     return (
       <div className="relative w-full h-full grid place-items-center">
-        <div className="relative w-52 h-32 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-950 via-rose-900/60 to-black">
-          {/* film scanlines */}
+        <div className="relative w-56 h-32 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-950 via-rose-900/60 to-black">
+          {/* scanlines */}
           <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.08) 3px, transparent 4px)" }} />
-          {/* subtitle bar */}
-          <div className="absolute top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px] font-bold tracking-wider">VIDÉO MONTÉE</div>
-          <div className="absolute inset-0 grid place-items-center">
-            <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
-              <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+          {/* preview area */}
+          <div className="absolute inset-x-0 top-0 h-[58%] grid place-items-center">
+            <div className="w-9 h-9 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+              <Play className="w-3.5 h-3.5 fill-white text-white ml-0.5" />
             </div>
           </div>
-          {/* duration */}
-          <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/80 text-white text-[10px] font-semibold tabular-nums">04:32</div>
-          {/* progress bar */}
-          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
-            <div className="h-full w-2/3 bg-primary" />
+          {/* timeline editor area */}
+          <div className="absolute inset-x-0 bottom-0 h-[42%] bg-black/70 backdrop-blur border-t border-white/15 px-1.5 py-1 flex flex-col gap-0.5">
+            <div className="flex items-center gap-1 text-[8px] text-white/70">
+              <Sparkles className="w-2.5 h-2.5 text-primary" />
+              <span className="font-semibold tracking-wider">PEAUFINAGE</span>
+              <span className="ml-auto tabular-nums">04:32</span>
+            </div>
+            {/* tracks with cut markers */}
+            <div className="relative h-2 rounded-sm bg-gradient-to-r from-primary/70 via-rose-500/60 to-primary/70">
+              <div className="absolute inset-y-0 left-[30%] w-[2px] bg-white" />
+              <div className="absolute inset-y-0 left-[55%] w-[2px] bg-white" />
+              <div className="absolute inset-y-0 left-[78%] w-[2px] bg-white" />
+            </div>
+            <div className="relative h-1.5 rounded-sm bg-white/25">
+              <div className="absolute inset-y-0 left-0 w-[40%] bg-emerald-400/80 rounded-sm" />
+              <div className="absolute inset-y-0 left-[48%] w-[28%] bg-amber-400/80 rounded-sm" />
+            </div>
+            <div className="relative h-1 rounded-sm bg-white/15">
+              <div className="absolute inset-y-0 left-[20%] w-[50%] bg-sky-400/70 rounded-sm" />
+            </div>
+            {/* playhead */}
+            <div className="absolute top-2 bottom-1 left-[42%] w-[1px] bg-primary shadow-[0_0_6px_rgba(226,75,74,0.9)]" />
           </div>
         </div>
-        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">1080p · 60fps</div>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">Révisions illimitées</div>
       </div>
     );
   };
@@ -506,30 +549,27 @@ function HowItWorks() {
                   Je veux ma vidéo en 48h <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
-              <div className="grid grid-cols-2 gap-3 h-[220px] overflow-hidden">
-                {[false, true].map((reverse, colIdx) => {
-                  const tiles = [0, 1, 2, 3, 4].map((k) => k + colIdx * 5);
-                  return (
-                    <div key={colIdx} className="marquee overflow-hidden h-full relative" style={{
-                      WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-                      maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
-                    }}>
-                      <div className={`flex flex-col gap-3 ${reverse ? "marquee-y-track-reverse" : "marquee-y-track"}`}>
-                        {[...tiles, ...tiles].map((k, i) => (
-                          <div key={i} className="relative aspect-[3/4] rounded-lg overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
-                            <div className="absolute inset-0 grid place-items-center">
-                              <Play className="w-5 h-5 fill-white text-white opacity-80" />
-                            </div>
-                            <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
-                              <span className="text-[9px] px-1 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
-                              <span className="text-[9px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
-                            </div>
+              <div className="h-[260px] overflow-hidden">
+                <div className="marquee overflow-hidden h-full relative" style={{
+                  WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                  maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                }}>
+                  <div className="flex flex-col gap-3 marquee-y-track">
+                    {[...Array(2)].flatMap(() => [0,1,2,3,4]).map((k, i) => (
+                      <div key={i} className="relative aspect-video rounded-lg overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
+                        <div className="absolute inset-0 grid place-items-center">
+                          <div className="w-10 h-10 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+                            <Play className="w-4 h-4 fill-white text-white ml-0.5" />
                           </div>
-                        ))}
+                        </div>
+                        <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
+                          <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -550,6 +590,236 @@ function HowItWorks() {
             </FadeIn>
           ))}
         </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------- content funnel ----------
+
+function ContentFunnel() {
+  const stages = [
+    {
+      icon: TrendingUp,
+      tag: "Top of the funnel",
+      goal: "Attirer",
+      formats: "Vlogs, lifestyle, contenu inspirationnel",
+      headline: "personal brand viral grâce au format vlog",
+    },
+    {
+      icon: Mic,
+      tag: "Middle of the funnel",
+      goal: "Engager",
+      formats: "Podcasts, vidéos full value, interviews",
+      headline: "double ta crédibilité en partageant ton expertise",
+    },
+    {
+      icon: Target,
+      tag: "Bottom of the funnel",
+      goal: "Closer",
+      formats: "VSL, vidéos de vente",
+      headline: "x4 sur tes ventes avec une VSL addictive dans ton funnel",
+    },
+  ];
+  return (
+    <section className="relative py-12 lg:py-16 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6">
+        <FadeIn>
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-xs uppercase tracking-widest text-primary font-semibold">
+              <Briefcase className="w-3.5 h-3.5" /> Pour les entrepreneurs
+            </div>
+            <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
+              <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Vous êtes dans l'entrepreneuriat ?</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground text-lg text-balance">
+              On travaille avec différentes méthodes et on s'adapte à chaque étape de votre <span className="text-primary font-semibold">Content Funnel</span> — du premier scroll jusqu'à la vente.
+            </p>
+          </div>
+        </FadeIn>
+        <div className="mt-10 grid md:grid-cols-3 gap-4">
+          {stages.map((s, i) => (
+            <FadeIn key={s.tag} delay={i * 0.1}>
+              <div className="relative h-full p-6 rounded-[1.75rem] border border-primary/25 bg-gradient-to-b from-red-950/40 via-black to-black overflow-hidden card-hover">
+                <div className="absolute inset-0 pointer-events-none opacity-60" style={{
+                  background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226,75,74,0.18), transparent 70%)",
+                }} />
+                <div className="relative flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-primary/15 border border-primary/40 grid place-items-center">
+                    <s.icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-primary font-bold">{s.tag}</div>
+                    <div className="text-lg font-black text-white">{s.goal}</div>
+                  </div>
+                </div>
+                <p className="relative mt-4 text-sm text-white/60">{s.formats}</p>
+                <div className="relative mt-3 pt-3 border-t border-white/10">
+                  <p className="font-script text-primary text-2xl leading-tight text-balance">{s.headline}</p>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------- ads / sales section ----------
+
+function AdsSection() {
+  const slides = [
+    { label: "Hook scroll-stop", duration: "0:08", tone: "from-rose-700/70 via-red-900/50" },
+    { label: "Témoignage client", duration: "0:24", tone: "from-red-600/70 via-rose-800/50" },
+    { label: "Démo produit", duration: "0:18", tone: "from-rose-500/70 via-red-700/50" },
+    { label: "Offre & CTA", duration: "0:12", tone: "from-red-700/70 via-rose-900/50" },
+    { label: "UGC raw", duration: "0:30", tone: "from-rose-600/70 via-red-800/50" },
+  ];
+  const [idx, setIdx] = useState(0);
+  const next = () => setIdx((i) => (i + 1) % slides.length);
+  const prev = () => setIdx((i) => (i - 1 + slides.length) % slides.length);
+
+  const positions = [-2, -1, 0, 1, 2];
+
+  return (
+    <section className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+      <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
+      <div className="relative max-w-6xl mx-auto px-6">
+        <FadeIn>
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
+              <span className="text-white">Boostez vos ventes avec des</span>{" "}
+              <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Ads</span>{" "}
+              <span className="text-white">qui remplissent votre agenda</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground text-lg text-balance">
+              Du hook au CTA, on produit des publicités vidéo qui convertissent dès la première vue.
+            </p>
+          </div>
+        </FadeIn>
+
+        {/* Testimonial banner */}
+        <FadeIn delay={0.1}>
+          <div className="mt-8 relative rounded-[1.75rem] border border-primary/30 p-5 lg:p-6 bg-gradient-to-r from-red-950/70 via-black to-black overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none opacity-60" style={{
+              background: "radial-gradient(ellipse 50% 80% at 80% 50%, rgba(226,75,74,0.30), transparent 60%)",
+            }} />
+            <div className="relative flex flex-col sm:flex-row items-center gap-5 sm:gap-7 text-center sm:text-left">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-rose-700 grid place-items-center text-white font-black text-xl shrink-0">A</div>
+              <div className="flex-1">
+                <div className="text-sm text-white/70">Alexis · Fondateur D2C</div>
+                <p className="mt-1 text-lg sm:text-xl font-semibold text-white text-balance">
+                  « +<span className="text-primary">120k€</span> de CA généré grâce à nos Ads vidéo, en moins de 60 jours. »
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center shrink-0">
+                <div>
+                  <div className="text-2xl font-black text-primary">+120k€</div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-primary">x4,8</div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">ROAS</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-primary">60j</div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">Setup</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Card carousel */}
+        <FadeIn delay={0.2}>
+          <div className="mt-12 relative h-[460px] sm:h-[520px] flex items-center justify-center select-none">
+            {/* arrows */}
+            <button
+              onClick={prev}
+              aria-label="Précédent"
+              className="absolute left-2 sm:left-6 z-20 liquid-glass rounded-full p-3 text-white hover:bg-white/15 transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={next}
+              aria-label="Suivant"
+              className="absolute right-2 sm:right-6 z-20 liquid-glass rounded-full p-3 text-white hover:bg-white/15 transition-colors"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            <div className="relative w-full h-full flex items-center justify-center">
+              {positions.map((offset) => {
+                const i = ((idx + offset) % slides.length + slides.length) % slides.length;
+                const s = slides[i];
+                const abs = Math.abs(offset);
+                if (abs > 2) return null;
+                const translate = offset * 130;
+                const scale = abs === 0 ? 1 : abs === 1 ? 0.82 : 0.66;
+                const opacity = abs === 0 ? 1 : abs === 1 ? 0.7 : 0.35;
+                const z = 10 - abs;
+                return (
+                  <motion.div
+                    key={`${i}-${offset}`}
+                    animate={{ x: translate, scale, opacity }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ zIndex: z }}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                    onClick={() => offset !== 0 && setIdx(i)}
+                  >
+                    <div className={`relative w-[240px] sm:w-[260px] aspect-[9/16] rounded-[1.75rem] overflow-hidden border border-primary/40 bg-gradient-to-br ${s.tone} to-black shadow-[0_30px_60px_-20px_rgba(226,75,74,0.5)]`}>
+                      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
+                      <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-bold text-white uppercase tracking-widest border border-white/15">
+                        Ad
+                      </div>
+                      <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-primary text-primary-foreground text-[10px] font-bold tabular-nums">
+                        {s.duration}
+                      </div>
+                      <div className="absolute inset-0 grid place-items-center">
+                        <div className="w-14 h-14 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+                          <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                        </div>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent">
+                        <p className="text-sm font-bold text-white">{s.label}</p>
+                        <div className="mt-2 h-1 rounded-full bg-white/15 overflow-hidden">
+                          <div className="h-full w-2/3 bg-primary" />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* dots */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIdx(i)}
+                  aria-label={`Aller à la slide ${i + 1}`}
+                  className={`h-1.5 rounded-full transition-all ${i === idx ? "w-6 bg-primary" : "w-1.5 bg-white/30 hover:bg-white/60"}`}
+                />
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+
+        <FadeIn delay={0.3}>
+          <div className="mt-6 text-center">
+            <a
+              href={CTA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
+            >
+              Je veux des Ads qui closent <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );
@@ -783,6 +1053,10 @@ function FAQ() {
       a: "Bien sûr. On accompagne aussi bien des créateurs en lancement que des comptes à plusieurs millions d'abonnés.",
     },
     {
+      q: "Vos tarifs sont comme les autres ?",
+      a: "Non. Nos tarifs sont en moyenne 30% moins chers que les autres agences, pour une qualité équivalente voire supérieure, et une relation client bien plus qualitative — contact direct WhatsApp, révisions illimitées, et un vrai suivi.",
+    },
+    {
       q: "Quels sont les tarifs ?",
       a: "Nos tarifs sont flexibles et personnalisés en fonction de ta demande et du volume. Tout sera discuté après ton devis, directement avec l'équipe sur WhatsApp.",
     },
@@ -794,7 +1068,7 @@ function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section id="faq" className="relative py-12 lg:py-16 border-t border-white/5">
-      <div className="max-w-3xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-6">
         <FadeIn>
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
@@ -803,10 +1077,10 @@ function FAQ() {
             </h2>
           </div>
         </FadeIn>
-        <div className="mt-8 space-y-3">
+        <div className="mt-8 grid md:grid-cols-2 gap-3">
           {items.map((it, i) => (
             <FadeIn key={it.q} delay={i * 0.04}>
-              <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden">
+              <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden h-full">
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
                   className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
@@ -965,7 +1239,9 @@ function Index() {
         <SocialProof />
         <WhySkale />
         <HowItWorks />
+        <ContentFunnel />
         <Portfolio />
+        <AdsSection />
         <Testimonials />
         <Comparison />
         <FAQ />
