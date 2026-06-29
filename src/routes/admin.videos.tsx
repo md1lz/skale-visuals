@@ -1,8 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { toast } from "sonner";
 import {
-  ArrowLeft, ChevronDown, Upload, Link as LinkIcon, Loader2, Check, Video as VideoIcon, Image as ImageIcon,
+  ArrowLeft, ChevronDown, Upload, Link as LinkIcon, Loader2, Check, Video as VideoIcon, Image as ImageIcon, Plus,
 } from "lucide-react";
 import { listAllVideos, updateVideo, createVideoUploadUrl } from "@/lib/admin-videos.functions";
 import { supabase } from "@/integrations/supabase/client";
