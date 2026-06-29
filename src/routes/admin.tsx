@@ -40,7 +40,7 @@ export const Route = createFileRoute("/admin")({
   ),
 });
 
-const NAV = [
+const NAV: { to: string; label: string; icon: typeof BarChart3; exact?: boolean }[] = [
   { to: "/admin", label: "Analytiques", icon: BarChart3, exact: true },
   { to: "/admin/videos", label: "Vidéos", icon: Video },
   { to: "/admin/clients", label: "Clients", icon: Users },
@@ -48,7 +48,7 @@ const NAV = [
   { to: "/admin/devis", label: "Devis Tally", icon: FileSignature },
   { to: "/admin/avis", label: "Avis clients", icon: Star },
   { to: "/admin/parametres", label: "Paramètres", icon: Settings },
-] as const;
+];
 
 function AdminLayout() {
   const navigate = useNavigate();
