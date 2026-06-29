@@ -11,13 +11,13 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminProjetsRouteImport } from './routes/admin.projets'
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
 import { Route as AdminDevisRouteImport } from './routes/admin.devis'
 import { Route as AdminClientsRouteImport } from './routes/admin.clients'
 import { Route as AdminAvisRouteImport } from './routes/admin.avis'
+import { Route as AdminAnalytiquesRouteImport } from './routes/admin.analytiques'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 
 const AdminRoute = AdminRouteImport.update({
@@ -29,11 +29,6 @@ const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
-} as any)
-const AdminIndexRoute = AdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AdminRoute,
 } as any)
 const AdminVideosRoute = AdminVideosRouteImport.update({
   id: '/videos',
@@ -65,6 +60,11 @@ const AdminAvisRoute = AdminAvisRouteImport.update({
   path: '/avis',
   getParentRoute: () => AdminRoute,
 } as any)
+const AdminAnalytiquesRoute = AdminAnalytiquesRouteImport.update({
+  id: '/analytiques',
+  path: '/analytiques',
+  getParentRoute: () => AdminRoute,
+} as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
@@ -74,37 +74,38 @@ const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/devis': typeof AdminDevisRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
-  '/admin/': typeof AdminIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/admin': typeof AdminRouteWithChildren
+  '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/devis': typeof AdminDevisRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
-  '/admin': typeof AdminIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
+  '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
   '/admin/devis': typeof AdminDevisRoute
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
-  '/admin/': typeof AdminIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
 }
 export interface FileRouteTypes {
@@ -112,36 +113,37 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
     | '/admin/devis'
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
-    | '/admin/'
     | '/api/public/track'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/admin'
+    | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
     | '/admin/devis'
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
-    | '/admin'
     | '/api/public/track'
   id:
     | '__root__'
     | '/'
     | '/admin'
+    | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
     | '/admin/devis'
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
-    | '/admin/'
     | '/api/public/track'
   fileRoutesById: FileRoutesById
 }
@@ -166,13 +168,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
-    }
-    '/admin/': {
-      id: '/admin/'
-      path: '/'
-      fullPath: '/admin/'
-      preLoaderRoute: typeof AdminIndexRouteImport
-      parentRoute: typeof AdminRoute
     }
     '/admin/videos': {
       id: '/admin/videos'
@@ -216,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminAvisRouteImport
       parentRoute: typeof AdminRoute
     }
+    '/admin/analytiques': {
+      id: '/admin/analytiques'
+      path: '/analytiques'
+      fullPath: '/admin/analytiques'
+      preLoaderRoute: typeof AdminAnalytiquesRouteImport
+      parentRoute: typeof AdminRoute
+    }
     '/api/public/track': {
       id: '/api/public/track'
       path: '/api/public/track'
@@ -227,23 +229,23 @@ declare module '@tanstack/react-router' {
 }
 
 interface AdminRouteChildren {
+  AdminAnalytiquesRoute: typeof AdminAnalytiquesRoute
   AdminAvisRoute: typeof AdminAvisRoute
   AdminClientsRoute: typeof AdminClientsRoute
   AdminDevisRoute: typeof AdminDevisRoute
   AdminParametresRoute: typeof AdminParametresRoute
   AdminProjetsRoute: typeof AdminProjetsRoute
   AdminVideosRoute: typeof AdminVideosRoute
-  AdminIndexRoute: typeof AdminIndexRoute
 }
 
 const AdminRouteChildren: AdminRouteChildren = {
+  AdminAnalytiquesRoute: AdminAnalytiquesRoute,
   AdminAvisRoute: AdminAvisRoute,
   AdminClientsRoute: AdminClientsRoute,
   AdminDevisRoute: AdminDevisRoute,
   AdminParametresRoute: AdminParametresRoute,
   AdminProjetsRoute: AdminProjetsRoute,
   AdminVideosRoute: AdminVideosRoute,
-  AdminIndexRoute: AdminIndexRoute,
 }
 
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
