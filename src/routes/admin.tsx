@@ -8,6 +8,7 @@ import {
 import { motion } from "framer-motion";
 
 import {
+  Home,
   BarChart3,
   Video,
   Users,
@@ -40,7 +41,8 @@ export const Route = createFileRoute("/admin")({
 });
 
 const NAV: { to: string; label: string; icon: typeof BarChart3; exact?: boolean }[] = [
-  { to: "/admin", label: "Analytiques", icon: BarChart3, exact: true },
+  { to: "/admin", label: "Accueil", icon: Home, exact: true },
+  { to: "/admin/analytiques", label: "Analytiques", icon: BarChart3 },
   { to: "/admin/videos", label: "Vidéos", icon: Video },
   { to: "/admin/clients", label: "Clients", icon: Users },
   { to: "/admin/projets", label: "Projets", icon: FolderKanban },
