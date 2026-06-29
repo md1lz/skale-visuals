@@ -15,7 +15,8 @@ type Carousel = {
 };
 type Video = {
   id: string; carousel_key: string; title: string; source_url: string;
-  thumbnail_url: string | null; format: "court" | "long" | "miniature"; visible: boolean; position: number;
+  source_label: string; thumbnail_url: string | null;
+  format: "court" | "long" | "miniature"; visible: boolean; position: number;
 };
 
 function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "video" | "image" | "none"; src: string } {
@@ -175,13 +176,8 @@ function CaseCard({
   onLocalPatch: (p: Partial<Video>) => void;
 }) {
   const [title, setTitle] = useState(video.title);
-  const [source, setSource] = useState(video.source_url);
-  // For media we store a separate "media url" piece, but to keep backend simple
-  // we reuse `source_url` as the media URL when there is no source field, and
-  // store the media URL in `thumbnail_url` when source is also displayed.
-  const hasSourceField = carousel.show_source;
-  const initialMedia = hasSourceField ? (video.thumbnail_url ?? "") : video.source_url;
-  const [mediaUrl, setMediaUrl] = useState(initialMedia);
+  const [source, setSource] = useState(video.source_label);
+  const [mediaUrl, setMediaUrl] = useState(video.source_url);
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -189,8 +185,8 @@ function CaseCard({
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => { setTitle(video.title); }, [video.title]);
-  useEffect(() => { setSource(video.source_url); }, [video.source_url]);
-  useEffect(() => { setMediaUrl(hasSourceField ? (video.thumbnail_url ?? "") : video.source_url); }, [video.thumbnail_url, video.source_url, hasSourceField]);
+  useEffect(() => { setSource(video.source_label); }, [video.source_label]);
+  useEffect(() => { setMediaUrl(video.source_url); }, [video.source_url]);
 
   async function uploadFile(file: File) {
     setUploading(true);
@@ -213,12 +209,8 @@ function CaseCard({
     try {
       const patch: Partial<Video> & { id: string } = { id: video.id };
       if (carousel.show_title) patch.title = title;
-      if (hasSourceField) {
-        patch.source_url = source;
-        patch.thumbnail_url = mediaUrl || null;
-      } else {
-        patch.source_url = mediaUrl;
-      }
+      if (carousel.show_source) patch.source_label = source;
+      patch.source_url = mediaUrl;
       await updateVideo({ data: patch });
       onLocalPatch(patch);
       setSaved(true);
