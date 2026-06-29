@@ -18,7 +18,7 @@ function sessionConfig() {
 }
 
 const rangeSchema = z.object({
-  range: z.enum(["today", "7d", "30d", "3m"]).default("30d"),
+  range: z.enum(["today", "24h", "7d", "30d", "3m"]).default("30d"),
 });
 
 type Range = z.infer<typeof rangeSchema>["range"];
@@ -29,6 +29,10 @@ function rangeStart(range: Range): Date {
     d.setHours(0, 0, 0, 0);
     return d;
   }
+  if (range === "24h") {
+    d.setHours(d.getHours() - 24);
+    return d;
+  }
   if (range === "7d") d.setDate(d.getDate() - 7);
   else if (range === "30d") d.setDate(d.getDate() - 30);
   else if (range === "3m") d.setMonth(d.getMonth() - 3);
@@ -36,7 +40,7 @@ function rangeStart(range: Range): Date {
 }
 
 function bucketSize(range: Range): "hour" | "day" {
-  return range === "today" ? "hour" : "day";
+  return range === "today" || range === "24h" ? "hour" : "day";
 }
 
 function bucketKey(date: Date, size: "hour" | "day"): string {
