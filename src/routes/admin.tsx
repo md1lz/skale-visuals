@@ -53,12 +53,38 @@ const NAV: { to: string; label: string; icon: typeof BarChart3; exact?: boolean 
 ];
 
 function AdminLayout() {
+  return (
+    <AdminPrefsProvider>
+      <ThemeStyleInjector />
+      <AdminLayoutInner />
+    </AdminPrefsProvider>
+  );
+}
+
+function AdminLayoutInner() {
   const session = Route.useRouteContext().session;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const { background } = useAdminPrefs();
 
   return (
-    <div className="min-h-screen flex bg-neutral-950 text-white" style={{ zoom: 1.25 }}>
-      <aside className="w-60 shrink-0 border-r border-white/10 bg-neutral-950 flex flex-col">
+    <div
+      className="admin-themed min-h-screen flex bg-neutral-950 text-white relative"
+      style={{ zoom: 1.25 }}
+    >
+      {background && (
+        <div
+          aria-hidden
+          className="fixed inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: `url(${background})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.25,
+          }}
+        />
+      )}
+      <div className="relative z-10 flex w-full">
+      <aside className="w-60 shrink-0 border-r border-white/10 bg-neutral-950/80 backdrop-blur flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5">
           <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
           <p className="text-sm font-semibold">Skale Admin</p>
@@ -110,6 +136,7 @@ function AdminLayout() {
           </motion.div>
         </AnimatePresence>
       </main>
+      </div>
     </div>
   );
 }
