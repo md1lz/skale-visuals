@@ -439,33 +439,42 @@ function HowItWorks() {
     if (i === 1) {
       return (
         <div className="relative w-full h-full grid place-items-center">
-          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">CTR · x3.6</div>
-          <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Impact</div>
-          <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">A/B Testing</div>
-          <svg viewBox="0 0 200 80" className="w-[80%] h-20 mt-6" preserveAspectRatio="none">
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">Watchtime · x3</div>
+          <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Rétention</div>
+          <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Engagement</div>
+          <svg viewBox="0 0 200 80" className="w-[80%] h-24 mt-6" preserveAspectRatio="none">
             <defs>
               <linearGradient id="cg" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.6" />
+                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.7" />
                 <stop offset="100%" stopColor="rgb(226,75,74)" stopOpacity="0" />
               </linearGradient>
             </defs>
-            <path d="M0 60 L30 55 L55 50 L80 30 L100 10 L120 35 L150 25 L175 45 L200 35 L200 80 L0 80 Z" fill="url(#cg)" />
-            <path d="M0 60 L30 55 L55 50 L80 30 L100 10 L120 35 L150 25 L175 45 L200 35" fill="none" stroke="rgb(226,75,74)" strokeWidth="1.5" />
+            <path d="M0 75 L25 72 L50 65 L80 50 L110 28 L140 14 L170 6 L200 0 L200 80 L0 80 Z" fill="url(#cg)" />
+            <path d="M0 75 L25 72 L50 65 L80 50 L110 28 L140 14 L170 6 L200 0" fill="none" stroke="rgb(226,75,74)" strokeWidth="2" />
           </svg>
         </div>
       );
     }
     return (
       <div className="relative w-full h-full grid place-items-center">
-        <div className="relative w-48 h-28 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-900 via-rose-800 to-red-950">
-          <div className="absolute inset-0 grid place-items-center text-white text-center">
-            <div>
-              <div className="text-[10px] tracking-[0.3em] opacity-70">TU N'ES PAS</div>
-              <div className="text-2xl font-black tracking-widest">FLEMMARD</div>
+        <div className="relative w-52 h-32 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-950 via-rose-900/60 to-black">
+          {/* film scanlines */}
+          <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.08) 3px, transparent 4px)" }} />
+          {/* subtitle bar */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px] font-bold tracking-wider">VIDÉO MONTÉE</div>
+          <div className="absolute inset-0 grid place-items-center">
+            <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+              <Play className="w-5 h-5 fill-white text-white ml-0.5" />
             </div>
           </div>
+          {/* duration */}
+          <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/80 text-white text-[10px] font-semibold tabular-nums">04:32</div>
+          {/* progress bar */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
+            <div className="h-full w-2/3 bg-primary" />
+          </div>
         </div>
-        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">1920 × 1080</div>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">1080p · 60fps</div>
       </div>
     );
   };
