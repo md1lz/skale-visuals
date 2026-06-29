@@ -46,6 +46,7 @@ function Initials({ name }: { name: string }) {
 function AdminHome() {
   const fetchAnalytics = useServerFn(getSiteAnalytics);
   const fetchProfile = useServerFn(getAdminProfile);
+  const fetchActivity = useServerFn(getRecentActivity);
 
   const profileQ = useQuery({
     queryKey: ["admin", "profile"],
