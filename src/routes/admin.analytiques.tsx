@@ -197,7 +197,7 @@ function AnalyticsPage() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="bucket" stroke="#737373" fontSize={11} tickLine={false} axisLine={false} />
+                <XAxis dataKey="bucket" stroke="#737373" fontSize={11} tickLine={false} axisLine={false} interval={tickInterval} minTickGap={8} tickMargin={8} />
                 <YAxis stroke="#737373" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
                 <Tooltip
                   contentStyle={{
