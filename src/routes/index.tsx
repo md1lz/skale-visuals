@@ -595,6 +595,236 @@ function HowItWorks() {
   );
 }
 
+// ---------- content funnel ----------
+
+function ContentFunnel() {
+  const stages = [
+    {
+      icon: TrendingUp,
+      tag: "Top of the funnel",
+      goal: "Attirer",
+      formats: "Vlogs, lifestyle, contenu inspirationnel",
+      headline: "personal brand viral grâce au format vlog",
+    },
+    {
+      icon: Mic,
+      tag: "Middle of the funnel",
+      goal: "Engager",
+      formats: "Podcasts, vidéos full value, interviews",
+      headline: "double ta crédibilité en partageant ton expertise",
+    },
+    {
+      icon: Target,
+      tag: "Bottom of the funnel",
+      goal: "Closer",
+      formats: "VSL, vidéos de vente",
+      headline: "x4 sur tes ventes avec une VSL addictive dans ton funnel",
+    },
+  ];
+  return (
+    <section className="relative py-12 lg:py-16 border-t border-white/5">
+      <div className="max-w-7xl mx-auto px-6">
+        <FadeIn>
+          <div className="text-center max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-xs uppercase tracking-widest text-primary font-semibold">
+              <Briefcase className="w-3.5 h-3.5" /> Pour les entrepreneurs
+            </div>
+            <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
+              <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Vous êtes dans l'entrepreneuriat ?</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground text-lg text-balance">
+              On travaille avec différentes méthodes et on s'adapte à chaque étape de votre <span className="text-primary font-semibold">Content Funnel</span> — du premier scroll jusqu'à la vente.
+            </p>
+          </div>
+        </FadeIn>
+        <div className="mt-10 grid md:grid-cols-3 gap-4">
+          {stages.map((s, i) => (
+            <FadeIn key={s.tag} delay={i * 0.1}>
+              <div className="relative h-full p-6 rounded-[1.75rem] border border-primary/25 bg-gradient-to-b from-red-950/40 via-black to-black overflow-hidden card-hover">
+                <div className="absolute inset-0 pointer-events-none opacity-60" style={{
+                  background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226,75,74,0.18), transparent 70%)",
+                }} />
+                <div className="relative flex items-center gap-3">
+                  <div className="w-11 h-11 rounded-xl bg-primary/15 border border-primary/40 grid place-items-center">
+                    <s.icon className="w-5 h-5 text-primary" />
+                  </div>
+                  <div>
+                    <div className="text-[10px] uppercase tracking-widest text-primary font-bold">{s.tag}</div>
+                    <div className="text-lg font-black text-white">{s.goal}</div>
+                  </div>
+                </div>
+                <p className="relative mt-4 text-sm text-white/60">{s.formats}</p>
+                <div className="relative mt-3 pt-3 border-t border-white/10">
+                  <p className="font-script text-primary text-2xl leading-tight text-balance">{s.headline}</p>
+                </div>
+              </div>
+            </FadeIn>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+// ---------- ads / sales section ----------
+
+function AdsSection() {
+  const slides = [
+    { label: "Hook scroll-stop", duration: "0:08", tone: "from-rose-700/70 via-red-900/50" },
+    { label: "Témoignage client", duration: "0:24", tone: "from-red-600/70 via-rose-800/50" },
+    { label: "Démo produit", duration: "0:18", tone: "from-rose-500/70 via-red-700/50" },
+    { label: "Offre & CTA", duration: "0:12", tone: "from-red-700/70 via-rose-900/50" },
+    { label: "UGC raw", duration: "0:30", tone: "from-rose-600/70 via-red-800/50" },
+  ];
+  const [idx, setIdx] = useState(0);
+  const next = () => setIdx((i) => (i + 1) % slides.length);
+  const prev = () => setIdx((i) => (i - 1 + slides.length) % slides.length);
+
+  const positions = [-2, -1, 0, 1, 2];
+
+  return (
+    <section className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+      <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
+      <div className="relative max-w-6xl mx-auto px-6">
+        <FadeIn>
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
+              <span className="text-white">Boostez vos ventes avec des</span>{" "}
+              <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Ads</span>{" "}
+              <span className="text-white">qui remplissent votre agenda</span>
+            </h2>
+            <p className="mt-4 text-muted-foreground text-lg text-balance">
+              Du hook au CTA, on produit des publicités vidéo qui convertissent dès la première vue.
+            </p>
+          </div>
+        </FadeIn>
+
+        {/* Testimonial banner */}
+        <FadeIn delay={0.1}>
+          <div className="mt-8 relative rounded-[1.75rem] border border-primary/30 p-5 lg:p-6 bg-gradient-to-r from-red-950/70 via-black to-black overflow-hidden">
+            <div className="absolute inset-0 pointer-events-none opacity-60" style={{
+              background: "radial-gradient(ellipse 50% 80% at 80% 50%, rgba(226,75,74,0.30), transparent 60%)",
+            }} />
+            <div className="relative flex flex-col sm:flex-row items-center gap-5 sm:gap-7 text-center sm:text-left">
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-rose-700 grid place-items-center text-white font-black text-xl shrink-0">A</div>
+              <div className="flex-1">
+                <div className="text-sm text-white/70">Alexis · Fondateur D2C</div>
+                <p className="mt-1 text-lg sm:text-xl font-semibold text-white text-balance">
+                  « +<span className="text-primary">120k€</span> de CA généré grâce à nos Ads vidéo, en moins de 60 jours. »
+                </p>
+              </div>
+              <div className="grid grid-cols-3 gap-4 sm:gap-6 text-center shrink-0">
+                <div>
+                  <div className="text-2xl font-black text-primary">+120k€</div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-primary">x4,8</div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">ROAS</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-black text-primary">60j</div>
+                  <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">Setup</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </FadeIn>
+
+        {/* Card carousel */}
+        <FadeIn delay={0.2}>
+          <div className="mt-12 relative h-[460px] sm:h-[520px] flex items-center justify-center select-none">
+            {/* arrows */}
+            <button
+              onClick={prev}
+              aria-label="Précédent"
+              className="absolute left-2 sm:left-6 z-20 liquid-glass rounded-full p-3 text-white hover:bg-white/15 transition-colors"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={next}
+              aria-label="Suivant"
+              className="absolute right-2 sm:right-6 z-20 liquid-glass rounded-full p-3 text-white hover:bg-white/15 transition-colors"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+
+            <div className="relative w-full h-full flex items-center justify-center">
+              {positions.map((offset) => {
+                const i = ((idx + offset) % slides.length + slides.length) % slides.length;
+                const s = slides[i];
+                const abs = Math.abs(offset);
+                if (abs > 2) return null;
+                const translate = offset * 130;
+                const scale = abs === 0 ? 1 : abs === 1 ? 0.82 : 0.66;
+                const opacity = abs === 0 ? 1 : abs === 1 ? 0.7 : 0.35;
+                const z = 10 - abs;
+                return (
+                  <motion.div
+                    key={`${i}-${offset}`}
+                    animate={{ x: translate, scale, opacity }}
+                    transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ zIndex: z }}
+                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                    onClick={() => offset !== 0 && setIdx(i)}
+                  >
+                    <div className={`relative w-[240px] sm:w-[260px] aspect-[9/16] rounded-[1.75rem] overflow-hidden border border-primary/40 bg-gradient-to-br ${s.tone} to-black shadow-[0_30px_60px_-20px_rgba(226,75,74,0.5)]`}>
+                      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
+                      <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-bold text-white uppercase tracking-widest border border-white/15">
+                        Ad
+                      </div>
+                      <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-primary text-primary-foreground text-[10px] font-bold tabular-nums">
+                        {s.duration}
+                      </div>
+                      <div className="absolute inset-0 grid place-items-center">
+                        <div className="w-14 h-14 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+                          <Play className="w-5 h-5 fill-white text-white ml-0.5" />
+                        </div>
+                      </div>
+                      <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent">
+                        <p className="text-sm font-bold text-white">{s.label}</p>
+                        <div className="mt-2 h-1 rounded-full bg-white/15 overflow-hidden">
+                          <div className="h-full w-2/3 bg-primary" />
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                );
+              })}
+            </div>
+
+            {/* dots */}
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2">
+              {slides.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIdx(i)}
+                  aria-label={`Aller à la slide ${i + 1}`}
+                  className={`h-1.5 rounded-full transition-all ${i === idx ? "w-6 bg-primary" : "w-1.5 bg-white/30 hover:bg-white/60"}`}
+                />
+              ))}
+            </div>
+          </div>
+        </FadeIn>
+
+        <FadeIn delay={0.3}>
+          <div className="mt-6 text-center">
+            <a
+              href={CTA_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
+            >
+              Je veux des Ads qui closent <ArrowRight className="w-4 h-4" />
+            </a>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+
 // ---------- portfolio ----------
 
 function Portfolio() {
