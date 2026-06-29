@@ -1144,7 +1144,7 @@ function FinalCTA() {
   ];
 
   return (
-    <section id="contact" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+    <section id="contact" data-section="contact" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
       <div className="absolute inset-0 cinematic-glow pointer-events-none" />
       <div className="relative max-w-5xl mx-auto px-6 text-center">
         <FadeIn>
