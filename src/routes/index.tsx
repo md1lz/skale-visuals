@@ -252,22 +252,19 @@ function Hero() {
           </div>
         </FadeIn>
         <FadeIn delay={0.45}>
-          <div className="mt-10 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl mx-auto">
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-x-16 gap-y-6 max-w-3xl mx-auto">
             {[
               { n: 20, s: "+", l: "clients" },
               { n: 70, s: "+", l: "vidéos montées" },
               { n: 4.8, s: "/5", l: "satisfaction client" },
             ].map((stat, i) => (
-              <div
-                key={i}
-                className="rounded-[2.5rem] border border-white/10 bg-white/[0.03] backdrop-blur px-6 py-6 text-center card-hover"
-              >
-                <div className="text-4xl lg:text-5xl font-black text-primary">
+              <div key={i} className="text-center">
+                <div className="text-2xl lg:text-3xl font-black text-primary">
                   {Number.isInteger(stat.n)
                     ? <><CountUp to={stat.n} />{stat.s}</>
                     : <>{stat.n}{stat.s}</>}
                 </div>
-                <div className="mt-1.5 text-sm text-muted-foreground">{stat.l}</div>
+                <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{stat.l}</div>
               </div>
             ))}
           </div>
@@ -286,27 +283,31 @@ function Hero() {
   );
 }
 
-// ---------- trust bar ----------
+// ---------- social proof ----------
 
-function TrustBar() {
-  const items = ["YouTubeurs", "Coachs", "E-commerçants", "Agences", "Podcasts", "Influenceurs", "Formateurs", "Startups"];
+function SocialProof() {
   return (
-    <section className="relative py-6">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur cinematic-glow-soft py-5 px-6">
-          <p className="text-center text-xs uppercase tracking-[0.2em] text-muted-foreground mb-4">
-            Ils nous font confiance
-          </p>
-          <div className="marquee overflow-hidden mask-fade">
-            <div className="flex gap-12 marquee-track-fast w-max">
-              {[...items, ...items, ...items].map((it, i) => (
-                <span key={i} className="text-lg lg:text-xl font-semibold text-white/60 hover:text-white whitespace-nowrap transition-colors">
-                  {it}
-                </span>
-              ))}
+    <section className="relative py-12 lg:py-16">
+      <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
+      <div className="relative max-w-4xl mx-auto px-6 text-center">
+        <FadeIn>
+          <div className="flex items-center justify-center gap-2 text-sm text-white/80">
+            <div className="flex gap-0.5 text-primary">
+              {[...Array(5)].map((_, i) => <Star key={i} className="w-4 h-4 fill-current" />)}
             </div>
+            <span>Noté 4,8 sur 5 avec +80 avis</span>
           </div>
-        </div>
+        </FadeIn>
+        <FadeIn delay={0.1}>
+          <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-black text-balance leading-[1.05]">
+            Plus de <CountUp to={20} /> entrepreneurs<br className="hidden sm:block" /> nous ont déjà fait confiance.
+          </h2>
+        </FadeIn>
+        <FadeIn delay={0.2}>
+          <p className="mt-5 text-base sm:text-lg text-muted-foreground text-balance">
+            Et leur watchtime n'a jamais été aussi haut depuis qu'on monte leurs vidéos.
+          </p>
+        </FadeIn>
       </div>
     </section>
   );
@@ -407,7 +408,7 @@ function HowItWorks() {
       n: "Étape 2",
       title: "Montage & peaufinage",
       icon: BarChart3,
-      desc: "Notre équipe monte ta vidéo : cuts dynamiques, color grading cinématique, sous-titres, motion et sound design. Chaque détail est optimisé pour la rétention et le clic.",
+      desc: "Notre équipe monte ta vidéo : cuts dynamiques, color grading cinématique, sous-titres, motion et sound design. Chaque détail est optimisé pour maximiser le watchtime.",
     },
     {
       n: "Étape 3",
@@ -438,33 +439,42 @@ function HowItWorks() {
     if (i === 1) {
       return (
         <div className="relative w-full h-full grid place-items-center">
-          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">CTR · x3.6</div>
-          <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Impact</div>
-          <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">A/B Testing</div>
-          <svg viewBox="0 0 200 80" className="w-[80%] h-20 mt-6" preserveAspectRatio="none">
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">Watchtime · x3</div>
+          <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Rétention</div>
+          <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Engagement</div>
+          <svg viewBox="0 0 200 80" className="w-[80%] h-24 mt-6" preserveAspectRatio="none">
             <defs>
               <linearGradient id="cg" x1="0" x2="0" y1="0" y2="1">
-                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.6" />
+                <stop offset="0%" stopColor="rgb(226,75,74)" stopOpacity="0.7" />
                 <stop offset="100%" stopColor="rgb(226,75,74)" stopOpacity="0" />
               </linearGradient>
             </defs>
-            <path d="M0 60 L30 55 L55 50 L80 30 L100 10 L120 35 L150 25 L175 45 L200 35 L200 80 L0 80 Z" fill="url(#cg)" />
-            <path d="M0 60 L30 55 L55 50 L80 30 L100 10 L120 35 L150 25 L175 45 L200 35" fill="none" stroke="rgb(226,75,74)" strokeWidth="1.5" />
+            <path d="M0 75 L25 72 L50 65 L80 50 L110 28 L140 14 L170 6 L200 0 L200 80 L0 80 Z" fill="url(#cg)" />
+            <path d="M0 75 L25 72 L50 65 L80 50 L110 28 L140 14 L170 6 L200 0" fill="none" stroke="rgb(226,75,74)" strokeWidth="2" />
           </svg>
         </div>
       );
     }
     return (
       <div className="relative w-full h-full grid place-items-center">
-        <div className="relative w-48 h-28 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-900 via-rose-800 to-red-950">
-          <div className="absolute inset-0 grid place-items-center text-white text-center">
-            <div>
-              <div className="text-[10px] tracking-[0.3em] opacity-70">TU N'ES PAS</div>
-              <div className="text-2xl font-black tracking-widest">FLEMMARD</div>
+        <div className="relative w-52 h-32 rounded-lg overflow-hidden border border-primary/40 bg-gradient-to-br from-red-950 via-rose-900/60 to-black">
+          {/* film scanlines */}
+          <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.08) 3px, transparent 4px)" }} />
+          {/* subtitle bar */}
+          <div className="absolute top-3 left-1/2 -translate-x-1/2 px-2 py-0.5 rounded bg-black/70 text-white text-[10px] font-bold tracking-wider">VIDÉO MONTÉE</div>
+          <div className="absolute inset-0 grid place-items-center">
+            <div className="w-12 h-12 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
+              <Play className="w-5 h-5 fill-white text-white ml-0.5" />
             </div>
           </div>
+          {/* duration */}
+          <div className="absolute bottom-1.5 right-1.5 px-1.5 py-0.5 rounded bg-black/80 text-white text-[10px] font-semibold tabular-nums">04:32</div>
+          {/* progress bar */}
+          <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
+            <div className="h-full w-2/3 bg-primary" />
+          </div>
         </div>
-        <div className="absolute bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">1920 × 1080</div>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">1080p · 60fps</div>
       </div>
     );
   };
@@ -474,11 +484,11 @@ function HowItWorks() {
       <div className="max-w-7xl mx-auto px-6">
         {/* Hero banner */}
         <FadeIn>
-          <div className="relative rounded-[2rem] border border-primary/30 overflow-hidden p-8 lg:p-10 bg-gradient-to-br from-red-950/80 via-black to-black">
+          <div className="relative rounded-[2rem] border border-primary/30 overflow-hidden p-6 lg:p-8 bg-gradient-to-br from-red-950/80 via-black to-black">
             <div className="absolute inset-0 pointer-events-none" style={{
               background: "radial-gradient(ellipse 60% 80% at 30% 50%, rgba(226,75,74,0.35), transparent 60%)"
             }} />
-            <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-8 items-center">
+            <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-6 items-center">
               <div>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white">
                   Notre méthode en{" "}
@@ -491,23 +501,35 @@ function HowItWorks() {
                   href={CTA_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-6 inline-flex items-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-full hover:scale-[1.02] transition-transform"
+                  className="mt-5 inline-flex items-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-full hover:scale-[1.02] transition-transform"
                 >
                   Je veux ma vidéo en 48h <ArrowRight className="w-4 h-4" />
                 </a>
               </div>
-              <div className="grid grid-cols-2 gap-3">
-                {[0, 1, 2, 3].map((i) => (
-                  <div key={i} className="relative aspect-[3/4] rounded-xl overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black">
-                    <div className="absolute inset-0 grid place-items-center">
-                      <Play className="w-6 h-6 fill-white text-white opacity-80" />
+              <div className="grid grid-cols-2 gap-3 h-[220px] overflow-hidden">
+                {[false, true].map((reverse, colIdx) => {
+                  const tiles = [0, 1, 2, 3, 4].map((k) => k + colIdx * 5);
+                  return (
+                    <div key={colIdx} className="marquee overflow-hidden h-full relative" style={{
+                      WebkitMaskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                      maskImage: "linear-gradient(to bottom, transparent, black 10%, black 90%, transparent)",
+                    }}>
+                      <div className={`flex flex-col gap-3 ${reverse ? "marquee-y-track-reverse" : "marquee-y-track"}`}>
+                        {[...tiles, ...tiles].map((k, i) => (
+                          <div key={i} className="relative aspect-[3/4] rounded-lg overflow-hidden border border-primary/30 bg-gradient-to-br from-rose-700/60 via-red-900/40 to-black shrink-0">
+                            <div className="absolute inset-0 grid place-items-center">
+                              <Play className="w-5 h-5 fill-white text-white opacity-80" />
+                            </div>
+                            <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
+                              <span className="text-[9px] px-1 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
+                              <span className="text-[9px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
                     </div>
-                    <div className="absolute bottom-1.5 left-1.5 right-1.5 flex items-center justify-between">
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/70 text-white">12:00</span>
-                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -577,7 +599,7 @@ function Portfolio() {
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
-              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Nos</span> réalisations
+              <span className="text-white">Nos</span> <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">réalisations</span>
             </h2>
             <p className="mt-3 text-muted-foreground text-lg">Un aperçu de ce qu'on crée pour nos clients.</p>
           </div>
@@ -940,8 +962,7 @@ function Index() {
       <Navbar />
       <main className="relative z-10">
         <Hero />
-        <TrustBar />
-        <FeaturedTestimonial />
+        <SocialProof />
         <WhySkale />
         <HowItWorks />
         <Portfolio />
