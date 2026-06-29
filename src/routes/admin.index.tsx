@@ -57,6 +57,8 @@ function AdminHome() {
   const activityQ = useQuery({
     queryKey: ["admin", "activity"],
     queryFn: () => fetchActivity(),
+    initialData: [] as Awaited<ReturnType<typeof fetchActivity>>,
+    refetchOnMount: "always",
   });
 
   const p = profileQ.data;
