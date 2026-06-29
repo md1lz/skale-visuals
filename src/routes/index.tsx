@@ -4,7 +4,8 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Play, Film, Sparkles, Zap, Palette, Check, Star, ChevronDown,
   ArrowRight, Type, Music, MessageCircle, Mail, Instagram, X,
-  Upload, BarChart3, Send, Menu,
+  Upload, BarChart3, Send, Menu, ChevronLeft, ChevronRight,
+  TrendingUp, Mic, Target, Briefcase,
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
 
