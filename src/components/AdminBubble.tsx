@@ -59,7 +59,7 @@ export function AdminBubble() {
   return (
     <>
       <div
-        className="fixed top-4 right-4 z-[60] flex items-center gap-2"
+        className="fixed top-4 right-4 z-[60] hidden md:flex items-center gap-2"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
       >
