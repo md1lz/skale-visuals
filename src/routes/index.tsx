@@ -1302,9 +1302,46 @@ function Footer() {
 // ---------- root ----------
 
 function Index() {
+  const [psstOpen, setPsstOpen] = useState(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.innerWidth >= 768) return;
+    const showT = setTimeout(() => setPsstOpen(true), 800);
+    const hideT = setTimeout(() => setPsstOpen(false), 5800);
+    return () => {
+      clearTimeout(showT);
+      clearTimeout(hideT);
+    };
+  }, []);
   return (
     <div className="relative">
       <Navbar />
+      <AnimatePresence>
+        {psstOpen && (
+          <motion.div
+            initial={{ x: "-110%", opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            exit={{ x: "-110%", opacity: 0 }}
+            transition={{ type: "spring", stiffness: 220, damping: 24 }}
+            className="md:hidden fixed left-3 right-3 top-[72px] z-[55] liquid-glass rounded-2xl px-4 py-3 flex items-center gap-3 shadow-xl border border-white/15"
+          >
+            <span className="relative flex h-2.5 w-2.5 shrink-0">
+              <span className="absolute inline-flex h-full w-full rounded-full bg-primary opacity-75 animate-ping" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary" />
+            </span>
+            <p className="text-sm text-white/95 flex-1">
+              Psst, notre site est plus joli sur PC&nbsp;!
+            </p>
+            <button
+              onClick={() => setPsstOpen(false)}
+              aria-label="Fermer"
+              className="text-white/60 hover:text-white shrink-0"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <main className="relative z-10">
         <Hero />
         <SocialProof />
