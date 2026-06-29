@@ -29,7 +29,7 @@ export const listAllVideos = createServerFn({ method: "GET" }).handler(async () 
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: carousels } = await supabaseAdmin
     .from("site_carousels")
-    .select("key, label, description, position")
+    .select("key, label, description, position, media_kind, aspect, show_title, show_source")
     .order("position");
   const { data: videos } = await supabaseAdmin
     .from("site_videos")
