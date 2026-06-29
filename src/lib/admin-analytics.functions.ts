@@ -96,16 +96,18 @@ export const getSiteAnalytics = createServerFn({ method: "POST" })
 
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const start = rangeStart(data.range);
+    const { start, end, bucket } = resolveWindow(data);
     const startIso = start.toISOString();
-    const bucket = bucketSize(data.range);
+    const endIso = end.toISOString();
 
     const { data: events, error } = await supabaseAdmin
       .from("site_events")
       .select("type, session_id, path, cta_id, duration_ms, device, source, created_at")
       .gte("created_at", startIso)
+      .lte("created_at", endIso)
       .order("created_at", { ascending: true })
       .limit(50_000);
+
 
     if (error) throw new Error(error.message);
     const rows = events ?? [];
