@@ -78,7 +78,7 @@ export function AdminBubble() {
         </AnimatePresence>
         <motion.button
           aria-label="Admin login"
-          onClick={() => setOpen(true)}
+          onClick={handleBubbleClick}
           initial={{ opacity: 0.35, scale: 0.85 }}
           animate={{
             opacity: hovered ? 1 : 0.35,
