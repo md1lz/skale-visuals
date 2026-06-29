@@ -18,29 +18,35 @@ function sessionConfig() {
 }
 
 const rangeSchema = z.object({
-  range: z.enum(["today", "24h", "7d", "30d", "3m"]).default("30d"),
+  range: z.enum(["today", "24h", "7d", "30d", "custom"]).default("today"),
+  from: z.string().datetime().optional(),
+  to: z.string().datetime().optional(),
 });
 
 type Range = z.infer<typeof rangeSchema>["range"];
 
-function rangeStart(range: Range): Date {
-  const d = new Date();
-  if (range === "today") {
-    d.setHours(0, 0, 0, 0);
-    return d;
+function resolveWindow(input: z.infer<typeof rangeSchema>): { start: Date; end: Date; bucket: "hour" | "day" } {
+  const end = new Date();
+  const start = new Date();
+  if (input.range === "custom" && input.from) {
+    const s = new Date(input.from);
+    const e = input.to ? new Date(input.to) : new Date();
+    s.setHours(0, 0, 0, 0);
+    e.setHours(23, 59, 59, 999);
+    const diffDays = Math.max(1, Math.round((e.getTime() - s.getTime()) / 86400000));
+    return { start: s, end: e, bucket: diffDays <= 2 ? "hour" : "day" };
   }
-  if (range === "24h") {
-    d.setHours(d.getHours() - 24);
-    return d;
+  if (input.range === "today") {
+    start.setHours(0, 0, 0, 0);
+    return { start, end, bucket: "hour" };
   }
-  if (range === "7d") d.setDate(d.getDate() - 7);
-  else if (range === "30d") d.setDate(d.getDate() - 30);
-  else if (range === "3m") d.setMonth(d.getMonth() - 3);
-  return d;
-}
-
-function bucketSize(range: Range): "hour" | "day" {
-  return range === "today" || range === "24h" ? "hour" : "day";
+  if (input.range === "24h") {
+    start.setHours(start.getHours() - 24);
+    return { start, end, bucket: "hour" };
+  }
+  if (input.range === "7d") start.setDate(start.getDate() - 7);
+  else if (input.range === "30d") start.setDate(start.getDate() - 30);
+  return { start, end, bucket: "day" };
 }
 
 function bucketKey(date: Date, size: "hour" | "day"): string {
@@ -60,6 +66,27 @@ function formatBucket(iso: string, size: "hour" | "day"): string {
   }
   return d.toLocaleDateString("fr-FR", { day: "2-digit", month: "short" });
 }
+
+const PAGE_LABELS: Record<string, string> = {
+  "/": "Accueil",
+  "/accueil": "Accueil",
+  "/social-proof": "Avis vidéos (top)",
+  "/temoignage": "Témoignage",
+  "/services": "Nos services",
+  "/methode": "Notre méthode",
+  "/funnel": "Entrepreneuriat",
+  "/ads": "Ads",
+  "/realisations": "Nos réalisations",
+  "/avis": "Avis clients",
+  "/partenaire": "Partenaire #1",
+  "/faq": "FAQ",
+  "/contact": "Contact",
+};
+
+function labelPath(path: string): string {
+  return PAGE_LABELS[path] ?? path;
+}
+
 
 export const getSiteAnalytics = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => rangeSchema.parse(d ?? {}))
