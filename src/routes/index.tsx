@@ -763,10 +763,11 @@ function AdsSection() {
                 return (
                   <motion.div
                     key={`${i}-${offset}`}
-                    animate={{ x: translate, scale, opacity }}
+                    initial={false}
+                    animate={{ x: `calc(-50% + ${translate}px)`, y: "-50%", scale, opacity }}
                     transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-                    style={{ zIndex: z }}
-                    className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer"
+                    style={{ zIndex: z, position: "absolute", top: "50%", left: "50%" }}
+                    className="cursor-pointer"
                     onClick={() => offset !== 0 && setIdx(i)}
                   >
                     <div className={`relative w-[240px] sm:w-[260px] aspect-[9/16] rounded-[1.75rem] overflow-hidden border border-primary/40 bg-gradient-to-br ${s.tone} to-black shadow-[0_30px_60px_-20px_rgba(226,75,74,0.5)]`}>
