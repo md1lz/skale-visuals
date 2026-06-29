@@ -288,6 +288,7 @@ function Hero() {
     { t: "Talk conférence", c: "Conférence" },
     { t: "Réel viral 2M vues", c: "Reels" },
   ];
+  const liveVideos = useSiteVideos().filter((v) => v.carousel_key === "hero");
 
   return (
     <section data-section="accueil" className="relative overflow-hidden">
@@ -350,9 +351,13 @@ function Hero() {
       {/* hero thumbnail strip — tight spacing */}
       <div className="relative marquee overflow-hidden py-2 mask-fade">
         <div className="flex gap-4 marquee-track w-max">
-          {[...heroThumbs, ...heroThumbs].map((t, i) => (
-            <VideoThumb key={i} title={t.t} category={t.c} idx={i} size="md" />
-          ))}
+          {liveVideos.length > 0
+            ? [...liveVideos, ...liveVideos].map((v, i) => (
+                <LiveVideoThumb key={`${v.id}-${i}`} video={v} idx={i} size="md" />
+              ))
+            : [...heroThumbs, ...heroThumbs].map((t, i) => (
+                <VideoThumb key={i} title={t.t} category={t.c} idx={i} size="md" />
+              ))}
         </div>
       </div>
     </section>
