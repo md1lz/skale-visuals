@@ -931,13 +931,21 @@ function Portfolio() {
     { t: "Trailer formation", c: "Promo" },
     { t: "Étude de cas client", c: "B2B" },
   ];
+  const allLive = useSiteVideos();
+  const live1 = allLive.filter((v) => v.carousel_key === "realisations_1");
+  const live2 = allLive.filter((v) => v.carousel_key === "realisations_2");
+  const live3 = allLive.filter((v) => v.carousel_key === "realisations_3");
 
-  const Row = ({ items, reverse, offset = 0 }: { items: { t: string; c: string }[]; reverse?: boolean; offset?: number }) => (
+  const Row = ({ items, live, reverse, offset = 0 }: { items: { t: string; c: string }[]; live: PublicVideo[]; reverse?: boolean; offset?: number }) => (
     <div className="marquee overflow-hidden mask-fade">
       <div className={`flex gap-4 w-max ${reverse ? "marquee-track-reverse" : "marquee-track"}`}>
-        {[...items, ...items].map((it, i) => (
-          <VideoThumb key={i} title={it.t} category={it.c} idx={i + offset} />
-        ))}
+        {live.length > 0
+          ? [...live, ...live].map((v, i) => (
+              <LiveVideoThumb key={`${v.id}-${i}`} video={v} idx={i + offset} />
+            ))
+          : [...items, ...items].map((it, i) => (
+              <VideoThumb key={i} title={it.t} category={it.c} idx={i + offset} />
+            ))}
       </div>
     </div>
   );
@@ -955,9 +963,9 @@ function Portfolio() {
         </FadeIn>
       </div>
       <div className="space-y-4">
-        <Row items={row1} offset={0} />
-        <Row items={row2} reverse offset={3} />
-        <Row items={row3} offset={6} />
+        <Row items={row1} live={live1} offset={0} />
+        <Row items={row2} live={live2} reverse offset={3} />
+        <Row items={row3} live={live3} offset={6} />
       </div>
     </section>
   );
