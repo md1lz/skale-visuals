@@ -1053,6 +1053,10 @@ function FAQ() {
       a: "Bien sûr. On accompagne aussi bien des créateurs en lancement que des comptes à plusieurs millions d'abonnés.",
     },
     {
+      q: "Vos tarifs sont comme les autres ?",
+      a: "Non. Nos tarifs sont en moyenne 30% moins chers que les autres agences, pour une qualité équivalente voire supérieure, et une relation client bien plus qualitative — contact direct WhatsApp, révisions illimitées, et un vrai suivi.",
+    },
+    {
       q: "Quels sont les tarifs ?",
       a: "Nos tarifs sont flexibles et personnalisés en fonction de ta demande et du volume. Tout sera discuté après ton devis, directement avec l'équipe sur WhatsApp.",
     },
@@ -1064,7 +1068,7 @@ function FAQ() {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <section id="faq" className="relative py-12 lg:py-16 border-t border-white/5">
-      <div className="max-w-3xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-6">
         <FadeIn>
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
@@ -1073,10 +1077,10 @@ function FAQ() {
             </h2>
           </div>
         </FadeIn>
-        <div className="mt-8 space-y-3">
+        <div className="mt-8 grid md:grid-cols-2 gap-3">
           {items.map((it, i) => (
             <FadeIn key={it.q} delay={i * 0.04}>
-              <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden">
+              <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden h-full">
                 <button
                   onClick={() => setOpen(open === i ? null : i)}
                   className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
