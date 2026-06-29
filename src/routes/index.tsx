@@ -377,7 +377,7 @@ function SocialProof() {
           </p>
         </FadeIn>
         <FadeIn delay={0.3}>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 max-w-xs sm:max-w-3xl mx-auto">
             {videoSlots.map((i) => (
               <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-primary/25 bg-gradient-to-br from-red-950/60 via-rose-900/30 to-black card-hover cursor-pointer">
                 <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
