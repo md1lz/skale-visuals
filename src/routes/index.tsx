@@ -626,11 +626,8 @@ function ContentFunnel() {
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full border border-primary/40 bg-primary/10 text-xs uppercase tracking-widest text-primary font-semibold">
-              <Briefcase className="w-3.5 h-3.5" /> Pour les entrepreneurs
-            </div>
-            <h2 className="mt-4 text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
-              <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Vous êtes dans l'entrepreneuriat ?</span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance text-white">
+              Vous êtes dans l'<span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">entrepreneuriat</span> ?
             </h2>
             <p className="mt-4 text-muted-foreground text-lg text-balance">
               On travaille avec différentes méthodes et on s'adapte à chaque étape de votre <span className="text-primary font-semibold">Content Funnel</span> — du premier scroll jusqu'à la vente.
@@ -649,18 +646,33 @@ function ContentFunnel() {
                     <s.icon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-widest text-primary font-bold">{s.tag}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-white/60 font-bold">{s.tag}</div>
                     <div className="text-lg font-black text-white">{s.goal}</div>
                   </div>
                 </div>
-                <p className="relative mt-4 text-sm text-white/60">{s.formats}</p>
+                <p className="relative mt-4 text-sm text-white/70">{s.formats}</p>
                 <div className="relative mt-3 pt-3 border-t border-white/10">
-                  <p className="font-script text-primary text-2xl leading-tight text-balance">{s.headline}</p>
+                  <p className="text-base text-white leading-snug text-balance">{s.headline}</p>
                 </div>
               </div>
             </FadeIn>
           ))}
         </div>
+
+        {/* Arrow + closing text */}
+        <FadeIn delay={0.2}>
+          <div className="mt-8 relative max-w-3xl mx-auto">
+            <img
+              src={arrowAsset.url}
+              alt=""
+              aria-hidden="true"
+              className="absolute -top-4 left-1/2 -translate-x-[140%] w-28 sm:w-36 opacity-90 pointer-events-none select-none"
+            />
+            <p className="text-center text-base sm:text-lg text-white/85 leading-relaxed max-w-2xl mx-auto px-4">
+              En 2026, ceux qui captent l'attention captent leur réussite. On ne fait pas que monter vos vidéos — on vous fait gagner un temps précieux, et donc de l'argent. Vous nous confiez vos rushs, <span className="text-primary font-semibold">on s'occupe de tout</span>.
+            </p>
+          </div>
+        </FadeIn>
       </div>
     </section>
   );
