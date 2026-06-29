@@ -17,9 +17,10 @@ import {
   FileSignature,
   Star,
   Settings,
-  LogOut,
 } from "lucide-react";
-import { getAdminSessionFn, logoutAdminFn } from "@/lib/admin-auth.functions";
+import { getAdminSessionFn } from "@/lib/admin-auth.functions";
+import { AdminProfileMenu } from "@/components/AdminProfileMenu";
+
 
 export const Route = createFileRoute("/admin")({
   beforeLoad: async () => {
