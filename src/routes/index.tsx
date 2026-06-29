@@ -314,20 +314,18 @@ function SocialProof() {
           </p>
         </FadeIn>
         <FadeIn delay={0.3}>
-          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-left">
-            {reviews.map((r) => (
-              <div key={r.name} className="p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
-                <div className="flex items-center gap-3">
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-sm">{r.name.charAt(0)}</div>
-                  <div className="min-w-0">
-                    <div className="font-semibold truncate text-sm">{r.name}</div>
-                    <div className="text-xs text-muted-foreground truncate">{r.role}</div>
+          <div className="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-5 max-w-3xl mx-auto">
+            {videoSlots.map((i) => (
+              <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-primary/25 bg-gradient-to-br from-red-950/60 via-rose-900/30 to-black card-hover cursor-pointer">
+                <div className="absolute inset-0 opacity-25" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
+                <div className="absolute inset-0 grid place-items-center">
+                  <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/25 grid place-items-center group-hover:bg-primary/90 group-hover:scale-110 transition-all duration-300">
+                    <Play className="w-6 h-6 text-white fill-white ml-0.5" />
                   </div>
                 </div>
-                <div className="mt-2.5 flex gap-0.5 text-primary">
-                  {[...Array(5)].map((_, i) => <Star key={i} className="w-3.5 h-3.5 fill-current" />)}
+                <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-bold text-white uppercase tracking-widest border border-white/15">
+                  Avis client {i + 1}
                 </div>
-                <p className="mt-2.5 text-sm text-white/80 leading-relaxed">{r.text}</p>
               </div>
             ))}
           </div>
