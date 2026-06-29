@@ -1077,27 +1077,34 @@ function FAQ() {
             </h2>
           </div>
         </FadeIn>
-        <div className="mt-8 grid md:grid-cols-2 gap-3">
-          {items.map((it, i) => (
-            <FadeIn key={it.q} delay={i * 0.04}>
-              <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden h-full">
-                <button
-                  onClick={() => setOpen(open === i ? null : i)}
-                  className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
-                >
-                  <span className="font-semibold">{it.q}</span>
-                  <ChevronDown className={`w-5 h-5 text-primary shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
-                </button>
-                <motion.div
-                  initial={false}
-                  animate={{ height: open === i ? "auto" : 0, opacity: open === i ? 1 : 0 }}
-                  transition={{ duration: 0.3 }}
-                  className="overflow-hidden"
-                >
-                  <p className="px-5 pb-5 text-muted-foreground leading-relaxed">{it.a}</p>
-                </motion.div>
-              </div>
-            </FadeIn>
+        <div className="mt-8 grid md:grid-cols-2 gap-3 items-start">
+          {[0, 1].map((col) => (
+            <div key={col} className="flex flex-col gap-3">
+              {items.filter((_, i) => i % 2 === col).map((it) => {
+                const i = items.indexOf(it);
+                return (
+                  <FadeIn key={it.q} delay={i * 0.04}>
+                    <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden">
+                      <button
+                        onClick={() => setOpen(open === i ? null : i)}
+                        className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
+                      >
+                        <span className="font-semibold">{it.q}</span>
+                        <ChevronDown className={`w-5 h-5 text-primary shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
+                      </button>
+                      <motion.div
+                        initial={false}
+                        animate={{ height: open === i ? "auto" : 0, opacity: open === i ? 1 : 0 }}
+                        transition={{ duration: 0.3 }}
+                        className="overflow-hidden"
+                      >
+                        <p className="px-5 pb-5 text-muted-foreground leading-relaxed">{it.a}</p>
+                      </motion.div>
+                    </div>
+                  </FadeIn>
+                );
+              })}
+            </div>
           ))}
         </div>
       </div>
