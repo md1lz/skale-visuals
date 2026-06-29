@@ -99,7 +99,7 @@ function AdminHome() {
   ];
 
   return (
-    <div className="px-8 py-8 max-w-6xl mx-auto">
+    <div className="px-8 pt-10 pb-8 max-w-6xl mx-auto">
       {/* Greeting */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
@@ -130,7 +130,7 @@ function AdminHome() {
           initial={{ opacity: 0, y: 6 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
-          className="lg:col-span-2 rounded-xl border border-white/10 bg-neutral-900/50 p-4"
+          className="lg:col-span-2 rounded-xl border border-white/10 bg-neutral-900/50 p-4 flex flex-col"
         >
           <div className="flex items-baseline justify-between mb-3">
             <div>
@@ -143,9 +143,9 @@ function AdminHome() {
               </p>
             </div>
           </div>
-          <div className="h-48">
+          <div className="flex-1 min-h-0">
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={dayQ.data?.timeseries ?? []}>
+              <AreaChart data={dayQ.data?.timeseries ?? []} margin={{ top: 4, right: 8, bottom: 0, left: -12 }}>
                 <defs>
                   <linearGradient id="visitsHomeGrad" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#ef4444" stopOpacity={0.5} />
