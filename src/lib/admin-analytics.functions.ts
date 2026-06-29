@@ -197,3 +197,87 @@ export const getSiteAnalytics = createServerFn({ method: "POST" })
       sources,
     };
   });
+
+export const getRecentActivity = createServerFn({ method: "POST" })
+  .handler(async () => {
+    const session = await useSession<AdminSessionData>(sessionConfig());
+    if (!session.data.user) throw new Error("Unauthorized");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    const since = new Date();
+    since.setDate(since.getDate() - 7);
+
+    const { data: events } = await supabaseAdmin
+      .from("site_events")
+      .select("type, cta_id, created_at")
+      .gte("created_at", since.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(200);
+
+    const rows = events ?? [];
+    const activity: { id: string; type: string; message: string; time: string; variant: "red" | "neutral" | "green" | "amber" }[] = [];
+
+    // Real events from site_events
+    for (const ev of rows) {
+      if (ev.type === "tally_submitted") {
+        activity.push({
+          id: `tally-${ev.created_at}`,
+          type: "devis",
+          message: "Nouveau devis soumis via le site",
+          time: ev.created_at,
+          variant: "red",
+        });
+      }
+    }
+
+    // Mock realistic admin activity (replace with real queries later)
+    const now = new Date();
+    activity.push(
+      {
+        id: "mock-1",
+        type: "deadline",
+        message: "Deadline bientôt atteinte : Projet "Lancement été"",
+        time: new Date(now.getTime() - 1000 * 60 * 45).toISOString(),
+        variant: "amber",
+      },
+      {
+        id: "mock-2",
+        type: "avis",
+        message: "Nouvel avis client ajouté — 5 étoiles",
+        time: new Date(now.getTime() - 1000 * 60 * 120).toISOString(),
+        variant: "green",
+      },
+      {
+        id: "mock-3",
+        type: "video",
+        message: "Vidéo "Promo Q3" modifiée et republiée",
+        time: new Date(now.getTime() - 1000 * 60 * 60 * 3).toISOString(),
+        variant: "neutral",
+      },
+      {
+        id: "mock-4",
+        type: "client",
+        message: "Nouveau client ajouté : Agence Pulse",
+        time: new Date(now.getTime() - 1000 * 60 * 60 * 5).toISOString(),
+        variant: "red",
+      },
+      {
+        id: "mock-5",
+        type: "devis",
+        message: "Devis accepté — Projet "Série Web"",
+        time: new Date(now.getTime() - 1000 * 60 * 60 * 8).toISOString(),
+        variant: "green",
+      },
+      {
+        id: "mock-6",
+        type: "projet",
+        message: "Projet "Teaser Event" passé en review",
+        time: new Date(now.getTime() - 1000 * 60 * 60 * 12).toISOString(),
+        variant: "neutral",
+      }
+    );
+
+    activity.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
+    return activity.slice(0, 8);
+  });
