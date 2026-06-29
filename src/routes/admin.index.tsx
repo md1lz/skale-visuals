@@ -99,7 +99,7 @@ function AdminHome() {
   ];
 
   return (
-    <div className="px-8 py-8 max-w-6xl">
+    <div className="px-8 py-8 max-w-6xl mx-auto">
       {/* Greeting */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
