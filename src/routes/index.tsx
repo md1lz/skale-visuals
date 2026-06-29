@@ -379,7 +379,7 @@ function WhySkale() {
     { icon: Music, label: "Musique & sound design" },
   ];
   return (
-    <section className="relative py-12 lg:py-16">
+    <section data-section="services" className="relative py-12 lg:py-16">
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
