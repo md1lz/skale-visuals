@@ -256,7 +256,7 @@ function Hero() {
           </div>
         </FadeIn>
         <FadeIn delay={0.45}>
-          <div className="mt-12 grid grid-cols-3 items-center gap-x-8 gap-y-6 max-w-3xl mx-auto">
+          <div className="mt-12 grid grid-cols-3 items-center gap-x-4 gap-y-6 max-w-3xl mx-auto">
             {[
               { n: 30, p: "+", l: "clients" },
               { n: 70, p: "+", l: "PROJETS" },
