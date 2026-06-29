@@ -261,10 +261,11 @@ function AnalyticsPage() {
             <ul className="divide-y divide-white/5">
               {data.topPages.map((p) => (
                 <li key={p.path} className="flex items-center justify-between py-2.5 text-sm gap-3">
-                  <span className="text-neutral-200 truncate font-mono text-xs">{p.path}</span>
+                  <span className="text-neutral-200 truncate">{(p as { label?: string }).label ?? p.path}</span>
                   <span className="text-neutral-400 tabular-nums">{p.views.toLocaleString("fr-FR")}</span>
                 </li>
               ))}
+
             </ul>
           ) : (
             <EmptyState label="Aucune page vue sur la période." />
