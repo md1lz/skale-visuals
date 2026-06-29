@@ -985,6 +985,24 @@ function Testimonials() {
     </div>
   );
 
+  const MobileCard = ({ r }: { r: R }) => (
+    <div className="w-60 shrink-0 p-3.5 rounded-xl border border-white/10 bg-card/60 backdrop-blur">
+      <div className="flex items-center gap-2">
+        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-xs">
+          {r.name.charAt(0)}
+        </div>
+        <div className="min-w-0">
+          <div className="font-semibold truncate text-xs">{r.name}</div>
+          <div className="text-[10px] text-muted-foreground truncate">{r.role}</div>
+        </div>
+      </div>
+      <div className="mt-1.5 flex gap-0.5 text-primary">
+        {[...Array(5)].map((_, i) => <Star key={i} className="w-3 h-3 fill-current" />)}
+      </div>
+      <p className="mt-1.5 text-xs text-white/80 leading-relaxed line-clamp-4">{r.text}</p>
+    </div>
+  );
+
   const cols = [
     reviews.slice(0, 4),
     reviews.slice(4, 8),
@@ -999,6 +1017,17 @@ function Testimonials() {
     </div>
   );
 
+  const MobileRow = ({ items, reverse }: { items: R[]; reverse?: boolean }) => (
+    <div className="marquee overflow-hidden mask-fade relative">
+      <div className={`flex gap-3 w-max ${reverse ? "marquee-track-reverse" : "marquee-track"}`}>
+        {[...items, ...items].map((r, i) => <MobileCard key={i} r={r} />)}
+      </div>
+    </div>
+  );
+
+  const mobileRow1 = reviews.slice(0, 6);
+  const mobileRow2 = reviews.slice(6, 12);
+
   return (
     <section id="avis" data-section="avis" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
@@ -1011,10 +1040,14 @@ function Testimonials() {
             <p className="mt-3 text-muted-foreground text-lg">Des créateurs qui ont vu leur audience et leur business décoller.</p>
           </div>
         </FadeIn>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           <Column items={cols[0]} />
           <Column items={cols[1]} reverse />
           <Column items={cols[2]} />
+        </div>
+        <div className="md:hidden space-y-3">
+          <MobileRow items={mobileRow1} />
+          <MobileRow items={mobileRow2} reverse />
         </div>
       </div>
     </section>
