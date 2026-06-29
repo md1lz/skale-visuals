@@ -111,6 +111,41 @@ function bindHeartbeat(sid: string) {
   }, HEARTBEAT_MS);
 }
 
+function bindSectionViews(sid: string) {
+  if (isAdminPath(location.pathname)) return;
+  const seen = new Set<string>();
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        if (entry.intersectionRatio < 0.35) continue;
+        const el = entry.target as HTMLElement;
+        const name = el.getAttribute("data-section") || el.id;
+        if (!name || seen.has(name)) continue;
+        seen.add(name);
+        send({
+          type: "page_view",
+          session_id: sid,
+          path: `/${name}`,
+        });
+      }
+    },
+    { threshold: [0.35] },
+  );
+  const scan = () => {
+    document.querySelectorAll<HTMLElement>("[data-section]").forEach((el) => {
+      if (!el.dataset.skTracked) {
+        el.dataset.skTracked = "1";
+        observer.observe(el);
+      }
+    });
+  };
+  scan();
+  // Rescan after navigation/hydration churn
+  setTimeout(scan, 800);
+  setTimeout(scan, 2500);
+}
+
 export function initTracker() {
   if (started || typeof window === "undefined") return;
   started = true;
@@ -125,18 +160,13 @@ export function initTracker() {
       path: location.pathname,
       referrer,
     });
-    send({
-      type: "page_view",
-      session_id: sid,
-      path: location.pathname,
-      referrer,
-    });
     lastPath = location.pathname;
   }
 
   bindClicks(sid);
   bindHeartbeat(sid);
   bindUnload(sid);
+  bindSectionViews(sid);
 }
 
 export function trackPageView(path: string) {
@@ -150,3 +180,4 @@ export function trackPageView(path: string) {
     path,
   });
 }
+

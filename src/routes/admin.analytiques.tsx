@@ -3,6 +3,8 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { format } from "date-fns";
+import { fr } from "date-fns/locale";
 import {
   Eye,
   MousePointerClick,
@@ -13,6 +15,7 @@ import {
   Globe,
   Smartphone,
   Loader2,
+  CalendarIcon,
 } from "lucide-react";
 import {
   Area,
@@ -28,15 +31,19 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { Calendar } from "@/components/ui/calendar";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { getSiteAnalytics } from "@/lib/admin-analytics.functions";
 
-type Range = "today" | "7d" | "30d" | "3m";
+type Range = "today" | "7d" | "30d" | "custom";
 
 const RANGES: { value: Range; label: string }[] = [
   { value: "today", label: "Aujourd'hui" },
   { value: "7d", label: "7 jours" },
   { value: "30d", label: "30 jours" },
-  { value: "3m", label: "3 mois" },
+  { value: "custom", label: "Personnalisé" },
 ];
 
 const DEVICE_COLORS = ["#ef4444", "#f97316", "#fbbf24"];
@@ -46,13 +53,30 @@ export const Route = createFileRoute("/admin/analytiques")({
 });
 
 function AnalyticsPage() {
-  const [range, setRange] = useState<Range>("30d");
-  const fetchAnalytics = useServerFn(getSiteAnalytics);
-  const { data, isLoading, isFetching } = useQuery({
-    queryKey: ["site-analytics", range],
-    queryFn: () => fetchAnalytics({ data: { range } }),
-    refetchInterval: 60_000,
+  const [range, setRange] = useState<Range>("today");
+  const [customFrom, setCustomFrom] = useState<Date | undefined>(() => {
+    const d = new Date();
+    d.setDate(d.getDate() - 7);
+    return d;
   });
+  const [customTo, setCustomTo] = useState<Date | undefined>(new Date());
+  const [calendarOpen, setCalendarOpen] = useState(false);
+
+  const fetchAnalytics = useServerFn(getSiteAnalytics);
+  const queryArgs =
+    range === "custom"
+      ? { range, from: customFrom?.toISOString(), to: customTo?.toISOString() }
+      : { range };
+  const { data, isLoading, isFetching } = useQuery({
+    queryKey: ["site-analytics", range, range === "custom" ? customFrom?.toISOString() : null, range === "custom" ? customTo?.toISOString() : null],
+    queryFn: () => fetchAnalytics({ data: queryArgs }),
+    refetchInterval: 60_000,
+    enabled: range !== "custom" || (!!customFrom && !!customTo),
+  });
+
+  // Compute tick interval so labels never overlap
+  const seriesLen = data?.timeseries.length ?? 0;
+  const tickInterval = seriesLen > 20 ? Math.ceil(seriesLen / 10) - 1 : seriesLen > 10 ? 1 : 0;
 
   return (
     <div className="p-6 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
@@ -68,22 +92,61 @@ function AnalyticsPage() {
             )}
           </p>
         </div>
-        <div className="inline-flex rounded-xl border border-white/10 bg-neutral-900/50 p-1">
-          {RANGES.map((r) => (
-            <button
-              key={r.value}
-              onClick={() => setRange(r.value)}
-              className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
-                range === r.value
-                  ? "bg-red-600 text-white"
-                  : "text-neutral-400 hover:text-white"
-              }`}
-            >
-              {r.label}
-            </button>
-          ))}
+        <div className="flex items-center gap-2 flex-wrap">
+          <div className="inline-flex rounded-xl border border-white/10 bg-neutral-900/50 p-1">
+            {RANGES.map((r) => (
+              <button
+                key={r.value}
+                onClick={() => {
+                  setRange(r.value);
+                  if (r.value === "custom") setCalendarOpen(true);
+                }}
+                className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                  range === r.value
+                    ? "bg-red-600 text-white"
+                    : "text-neutral-400 hover:text-white"
+                }`}
+              >
+                {r.label}
+              </button>
+            ))}
+          </div>
+          {range === "custom" && (
+            <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={cn(
+                    "h-9 justify-start text-left font-normal bg-neutral-900/50 border-white/10 text-neutral-200 hover:bg-neutral-800/70 hover:text-white",
+                    !customFrom && "text-neutral-500",
+                  )}
+                >
+                  <CalendarIcon className="mr-2 h-3.5 w-3.5" />
+                  {customFrom && customTo
+                    ? `${format(customFrom, "d MMM", { locale: fr })} → ${format(customTo, "d MMM yyyy", { locale: fr })}`
+                    : "Choisir une période"}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0 bg-neutral-950 border-white/10" align="end">
+                <Calendar
+                  mode="range"
+                  locale={fr}
+                  selected={{ from: customFrom, to: customTo }}
+                  onSelect={(r) => {
+                    setCustomFrom(r?.from);
+                    setCustomTo(r?.to);
+                  }}
+                  numberOfMonths={2}
+                  initialFocus
+                  className={cn("p-3 pointer-events-auto")}
+                />
+              </PopoverContent>
+            </Popover>
+          )}
         </div>
       </header>
+
 
       <section className="grid grid-cols-2 lg:grid-cols-5 gap-3">
         <Kpi
@@ -120,7 +183,7 @@ function AnalyticsPage() {
 
       <Panel
         title="Visites"
-        subtitle={range === "today" ? "Sessions par heure" : "Sessions par jour"}
+        subtitle={range === "today" ? "Sessions par heure" : range === "custom" && customFrom && customTo && (customTo.getTime() - customFrom.getTime()) <= 2 * 86400000 ? "Sessions par heure" : "Sessions par jour"}
         icon={<TrendingUp className="h-4 w-4 text-red-500" />}
       >
         <div className="h-72">
@@ -134,7 +197,7 @@ function AnalyticsPage() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
-                <XAxis dataKey="bucket" stroke="#737373" fontSize={11} tickLine={false} axisLine={false} />
+                <XAxis dataKey="bucket" stroke="#737373" fontSize={11} tickLine={false} axisLine={false} interval={tickInterval} minTickGap={8} tickMargin={8} />
                 <YAxis stroke="#737373" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
                 <Tooltip
                   contentStyle={{
@@ -198,10 +261,11 @@ function AnalyticsPage() {
             <ul className="divide-y divide-white/5">
               {data.topPages.map((p) => (
                 <li key={p.path} className="flex items-center justify-between py-2.5 text-sm gap-3">
-                  <span className="text-neutral-200 truncate font-mono text-xs">{p.path}</span>
+                  <span className="text-neutral-200 truncate">{(p as { label?: string }).label ?? p.path}</span>
                   <span className="text-neutral-400 tabular-nums">{p.views.toLocaleString("fr-FR")}</span>
                 </li>
               ))}
+
             </ul>
           ) : (
             <EmptyState label="Aucune page vue sur la période." />

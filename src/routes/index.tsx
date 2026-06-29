@@ -220,7 +220,7 @@ function Hero() {
   ];
 
   return (
-    <section className="relative overflow-hidden">
+    <section data-section="accueil" className="relative overflow-hidden">
       <div className="absolute inset-0 cinematic-glow pointer-events-none" />
       <div className="relative max-w-7xl mx-auto px-6 pt-10 pb-6 lg:pt-16 lg:pb-8 text-center">
         <FadeIn>
@@ -294,7 +294,8 @@ function Hero() {
 function SocialProof() {
   const videoSlots = [0, 1];
   return (
-    <section className="relative py-12 lg:py-16">
+    <section data-section="social-proof" className="relative py-12 lg:py-16">
+
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
       <div className="relative max-w-6xl mx-auto px-6 text-center">
         <FadeIn>
@@ -341,7 +342,7 @@ function SocialProof() {
 
 function FeaturedTestimonial() {
   return (
-    <section className="relative py-10 lg:py-12">
+    <section data-section="temoignage" className="relative py-10 lg:py-12">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
       <div className="relative max-w-4xl mx-auto px-6 text-center">
         <FadeIn>
@@ -378,7 +379,7 @@ function WhySkale() {
     { icon: Music, label: "Musique & sound design" },
   ];
   return (
-    <section className="relative py-12 lg:py-16">
+    <section data-section="services" className="relative py-12 lg:py-16">
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
@@ -521,7 +522,7 @@ function HowItWorks() {
   };
 
   return (
-    <section id="methode" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section id="methode" data-section="methode" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         {/* Hero banner */}
         <FadeIn>
@@ -624,7 +625,8 @@ function ContentFunnel() {
     },
   ];
   return (
-    <section className="relative py-12 lg:py-16 border-t border-white/5">
+    <section data-section="funnel" className="relative py-12 lg:py-16 border-t border-white/5">
+
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
@@ -695,7 +697,7 @@ function AdsSection() {
   const positions = [-1, 0, 1];
 
   return (
-    <section className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+    <section data-section="ads" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
       <div className="relative max-w-6xl mx-auto px-6">
         <FadeIn>
@@ -866,7 +868,7 @@ function Portfolio() {
   );
 
   return (
-    <section id="realisations" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section id="realisations" data-section="realisations" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6 mb-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
@@ -938,7 +940,7 @@ function Testimonials() {
   );
 
   return (
-    <section id="avis" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section id="avis" data-section="avis" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto mb-8">
@@ -979,7 +981,7 @@ function Comparison() {
   };
 
   return (
-    <section className="relative py-12 lg:py-16 border-t border-white/5">
+    <section data-section="partenaire" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-4xl mx-auto px-6">
         <FadeIn>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-center text-balance">
@@ -1069,7 +1071,7 @@ function FAQ() {
   ];
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <section id="faq" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section id="faq" data-section="faq" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-6xl mx-auto px-6">
         <FadeIn>
           <div className="text-center">
@@ -1142,7 +1144,7 @@ function FinalCTA() {
   ];
 
   return (
-    <section id="contact" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+    <section id="contact" data-section="contact" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
       <div className="absolute inset-0 cinematic-glow pointer-events-none" />
       <div className="relative max-w-5xl mx-auto px-6 text-center">
         <FadeIn>
