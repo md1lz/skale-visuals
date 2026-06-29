@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { motion, useInView, useMotionValue, useTransform, animate } from "framer-motion";
+import { motion, AnimatePresence, useInView, useMotionValue, useTransform, animate } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
   Play, Film, Sparkles, Zap, Palette, Check, Star, ChevronDown,
