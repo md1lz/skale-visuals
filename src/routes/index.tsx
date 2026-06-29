@@ -220,7 +220,7 @@ function Hero() {
   ];
 
   return (
-    <section className="relative overflow-hidden">
+    <section data-section="accueil" className="relative overflow-hidden">
       <div className="absolute inset-0 cinematic-glow pointer-events-none" />
       <div className="relative max-w-7xl mx-auto px-6 pt-10 pb-6 lg:pt-16 lg:pb-8 text-center">
         <FadeIn>
