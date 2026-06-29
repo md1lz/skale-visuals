@@ -2,10 +2,11 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
 import { Eye, EyeOff } from "lucide-react";
-import { loginAdmin } from "@/lib/admin-auth.functions";
+import { loginAdmin, tryAutoLoginByIp } from "@/lib/admin-auth.functions";
 
 export function AdminBubble() {
   const login = useServerFn(loginAdmin);
+  const autoLogin = useServerFn(tryAutoLoginByIp);
   const [hovered, setHovered] = useState(false);
   const [open, setOpen] = useState(false);
   const [error, setError] = useState(false);
@@ -13,6 +14,24 @@ export function AdminBubble() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
+
+  async function handleBubbleClick() {
+    if (pending) return;
+    setPending(true);
+    try {
+      const res = await autoLogin();
+      if (res.ok) {
+        window.location.assign("/admin");
+        return;
+      }
+    } catch {
+      // ignore, fall through to manual login
+    } finally {
+      setPending(false);
+    }
+    setOpen(true);
+  }
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -20,7 +39,7 @@ export function AdminBubble() {
     setPending(true);
     setError(false);
     try {
-      const res = await login({ data: { username, password } });
+      const res = await login({ data: { username, password, remember } });
       if (res.ok) {
         setOpen(false);
         setUsername("");
@@ -35,6 +54,7 @@ export function AdminBubble() {
       setPending(false);
     }
   }
+
 
   return (
     <>
