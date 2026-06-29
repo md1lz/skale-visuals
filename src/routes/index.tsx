@@ -1239,7 +1239,9 @@ function Index() {
         <SocialProof />
         <WhySkale />
         <HowItWorks />
+        <ContentFunnel />
         <Portfolio />
+        <AdsSection />
         <Testimonials />
         <Comparison />
         <FAQ />
