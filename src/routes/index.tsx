@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
 import arrowAsset from "@/assets/arrow-curl.png.asset.json";
+import { listPublicVideos, type PublicVideo } from "@/lib/site-videos.functions";
 
 const CTA_URL = "https://tally.so/r/PdPXRQ";
 const WA_URL = "https://wa.me/33766766153?text=" + encodeURIComponent("Bonjour, je souhaite obtenir un devis pour mes vidéos.");
@@ -97,6 +98,63 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
       </div>
     </div>
   );
+}
+
+// ---------- live video thumb (DB-backed) ----------
+
+function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "video" | "image" | "none"; src: string } {
+  if (!url) return { kind: "none", src: "" };
+  const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
+  if (yt) return { kind: "youtube", src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1` };
+  const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+  if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&background=1` };
+  const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
+  if (dr) return { kind: "drive", src: `https://drive.google.com/file/d/${dr[1]}/preview` };
+  if (/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)) return { kind: "video", src: url };
+  if (/\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(url)) return { kind: "image", src: url };
+  return { kind: "none", src: url };
+}
+
+function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg" }) {
+  const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
+  const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
+  const { kind, src } = detectEmbed(video.source_url);
+  return (
+    <div className={`${widths[size]} shrink-0 group cursor-pointer`}>
+      <div className={`relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br ${gradient} card-hover`}>
+        {video.thumbnail_url ? (
+          <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+        ) : kind === "image" ? (
+          <img src={src} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+        ) : kind === "video" ? (
+          <video src={src} className="absolute inset-0 w-full h-full object-cover" muted loop autoPlay playsInline />
+        ) : kind !== "none" ? (
+          <iframe src={src} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; encrypted-media; picture-in-picture" />
+        ) : null}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none" />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-primary/90 group-hover:scale-110 transition-all duration-300">
+            <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+          </div>
+        </div>
+        {video.title && (
+          <div className="absolute bottom-3 left-3 right-3 pointer-events-none">
+            <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function useSiteVideos() {
+  const [videos, setVideos] = useState<PublicVideo[]>([]);
+  useEffect(() => {
+    let alive = true;
+    listPublicVideos().then((r) => { if (alive) setVideos(r.videos); }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
+  return videos;
 }
 
 // ---------- shared bits ----------
@@ -230,6 +288,7 @@ function Hero() {
     { t: "Talk conférence", c: "Conférence" },
     { t: "Réel viral 2M vues", c: "Reels" },
   ];
+  const liveVideos = useSiteVideos().filter((v) => v.carousel_key === "hero");
 
   return (
     <section data-section="accueil" className="relative overflow-hidden">
@@ -292,9 +351,13 @@ function Hero() {
       {/* hero thumbnail strip — tight spacing */}
       <div className="relative marquee overflow-hidden py-2 mask-fade">
         <div className="flex gap-4 marquee-track w-max">
-          {[...heroThumbs, ...heroThumbs].map((t, i) => (
-            <VideoThumb key={i} title={t.t} category={t.c} idx={i} size="md" />
-          ))}
+          {liveVideos.length > 0
+            ? [...liveVideos, ...liveVideos].map((v, i) => (
+                <LiveVideoThumb key={`${v.id}-${i}`} video={v} idx={i} size="md" />
+              ))
+            : [...heroThumbs, ...heroThumbs].map((t, i) => (
+                <VideoThumb key={i} title={t.t} category={t.c} idx={i} size="md" />
+              ))}
         </div>
       </div>
     </section>
@@ -868,13 +931,21 @@ function Portfolio() {
     { t: "Trailer formation", c: "Promo" },
     { t: "Étude de cas client", c: "B2B" },
   ];
+  const allLive = useSiteVideos();
+  const live1 = allLive.filter((v) => v.carousel_key === "realisations_1");
+  const live2 = allLive.filter((v) => v.carousel_key === "realisations_2");
+  const live3 = allLive.filter((v) => v.carousel_key === "realisations_3");
 
-  const Row = ({ items, reverse, offset = 0 }: { items: { t: string; c: string }[]; reverse?: boolean; offset?: number }) => (
+  const Row = ({ items, live, reverse, offset = 0 }: { items: { t: string; c: string }[]; live: PublicVideo[]; reverse?: boolean; offset?: number }) => (
     <div className="marquee overflow-hidden mask-fade">
       <div className={`flex gap-4 w-max ${reverse ? "marquee-track-reverse" : "marquee-track"}`}>
-        {[...items, ...items].map((it, i) => (
-          <VideoThumb key={i} title={it.t} category={it.c} idx={i + offset} />
-        ))}
+        {live.length > 0
+          ? [...live, ...live].map((v, i) => (
+              <LiveVideoThumb key={`${v.id}-${i}`} video={v} idx={i + offset} />
+            ))
+          : [...items, ...items].map((it, i) => (
+              <VideoThumb key={i} title={it.t} category={it.c} idx={i + offset} />
+            ))}
       </div>
     </div>
   );
@@ -892,9 +963,9 @@ function Portfolio() {
         </FadeIn>
       </div>
       <div className="space-y-4">
-        <Row items={row1} offset={0} />
-        <Row items={row2} reverse offset={3} />
-        <Row items={row3} offset={6} />
+        <Row items={row1} live={live1} offset={0} />
+        <Row items={row2} live={live2} reverse offset={3} />
+        <Row items={row3} live={live3} offset={6} />
       </div>
     </section>
   );
