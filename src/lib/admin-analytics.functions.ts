@@ -173,8 +173,7 @@ export const getSiteAnalytics = createServerFn({ method: "POST" })
     // Fill timeseries with zero-buckets for the window
     const series: { bucket: string; visits: number }[] = [];
     const cursor = new Date(start);
-    const now = new Date();
-    while (cursor <= now) {
+    while (cursor <= end) {
       const k = bucketKey(cursor, bucket);
       const v = visitBuckets.get(k)?.size ?? 0;
       series.push({ bucket: formatBucket(k, bucket), visits: v });
@@ -185,7 +184,8 @@ export const getSiteAnalytics = createServerFn({ method: "POST" })
     const topPages = Array.from(pageCounts.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 8)
-      .map(([path, views]) => ({ path, views }));
+      .map(([path, views]) => ({ path, label: labelPath(path), views }));
+
 
     const ctaBreakdown = Array.from(ctaCounts.entries())
       .sort((a, b) => b[1] - a[1])
