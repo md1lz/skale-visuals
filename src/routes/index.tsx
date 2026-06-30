@@ -480,13 +480,16 @@ function SocialProof() {
                   <LiveVideoSurface video={v} />
                 ) : (
                   <>
-                    <div className="absolute inset-0 grid place-items-center">
-                      <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-md border border-white/25 grid place-items-center group-hover:bg-primary/90 group-hover:scale-110 transition-all duration-300">
-                        <Play className="w-6 h-6 text-white fill-white ml-0.5" />
-                      </div>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+                    <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+                      <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
+                        Avis client {i + 1}
+                      </span>
                     </div>
-                    <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-bold text-white uppercase tracking-widest border border-white/15">
-                      Avis client {i + 1}
+                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300">
+                        <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+                      </div>
                     </div>
                   </>
                 )}
