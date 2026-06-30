@@ -311,8 +311,6 @@ function AdminHome() {
               );
             })}
             </AnimatePresence>
-              );
-            })
           )}
         </div>
       </motion.div>
