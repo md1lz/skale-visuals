@@ -34,7 +34,17 @@ export const listRememberedIps = createServerFn({ method: "GET" }).handler(async
     .from("admin_remembered_ips")
     .select("ip, username, label, created_at, last_seen_at")
     .order("last_seen_at", { ascending: false });
-  return data ?? [];
+  const rows = data ?? [];
+  if (rows.length === 0) return [];
+  const ips = rows.map((r) => r.ip);
+  const since = new Date(Date.now() - 90_000).toISOString();
+  const { data: presence } = await supabaseAdmin
+    .from("site_presence")
+    .select("ip, last_seen_at")
+    .in("ip", ips)
+    .gte("last_seen_at", since);
+  const onlineSet = new Set((presence ?? []).map((p) => p.ip));
+  return rows.map((r) => ({ ...r, online: onlineSet.has(r.ip) }));
 });
 
 export const renameRememberedIp = createServerFn({ method: "POST" })
