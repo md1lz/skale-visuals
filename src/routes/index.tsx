@@ -167,17 +167,20 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
         <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
       ) : kind !== "none" ? (
         kind === "youtube" ? (
-          // Scale the YT iframe up so its title bar, side arrows, pause overlay
-          // and other branding fall outside the parent's overflow-hidden box.
-          // Only the video pixels remain visible.
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          // Slight scale + overflow crop removes the small pause button and side
+          // arrows that YouTube still renders inside the embed chrome. A transparent
+          // hit-catcher sits above the iframe so YouTube never receives hover/focus
+          // events that would trigger its own UI.
+          <div className="absolute inset-0 overflow-hidden">
             <iframe
               ref={iframeRef}
               src={iframeSrc}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-              style={{ width: "300%", height: "300%" }}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ width: "140%", height: "140%" }}
               allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
               allowFullScreen
+              tabIndex={-1}
+              aria-hidden="true"
               onLoad={() => {
                 const w = iframeRef.current?.contentWindow;
                 if (!w) return;
@@ -186,6 +189,8 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
                 w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["highres"] }), "*");
               }}
             />
+            {/* Block YT chrome from appearing on hover/focus */}
+            <div className="absolute inset-0 z-10 pointer-events-auto" aria-hidden="true" />
           </div>
         ) : (
           <iframe
