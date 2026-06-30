@@ -447,7 +447,7 @@ function Hero() {
 
 function SocialProof() {
   const liveAvis = useSiteVideos().filter((v) => v.carousel_key === "avis_video");
-  const slots: (PublicVideo | null)[] = [liveAvis[0] ?? null, liveAvis[1] ?? null];
+  const slots: (PublicVideo | null)[] = [liveAvis[0] ?? null, liveAvis[1] ?? null, liveAvis[2] ?? null];
   return (
     <section data-section="social-proof" className="relative py-12 lg:py-16">
 
@@ -472,7 +472,7 @@ function SocialProof() {
           </p>
         </FadeIn>
         <FadeIn delay={0.3}>
-          <div className="mt-8 grid grid-cols-2 gap-3 sm:gap-5 max-w-xs sm:max-w-3xl mx-auto">
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-5 max-w-xs sm:max-w-4xl mx-auto">
             {slots.map((v, i) => (
               <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-primary/25 bg-gradient-to-br from-red-950/60 via-rose-900/30 to-black card-hover cursor-pointer">
                 <div className="absolute inset-0 opacity-25 pointer-events-none" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
