@@ -202,7 +202,8 @@ function ConnectionsSection() {
   const q = useQuery({
     queryKey: ["admin", "remembered-ips"],
     queryFn: () => fetchList(),
-    initialData: [] as Array<{ ip: string; username: string; label: string | null; created_at: string; last_seen_at: string }>,
+    initialData: [] as Array<{ ip: string; username: string; label: string | null; created_at: string; last_seen_at: string; online: boolean }>,
+    refetchInterval: 15_000,
   });
 
   const [editingIp, setEditingIp] = useState<string | null>(null);
@@ -267,9 +268,20 @@ function ConnectionsSection() {
                       )}
                     </p>
                   )}
-                  <p className="text-[11px] text-neutral-500">
-                    @{row.username} · vu{" "}
-                    {new Date(row.last_seen_at).toLocaleString("fr-FR")}
+                  <p className="text-[11px] text-neutral-500 flex items-center gap-1.5">
+                    <span>@{row.username}</span>
+                    <span>·</span>
+                    {row.online ? (
+                      <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
+                        <span className="relative flex h-1.5 w-1.5">
+                          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                        </span>
+                        En ligne
+                      </span>
+                    ) : (
+                      <span>vu {new Date(row.last_seen_at).toLocaleString("fr-FR")}</span>
+                    )}
                   </p>
                 </div>
                 {isEditing ? (

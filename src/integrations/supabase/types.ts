@@ -182,6 +182,24 @@ export type Database = {
         }
         Relationships: []
       }
+      site_presence: {
+        Row: {
+          ip: string
+          last_seen_at: string
+          user_agent: string | null
+        }
+        Insert: {
+          ip: string
+          last_seen_at?: string
+          user_agent?: string | null
+        }
+        Update: {
+          ip?: string
+          last_seen_at?: string
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       site_videos: {
         Row: {
           carousel_key: string
