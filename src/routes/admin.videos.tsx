@@ -85,9 +85,8 @@ function AdminVideosPage() {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dirtyRef = useRef<Map<string, DirtyEntry>>(new Map());
   const [dirtyCount, setDirtyCount] = useState(0);
-  const [blockerOpen, setBlockerOpen] = useState(false);
   const [blockerBusy, setBlockerBusy] = useState(false);
-  const blockerResolver = useRef<((proceed: boolean) => void) | null>(null);
+  const [localPrompt, setLocalPrompt] = useState<null | (() => void)>(null);
 
   const setDirty = useCallback((id: string, entry: DirtyEntry | null) => {
     if (entry) dirtyRef.current.set(id, entry);
@@ -96,15 +95,11 @@ function AdminVideosPage() {
   }, []);
 
   // Block route changes when there are unsaved edits
-  useBlocker({
+  const blocker = useBlocker({
     shouldBlockFn: () => dirtyRef.current.size > 0,
     withResolver: true,
-    blockerFn: () =>
-      new Promise<boolean>((resolve) => {
-        blockerResolver.current = resolve;
-        setBlockerOpen(true);
-      }),
-  } as Parameters<typeof useBlocker>[0]);
+  });
+  const blockerOpen = blocker.status === "blocked" || !!localPrompt;
 
   // Block tab close / hard refresh
   useEffect(() => {
@@ -125,33 +120,32 @@ function AdminVideosPage() {
     }
   }
 
+  function proceedLeave() {
+    if (blocker.status === "blocked") blocker.proceed();
+    if (localPrompt) { localPrompt(); setLocalPrompt(null); }
+  }
+  function cancelLeave() {
+    if (blocker.status === "blocked") blocker.reset();
+    if (localPrompt) setLocalPrompt(null);
+  }
   function handleBlockerSave() {
     setBlockerBusy(true);
     saveAllDirty().finally(() => {
       setBlockerBusy(false);
-      setBlockerOpen(false);
-      blockerResolver.current?.(true);
-      blockerResolver.current = null;
+      proceedLeave();
     });
   }
   function handleBlockerDiscard() {
     dirtyRef.current.clear();
     setDirtyCount(0);
-    setBlockerOpen(false);
-    blockerResolver.current?.(true);
-    blockerResolver.current = null;
+    proceedLeave();
   }
-  function handleBlockerCancel() {
-    setBlockerOpen(false);
-    blockerResolver.current?.(false);
-    blockerResolver.current = null;
-  }
+  function handleBlockerCancel() { cancelLeave(); }
 
   // Intercept the in-page "Changer de carrousel" too
   function requestLeaveCarousel() {
     if (dirtyRef.current.size === 0) { setSelectedKey(null); return; }
-    blockerResolver.current = (ok) => { if (ok) setSelectedKey(null); };
-    setBlockerOpen(true);
+    setLocalPrompt(() => () => setSelectedKey(null));
   }
 
   async function reload() {
