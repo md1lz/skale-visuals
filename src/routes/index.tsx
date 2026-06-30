@@ -167,16 +167,24 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
         <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
       ) : kind !== "none" ? (
         kind === "youtube" ? (
-          // Scale the YT iframe up so its title bar / branding falls outside
-          // the parent's overflow-hidden box. Only the video itself remains visible.
+          // Scale the YT iframe up so its title bar, side arrows, pause overlay
+          // and other branding fall outside the parent's overflow-hidden box.
+          // Only the video pixels remain visible.
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <iframe
               ref={iframeRef}
               src={iframeSrc}
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-              style={{ width: "180%", height: "180%" }}
+              style={{ width: "300%", height: "300%" }}
               allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
               allowFullScreen
+              onLoad={() => {
+                const w = iframeRef.current?.contentWindow;
+                if (!w) return;
+                // Force highest quality available via the YT iframe API.
+                w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["hd2160"] }), "*");
+                w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["highres"] }), "*");
+              }}
             />
           </div>
         ) : (
