@@ -245,7 +245,7 @@ export const getRecentActivity = createServerFn({ method: "POST" })
       .limit(200);
 
     const rows = events ?? [];
-    const activity: { id: string; type: string; message: string; time: string; variant: "red" | "neutral" | "green" | "amber" }[] = [];
+    const activity: { id: string; type: string; action?: "create" | "update" | "delete"; message: string; time: string; variant: "red" | "neutral" | "green" | "amber" | "blue" }[] = [];
 
     // Real events from site_events
     for (const ev of rows) {
@@ -268,14 +268,21 @@ export const getRecentActivity = createServerFn({ method: "POST" })
       .order("created_at", { ascending: false })
       .limit(50);
     for (const a of adminRows ?? []) {
-      const variant: "red" | "neutral" | "green" | "amber" =
-        a.kind.startsWith("video_delete") ? "amber"
-        : a.kind.startsWith("video") ? "green"
+      const action: "create" | "update" | "delete" | undefined =
+        a.kind.endsWith("_create") || a.kind.endsWith("_add") ? "create"
+        : a.kind.endsWith("_delete") || a.kind.endsWith("_remove") ? "delete"
+        : a.kind.endsWith("_update") || a.kind.endsWith("_edit") ? "update"
+        : undefined;
+      const variant: "red" | "neutral" | "green" | "amber" | "blue" =
+        action === "create" ? "green"
+        : action === "delete" ? "red"
+        : action === "update" ? "blue"
         : "neutral";
-      const type = a.kind.startsWith("video") ? "video" : a.kind;
+      const type = a.kind.split("_")[0] || a.kind;
       activity.push({
         id: `admin-${a.id}`,
         type,
+        action,
         message: a.actor_username ? `${a.message} · @${a.actor_username}` : a.message,
         time: a.created_at,
         variant,
