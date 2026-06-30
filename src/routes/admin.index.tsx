@@ -12,6 +12,7 @@ import {
   YAxis,
 } from "recharts";
 import {
+  Eye,
   MousePointerClick,
   FileSignature,
   TrendingUp,
@@ -49,9 +50,11 @@ function AdminHome() {
     queryFn: () => fetchProfile(),
   });
 
+  // Same queryKey as the Analytics page so both views share cache and auto-sync
   const dayQ = useQuery({
-    queryKey: ["admin", "analytics", "24h", "home"],
-    queryFn: () => fetchAnalytics({ data: { range: "24h" } }),
+    queryKey: ["site-analytics", "today", null, null],
+    queryFn: () => fetchAnalytics({ data: { range: "today" } }),
+    refetchInterval: 60_000,
   });
 
   const activityQ = useQuery({
@@ -65,28 +68,24 @@ function AdminHome() {
   const greetingName = p?.firstName?.trim() || p?.username || "";
   const k = dayQ.data?.kpis;
 
-  const totalVisits24h = dayQ.data?.timeseries.reduce((s, b) => s + b.visits, 0) ?? 0;
-  const ctaRate = k && k.visits > 0 ? Math.round((k.ctaClicks / k.visits) * 1000) / 10 : 0;
+  const totalVisitsToday = dayQ.data?.timeseries.reduce((s, b) => s + b.visits, 0) ?? 0;
+
+  const fmtNum = (n?: number) => (n == null ? "—" : new Intl.NumberFormat("fr-FR").format(n));
+  const fmtDuration = (ms?: number) => {
+    if (!ms) return "—";
+    const s = Math.round(ms / 1000);
+    if (s < 60) return `${s}s`;
+    const m = Math.floor(s / 60);
+    const r = s % 60;
+    return `${m}m ${r}s`;
+  };
 
   const sideKpis = [
-    {
-      label: "Taux de conversion",
-      value: dayQ.isLoading ? "…" : `${k?.conversionRate ?? 0}%`,
-      hint: "Visiteurs → CTA",
-      icon: TrendingUp,
-    },
-    {
-      label: "% Clics CTA",
-      value: dayQ.isLoading ? "…" : `${ctaRate}%`,
-      hint: `${k?.ctaClicks ?? 0} clics / ${k?.visits ?? 0} visites`,
-      icon: MousePointerClick,
-    },
-    {
-      label: "Devis soumis",
-      value: dayQ.isLoading ? "…" : (k?.devisSubmitted ?? 0),
-      hint: "Sur 24h",
-      icon: FileSignature,
-    },
+    { label: "Visites", value: dayQ.isLoading ? "…" : fmtNum(k?.visits), icon: Eye },
+    { label: "Clics CTA", value: dayQ.isLoading ? "…" : fmtNum(k?.ctaClicks), icon: MousePointerClick },
+    { label: "Conversion", value: dayQ.isLoading ? "…" : `${k?.conversionRate ?? 0}%`, icon: TrendingUp },
+    { label: "Temps moyen", value: dayQ.isLoading ? "…" : fmtDuration(k?.avgDurationMs), icon: Clock },
+    { label: "Devis soumis", value: dayQ.isLoading ? "…" : fmtNum(k?.devisSubmitted), icon: FileSignature },
   ];
 
 
@@ -130,10 +129,10 @@ function AdminHome() {
         <div className="flex items-baseline justify-between mb-4">
           <div>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500">
-              Connexions au site — 24h
+              Connexions au site — Aujourd'hui
             </p>
             <p className="text-2xl font-semibold text-white mt-1">
-              {dayQ.isLoading ? "…" : totalVisits24h}
+              {dayQ.isLoading ? "…" : totalVisitsToday}
               <span className="text-xs text-neutral-500 font-normal ml-2">visites</span>
             </p>
           </div>
@@ -184,7 +183,7 @@ function AdminHome() {
       </motion.div>
 
       {/* Side KPIs */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-10">
         {sideKpis.map((c, i) => {
           const Icon = c.icon;
           return (
@@ -203,7 +202,6 @@ function AdminHome() {
               </div>
               <div>
                 <p className="text-2xl font-semibold text-white">{c.value}</p>
-                <p className="text-[11px] text-neutral-500 mt-0.5">{c.hint}</p>
               </div>
             </motion.div>
           );
