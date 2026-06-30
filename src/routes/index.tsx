@@ -115,9 +115,7 @@ function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "vide
   return { kind: "none", src: url };
 }
 
-function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg" }) {
-  const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
-  const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
+function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSize?: "sm" | "md" }) {
   const { kind, src } = detectEmbed(video.source_url);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -130,14 +128,8 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
     setPlaying(next);
     if (kind === "video" && videoRef.current) {
       const v = videoRef.current;
-      if (next) {
-        v.muted = false;
-        v.volume = 0.5;
-        v.play().catch(() => {});
-      } else {
-        v.muted = true;
-        v.play().catch(() => {});
-      }
+      if (next) { v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
+      else { v.muted = true; v.play().catch(() => {}); }
     } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
       const w = iframeRef.current.contentWindow;
       if (next) {
@@ -153,55 +145,65 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
     }
   }
 
+  const btn = btnSize === "sm" ? "w-12 h-12" : "w-14 h-14";
+  const ic = btnSize === "sm" ? "w-4 h-4" : "w-5 h-5";
+
+  return (
+    <>
+      {kind === "image" ? (
+        <img src={src} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+      ) : kind === "video" ? (
+        <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
+      ) : kind !== "none" ? (
+        <iframe ref={iframeRef} src={src} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; encrypted-media; picture-in-picture" />
+      ) : video.thumbnail_url ? (
+        <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+      ) : null}
+      {/* hover dim */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      {/* source slides down */}
+      {video.source_label && (
+        <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+          <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
+            {video.source_label}
+          </span>
+        </div>
+      )}
+      {/* title slides up */}
+      {video.title && (
+        <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+          <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
+        </div>
+      )}
+      {/* play/pause button */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button
+          type="button"
+          onClick={togglePlay}
+          aria-label={playing ? "Mettre en pause" : "Lancer la vidéo"}
+          className={`${btn} rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300`}
+        >
+          {playing ? (
+            <svg viewBox="0 0 24 24" className={`${ic} text-white fill-white`} aria-hidden>
+              <rect x="6" y="5" width="4" height="14" rx="1" />
+              <rect x="14" y="5" width="4" height="14" rx="1" />
+            </svg>
+          ) : (
+            <Play className={`${ic} text-white fill-white ml-0.5`} />
+          )}
+        </button>
+      </div>
+    </>
+  );
+}
+
+function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg" }) {
+  const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
+  const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
   return (
     <div className={`${widths[size]} shrink-0 group cursor-pointer`}>
       <div className={`relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br ${gradient} card-hover`}>
-        {video.thumbnail_url ? (
-          <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
-        ) : kind === "image" ? (
-          <img src={src} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
-        ) : kind === "video" ? (
-          <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
-        ) : kind !== "none" ? (
-          <iframe ref={iframeRef} src={src} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; encrypted-media; picture-in-picture" />
-        ) : null}
-        {/* hover dim */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-        {/* source: slides down from top on hover */}
-        {video.source_label && (
-          <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
-            <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
-              {video.source_label}
-            </span>
-          </div>
-        )}
-
-        {/* title: slides up from bottom on hover */}
-        {video.title && (
-          <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
-            <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
-          </div>
-        )}
-
-        {/* sound toggle button: hidden, shown on hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button
-            type="button"
-            onClick={togglePlay}
-            aria-label={playing ? "Mettre en pause" : "Lancer la vidéo"}
-            className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300"
-          >
-            {playing ? (
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-white fill-white" aria-hidden>
-                <rect x="6" y="5" width="4" height="14" rx="1" />
-                <rect x="14" y="5" width="4" height="14" rx="1" />
-              </svg>
-            ) : (
-              <Play className="w-5 h-5 text-white fill-white ml-0.5" />
-            )}
-          </button>
-        </div>
+        <LiveVideoSurface video={video} />
       </div>
     </div>
   );
@@ -820,16 +822,22 @@ function ContentFunnel() {
 // ---------- ads / sales section ----------
 
 function AdsSection() {
-  const slides = [
-    { label: "Hook scroll-stop", duration: "0:08", tone: "from-rose-700/70 via-red-900/50" },
-    { label: "Témoignage client", duration: "0:24", tone: "from-red-600/70 via-rose-800/50" },
-    { label: "Démo produit", duration: "0:18", tone: "from-rose-500/70 via-red-700/50" },
+  const liveAds = useSiteVideos().filter((v) => v.carousel_key === "ads_alexis");
+  const fallback: PublicVideo[] = [
+    { id: "f1", carousel_key: "ads_alexis", title: "Hook scroll-stop", source_url: "", source_label: "Ad · 0:08", thumbnail_url: null, format: "court", position: 0 },
+    { id: "f2", carousel_key: "ads_alexis", title: "Témoignage client", source_url: "", source_label: "Ad · 0:24", thumbnail_url: null, format: "court", position: 1 },
+    { id: "f3", carousel_key: "ads_alexis", title: "Démo produit", source_url: "", source_label: "Ad · 0:18", thumbnail_url: null, format: "court", position: 2 },
   ];
+  const slides = liveAds.length > 0 ? liveAds : fallback;
+  const len = slides.length;
   const [idx, setIdx] = useState(0);
-  const next = () => setIdx((i) => (i + 1) % slides.length);
-  const prev = () => setIdx((i) => (i - 1 + slides.length) % slides.length);
-
-  const positions = [-1, 0, 1];
+  const next = () => setIdx((i) => (i + 1) % len);
+  const prev = () => setIdx((i) => (i - 1 + len) % len);
+  const tones = [
+    "from-rose-700/70 via-red-900/50",
+    "from-red-600/70 via-rose-800/50",
+    "from-rose-500/70 via-red-700/50",
+  ];
 
   return (
     <section data-section="ads" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
@@ -870,62 +878,54 @@ function AdsSection() {
           </div>
         </FadeIn>
 
-        {/* Card carousel */}
+        {/* Card-deck carousel */}
         <FadeIn delay={0.2}>
-          <div className="mt-12 relative h-[460px] sm:h-[520px] flex items-center justify-center select-none">
-            {/* arrows */}
+          <div className="mt-12 relative h-[520px] sm:h-[580px] flex items-center justify-center select-none [perspective:1400px]">
             <button
               onClick={prev}
               aria-label="Précédent"
-              className="absolute left-2 sm:left-6 z-20 liquid-glass rounded-full p-3 text-white hover:bg-white/15 transition-colors"
+              className="absolute left-2 sm:left-6 z-30 liquid-glass rounded-full p-3 text-white hover:bg-white/15 transition-colors"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={next}
               aria-label="Suivant"
-              className="absolute right-2 sm:right-6 z-20 liquid-glass rounded-full p-3 text-white hover:bg-white/15 transition-colors"
+              className="absolute right-2 sm:right-6 z-30 liquid-glass rounded-full p-3 text-white hover:bg-white/15 transition-colors"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
 
-            <div className="relative w-full h-full flex items-center justify-center">
-              {positions.map((offset) => {
-                const i = ((idx + offset) % slides.length + slides.length) % slides.length;
-                const s = slides[i];
+            <div className="relative w-full h-full flex items-center justify-center [transform-style:preserve-3d]">
+              {slides.map((s, i) => {
+                // signed offset around the active card, wrapped to [-floor(len/2), ceil(len/2)-1]
+                const half = Math.floor(len / 2);
+                let offset = ((i - idx) % len + len) % len;
+                if (offset > half) offset -= len;
                 const abs = Math.abs(offset);
-                const translate = offset * 220;
-                const scale = abs === 0 ? 1 : 0.78;
-                const opacity = abs === 0 ? 1 : 0.5;
-                const z = 10 - abs;
+                const x = offset * 170;
+                const y = abs * 14;
+                const scale = abs === 0 ? 1 : 0.82 - (abs - 1) * 0.06;
+                const rotateY = offset * -14;
+                const rotateZ = offset * -4;
+                const opacity = abs > 2 ? 0 : abs === 0 ? 1 : 0.7;
+                const z = 50 - abs;
+                const tone = tones[i % tones.length];
                 return (
                   <motion.div
-                    key={`${i}-${offset}`}
+                    key={s.id}
                     initial={false}
-                    animate={{ x: `calc(-50% + ${translate}px)`, y: "-50%", scale, opacity }}
-                    transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                    style={{ zIndex: z, position: "absolute", top: "50%", left: "50%" }}
-                    className="cursor-pointer"
+                    animate={{ x, y, scale, rotateY, rotateZ, opacity }}
+                    transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+                    style={{ zIndex: z, position: "absolute", top: "50%", left: "50%", translateX: "-50%", translateY: "-50%", transformStyle: "preserve-3d", transformOrigin: "center center" }}
                     onClick={() => offset !== 0 && setIdx(i)}
+                    className={offset !== 0 ? "cursor-pointer" : ""}
                   >
-                    <div className={`relative w-[240px] sm:w-[260px] aspect-[9/16] rounded-[1.75rem] overflow-hidden border border-primary/40 bg-gradient-to-br ${s.tone} to-black shadow-[0_30px_60px_-20px_rgba(226,75,74,0.5)]`}>
-                      <div className="absolute inset-0 opacity-30" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
-                      <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-bold text-white uppercase tracking-widest border border-white/15">
+                    <div className={`group relative w-[240px] sm:w-[280px] aspect-[9/16] rounded-[1.75rem] overflow-hidden border border-primary/40 bg-gradient-to-br ${tone} to-black shadow-[0_40px_80px_-20px_rgba(226,75,74,0.55)]`}>
+                      <LiveVideoSurface video={s} btnSize="sm" />
+                      <div className="absolute inset-0 pointer-events-none opacity-25" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
+                      <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-bold text-white uppercase tracking-widest border border-white/15 pointer-events-none">
                         Ad
-                      </div>
-                      <div className="absolute top-3 right-3 px-2 py-1 rounded-md bg-primary text-primary-foreground text-[10px] font-bold tabular-nums">
-                        {s.duration}
-                      </div>
-                      <div className="absolute inset-0 grid place-items-center">
-                        <div className="w-14 h-14 rounded-full bg-white/15 backdrop-blur border border-white/30 grid place-items-center">
-                          <Play className="w-5 h-5 fill-white text-white ml-0.5" />
-                        </div>
-                      </div>
-                      <div className="absolute bottom-0 left-0 right-0 p-3 bg-gradient-to-t from-black/90 to-transparent">
-                        <p className="text-sm font-bold text-white">{s.label}</p>
-                        <div className="mt-2 h-1 rounded-full bg-white/15 overflow-hidden">
-                          <div className="h-full w-2/3 bg-primary" />
-                        </div>
                       </div>
                     </div>
                   </motion.div>
@@ -933,7 +933,6 @@ function AdsSection() {
               })}
             </div>
 
-            {/* dots */}
             <div className="absolute bottom-0 left-1/2 -translate-x-1/2 flex gap-2">
               {slides.map((_, i) => (
                 <button
