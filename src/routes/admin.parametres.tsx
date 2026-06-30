@@ -221,6 +221,24 @@ function ConnectionsSection() {
     q.refetch();
   }
 
+  function formatLastSeen(iso: string) {
+    const d = new Date(iso);
+    const now = new Date();
+    const time = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+
+    const isSameDay = (a: Date, b: Date) =>
+      a.getFullYear() === b.getFullYear() &&
+      a.getMonth() === b.getMonth() &&
+      a.getDate() === b.getDate();
+
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+
+    if (isSameDay(d, now)) return `vu aujourd'hui à ${time}`;
+    if (isSameDay(d, yesterday)) return `vu hier à ${time}`;
+    return `vu ${d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })} à ${time}`;
+  }
+
   return (
     <Section
       icon={Wifi}
@@ -280,7 +298,7 @@ function ConnectionsSection() {
                         En ligne
                       </span>
                     ) : (
-                      <span>vu {new Date(row.last_seen_at).toLocaleString("fr-FR")}</span>
+                      <span>{formatLastSeen(row.last_seen_at)}</span>
                     )}
                   </p>
                 </div>
