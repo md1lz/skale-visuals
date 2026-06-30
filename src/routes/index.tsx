@@ -176,15 +176,13 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
               ref={iframeRef}
               src={iframeSrc}
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              style={{ width: "140%", height: "140%" }}
-              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-              allowFullScreen
+              style={{ width: "150%", height: "150%" }}
+              allow="autoplay; encrypted-media; picture-in-picture"
               tabIndex={-1}
               aria-hidden="true"
               onLoad={() => {
                 const w = iframeRef.current?.contentWindow;
                 if (!w) return;
-                // Force highest quality available via the YT iframe API.
                 w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["hd2160"] }), "*");
                 w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["highres"] }), "*");
               }}
