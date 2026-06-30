@@ -87,6 +87,7 @@ function AdminVideosPage() {
   const [dirtyCount, setDirtyCount] = useState(0);
   const [blockerBusy, setBlockerBusy] = useState(false);
   const [localPrompt, setLocalPrompt] = useState<null | (() => void)>(null);
+  const [savingAll, setSavingAll] = useState(false);
 
   const setDirty = useCallback((id: string, entry: DirtyEntry | null) => {
     if (entry) dirtyRef.current.set(id, entry);
@@ -118,6 +119,12 @@ function AdminVideosPage() {
     for (const e of entries) {
       try { await e.save(); } catch { /* card shows its own error */ }
     }
+  }
+
+  async function handleSaveAll() {
+    if (dirtyRef.current.size === 0 || savingAll) return;
+    setSavingAll(true);
+    try { await saveAllDirty(); } finally { setSavingAll(false); }
   }
 
   function proceedLeave() {
@@ -171,34 +178,58 @@ function AdminVideosPage() {
   return (
     <DirtyContext.Provider value={{ setDirty }}>
     <div className="p-8 mx-auto max-w-[1400px] w-full">
-      <header className="mb-8">
-        <div className="flex items-center gap-3">
+      <header className="mb-8 flex items-start justify-between gap-4">
+        <div className="min-w-0">
           {selected && (
             <button
               onClick={requestLeaveCarousel}
-              className="inline-flex items-center gap-2 text-sm text-neutral-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
+              className="inline-flex items-center gap-2 text-sm text-neutral-300 hover:text-white px-3 py-1.5 -ml-3 rounded-lg hover:bg-white/5 transition-colors"
             >
               <ArrowLeft className="h-4 w-4" /> Changer de carrousel
             </button>
           )}
-          {dirtyCount > 0 && (
-            <span className="inline-flex items-center gap-1.5 text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full px-2.5 py-1">
-              <AlertTriangle className="h-3 w-3" />
-              {dirtyCount} modification{dirtyCount > 1 ? "s" : ""} non enregistrée{dirtyCount > 1 ? "s" : ""}
-            </span>
+          <h1 className="mt-2 text-3xl font-bold flex items-center gap-3">
+            <VideoIcon className="h-7 w-7 text-red-500" /> {selected ? selected.label : "Vidéos"}
+          </h1>
+          {!selected && (
+            <p className="mt-1 text-sm text-neutral-400">
+              Panneau de contrôle des carrousels affichés sur le site public. Chaque modification se reflète immédiatement.
+            </p>
+          )}
+          {selected?.description && (
+            <p className="mt-1 text-sm text-neutral-400 max-w-2xl">{selected.description}</p>
           )}
         </div>
-        <h1 className="mt-2 text-3xl font-bold flex items-center gap-3">
-          <VideoIcon className="h-7 w-7 text-red-500" /> {selected ? selected.label : "Vidéos"}
-        </h1>
-        {!selected && (
-          <p className="mt-1 text-sm text-neutral-400">
-            Panneau de contrôle des carrousels affichés sur le site public. Chaque modification se reflète immédiatement.
-          </p>
-        )}
-        {selected?.description && (
-          <p className="mt-1 text-sm text-neutral-400 max-w-2xl">{selected.description}</p>
-        )}
+
+        <div className="self-center shrink-0">
+          <AnimatePresence>
+            {dirtyCount > 0 && (
+              <motion.button
+                key="save-all"
+                initial={{ opacity: 0, y: -4, scale: 0.96 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -4, scale: 0.96 }}
+                transition={{ duration: 0.18 }}
+                onClick={handleSaveAll}
+                disabled={savingAll}
+                className="inline-flex items-center gap-2 rounded-xl bg-amber-500/10 hover:bg-amber-500/15 border border-amber-500/40 px-4 py-2.5 text-sm text-amber-100 disabled:opacity-60 transition-colors group"
+              >
+                <span className="grid place-items-center h-7 w-7 rounded-lg bg-amber-500/20 text-amber-300">
+                  {savingAll ? <Loader2 className="h-4 w-4 animate-spin" /> : <AlertTriangle className="h-4 w-4" />}
+                </span>
+                <span className="flex flex-col items-start leading-tight">
+                  <span className="text-[11px] text-amber-200/80">
+                    {dirtyCount} modification{dirtyCount > 1 ? "s" : ""} non enregistrée{dirtyCount > 1 ? "s" : ""}
+                  </span>
+                  <span className="text-sm font-semibold text-white inline-flex items-center gap-1.5">
+                    {savingAll ? "Enregistrement…" : "Enregistrer"}
+                    {!savingAll && <Check className="h-3.5 w-3.5 opacity-0 group-hover:opacity-100 transition-opacity" />}
+                  </span>
+                </span>
+              </motion.button>
+            )}
+          </AnimatePresence>
+        </div>
       </header>
 
       {loading ? (
@@ -328,8 +359,6 @@ function CaseCard({
   const [previewUrl, setPreviewUrl] = useState(video.playback_url || video.source_url);
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const { setDirty } = useContext(DirtyContext);
 
@@ -365,7 +394,6 @@ function CaseCard({
   }
 
   async function handleSave() {
-    setSaving(true);
     try {
       const patch: Partial<Video> & { id: string } = { id: video.id };
       if (carousel.show_title) patch.title = title;
@@ -373,15 +401,13 @@ function CaseCard({
       patch.source_url = mediaUrl;
       await updateVideo({ data: patch });
       onLocalPatch({ ...patch, playback_url: previewUrl });
-      setSaved(true);
       setDirty(video.id, null);
       toast.success("Modifications enregistrées");
       const titleLabel = (carousel.show_title && title.trim()) || (carousel.show_source && source.trim()) || carousel.label;
       logAdminActivity({ data: { kind: "video_update", message: `Vidéo mise à jour : ${titleLabel}` } }).catch(() => {});
-      setTimeout(() => setSaved(false), 2000);
     } catch (e) {
       toast.error("Échec de l'enregistrement : " + (e as Error).message);
-    } finally { setSaving(false); }
+    }
   }
 
   // Track dirty state vs original video
@@ -481,13 +507,6 @@ function CaseCard({
           </div>
         )}
 
-        <button
-          onClick={handleSave}
-          disabled={saving || uploading}
-          className={`mt-auto inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${saved ? "bg-emerald-600 hover:bg-emerald-600" : "bg-red-600 hover:bg-red-500"}`}
-        >
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : saved ? <><Check className="h-4 w-4" /> Enregistré</> : "Enregistrer"}
-        </button>
       </div>
     </motion.div>
   );
