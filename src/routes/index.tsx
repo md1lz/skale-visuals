@@ -110,8 +110,14 @@ function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "vide
   if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&background=1&controls=0` };
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (dr) return { kind: "drive", src: `https://drive.google.com/file/d/${dr[1]}/preview` };
+  const loom = url.match(/loom\.com\/(?:share|embed)\/([\w-]+)/);
+  if (loom) return { kind: "drive", src: `https://www.loom.com/embed/${loom[1]}?autoplay=1&muted=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true` };
+  const stream = url.match(/streamable\.com\/(?:e\/)?([\w-]+)/);
+  if (stream) return { kind: "drive", src: `https://streamable.com/e/${stream[1]}?autoplay=1&muted=1&loop=1` };
   if (/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)) return { kind: "video", src: url };
   if (/\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(url)) return { kind: "image", src: url };
+  // Fallback: try as direct video source (signed URLs without extension, CDN URLs, etc.)
+  if (/^https?:\/\//i.test(url)) return { kind: "video", src: url };
   return { kind: "none", src: url };
 }
 
