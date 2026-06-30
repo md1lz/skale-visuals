@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowLeft, ChevronDown, Upload, Link as LinkIcon, Loader2, Check, Video as VideoIcon, Image as ImageIcon,
 } from "lucide-react";
-import { listAllVideos, updateVideo, createVideoUploadUrl } from "@/lib/admin-videos.functions";
+import { listAllVideos, updateVideo, createVideoUploadUrl, createVideoPlaybackUrl } from "@/lib/admin-videos.functions";
 import { supabase } from "@/integrations/supabase/client";
 
 export const Route = createFileRoute("/admin/videos")({ component: AdminVideosPage });
@@ -57,6 +57,11 @@ function dropHint(c: Carousel) {
 
 function acceptFor(c: Carousel) {
   return c.media_kind === "image" ? "image/*" : "video/*";
+}
+
+function storagePathFromReference(url: string) {
+  const match = url.match(/^storage:\/\/site-videos\/(.+)$/);
+  return match ? decodeURIComponent(match[1]) : null;
 }
 
 function AdminVideosPage() {
@@ -190,6 +195,16 @@ function CaseCard({
   useEffect(() => { setTitle(video.title); }, [video.title]);
   useEffect(() => { setSource(video.source_label); }, [video.source_label]);
   useEffect(() => { setMediaUrl(video.source_url); setPreviewUrl(video.playback_url || video.source_url); }, [video.source_url, video.playback_url]);
+
+  useEffect(() => {
+    let alive = true;
+    const path = storagePathFromReference(mediaUrl);
+    if (!path || previewUrl !== mediaUrl) return;
+    createVideoPlaybackUrl({ data: { path } })
+      .then((res) => { if (alive) setPreviewUrl(res.playbackUrl); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [mediaUrl, previewUrl]);
 
   async function uploadFile(file: File) {
     setUploading(true);
