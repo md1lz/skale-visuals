@@ -115,9 +115,7 @@ function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "vide
   return { kind: "none", src: url };
 }
 
-function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg" }) {
-  const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
-  const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
+function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSize?: "sm" | "md" }) {
   const { kind, src } = detectEmbed(video.source_url);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -130,14 +128,8 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
     setPlaying(next);
     if (kind === "video" && videoRef.current) {
       const v = videoRef.current;
-      if (next) {
-        v.muted = false;
-        v.volume = 0.5;
-        v.play().catch(() => {});
-      } else {
-        v.muted = true;
-        v.play().catch(() => {});
-      }
+      if (next) { v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
+      else { v.muted = true; v.play().catch(() => {}); }
     } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
       const w = iframeRef.current.contentWindow;
       if (next) {
@@ -153,55 +145,65 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
     }
   }
 
+  const btn = btnSize === "sm" ? "w-12 h-12" : "w-14 h-14";
+  const ic = btnSize === "sm" ? "w-4 h-4" : "w-5 h-5";
+
+  return (
+    <>
+      {kind === "image" ? (
+        <img src={src} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+      ) : kind === "video" ? (
+        <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
+      ) : kind !== "none" ? (
+        <iframe ref={iframeRef} src={src} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; encrypted-media; picture-in-picture" />
+      ) : video.thumbnail_url ? (
+        <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+      ) : null}
+      {/* hover dim */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      {/* source slides down */}
+      {video.source_label && (
+        <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+          <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
+            {video.source_label}
+          </span>
+        </div>
+      )}
+      {/* title slides up */}
+      {video.title && (
+        <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+          <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
+        </div>
+      )}
+      {/* play/pause button */}
+      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+        <button
+          type="button"
+          onClick={togglePlay}
+          aria-label={playing ? "Mettre en pause" : "Lancer la vidéo"}
+          className={`${btn} rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300`}
+        >
+          {playing ? (
+            <svg viewBox="0 0 24 24" className={`${ic} text-white fill-white`} aria-hidden>
+              <rect x="6" y="5" width="4" height="14" rx="1" />
+              <rect x="14" y="5" width="4" height="14" rx="1" />
+            </svg>
+          ) : (
+            <Play className={`${ic} text-white fill-white ml-0.5`} />
+          )}
+        </button>
+      </div>
+    </>
+  );
+}
+
+function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg" }) {
+  const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
+  const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
   return (
     <div className={`${widths[size]} shrink-0 group cursor-pointer`}>
       <div className={`relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br ${gradient} card-hover`}>
-        {video.thumbnail_url ? (
-          <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
-        ) : kind === "image" ? (
-          <img src={src} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
-        ) : kind === "video" ? (
-          <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
-        ) : kind !== "none" ? (
-          <iframe ref={iframeRef} src={src} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; encrypted-media; picture-in-picture" />
-        ) : null}
-        {/* hover dim */}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-
-        {/* source: slides down from top on hover */}
-        {video.source_label && (
-          <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
-            <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
-              {video.source_label}
-            </span>
-          </div>
-        )}
-
-        {/* title: slides up from bottom on hover */}
-        {video.title && (
-          <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
-            <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
-          </div>
-        )}
-
-        {/* sound toggle button: hidden, shown on hover */}
-        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <button
-            type="button"
-            onClick={togglePlay}
-            aria-label={playing ? "Mettre en pause" : "Lancer la vidéo"}
-            className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300"
-          >
-            {playing ? (
-              <svg viewBox="0 0 24 24" className="w-5 h-5 text-white fill-white" aria-hidden>
-                <rect x="6" y="5" width="4" height="14" rx="1" />
-                <rect x="14" y="5" width="4" height="14" rx="1" />
-              </svg>
-            ) : (
-              <Play className="w-5 h-5 text-white fill-white ml-0.5" />
-            )}
-          </button>
-        </div>
+        <LiveVideoSurface video={video} />
       </div>
     </div>
   );
