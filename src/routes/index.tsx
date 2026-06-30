@@ -102,7 +102,7 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
 
 // ---------- live video thumb (DB-backed) ----------
 
-function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "video" | "image" | "none"; src: string } {
+function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "loom" | "streamable" | "video" | "image" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
   if (yt) return { kind: "youtube", src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1` };
@@ -111,9 +111,9 @@ function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "vide
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (dr) return { kind: "drive", src: `https://drive.google.com/file/d/${dr[1]}/preview` };
   const loom = url.match(/loom\.com\/(?:share|embed)\/([\w-]+)/);
-  if (loom) return { kind: "drive", src: `https://www.loom.com/embed/${loom[1]}?autoplay=1&muted=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true` };
+  if (loom) return { kind: "loom", src: `https://www.loom.com/embed/${loom[1]}?autoplay=1&muted=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&loop=true` };
   const stream = url.match(/streamable\.com\/(?:e\/)?([\w-]+)/);
-  if (stream) return { kind: "drive", src: `https://streamable.com/e/${stream[1]}?autoplay=1&muted=1&loop=1` };
+  if (stream) return { kind: "streamable", src: `https://streamable.com/e/${stream[1]}?autoplay=1&muted=1&loop=1&nocontrols=1` };
   if (/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)) return { kind: "video", src: url };
   if (/\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(url)) return { kind: "image", src: url };
   // Fallback: try as direct video source (signed URLs without extension, CDN URLs, etc.)
@@ -126,6 +126,8 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [iframeSrc, setIframeSrc] = useState(src);
+  useEffect(() => { setIframeSrc(src); setPlaying(false); }, [src]);
 
   function togglePlay(e: React.MouseEvent) {
     e.preventDefault();
@@ -148,6 +150,9 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
       const w = iframeRef.current.contentWindow;
       w.postMessage(JSON.stringify({ method: "setMuted", value: !next }), "*");
       w.postMessage(JSON.stringify({ method: "setVolume", value: next ? 0.5 : 0 }), "*");
+    } else if (kind === "streamable" || kind === "loom") {
+      // No reliable postMessage API: swap iframe src to toggle mute.
+      setIframeSrc(src.replace(/muted=1/g, next ? "muted=0" : "muted=1"));
     }
   }
 
@@ -161,7 +166,13 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
       ) : kind === "video" ? (
         <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
       ) : kind !== "none" ? (
-        <iframe ref={iframeRef} src={src} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; encrypted-media; picture-in-picture" />
+        <iframe
+          ref={iframeRef}
+          src={iframeSrc}
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
+          allowFullScreen
+        />
       ) : video.thumbnail_url ? (
         <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
       ) : null}
