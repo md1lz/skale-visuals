@@ -116,7 +116,7 @@ function AdminVideosPage() {
         </div>
       ) : !selected ? (
         <div className="max-w-xl">
-          <label className="text-xs uppercase tracking-wide text-neutral-400">Carrousel</label>
+          <label className="text-xs uppercase tracking-wide text-neutral-400">MODIFIER UNE RUBRIQUE DE VIDÉOS</label>
           <div className="relative mt-1">
             <button
               onClick={() => setDropdownOpen((o) => !o)}
