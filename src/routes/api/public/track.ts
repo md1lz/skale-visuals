@@ -47,6 +47,11 @@ export const Route = createFileRoute("/api/public/track")({
           const ua = request.headers.get("user-agent");
           const device = detectDevice(ua);
           const source = detectSource(parsed.data.referrer);
+          const ip =
+            request.headers.get("cf-connecting-ip") ||
+            request.headers.get("x-real-ip") ||
+            (request.headers.get("x-forwarded-for") || "").split(",")[0].trim() ||
+            null;
 
           const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
           await supabaseAdmin.from("site_events").insert({
@@ -60,6 +65,13 @@ export const Route = createFileRoute("/api/public/track")({
             user_agent: ua,
             device,
           });
+
+          if (ip) {
+            await supabaseAdmin.from("site_presence").upsert(
+              { ip, last_seen_at: new Date().toISOString(), user_agent: ua },
+              { onConflict: "ip" },
+            );
+          }
 
           return new Response(null, { status: 204 });
         } catch {
