@@ -30,6 +30,12 @@ export const listPublicVideos = createServerFn({ method: "GET" }).handler(async 
   return { videos };
 });
 
+export type AdminVideoWithPlayback = PublicVideo & {
+  visible: boolean;
+  playback_url: string;
+  thumbnail_playback_url: string | null;
+};
+
 // Re-sign any URL that points at our private "site-videos" bucket so the
 // <video>/<iframe> in the browser can actually fetch the bytes.
 export async function signStorageUrls(
@@ -60,8 +66,40 @@ export async function signStorageUrls(
   );
 }
 
+export async function addPlaybackUrls<
+  T extends { source_url: string; thumbnail_url: string | null; playback_url?: string; thumbnail_playback_url?: string | null },
+>(rows: T[]) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const EXPIRY = 60 * 60 * 24 * 7;
+  await Promise.all(
+    rows.map(async (r) => {
+      const sp = extractStoragePath(r.source_url);
+      r.playback_url = r.source_url;
+      if (sp) {
+        r.source_url = toStorageReference(sp);
+        const { data: s } = await supabaseAdmin.storage.from("site-videos").createSignedUrl(sp, EXPIRY);
+        if (s?.signedUrl) r.playback_url = s.signedUrl;
+      }
+
+      r.thumbnail_playback_url = r.thumbnail_url;
+      const tp = extractStoragePath(r.thumbnail_url);
+      if (tp) {
+        r.thumbnail_url = toStorageReference(tp);
+        const { data: s } = await supabaseAdmin.storage.from("site-videos").createSignedUrl(tp, EXPIRY);
+        if (s?.signedUrl) r.thumbnail_playback_url = s.signedUrl;
+      }
+    }),
+  );
+}
+
+export function toStorageReference(path: string) {
+  return `storage://site-videos/${path}`;
+}
+
 function extractStoragePath(u: string | null | undefined): string | null {
   if (!u) return null;
+  const ref = u.match(/^storage:\/\/site-videos\/(.+)$/);
+  if (ref) return decodeURIComponent(ref[1]);
   const m = u.match(/\/storage\/v1\/object\/(?:public|sign|authenticated)\/site-videos\/([^?#]+)/);
   return m ? decodeURIComponent(m[1]) : null;
 }
