@@ -224,7 +224,7 @@ function AnalyticsPage() {
           {data && data.ctaBreakdown.length > 0 ? (
             <div className="h-64">
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={data.ctaBreakdown} layout="vertical" margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
+                <BarChart data={[...data.ctaBreakdown].sort((a,b)=>b.clicks-a.clicks).slice(0,5)} layout="vertical" margin={{ top: 5, right: 10, left: 0, bottom: 0 }}>
                   <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" />
                   <XAxis type="number" stroke="#737373" fontSize={11} tickLine={false} axisLine={false} allowDecimals={false} />
                   <YAxis
@@ -259,7 +259,7 @@ function AnalyticsPage() {
         >
           {data && data.topPages.length > 0 ? (
             <ul className="divide-y divide-white/5">
-              {data.topPages.map((p) => (
+              {[...data.topPages].sort((a,b)=>b.views-a.views).slice(0,5).map((p) => (
                 <li key={p.path} className="flex items-center justify-between py-2.5 text-sm gap-3">
                   <span className="text-neutral-200 truncate">{(p as { label?: string }).label ?? p.path}</span>
                   <span className="text-neutral-400 tabular-nums">{p.views.toLocaleString("fr-FR")}</span>
@@ -303,7 +303,10 @@ function AnalyticsPage() {
                         border: "1px solid rgba(255,255,255,0.1)",
                         borderRadius: 8,
                         fontSize: 12,
+                        color: "#ffffff",
                       }}
+                      itemStyle={{ color: "#ffffff" }}
+                      labelStyle={{ color: "#ffffff" }}
                     />
                   </PieChart>
                 </ResponsiveContainer>
