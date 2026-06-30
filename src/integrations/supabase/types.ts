@@ -14,6 +14,30 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_activity: {
+        Row: {
+          actor_username: string | null
+          created_at: string
+          id: string
+          kind: string
+          message: string
+        }
+        Insert: {
+          actor_username?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          message: string
+        }
+        Update: {
+          actor_username?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message?: string
+        }
+        Relationships: []
+      }
       admin_login_events: {
         Row: {
           created_at: string

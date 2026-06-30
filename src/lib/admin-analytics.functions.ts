@@ -260,6 +260,28 @@ export const getRecentActivity = createServerFn({ method: "POST" })
       }
     }
 
+    // Admin actions (saves, updates, deletions)
+    const { data: adminRows } = await supabaseAdmin
+      .from("admin_activity")
+      .select("id, kind, message, actor_username, created_at")
+      .gte("created_at", since.toISOString())
+      .order("created_at", { ascending: false })
+      .limit(50);
+    for (const a of adminRows ?? []) {
+      const variant: "red" | "neutral" | "green" | "amber" =
+        a.kind.startsWith("video_delete") ? "amber"
+        : a.kind.startsWith("video") ? "green"
+        : "neutral";
+      const type = a.kind.startsWith("video") ? "video" : a.kind;
+      activity.push({
+        id: `admin-${a.id}`,
+        type,
+        message: a.actor_username ? `${a.message} · @${a.actor_username}` : a.message,
+        time: a.created_at,
+        variant,
+      });
+    }
+
     activity.sort((a, b) => new Date(b.time).getTime() - new Date(a.time).getTime());
     return activity.slice(0, 6);
   });

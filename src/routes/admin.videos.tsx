@@ -1,11 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { createFileRoute, useBlocker } from "@tanstack/react-router";
+import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  ArrowLeft, ChevronDown, Upload, Link as LinkIcon, Loader2, Check, Video as VideoIcon, Image as ImageIcon,
+  ArrowLeft, ChevronDown, Upload, Link as LinkIcon, Loader2, Check, Video as VideoIcon, Image as ImageIcon, AlertTriangle,
 } from "lucide-react";
 import { listAllVideos, updateVideo, createVideoUploadUrl, createVideoPlaybackUrl } from "@/lib/admin-videos.functions";
+import { logAdminActivity } from "@/lib/admin-activity.functions";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/admin/videos")({ component: AdminVideosPage });
 
@@ -68,12 +70,83 @@ function storagePathFromReference(url: string) {
   return match ? decodeURIComponent(match[1]) : null;
 }
 
+// ---- Dirty cards tracker ----
+type DirtyEntry = { save: () => Promise<void> };
+type DirtyCtx = {
+  setDirty: (id: string, entry: DirtyEntry | null) => void;
+};
+const DirtyContext = createContext<DirtyCtx>({ setDirty: () => {} });
+
 function AdminVideosPage() {
   const [carousels, setCarousels] = useState<Carousel[]>([]);
   const [videos, setVideos] = useState<Video[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dirtyRef = useRef<Map<string, DirtyEntry>>(new Map());
+  const [dirtyCount, setDirtyCount] = useState(0);
+  const [blockerBusy, setBlockerBusy] = useState(false);
+  const [localPrompt, setLocalPrompt] = useState<null | (() => void)>(null);
+
+  const setDirty = useCallback((id: string, entry: DirtyEntry | null) => {
+    if (entry) dirtyRef.current.set(id, entry);
+    else dirtyRef.current.delete(id);
+    setDirtyCount(dirtyRef.current.size);
+  }, []);
+
+  // Block route changes when there are unsaved edits
+  const blocker = useBlocker({
+    shouldBlockFn: () => dirtyRef.current.size > 0,
+    withResolver: true,
+  });
+  const blockerOpen = blocker.status === "blocked" || !!localPrompt;
+
+  // Block tab close / hard refresh
+  useEffect(() => {
+    const handler = (e: BeforeUnloadEvent) => {
+      if (dirtyRef.current.size > 0) {
+        e.preventDefault();
+        e.returnValue = "";
+      }
+    };
+    window.addEventListener("beforeunload", handler);
+    return () => window.removeEventListener("beforeunload", handler);
+  }, []);
+
+  async function saveAllDirty() {
+    const entries = [...dirtyRef.current.values()];
+    for (const e of entries) {
+      try { await e.save(); } catch { /* card shows its own error */ }
+    }
+  }
+
+  function proceedLeave() {
+    if (blocker.status === "blocked") blocker.proceed();
+    if (localPrompt) { localPrompt(); setLocalPrompt(null); }
+  }
+  function cancelLeave() {
+    if (blocker.status === "blocked") blocker.reset();
+    if (localPrompt) setLocalPrompt(null);
+  }
+  function handleBlockerSave() {
+    setBlockerBusy(true);
+    saveAllDirty().finally(() => {
+      setBlockerBusy(false);
+      proceedLeave();
+    });
+  }
+  function handleBlockerDiscard() {
+    dirtyRef.current.clear();
+    setDirtyCount(0);
+    proceedLeave();
+  }
+  function handleBlockerCancel() { cancelLeave(); }
+
+  // Intercept the in-page "Changer de carrousel" too
+  function requestLeaveCarousel() {
+    if (dirtyRef.current.size === 0) { setSelectedKey(null); return; }
+    setLocalPrompt(() => () => setSelectedKey(null));
+  }
 
   async function reload() {
     setLoading(true);
@@ -96,16 +169,23 @@ function AdminVideosPage() {
   }
 
   return (
+    <DirtyContext.Provider value={{ setDirty }}>
     <div className="p-8 mx-auto max-w-[1400px] w-full">
       <header className="mb-8">
         <div className="flex items-center gap-3">
           {selected && (
             <button
-              onClick={() => setSelectedKey(null)}
+              onClick={requestLeaveCarousel}
               className="inline-flex items-center gap-2 text-sm text-neutral-300 hover:text-white px-3 py-1.5 rounded-lg hover:bg-white/5 transition-colors"
             >
               <ArrowLeft className="h-4 w-4" /> Changer de carrousel
             </button>
+          )}
+          {dirtyCount > 0 && (
+            <span className="inline-flex items-center gap-1.5 text-[11px] text-amber-300 bg-amber-500/10 border border-amber-500/30 rounded-full px-2.5 py-1">
+              <AlertTriangle className="h-3 w-3" />
+              {dirtyCount} modification{dirtyCount > 1 ? "s" : ""} non enregistrée{dirtyCount > 1 ? "s" : ""}
+            </span>
           )}
         </div>
         <h1 className="mt-2 text-3xl font-bold flex items-center gap-3">
@@ -176,7 +256,63 @@ function AdminVideosPage() {
           ))}
         </motion.div>
       )}
+
+      <AnimatePresence>
+        {blockerOpen && (
+          <motion.div
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[120] bg-black/70 backdrop-blur-sm grid place-items-center p-4"
+            onClick={handleBlockerCancel}
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 10, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 6, scale: 0.97 }}
+              transition={{ duration: 0.18 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl"
+            >
+              <div className="flex items-start gap-3">
+                <span className="grid place-items-center h-10 w-10 rounded-full bg-amber-500/15 text-amber-400 shrink-0">
+                  <AlertTriangle className="h-5 w-5" />
+                </span>
+                <div className="min-w-0">
+                  <h3 className="text-base font-semibold text-white">Vous avez des modifications non enregistrées</h3>
+                  <p className="mt-1 text-sm text-neutral-400">
+                    {dirtyCount} case{dirtyCount > 1 ? "s" : ""} en attente. Voulez-vous enregistrer avant de quitter ?
+                  </p>
+                </div>
+              </div>
+              <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+                <button
+                  onClick={handleBlockerCancel}
+                  disabled={blockerBusy}
+                  className="px-4 py-2 text-sm rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5 disabled:opacity-50"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={handleBlockerDiscard}
+                  disabled={blockerBusy}
+                  className="px-4 py-2 text-sm rounded-lg border border-white/10 text-neutral-300 hover:bg-white/5 disabled:opacity-50"
+                >
+                  Quitter sans enregistrer
+                </button>
+                <button
+                  onClick={handleBlockerSave}
+                  disabled={blockerBusy}
+                  className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm rounded-lg bg-red-600 hover:bg-red-500 font-medium disabled:opacity-50"
+                >
+                  {blockerBusy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Check className="h-4 w-4" />}
+                  Enregistrer
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
+    </DirtyContext.Provider>
   );
 }
 
@@ -195,6 +331,7 @@ function CaseCard({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
+  const { setDirty } = useContext(DirtyContext);
 
   useEffect(() => { setTitle(video.title); }, [video.title]);
   useEffect(() => { setSource(video.source_label); }, [video.source_label]);
@@ -237,11 +374,28 @@ function CaseCard({
       await updateVideo({ data: patch });
       onLocalPatch({ ...patch, playback_url: previewUrl });
       setSaved(true);
+      setDirty(video.id, null);
+      toast.success("Modifications enregistrées");
+      const titleLabel = (carousel.show_title && title.trim()) || (carousel.show_source && source.trim()) || carousel.label;
+      logAdminActivity({ data: { kind: "video_update", message: `Vidéo mise à jour : ${titleLabel}` } }).catch(() => {});
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
-      alert("Échec: " + (e as Error).message);
+      toast.error("Échec de l'enregistrement : " + (e as Error).message);
     } finally { setSaving(false); }
   }
+
+  // Track dirty state vs original video
+  const isDirty =
+    (carousel.show_title && title !== video.title) ||
+    (carousel.show_source && source !== video.source_label) ||
+    mediaUrl !== video.source_url;
+  const handleSaveRef = useRef(handleSave);
+  handleSaveRef.current = handleSave;
+  useEffect(() => {
+    if (isDirty) setDirty(video.id, { save: () => handleSaveRef.current() });
+    else setDirty(video.id, null);
+    return () => setDirty(video.id, null);
+  }, [isDirty, video.id, setDirty]);
 
   const hasMedia = mediaUrl.trim().length > 0;
   const isUploadedFile = storagePathFromReference(mediaUrl) !== null;
