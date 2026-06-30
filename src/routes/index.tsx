@@ -175,8 +175,7 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
             <iframe
               ref={iframeRef}
               src={iframeSrc}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
-              style={{ width: "150%", height: "150%" }}
+              className="absolute inset-0 w-full h-full pointer-events-none"
               allow="autoplay; encrypted-media; picture-in-picture"
               tabIndex={-1}
               aria-hidden="true"
