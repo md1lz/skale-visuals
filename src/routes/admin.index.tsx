@@ -62,6 +62,7 @@ function AdminHome() {
     queryFn: () => fetchActivity(),
     initialData: [] as Awaited<ReturnType<typeof fetchActivity>>,
     refetchOnMount: "always",
+    refetchInterval: 20_000,
   });
 
   const p = profileQ.data;
