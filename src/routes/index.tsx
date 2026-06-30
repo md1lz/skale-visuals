@@ -105,7 +105,7 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
 function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "loom" | "streamable" | "video" | "image" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
-  if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&enablejsapi=1` };
+  if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&enablejsapi=1&hd=1&vq=hd1080` };
   const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&background=1&controls=0` };
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
@@ -167,16 +167,24 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
         <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
       ) : kind !== "none" ? (
         kind === "youtube" ? (
-          // Scale the YT iframe up so its title bar / branding falls outside
-          // the parent's overflow-hidden box. Only the video itself remains visible.
+          // Scale the YT iframe up so its title bar, side arrows, pause overlay
+          // and other branding fall outside the parent's overflow-hidden box.
+          // Only the video pixels remain visible.
           <div className="absolute inset-0 overflow-hidden pointer-events-none">
             <iframe
               ref={iframeRef}
               src={iframeSrc}
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-              style={{ width: "180%", height: "180%" }}
+              style={{ width: "300%", height: "300%" }}
               allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
               allowFullScreen
+              onLoad={() => {
+                const w = iframeRef.current?.contentWindow;
+                if (!w) return;
+                // Force highest quality available via the YT iframe API.
+                w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["hd2160"] }), "*");
+                w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["highres"] }), "*");
+              }}
             />
           </div>
         ) : (
