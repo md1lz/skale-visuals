@@ -105,7 +105,7 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
 function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "loom" | "streamable" | "video" | "image" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
-  if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&enablejsapi=1&hd=1&vq=hd1080` };
+  if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&autohide=1&enablejsapi=1&hd=1&vq=hd1080` };
   const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&background=1&controls=0` };
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
@@ -167,25 +167,28 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
         <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
       ) : kind !== "none" ? (
         kind === "youtube" ? (
-          // Scale the YT iframe up so its title bar, side arrows, pause overlay
-          // and other branding fall outside the parent's overflow-hidden box.
-          // Only the video pixels remain visible.
-          <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          // Slight scale + overflow crop removes the small pause button and side
+          // arrows that YouTube still renders inside the embed chrome. A transparent
+          // hit-catcher sits above the iframe so YouTube never receives hover/focus
+          // events that would trigger its own UI.
+          <div className="absolute inset-0 overflow-hidden">
             <iframe
               ref={iframeRef}
               src={iframeSrc}
-              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-              style={{ width: "300%", height: "300%" }}
-              allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-              allowFullScreen
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              style={{ width: "150%", height: "150%" }}
+              allow="autoplay; encrypted-media; picture-in-picture"
+              tabIndex={-1}
+              aria-hidden="true"
               onLoad={() => {
                 const w = iframeRef.current?.contentWindow;
                 if (!w) return;
-                // Force highest quality available via the YT iframe API.
                 w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["hd2160"] }), "*");
                 w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["highres"] }), "*");
               }}
             />
+            {/* Block YT chrome from appearing on hover/focus */}
+            <div className="absolute inset-0 z-10 pointer-events-auto" aria-hidden="true" />
           </div>
         ) : (
           <iframe
@@ -200,10 +203,10 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
         <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
       ) : null}
       {/* hover dim */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       {/* source slides down */}
       {video.source_label && (
-        <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+        <div className="absolute top-0 left-0 right-0 z-20 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
           <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
             {video.source_label}
           </span>
@@ -211,12 +214,12 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
       )}
       {/* title slides up */}
       {video.title && (
-        <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+        <div className="absolute bottom-0 left-0 right-0 z-20 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
           <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
         </div>
       )}
       {/* play/pause button */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <button
           type="button"
           onClick={togglePlay}
