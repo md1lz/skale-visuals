@@ -15,7 +15,9 @@ type Carousel = {
 };
 type Video = {
   id: string; carousel_key: string; title: string; source_url: string;
+  playback_url?: string;
   source_label: string; thumbnail_url: string | null;
+  thumbnail_playback_url?: string | null;
   format: "court" | "long" | "miniature"; visible: boolean; position: number;
 };
 
@@ -178,6 +180,7 @@ function CaseCard({
   const [title, setTitle] = useState(video.title);
   const [source, setSource] = useState(video.source_label);
   const [mediaUrl, setMediaUrl] = useState(video.source_url);
+  const [previewUrl, setPreviewUrl] = useState(video.playback_url || video.source_url);
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -186,7 +189,7 @@ function CaseCard({
 
   useEffect(() => { setTitle(video.title); }, [video.title]);
   useEffect(() => { setSource(video.source_label); }, [video.source_label]);
-  useEffect(() => { setMediaUrl(video.source_url); }, [video.source_url]);
+  useEffect(() => { setMediaUrl(video.source_url); setPreviewUrl(video.playback_url || video.source_url); }, [video.source_url, video.playback_url]);
 
   async function uploadFile(file: File) {
     setUploading(true);
@@ -199,6 +202,7 @@ function CaseCard({
         .uploadToSignedUrl(res.path, res.token, file, { contentType: file.type || "application/octet-stream" });
       if (error) throw error;
       setMediaUrl(res.publicUrl);
+      setPreviewUrl(res.playbackUrl || res.publicUrl);
     } catch (e) {
       alert("Échec de l'upload: " + (e as Error).message);
     } finally { setUploading(false); }
@@ -212,7 +216,7 @@ function CaseCard({
       if (carousel.show_source) patch.source_label = source;
       patch.source_url = mediaUrl;
       await updateVideo({ data: patch });
-      onLocalPatch(patch);
+      onLocalPatch({ ...patch, playback_url: previewUrl });
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
     } catch (e) {
@@ -234,7 +238,7 @@ function CaseCard({
         onDrop={(e) => { e.preventDefault(); setDragOver(false); const f = e.dataTransfer.files?.[0]; if (f) uploadFile(f); }}
       >
         {hasMedia ? (
-          <MediaPreview url={mediaUrl} />
+          <MediaPreview url={previewUrl || mediaUrl} />
         ) : (
           <button
             onClick={() => fileRef.current?.click()}
@@ -276,7 +280,7 @@ function CaseCard({
           </label>
           <input
             value={mediaUrl}
-            onChange={(e) => setMediaUrl(e.target.value)}
+            onChange={(e) => { setMediaUrl(e.target.value); setPreviewUrl(e.target.value); }}
             placeholder="https://…"
             className="mt-1 w-full bg-neutral-900 border border-white/10 rounded px-2 py-1.5 text-xs focus:border-red-500 outline-none"
           />
