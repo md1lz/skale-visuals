@@ -111,7 +111,11 @@ async function requireSessionUser() {
 }
 
 export const getAdminProfile = createServerFn({ method: "GET" }).handler(async () => {
-  const username = await requireSessionUser();
+  const session = await useSession<AdminSessionData>(sessionConfig());
+  const username = session.data.user;
+  if (!username) {
+    return { username: "", firstName: null, lastName: null, avatarUrl: null };
+  }
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin
     .from("admins")
