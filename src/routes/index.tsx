@@ -105,7 +105,7 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
 function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "loom" | "streamable" | "video" | "image" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
-  if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&autohide=1&enablejsapi=1&hd=1&vq=hd1080` };
+  if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&autohide=1&enablejsapi=1&vq=hd720` };
   const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
   if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&background=1&controls=0` };
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
@@ -128,6 +128,27 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
   const [playing, setPlaying] = useState(false);
   const [iframeSrc, setIframeSrc] = useState(src);
   useEffect(() => { setIframeSrc(src); setPlaying(false); }, [src]);
+
+  // YouTube auto-pauses muted loops after a while ("are you still watching"),
+  // and pauses when scrolled off-screen. Listen for state changes and force resume.
+  useEffect(() => {
+    if (kind !== "youtube") return;
+    function onMsg(e: MessageEvent) {
+      const w = iframeRef.current?.contentWindow;
+      if (!w || e.source !== w) return;
+      let data: any;
+      try { data = typeof e.data === "string" ? JSON.parse(e.data) : e.data; } catch { return; }
+      // info event with playerState 2 (paused) or 0 (ended) → force play
+      const state = data?.info?.playerState ?? (data?.event === "onStateChange" ? data.info : undefined);
+      if (state === 2 || state === 0) {
+        if (!playing) {
+          w.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+        }
+      }
+    }
+    window.addEventListener("message", onMsg);
+    return () => window.removeEventListener("message", onMsg);
+  }, [kind, playing]);
 
   function togglePlay(e: React.MouseEvent) {
     e.preventDefault();
@@ -182,8 +203,11 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
               onLoad={() => {
                 const w = iframeRef.current?.contentWindow;
                 if (!w) return;
-                w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["hd2160"] }), "*");
-                w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["highres"] }), "*");
+                // Subscribe to state changes so we can resume after auto-pause.
+                w.postMessage(JSON.stringify({ event: "listening" }), "*");
+                w.postMessage(JSON.stringify({ event: "command", func: "addEventListener", args: ["onStateChange"] }), "*");
+                // Cap quality at 720p to avoid network-driven pauses/buffering.
+                w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["hd720"] }), "*");
               }}
             />
             {/* Block YT chrome from appearing on hover/focus */}
