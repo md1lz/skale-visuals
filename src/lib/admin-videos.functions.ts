@@ -150,3 +150,15 @@ export const createVideoUploadUrl = createServerFn({ method: "POST" })
       playbackUrl: pub?.signedUrl ?? "",
     };
   });
+
+export const createVideoPlaybackUrl = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ path: z.string().min(1).max(500) }).parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("site-videos")
+      .createSignedUrl(data.path, 60 * 60 * 24 * 7);
+    if (error || !signed?.signedUrl) throw new Error(error?.message ?? "Preview URL failed");
+    return { playbackUrl: signed.signedUrl };
+  });
