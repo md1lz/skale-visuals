@@ -399,12 +399,23 @@ function CaseCard({
       if (carousel.show_title) patch.title = title;
       if (carousel.show_source) patch.source_label = source;
       patch.source_url = mediaUrl;
+      const before = video.source_url.trim();
+      const after = mediaUrl.trim();
+      const action: "create" | "delete" | "update" =
+        !before && after ? "create"
+        : before && !after ? "delete"
+        : "update";
       await updateVideo({ data: patch });
       onLocalPatch({ ...patch, playback_url: previewUrl });
       setDirty(video.id, null);
       toast.success("Modifications enregistrées");
       const titleLabel = (carousel.show_title && title.trim()) || (carousel.show_source && source.trim()) || carousel.label;
-      logAdminActivity({ data: { kind: "video_update", message: `Vidéo mise à jour : ${titleLabel}` } }).catch(() => {});
+      const messages = {
+        create: `Vidéo ajoutée dans ${carousel.label} : ${titleLabel}`,
+        update: `Vidéo modifiée dans ${carousel.label} : ${titleLabel}`,
+        delete: `Vidéo retirée de ${carousel.label} : ${titleLabel}`,
+      };
+      logAdminActivity({ data: { kind: `video_${action}`, message: messages[action] } }).catch(() => {});
     } catch (e) {
       toast.error("Échec de l'enregistrement : " + (e as Error).message);
     }

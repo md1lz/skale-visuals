@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Area,
   AreaChart,
@@ -22,6 +22,9 @@ import {
   AlertTriangle,
   MessageSquare,
   FolderOpen,
+  Plus,
+  Pencil,
+  Trash2,
 } from "lucide-react";
 import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.functions";
 import { getAdminProfile } from "@/lib/admin-auth.functions";
@@ -62,6 +65,7 @@ function AdminHome() {
     queryFn: () => fetchActivity(),
     initialData: [] as Awaited<ReturnType<typeof fetchActivity>>,
     refetchOnMount: "always",
+    refetchInterval: 20_000,
   });
 
   const p = profileQ.data;
@@ -227,8 +231,9 @@ function AdminHome() {
               Aucune activité récente
             </div>
           ) : (
-            (activityQ.data ?? []).map((a, i) => {
-              const icons: Record<string, React.ElementType> = {
+            <AnimatePresence initial={false}>
+            {(activityQ.data ?? []).slice(0, 6).map((a) => {
+              const typeIcons: Record<string, React.ElementType> = {
                 deadline: AlertTriangle,
                 avis: MessageSquare,
                 video: Video,
@@ -236,18 +241,31 @@ function AdminHome() {
                 devis: FileSignature,
                 projet: FolderOpen,
               };
-              const Icon = icons[a.type] || Clock;
+              const actionIcons: Record<string, React.ElementType> = {
+                create: Plus,
+                update: Pencil,
+                delete: Trash2,
+              };
+              const Icon = (a.action && actionIcons[a.action]) || typeIcons[a.type] || Clock;
+              const TypeIcon = typeIcons[a.type] || Clock;
               const colors: Record<string, string> = {
-                red: "bg-red-500/15 text-red-400",
-                amber: "bg-amber-500/15 text-amber-400",
-                green: "bg-emerald-500/15 text-emerald-400",
-                neutral: "bg-neutral-500/15 text-neutral-400",
+                red: "bg-red-500/15 text-red-400 ring-1 ring-red-500/20",
+                amber: "bg-amber-500/15 text-amber-400 ring-1 ring-amber-500/20",
+                green: "bg-emerald-500/15 text-emerald-400 ring-1 ring-emerald-500/20",
+                blue: "bg-sky-500/15 text-sky-300 ring-1 ring-sky-500/20",
+                neutral: "bg-neutral-500/15 text-neutral-300 ring-1 ring-white/10",
               };
               const dotColors: Record<string, string> = {
                 red: "bg-red-500",
                 amber: "bg-amber-500",
                 green: "bg-emerald-500",
+                blue: "bg-sky-400",
                 neutral: "bg-neutral-500",
+              };
+              const actionLabel: Record<string, string> = {
+                create: "Ajout",
+                update: "Modification",
+                delete: "Suppression",
               };
               const relTime = (iso: string) => {
                 const diff = Date.now() - new Date(iso).getTime();
@@ -262,15 +280,27 @@ function AdminHome() {
               return (
                 <motion.div
                   key={a.id}
-                  initial={{ opacity: 0, x: -8 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ duration: 0.25, delay: 0.05 * i }}
+                  layout
+                  initial={{ opacity: 0, y: -6, scale: 0.98 }}
+                  animate={{ opacity: 1, y: 0, scale: 1 }}
+                  exit={{ opacity: 0, y: 6, scale: 0.98, transition: { duration: 0.18 } }}
+                  transition={{ duration: 0.25, type: "spring", stiffness: 260, damping: 26 }}
                   className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5 hover:bg-white/[0.04] transition"
                 >
-                  <span className={`grid place-items-center h-8 w-8 rounded-lg shrink-0 ${colors[a.variant]}`}>
+                  <span className={`relative grid place-items-center h-9 w-9 rounded-lg shrink-0 ${colors[a.variant]}`}>
                     <Icon className="h-4 w-4" />
+                    {a.action && (
+                      <span className="absolute -bottom-1 -right-1 grid place-items-center h-4 w-4 rounded-full bg-neutral-950 border border-white/10 text-neutral-300">
+                        <TypeIcon className="h-2.5 w-2.5" />
+                      </span>
+                    )}
                   </span>
                   <div className="flex-1 min-w-0">
+                    {a.action && (
+                      <p className="text-[10px] uppercase tracking-wider text-neutral-500 leading-none mb-0.5">
+                        {actionLabel[a.action]}
+                      </p>
+                    )}
                     <p className="text-sm text-white truncate">{a.message}</p>
                   </div>
                   <span className="flex items-center gap-1.5 shrink-0">
@@ -279,7 +309,8 @@ function AdminHome() {
                   </span>
                 </motion.div>
               );
-            })
+            })}
+            </AnimatePresence>
           )}
         </div>
       </motion.div>
