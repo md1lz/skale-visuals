@@ -105,9 +105,9 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
 function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "video" | "image" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
-  if (yt) return { kind: "youtube", src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1` };
+  if (yt) return { kind: "youtube", src: `https://www.youtube.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1` };
   const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-  if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&background=1` };
+  if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&background=1&controls=0` };
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (dr) return { kind: "drive", src: `https://drive.google.com/file/d/${dr[1]}/preview` };
   if (/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)) return { kind: "video", src: url };
@@ -119,6 +119,36 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
   const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
   const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
   const { kind, src } = detectEmbed(video.source_url);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [muted, setMuted] = useState(true);
+
+  function toggleSound(e: React.MouseEvent) {
+    e.preventDefault();
+    e.stopPropagation();
+    const next = !muted;
+    setMuted(next);
+    if (kind === "video" && videoRef.current) {
+      videoRef.current.muted = next;
+      // keep playing without restart
+      videoRef.current.play().catch(() => {});
+    } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({ event: "command", func: next ? "mute" : "unMute", args: [] }),
+        "*",
+      );
+    } else if (kind === "vimeo" && iframeRef.current?.contentWindow) {
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({ method: "setVolume", value: next ? 0 : 1 }),
+        "*",
+      );
+      iframeRef.current.contentWindow.postMessage(
+        JSON.stringify({ method: next ? "setMuted" : "setMuted", value: next }),
+        "*",
+      );
+    }
+  }
+
   return (
     <div className={`${widths[size]} shrink-0 group cursor-pointer`}>
       <div className={`relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br ${gradient} card-hover`}>
@@ -127,28 +157,46 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
         ) : kind === "image" ? (
           <img src={src} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
         ) : kind === "video" ? (
-          <video src={src} className="absolute inset-0 w-full h-full object-cover" muted loop autoPlay playsInline />
+          <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
         ) : kind !== "none" ? (
-          <iframe src={src} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; encrypted-media; picture-in-picture" />
+          <iframe ref={iframeRef} src={src} className="absolute inset-0 w-full h-full pointer-events-none" allow="autoplay; encrypted-media; picture-in-picture" />
         ) : null}
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none" />
-        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-          <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-primary/90 group-hover:scale-110 transition-all duration-300">
-            <Play className="w-5 h-5 text-white fill-white ml-0.5" />
-          </div>
-        </div>
+        {/* hover dim */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+
+        {/* source: slides down from top on hover */}
         {video.source_label && (
-          <div className="absolute top-3 left-3 pointer-events-none">
+          <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
             <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
               {video.source_label}
             </span>
           </div>
         )}
+
+        {/* title: slides up from bottom on hover */}
         {video.title && (
-          <div className="absolute bottom-3 left-3 right-3 pointer-events-none">
+          <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
             <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
           </div>
         )}
+
+        {/* sound toggle button: hidden, shown on hover */}
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <button
+            type="button"
+            onClick={toggleSound}
+            aria-label={muted ? "Activer le son" : "Couper le son"}
+            className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300"
+          >
+            {muted ? (
+              <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+            ) : (
+              <svg viewBox="0 0 24 24" className="w-5 h-5 text-white fill-white" aria-hidden>
+                <path d="M3 10v4a1 1 0 0 0 1 1h3l4 3.5a1 1 0 0 0 1.7-.8V6.3a1 1 0 0 0-1.7-.8L7 9H4a1 1 0 0 0-1 1zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zm-2.5-7v2.07A7 7 0 0 1 19 12a7 7 0 0 1-5 6.93V21a9 9 0 0 0 0-16z"/>
+              </svg>
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );
