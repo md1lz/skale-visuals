@@ -205,10 +205,10 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
         <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
       ) : null}
       {/* hover dim */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       {/* source slides down */}
       {video.source_label && (
-        <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+        <div className="absolute top-0 left-0 right-0 z-20 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
           <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
             {video.source_label}
           </span>
@@ -216,12 +216,12 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
       )}
       {/* title slides up */}
       {video.title && (
-        <div className="absolute bottom-0 left-0 right-0 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
+        <div className="absolute bottom-0 left-0 right-0 z-20 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
           <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
         </div>
       )}
       {/* play/pause button */}
-      <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
         <button
           type="button"
           onClick={togglePlay}
