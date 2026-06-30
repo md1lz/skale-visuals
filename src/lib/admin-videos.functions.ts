@@ -36,7 +36,7 @@ export const listAllVideos = createServerFn({ method: "GET" }).handler(async () 
     .select("id, carousel_key, title, source_url, source_label, thumbnail_url, format, visible, position")
     .order("position");
   const rows = (videos ?? []) as Array<{ source_url: string; thumbnail_url: string | null }>;
-  const { addPlaybackUrls } = await import("@/lib/site-videos.functions");
+  const { addPlaybackUrls } = await import("@/lib/video-storage.server");
   await addPlaybackUrls(rows);
   return { carousels: carousels ?? [], videos: videos ?? [] };
 });
@@ -141,7 +141,7 @@ export const createVideoUploadUrl = createServerFn({ method: "POST" })
     const { data: pub } = await supabaseAdmin.storage
       .from("site-videos")
       .createSignedUrl(path, 60 * 60 * 24 * 7);
-    const { toStorageReference } = await import("@/lib/site-videos.functions");
+    const { toStorageReference } = await import("@/lib/video-storage.server");
     return {
       uploadUrl: signed.signedUrl,
       token: signed.token,
@@ -156,9 +156,6 @@ export const createVideoPlaybackUrl = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await requireAdmin();
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { data: signed, error } = await supabaseAdmin.storage
-      .from("site-videos")
-      .createSignedUrl(data.path, 60 * 60 * 24 * 7);
-    if (error || !signed?.signedUrl) throw new Error(error?.message ?? "Preview URL failed");
-    return { playbackUrl: signed.signedUrl };
+    const { createVideoSignedUrl } = await import("@/lib/video-storage.server");
+    return { playbackUrl: await createVideoSignedUrl(data.path) };
   });
