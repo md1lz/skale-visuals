@@ -240,6 +240,7 @@ function CaseCard({
   }
 
   const hasMedia = mediaUrl.trim().length > 0;
+  const isUploadedFile = storagePathFromReference(mediaUrl) !== null;
 
   return (
     <motion.div
@@ -285,7 +286,8 @@ function CaseCard({
               <Upload className="h-3 w-3" /> Remplacer
             </button>
             <span className="text-neutral-700">·</span>
-            <button onClick={() => setMediaUrl("")} className="hover:text-red-400">Vider</button>
+            <button onClick={() => { setMediaUrl(""); setPreviewUrl(""); }} className="hover:text-red-400">Vider</button>
+            {isUploadedFile && <span className="ml-auto text-emerald-400">Fichier importé dans le visionneur vidéo</span>}
           </div>
         )}
 
@@ -294,9 +296,9 @@ function CaseCard({
             <LinkIcon className="h-3 w-3" /> Ou coller un lien
           </label>
           <input
-            value={mediaUrl}
+            value={isUploadedFile ? "" : mediaUrl}
             onChange={(e) => { setMediaUrl(e.target.value); setPreviewUrl(e.target.value); }}
-            placeholder="https://…"
+            placeholder={isUploadedFile ? "Fichier importé — colle un lien ici pour le remplacer" : "https://…"}
             className="mt-1 w-full bg-neutral-900 border border-white/10 rounded px-2 py-1.5 text-xs focus:border-red-500 outline-none"
           />
         </div>
