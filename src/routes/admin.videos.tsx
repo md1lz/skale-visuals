@@ -21,7 +21,7 @@ type Video = {
   format: "court" | "long" | "miniature"; visible: boolean; position: number;
 };
 
-function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "video" | "image" | "none"; src: string } {
+function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "loom" | "streamable" | "video" | "image" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
   if (yt) return { kind: "youtube", src: `https://www.youtube.com/embed/${yt[1]}` };
@@ -29,6 +29,10 @@ function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "vide
   if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}` };
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (dr) return { kind: "drive", src: `https://drive.google.com/file/d/${dr[1]}/preview` };
+  const loom = url.match(/loom\.com\/(?:share|embed)\/([\w-]+)/);
+  if (loom) return { kind: "loom", src: `https://www.loom.com/embed/${loom[1]}` };
+  const stream = url.match(/streamable\.com\/(?:e\/)?([\w-]+)/);
+  if (stream) return { kind: "streamable", src: `https://streamable.com/e/${stream[1]}` };
   if (/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)) return { kind: "video", src: url };
   if (/\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(url)) return { kind: "image", src: url };
   return { kind: "none", src: url };
