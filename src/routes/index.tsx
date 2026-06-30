@@ -121,31 +121,35 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
   const { kind, src } = detectEmbed(video.source_url);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const [muted, setMuted] = useState(true);
+  const [playing, setPlaying] = useState(false);
 
-  function toggleSound(e: React.MouseEvent) {
+  function togglePlay(e: React.MouseEvent) {
     e.preventDefault();
     e.stopPropagation();
-    const next = !muted;
-    setMuted(next);
+    const next = !playing;
+    setPlaying(next);
     if (kind === "video" && videoRef.current) {
-      videoRef.current.muted = next;
-      // keep playing without restart
-      videoRef.current.play().catch(() => {});
+      const v = videoRef.current;
+      if (next) {
+        v.muted = false;
+        v.volume = 0.5;
+        v.play().catch(() => {});
+      } else {
+        v.muted = true;
+        v.play().catch(() => {});
+      }
     } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        JSON.stringify({ event: "command", func: next ? "mute" : "unMute", args: [] }),
-        "*",
-      );
+      const w = iframeRef.current.contentWindow;
+      if (next) {
+        w.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "*");
+        w.postMessage(JSON.stringify({ event: "command", func: "setVolume", args: [50] }), "*");
+      } else {
+        w.postMessage(JSON.stringify({ event: "command", func: "mute", args: [] }), "*");
+      }
     } else if (kind === "vimeo" && iframeRef.current?.contentWindow) {
-      iframeRef.current.contentWindow.postMessage(
-        JSON.stringify({ method: "setVolume", value: next ? 0 : 1 }),
-        "*",
-      );
-      iframeRef.current.contentWindow.postMessage(
-        JSON.stringify({ method: next ? "setMuted" : "setMuted", value: next }),
-        "*",
-      );
+      const w = iframeRef.current.contentWindow;
+      w.postMessage(JSON.stringify({ method: "setMuted", value: !next }), "*");
+      w.postMessage(JSON.stringify({ method: "setVolume", value: next ? 0.5 : 0 }), "*");
     }
   }
 
@@ -184,16 +188,17 @@ function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: 
         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <button
             type="button"
-            onClick={toggleSound}
-            aria-label={muted ? "Activer le son" : "Couper le son"}
+            onClick={togglePlay}
+            aria-label={playing ? "Mettre en pause" : "Lancer la vidéo"}
             className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center hover:bg-primary/90 hover:scale-110 transition-all duration-300"
           >
-            {muted ? (
-              <Play className="w-5 h-5 text-white fill-white ml-0.5" />
-            ) : (
+            {playing ? (
               <svg viewBox="0 0 24 24" className="w-5 h-5 text-white fill-white" aria-hidden>
-                <path d="M3 10v4a1 1 0 0 0 1 1h3l4 3.5a1 1 0 0 0 1.7-.8V6.3a1 1 0 0 0-1.7-.8L7 9H4a1 1 0 0 0-1 1zm13.5 2a4.5 4.5 0 0 0-2.5-4v8a4.5 4.5 0 0 0 2.5-4zm-2.5-7v2.07A7 7 0 0 1 19 12a7 7 0 0 1-5 6.93V21a9 9 0 0 0 0-16z"/>
+                <rect x="6" y="5" width="4" height="14" rx="1" />
+                <rect x="14" y="5" width="4" height="14" rx="1" />
               </svg>
+            ) : (
+              <Play className="w-5 h-5 text-white fill-white ml-0.5" />
             )}
           </button>
         </div>
