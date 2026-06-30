@@ -35,6 +35,9 @@ export const listAllVideos = createServerFn({ method: "GET" }).handler(async () 
     .from("site_videos")
     .select("id, carousel_key, title, source_url, source_label, thumbnail_url, format, visible, position")
     .order("position");
+  const rows = (videos ?? []) as Array<{ source_url: string; thumbnail_url: string | null }>;
+  const { signStorageUrls } = await import("@/lib/site-videos.functions");
+  await signStorageUrls(rows);
   return { carousels: carousels ?? [], videos: videos ?? [] };
 });
 
@@ -133,6 +136,15 @@ export const createVideoUploadUrl = createServerFn({ method: "POST" })
       .from("site-videos")
       .createSignedUploadUrl(path);
     if (error || !signed) throw new Error(error?.message ?? "Upload URL failed");
-    const { data: pub } = supabaseAdmin.storage.from("site-videos").getPublicUrl(path);
-    return { uploadUrl: signed.signedUrl, token: signed.token, path, publicUrl: pub.publicUrl };
+    // Bucket is private — return a signed read URL (7 days). It will be auto-
+    // refreshed by listPublicVideos/listAllVideos on subsequent reads.
+    const { data: pub } = await supabaseAdmin.storage
+      .from("site-videos")
+      .createSignedUrl(path, 60 * 60 * 24 * 7);
+    return {
+      uploadUrl: signed.signedUrl,
+      token: signed.token,
+      path,
+      publicUrl: pub?.signedUrl ?? "",
+    };
   });
