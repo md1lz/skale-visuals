@@ -359,8 +359,6 @@ function CaseCard({
   const [previewUrl, setPreviewUrl] = useState(video.playback_url || video.source_url);
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
   const { setDirty } = useContext(DirtyContext);
 
@@ -396,7 +394,6 @@ function CaseCard({
   }
 
   async function handleSave() {
-    setSaving(true);
     try {
       const patch: Partial<Video> & { id: string } = { id: video.id };
       if (carousel.show_title) patch.title = title;
@@ -404,15 +401,13 @@ function CaseCard({
       patch.source_url = mediaUrl;
       await updateVideo({ data: patch });
       onLocalPatch({ ...patch, playback_url: previewUrl });
-      setSaved(true);
       setDirty(video.id, null);
       toast.success("Modifications enregistrées");
       const titleLabel = (carousel.show_title && title.trim()) || (carousel.show_source && source.trim()) || carousel.label;
       logAdminActivity({ data: { kind: "video_update", message: `Vidéo mise à jour : ${titleLabel}` } }).catch(() => {});
-      setTimeout(() => setSaved(false), 2000);
     } catch (e) {
       toast.error("Échec de l'enregistrement : " + (e as Error).message);
-    } finally { setSaving(false); }
+    }
   }
 
   // Track dirty state vs original video
@@ -512,13 +507,6 @@ function CaseCard({
           </div>
         )}
 
-        <button
-          onClick={handleSave}
-          disabled={saving || uploading}
-          className={`mt-auto inline-flex items-center justify-center gap-2 rounded-lg px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 ${saved ? "bg-emerald-600 hover:bg-emerald-600" : "bg-red-600 hover:bg-red-500"}`}
-        >
-          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : saved ? <><Check className="h-4 w-4" /> Enregistré</> : "Enregistrer"}
-        </button>
       </div>
     </motion.div>
   );
