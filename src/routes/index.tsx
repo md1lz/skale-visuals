@@ -1,4 +1,4 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { motion, AnimatePresence, useInView, useMotionValue, useTransform, animate } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
@@ -350,14 +350,6 @@ function Logo({ size = 36 }: { size?: number }) {
 
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [flipping, setFlipping] = useState(false);
-  const navigate = useNavigate();
-  const handleLogoClick = (e: React.MouseEvent) => {
-    e.preventDefault();
-    if (flipping) return;
-    setFlipping(true);
-    setTimeout(() => navigate({ to: "/immobilier" }), 550);
-  };
   const [open, setOpen] = useState(false);
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -368,18 +360,13 @@ function Navbar() {
   return (
     <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? "py-3" : "py-4"}`}>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
-        {/* Left: logo — clic sur le S = univers Immobilier */}
-        <a href="/immobilier" onClick={handleLogoClick} className="flex items-center gap-2.5 shrink-0 group cursor-pointer" style={{ perspective: 800 }}>
-          <motion.span
-            animate={{ rotateY: flipping ? 360 : 0, scale: flipping ? 1.15 : 1 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="inline-block group-hover:scale-110 group-active:scale-95 transition-transform"
-            style={{ transformStyle: "preserve-3d" }}
-          >
+        {/* Left: logo */}
+        <div className="flex items-center gap-2.5 shrink-0 group">
+          <span className="inline-block group-hover:scale-110 transition-transform">
             <Logo size={36} />
-          </motion.span>
+          </span>
           <span className="font-extrabold text-lg tracking-tight">Skale Visuals</span>
-        </a>
+        </div>
 
         {/* Center: pill nav (absolute centered on desktop) */}
         <nav className="hidden lg:flex liquid-glass rounded-full px-2 py-1.5 absolute left-1/2 -translate-x-1/2">
