@@ -175,3 +175,11 @@
 .marquee:hover .marquee-y-track-reverse {
   animation-play-state: paused;
 }
+
+.marquee.is-offscreen .marquee-track,
+.marquee.is-offscreen .marquee-track-reverse,
+.marquee.is-offscreen .marquee-track-fast,
+.marquee.is-offscreen .marquee-y-track,
+.marquee.is-offscreen .marquee-y-track-reverse {
+  animation-play-state: paused;
+}

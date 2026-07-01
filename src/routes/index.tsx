@@ -127,7 +127,45 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
   const [playing, setPlaying] = useState(false);
   const [iframeSrc, setIframeSrc] = useState(src);
+  const visibleRef = useRef(true);
   useEffect(() => { setIframeSrc(src); setPlaying(false); }, [src]);
+
+  // Pause video/iframe when scrolled off-screen; resume when back in view.
+  useEffect(() => {
+    const target = (iframeRef.current ?? videoRef.current) as Element | null;
+    if (!target || typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        const visible = entry.isIntersecting;
+        visibleRef.current = visible;
+        if (kind === "video" && videoRef.current) {
+          if (visible) videoRef.current.play().catch(() => {});
+          else videoRef.current.pause();
+        } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
+          iframeRef.current.contentWindow.postMessage(
+            JSON.stringify({ event: "command", func: visible ? "playVideo" : "pauseVideo", args: [] }),
+            "*",
+          );
+        } else if (kind === "vimeo" && iframeRef.current?.contentWindow) {
+          iframeRef.current.contentWindow.postMessage(
+            JSON.stringify({ method: visible ? "play" : "pause" }),
+            "*",
+          );
+        } else if ((kind === "streamable" || kind === "loom") && iframeRef.current) {
+          const el = iframeRef.current;
+          if (!visible) {
+            if (el.src && el.src !== "about:blank") el.dataset.savedSrc = el.src;
+            el.src = "about:blank";
+          } else if (el.dataset.savedSrc) {
+            el.src = el.dataset.savedSrc;
+          }
+        }
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(target);
+    return () => io.disconnect();
+  }, [kind, iframeSrc]);
 
   // YouTube auto-pauses muted loops after a while ("are you still watching"),
   // and pauses when scrolled off-screen. Listen for state changes and force resume.
@@ -141,7 +179,7 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
       // info event with playerState 2 (paused) or 0 (ended) → force play
       const state = data?.info?.playerState ?? (data?.event === "onStateChange" ? data.info : undefined);
       if (state === 2 || state === 0) {
-        if (!playing) {
+        if (!playing && visibleRef.current) {
           w.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
         }
       }
@@ -1503,6 +1541,22 @@ function Index() {
       clearTimeout(showT);
       clearTimeout(hideT);
     };
+  }, []);
+  // Pause marquee carousels when off-screen to reduce jank and CPU usage.
+  useEffect(() => {
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".marquee"));
+    if (!els.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          (e.target as HTMLElement).classList.toggle("is-offscreen", !e.isIntersecting);
+        }
+      },
+      { threshold: 0.01 },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
   }, []);
   return (
     <div className="relative">
