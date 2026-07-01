@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, AnimatePresence, useInView, useMotionValue, useTransform, animate } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
@@ -360,11 +360,13 @@ function Navbar() {
   return (
     <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? "py-3" : "py-4"}`}>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
-        {/* Left: logo */}
-        <a href="#" className="flex items-center gap-2.5 shrink-0">
-          <Logo size={36} />
+        {/* Left: logo — clic sur le S = univers Immobilier */}
+        <Link to="/immobilier" className="flex items-center gap-2.5 shrink-0 group">
+          <span className="transition-transform group-hover:scale-110 group-active:scale-95">
+            <Logo size={36} />
+          </span>
           <span className="font-extrabold text-lg tracking-tight">Skale Visuals</span>
-        </a>
+        </Link>
 
         {/* Center: pill nav (absolute centered on desktop) */}
         <nav className="hidden lg:flex liquid-glass rounded-full px-2 py-1.5 absolute left-1/2 -translate-x-1/2">
