@@ -1504,6 +1504,22 @@ function Index() {
       clearTimeout(hideT);
     };
   }, []);
+  // Pause marquee carousels when off-screen to reduce jank and CPU usage.
+  useEffect(() => {
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    const els = Array.from(document.querySelectorAll<HTMLElement>(".marquee"));
+    if (!els.length) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          (e.target as HTMLElement).classList.toggle("is-offscreen", !e.isIntersecting);
+        }
+      },
+      { threshold: 0.01 },
+    );
+    els.forEach((el) => io.observe(el));
+    return () => io.disconnect();
+  }, []);
   return (
     <div className="relative">
       <Navbar />
