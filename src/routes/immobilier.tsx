@@ -1,27 +1,41 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
-  ArrowRight, Play, ChevronLeft, ChevronRight, Menu, X,
+  ArrowRight, Play, ChevronLeft, ChevronRight, Menu, X, AlertTriangle, Mail, MessageCircle, Instagram,
   PenLine, Scissors, TrendingUp, Sparkles,
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
 
-const CTA_URL = "https://tally.so/r/PdPXRQ";
 const ELECTRIC = "#1E90FF";
+const CONTACT_HREF = "#contact";
 
 export const Route = createFileRoute("/immobilier")({
   head: () => ({
     meta: [
-      { title: "Skale Visuals Immobilier — Vidéo & Social Media pour agences" },
+      { title: "Skale Immobilier — Vidéo & Social Media pour agences" },
       { name: "description", content: "Accompagnement complet pour les agences immobilières : scripts, hooks, montage Reels et gestion de comptes pour faire exploser vos stats." },
-      { property: "og:title", content: "Skale Visuals Immobilier — Vidéo & Social Media" },
+      { property: "og:title", content: "Skale Immobilier — Vidéo & Social Media" },
       { property: "og:description", content: "Scripts, hooks, montage, gestion de comptes. On propulse les agences immobilières sur les réseaux." },
       { property: "og:type", content: "website" },
     ],
   }),
   component: Immobilier,
 });
+
+function ConstructionBanner() {
+  return (
+    <div
+      className="w-full text-black text-center text-sm font-semibold py-2.5 px-4 flex items-center justify-center gap-2"
+      style={{ background: "linear-gradient(90deg, #FFD54A, #FFB800, #FFD54A)" }}
+      role="alert"
+    >
+      <AlertTriangle className="w-4 h-4" />
+      <span>Cette partie est en travaux — pas accessible pour le moment.</span>
+      <AlertTriangle className="w-4 h-4" />
+    </div>
+  );
+}
 
 function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +57,7 @@ function Logo({ size = 36 }: { size?: number }) {
   return (
     <img
       src={logoAsset.url}
-      alt="Skale Visuals Immobilier"
+      alt="Skale Immobilier"
       width={size}
       height={size}
       style={{ filter: `drop-shadow(0 0 12px ${ELECTRIC}99)` }}
@@ -61,6 +75,14 @@ const NAV_LINKS = [
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [flipping, setFlipping] = useState(false);
+  const navigate = useNavigate();
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (flipping) return;
+    setFlipping(true);
+    setTimeout(() => navigate({ to: "/" }), 550);
+  };
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -69,14 +91,19 @@ function Navbar() {
   return (
     <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? "py-3" : "py-4"}`}>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
-        <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-          <span className="transition-transform group-hover:scale-110 group-active:scale-95">
+        <a href="/" onClick={handleLogoClick} className="flex items-center gap-2.5 shrink-0 group cursor-pointer" style={{ perspective: 800 }}>
+          <motion.span
+            animate={{ rotateY: flipping ? 360 : 0, scale: flipping ? 1.15 : 1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="inline-block group-hover:scale-110 group-active:scale-95 transition-transform"
+            style={{ transformStyle: "preserve-3d" }}
+          >
             <Logo size={36} />
-          </span>
+          </motion.span>
           <span className="font-extrabold text-lg tracking-tight">
-            Skale Visuals <span style={{ color: ELECTRIC }}>Immobilier</span>
+            Skale <span style={{ color: ELECTRIC }}>Immobilier</span>
           </span>
-        </Link>
+        </a>
         <nav className="hidden lg:flex liquid-glass rounded-full px-2 py-1.5 absolute left-1/2 -translate-x-1/2">
           <ul className="flex items-center gap-1 whitespace-nowrap leading-none">
             {NAV_LINKS.map((l) => (
@@ -90,9 +117,7 @@ function Navbar() {
         </nav>
         <div className="flex items-center gap-2 shrink-0">
           <a
-            href={CTA_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={CONTACT_HREF}
             className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
           >
             Devis agence <ArrowRight className="w-4 h-4" style={{ color: ELECTRIC }} />
@@ -117,9 +142,8 @@ function Navbar() {
                 </a>
               ))}
               <a
-                href={CTA_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={CONTACT_HREF}
+                onClick={() => setOpen(false)}
                 className="mt-1 inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold text-black"
                 style={{ background: ELECTRIC }}
               >
