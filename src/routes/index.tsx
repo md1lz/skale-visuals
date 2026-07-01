@@ -128,12 +128,6 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
   const [playing, setPlaying] = useState(false);
   const [iframeSrc, setIframeSrc] = useState(src);
   const visibleRef = useRef(true);
-  // Adaptive quality ladder for YouTube: start at 720p, downgrade on buffering.
-  const ytQualityRef = useRef<string[]>(["hd720", "large", "medium", "small"]);
-  const ytQIdxRef = useRef(0);
-  const ytBufferSinceRef = useRef<number | null>(null);
-  const ytRetryRef = useRef(0);
-  const retryTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => { setIframeSrc(src); setPlaying(false); }, [src]);
 
   // Pause video/iframe when scrolled off-screen; resume when back in view.
@@ -182,80 +176,17 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
       if (!w || e.source !== w) return;
       let data: any;
       try { data = typeof e.data === "string" ? JSON.parse(e.data) : e.data; } catch { return; }
+      // info event with playerState 2 (paused) or 0 (ended) → force play
       const state = data?.info?.playerState ?? (data?.event === "onStateChange" ? data.info : undefined);
-      if (state === undefined) return;
-      // 1 = playing → reset backoff
-      if (state === 1) {
-        ytBufferSinceRef.current = null;
-        ytRetryRef.current = 0;
-        return;
-      }
-      // 3 = buffering → if it lasts too long, downgrade quality
-      if (state === 3) {
-        if (ytBufferSinceRef.current == null) ytBufferSinceRef.current = Date.now();
-        const stuckMs = Date.now() - (ytBufferSinceRef.current ?? Date.now());
-        if (stuckMs > 2500 && ytQIdxRef.current < ytQualityRef.current.length - 1) {
-          ytQIdxRef.current += 1;
-          const q = ytQualityRef.current[ytQIdxRef.current];
-          w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: [q] }), "*");
-          ytBufferSinceRef.current = Date.now();
-        }
-        return;
-      }
-      // 2 = paused, 0 = ended → force play with exponential backoff
       if (state === 2 || state === 0) {
         if (!playing && visibleRef.current) {
-          if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
-          const attempt = Math.min(ytRetryRef.current, 5);
-          const delay = Math.min(250 * Math.pow(2, attempt), 8000);
-          ytRetryRef.current += 1;
-          retryTimerRef.current = setTimeout(() => {
-            const win = iframeRef.current?.contentWindow;
-            if (win && visibleRef.current && !playing) {
-              win.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
-            }
-          }, delay);
+          w.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
         }
       }
     }
     window.addEventListener("message", onMsg);
-    return () => {
-      window.removeEventListener("message", onMsg);
-      if (retryTimerRef.current) clearTimeout(retryTimerRef.current);
-    };
+    return () => window.removeEventListener("message", onMsg);
   }, [kind, playing]);
-
-  // Native <video>: retry on waiting/stalled/error with backoff.
-  useEffect(() => {
-    if (kind !== "video") return;
-    const v = videoRef.current;
-    if (!v) return;
-    let attempt = 0;
-    let t: ReturnType<typeof setTimeout> | null = null;
-    const resetOnPlay = () => { attempt = 0; };
-    const onStuck = () => {
-      if (!visibleRef.current) return;
-      if (t) clearTimeout(t);
-      const delay = Math.min(400 * Math.pow(2, Math.min(attempt, 5)), 8000);
-      attempt += 1;
-      t = setTimeout(() => {
-        if (!visibleRef.current) return;
-        try { v.load(); } catch {}
-        v.play().catch(() => {});
-      }, delay);
-    };
-    v.addEventListener("playing", resetOnPlay);
-    v.addEventListener("waiting", onStuck);
-    v.addEventListener("stalled", onStuck);
-    v.addEventListener("error", onStuck);
-    return () => {
-      v.removeEventListener("playing", resetOnPlay);
-      v.removeEventListener("waiting", onStuck);
-      v.removeEventListener("stalled", onStuck);
-      v.removeEventListener("error", onStuck);
-      if (t) clearTimeout(t);
-    };
-  }, [kind, iframeSrc]);
 
   function togglePlay(e: React.MouseEvent) {
     e.preventDefault();
