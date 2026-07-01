@@ -1,27 +1,41 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import {
-  ArrowRight, Play, ChevronLeft, ChevronRight, Menu, X,
+  ArrowRight, Play, ChevronLeft, ChevronRight, Menu, X, AlertTriangle, Mail, MessageCircle, Instagram,
   PenLine, Scissors, TrendingUp, Sparkles,
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
 
-const CTA_URL = "https://tally.so/r/PdPXRQ";
 const ELECTRIC = "#1E90FF";
+const CONTACT_HREF = "#contact";
 
 export const Route = createFileRoute("/immobilier")({
   head: () => ({
     meta: [
-      { title: "Skale Visuals Immobilier — Vidéo & Social Media pour agences" },
+      { title: "Skale Immobilier — Vidéo & Social Media pour agences" },
       { name: "description", content: "Accompagnement complet pour les agences immobilières : scripts, hooks, montage Reels et gestion de comptes pour faire exploser vos stats." },
-      { property: "og:title", content: "Skale Visuals Immobilier — Vidéo & Social Media" },
+      { property: "og:title", content: "Skale Immobilier — Vidéo & Social Media" },
       { property: "og:description", content: "Scripts, hooks, montage, gestion de comptes. On propulse les agences immobilières sur les réseaux." },
       { property: "og:type", content: "website" },
     ],
   }),
   component: Immobilier,
 });
+
+function ConstructionBanner() {
+  return (
+    <div
+      className="w-full text-black text-center text-sm font-semibold py-2.5 px-4 flex items-center justify-center gap-2"
+      style={{ background: "linear-gradient(90deg, #FFD54A, #FFB800, #FFD54A)" }}
+      role="alert"
+    >
+      <AlertTriangle className="w-4 h-4" />
+      <span>Cette partie est en travaux — pas accessible pour le moment.</span>
+      <AlertTriangle className="w-4 h-4" />
+    </div>
+  );
+}
 
 function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -43,7 +57,7 @@ function Logo({ size = 36 }: { size?: number }) {
   return (
     <img
       src={logoAsset.url}
-      alt="Skale Visuals Immobilier"
+      alt="Skale Immobilier"
       width={size}
       height={size}
       style={{ filter: `drop-shadow(0 0 12px ${ELECTRIC}99)` }}
@@ -61,6 +75,14 @@ const NAV_LINKS = [
 function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [flipping, setFlipping] = useState(false);
+  const navigate = useNavigate();
+  const handleLogoClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (flipping) return;
+    setFlipping(true);
+    setTimeout(() => navigate({ to: "/" }), 550);
+  };
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
     window.addEventListener("scroll", onScroll);
@@ -69,14 +91,19 @@ function Navbar() {
   return (
     <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? "py-3" : "py-4"}`}>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
-        <Link to="/" className="flex items-center gap-2.5 shrink-0 group">
-          <span className="transition-transform group-hover:scale-110 group-active:scale-95">
+        <a href="/" onClick={handleLogoClick} className="flex items-center gap-2.5 shrink-0 group cursor-pointer" style={{ perspective: 800 }}>
+          <motion.span
+            animate={{ rotateY: flipping ? 360 : 0, scale: flipping ? 1.15 : 1 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            className="inline-block group-hover:scale-110 group-active:scale-95 transition-transform"
+            style={{ transformStyle: "preserve-3d" }}
+          >
             <Logo size={36} />
-          </span>
+          </motion.span>
           <span className="font-extrabold text-lg tracking-tight">
-            Skale Visuals <span style={{ color: ELECTRIC }}>Immobilier</span>
+            Skale <span style={{ color: ELECTRIC }}>Immobilier</span>
           </span>
-        </Link>
+        </a>
         <nav className="hidden lg:flex liquid-glass rounded-full px-2 py-1.5 absolute left-1/2 -translate-x-1/2">
           <ul className="flex items-center gap-1 whitespace-nowrap leading-none">
             {NAV_LINKS.map((l) => (
@@ -90,9 +117,7 @@ function Navbar() {
         </nav>
         <div className="flex items-center gap-2 shrink-0">
           <a
-            href={CTA_URL}
-            target="_blank"
-            rel="noopener noreferrer"
+            href={CONTACT_HREF}
             className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
           >
             Devis agence <ArrowRight className="w-4 h-4" style={{ color: ELECTRIC }} />
@@ -117,9 +142,8 @@ function Navbar() {
                 </a>
               ))}
               <a
-                href={CTA_URL}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={CONTACT_HREF}
+                onClick={() => setOpen(false)}
                 className="mt-1 inline-flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg text-sm font-semibold text-black"
                 style={{ background: ELECTRIC }}
               >
@@ -162,7 +186,7 @@ function Hero() {
 
         <FadeIn delay={0.1}>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-black text-balance max-w-5xl mx-auto leading-[1.05]">
-            On propulse les agences immo pour qu'elles{" "}
+            On accompagne les agences immobilières pour qu'elles{" "}
             <span className="font-script text-5xl sm:text-6xl lg:text-8xl" style={{ color: ELECTRIC }}>attirent</span>,{" "}
             <span className="font-script text-5xl sm:text-6xl lg:text-8xl" style={{ color: ELECTRIC }}>convertissent</span> et{" "}
             <span className="font-script text-5xl sm:text-6xl lg:text-8xl" style={{ color: ELECTRIC }}>explosent</span>.
@@ -171,17 +195,15 @@ function Hero() {
 
         <FadeIn delay={0.2}>
           <p className="mt-5 max-w-3xl mx-auto text-base sm:text-lg text-muted-foreground text-balance">
-            Ce n'est pas juste du montage. On écrit les scripts et les hooks, on monte vos Reels, et on
-            gère vos comptes de A à Z pour faire exploser vos stats — et vos ventes.
+            On écrit les scripts et les hooks, on monte vos Reels, et on optimise vos réseaux
+            sociaux de A à Z pour faire exploser vos stats — et vos ventes.
           </p>
         </FadeIn>
 
         <FadeIn delay={0.3}>
           <div className="mt-7 flex flex-col sm:flex-row items-center justify-center gap-3">
             <a
-              href={CTA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={CONTACT_HREF}
               className="inline-flex items-center gap-2 font-semibold px-6 py-3.5 rounded-full text-black transition-transform hover:scale-[1.03]"
               style={{ background: ELECTRIC, boxShadow: `0 10px 40px -10px ${ELECTRIC}` }}
             >
@@ -197,8 +219,8 @@ function Hero() {
           <div className="mt-10 flex flex-wrap justify-center gap-3">
             {[
               { icon: PenLine, label: "Scripts & hooks écrits pour vous" },
-              { icon: Scissors, label: "Montage Reels premium" },
-              { icon: TrendingUp, label: "Gestion de comptes complète" },
+              { icon: Scissors, label: "Montage premium" },
+              { icon: TrendingUp, label: "Optimisation des réseaux sociaux" },
               { icon: Sparkles, label: "Croissance mesurée & garantie" },
             ].map((p) => (
               <div
@@ -223,7 +245,6 @@ function ReelsDeck() {
     { id: "r3", title: "Témoignage vendeur satisfait", label: "Reel · 0:34" },
     { id: "r4", title: "Coulisses négociation off-market", label: "Reel · 0:22" },
     { id: "r5", title: "Top 3 quartiers qui montent", label: "Reel · 0:41" },
-    { id: "r6", title: "Avant / Après home staging", label: "Reel · 0:19" },
   ];
   const len = slides.length;
   const [idx, setIdx] = useState(0);
@@ -357,11 +378,9 @@ function ReelsDeck() {
         </FadeIn>
 
         <FadeIn delay={0.25}>
-          <div className="mt-8 text-center" id="contact">
+          <div className="mt-8 text-center">
             <a
-              href={CTA_URL}
-              target="_blank"
-              rel="noopener noreferrer"
+              href={CONTACT_HREF}
               className="inline-flex items-center gap-2 font-semibold px-6 py-3.5 rounded-full text-black transition-transform hover:scale-[1.03]"
               style={{ background: ELECTRIC, boxShadow: `0 10px 40px -10px ${ELECTRIC}` }}
             >
@@ -374,14 +393,74 @@ function ReelsDeck() {
   );
 }
 
+function ContactSection() {
+  return (
+    <section id="contact" className="relative py-16 lg:py-24 border-t border-white/5 overflow-hidden">
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: `radial-gradient(ellipse 60% 50% at 50% 30%, ${ELECTRIC}22, transparent 60%)`,
+        }}
+      />
+      <div className="relative max-w-4xl mx-auto px-6 text-center">
+        <FadeIn>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
+            <span className="text-white">On</span>{" "}
+            <span className="font-script text-5xl sm:text-6xl lg:text-7xl" style={{ color: ELECTRIC }}>discute</span>{" "}
+            <span className="text-white">de votre agence ?</span>
+          </h2>
+          <p className="mt-4 text-muted-foreground text-lg text-balance">
+            Réponse sous 24h. Devis clair, sans engagement — on regarde ensemble ce qu'on peut
+            propulser en premier.
+          </p>
+        </FadeIn>
+        <FadeIn delay={0.15}>
+          <div className="mt-8 grid sm:grid-cols-3 gap-3">
+            <a
+              href="mailto:skalevisuals086@gmail.com"
+              className="liquid-glass rounded-2xl p-5 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors"
+            >
+              <Mail className="w-5 h-5" style={{ color: ELECTRIC }} />
+              <span className="text-sm font-semibold text-white">Email</span>
+              <span className="text-xs text-white/60">skalevisuals086@gmail.com</span>
+            </a>
+            <a
+              href="https://wa.me/33766766153"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="liquid-glass rounded-2xl p-5 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors"
+            >
+              <MessageCircle className="w-5 h-5" style={{ color: ELECTRIC }} />
+              <span className="text-sm font-semibold text-white">WhatsApp</span>
+              <span className="text-xs text-white/60">+33 7 66 76 61 53</span>
+            </a>
+            <a
+              href="https://instagram.com/skalevisuals"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="liquid-glass rounded-2xl p-5 flex flex-col items-center gap-2 hover:bg-white/10 transition-colors"
+            >
+              <Instagram className="w-5 h-5" style={{ color: ELECTRIC }} />
+              <span className="text-sm font-semibold text-white">Instagram</span>
+              <span className="text-xs text-white/60">@skalevisuals</span>
+            </a>
+          </div>
+        </FadeIn>
+      </div>
+    </section>
+  );
+}
+
 function Immobilier() {
   return (
     <div className="min-h-screen bg-background text-white">
+      <ConstructionBanner />
       <Navbar />
       <Hero />
       <ReelsDeck />
+      <ContactSection />
       <footer className="py-8 text-center text-xs text-muted-foreground border-t border-white/5">
-        © Skale Visuals Immobilier — {new Date().getFullYear()}
+        © Skale Immobilier — 2026
       </footer>
     </div>
   );
