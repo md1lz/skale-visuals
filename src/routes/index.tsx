@@ -102,18 +102,21 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
 
 // ---------- live video thumb (DB-backed) ----------
 
-function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "loom" | "streamable" | "video" | "image" | "none"; src: string } {
+// ---------- live video thumb (DB-backed) ----------
+
+function detectEmbed(url: string, autoplay = true): { kind: "youtube" | "vimeo" | "drive" | "loom" | "streamable" | "video" | "image" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
+  const auto = autoplay ? "1" : "0";
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
-  if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=1&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&autohide=1&enablejsapi=1&vq=hd720` };
+  if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=${auto}&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&autohide=1&enablejsapi=1&vq=hd720` };
   const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-  if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=1&muted=1&loop=1&background=1&controls=0` };
+  if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=${auto}&muted=1&loop=1&background=1&controls=0` };
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (dr) return { kind: "drive", src: `https://drive.google.com/file/d/${dr[1]}/preview` };
   const loom = url.match(/loom\.com\/(?:share|embed)\/([\w-]+)/);
-  if (loom) return { kind: "loom", src: `https://www.loom.com/embed/${loom[1]}?autoplay=1&muted=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&loop=true` };
+  if (loom) return { kind: "loom", src: `https://www.loom.com/embed/${loom[1]}?autoplay=${auto}&muted=1&hide_owner=true&hide_share=true&hide_title=true&hideEmbedTopBar=true&loop=true` };
   const stream = url.match(/streamable\.com\/(?:e\/)?([\w-]+)/);
-  if (stream) return { kind: "streamable", src: `https://streamable.com/e/${stream[1]}?autoplay=1&muted=1&loop=1&nocontrols=1` };
+  if (stream) return { kind: "streamable", src: `https://streamable.com/e/${stream[1]}?autoplay=${auto}&muted=1&loop=1&nocontrols=1` };
   if (/\.(mp4|webm|mov|m4v)(\?|$)/i.test(url)) return { kind: "video", src: url };
   if (/\.(png|jpe?g|webp|gif|avif)(\?|$)/i.test(url)) return { kind: "image", src: url };
   // Fallback: try as direct video source (signed URLs without extension, CDN URLs, etc.)
@@ -121,16 +124,22 @@ function detectEmbed(url: string): { kind: "youtube" | "vimeo" | "drive" | "loom
   return { kind: "none", src: url };
 }
 
-function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSize?: "sm" | "md" }) {
-  const { kind, src } = detectEmbed(video.source_url);
+function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean }) {
+  const { kind, src } = detectEmbed(video.source_url, autoPlay);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
-  const [playing, setPlaying] = useState(false);
+  const [playing, setPlaying] = useState(autoPlay);
   const [iframeSrc, setIframeSrc] = useState(src);
   const visibleRef = useRef(true);
-  useEffect(() => { setIframeSrc(src); setPlaying(false); }, [src]);
+  useEffect(() => { setIframeSrc(src); setPlaying(autoPlay); }, [src, autoPlay]);
 
-  // Pause video/iframe when scrolled off-screen; resume when back in view.
+  // When autoPlay is false, ensure native video elements stay paused on mount.
+  useEffect(() => {
+    if (autoPlay || kind !== "video") return;
+    videoRef.current?.pause();
+  }, [autoPlay, kind]);
+
+  // Pause video/iframe when scrolled off-screen; resume when back in view (only if already playing).
   useEffect(() => {
     const target = (iframeRef.current ?? videoRef.current) as Element | null;
     if (!target || typeof window === "undefined" || !("IntersectionObserver" in window)) return;
@@ -139,16 +148,17 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
         const visible = entry.isIntersecting;
         visibleRef.current = visible;
         if (kind === "video" && videoRef.current) {
-          if (visible) videoRef.current.play().catch(() => {});
-          else videoRef.current.pause();
+          const v = videoRef.current;
+          if (visible && playing) v.play().catch(() => {});
+          else v.pause();
         } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
           iframeRef.current.contentWindow.postMessage(
-            JSON.stringify({ event: "command", func: visible ? "playVideo" : "pauseVideo", args: [] }),
+            JSON.stringify({ event: "command", func: visible && playing ? "playVideo" : "pauseVideo", args: [] }),
             "*",
           );
         } else if (kind === "vimeo" && iframeRef.current?.contentWindow) {
           iframeRef.current.contentWindow.postMessage(
-            JSON.stringify({ method: visible ? "play" : "pause" }),
+            JSON.stringify({ method: visible && playing ? "play" : "pause" }),
             "*",
           );
         } else if ((kind === "streamable" || kind === "loom") && iframeRef.current) {
@@ -165,7 +175,7 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
     );
     io.observe(target);
     return () => io.disconnect();
-  }, [kind, iframeSrc]);
+  }, [kind, iframeSrc, playing]);
 
   // YouTube auto-pauses muted loops after a while ("are you still watching"),
   // and pauses when scrolled off-screen. Listen for state changes and force resume.
@@ -179,7 +189,7 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
       // info event with playerState 2 (paused) or 0 (ended) → force play
       const state = data?.info?.playerState ?? (data?.event === "onStateChange" ? data.info : undefined);
       if (state === 2 || state === 0) {
-        if (!playing && visibleRef.current) {
+        if (playing && visibleRef.current) {
           w.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
         }
       }
@@ -196,22 +206,25 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
     if (kind === "video" && videoRef.current) {
       const v = videoRef.current;
       if (next) { v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
-      else { v.muted = true; v.play().catch(() => {}); }
+      else { v.muted = true; v.pause(); }
     } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
       const w = iframeRef.current.contentWindow;
       if (next) {
+        w.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
         w.postMessage(JSON.stringify({ event: "command", func: "unMute", args: [] }), "*");
         w.postMessage(JSON.stringify({ event: "command", func: "setVolume", args: [50] }), "*");
       } else {
+        w.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
         w.postMessage(JSON.stringify({ event: "command", func: "mute", args: [] }), "*");
       }
     } else if (kind === "vimeo" && iframeRef.current?.contentWindow) {
       const w = iframeRef.current.contentWindow;
+      w.postMessage(JSON.stringify({ method: next ? "play" : "pause" }), "*");
       w.postMessage(JSON.stringify({ method: "setMuted", value: !next }), "*");
       w.postMessage(JSON.stringify({ method: "setVolume", value: next ? 0.5 : 0 }), "*");
     } else if (kind === "streamable" || kind === "loom") {
-      // No reliable postMessage API: swap iframe src to toggle mute.
-      setIframeSrc(src.replace(/muted=1/g, next ? "muted=0" : "muted=1"));
+      // No reliable postMessage API: swap iframe src to toggle play/mute.
+      setIframeSrc(src.replace(/autoplay=[01]/g, next ? "autoplay=1" : "autoplay=0").replace(/muted=1/g, next ? "muted=0" : "muted=1"));
     }
   }
 
@@ -223,13 +236,9 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
       {kind === "image" ? (
         <img src={src} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
       ) : kind === "video" ? (
-        <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted loop autoPlay playsInline preload="auto" />
+        <video ref={videoRef} src={src} className="absolute inset-0 w-full h-full object-cover pointer-events-none" muted={!playing} loop playsInline preload="auto" autoPlay={autoPlay} />
       ) : kind !== "none" ? (
         kind === "youtube" ? (
-          // Slight scale + overflow crop removes the small pause button and side
-          // arrows that YouTube still renders inside the embed chrome. A transparent
-          // hit-catcher sits above the iframe so YouTube never receives hover/focus
-          // events that would trigger its own UI.
           <div className="absolute inset-0 overflow-hidden">
             <iframe
               ref={iframeRef}
@@ -241,14 +250,12 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
               onLoad={() => {
                 const w = iframeRef.current?.contentWindow;
                 if (!w) return;
-                // Subscribe to state changes so we can resume after auto-pause.
                 w.postMessage(JSON.stringify({ event: "listening" }), "*");
                 w.postMessage(JSON.stringify({ event: "command", func: "addEventListener", args: ["onStateChange"] }), "*");
-                // Cap quality at 720p to avoid network-driven pauses/buffering.
                 w.postMessage(JSON.stringify({ event: "command", func: "setPlaybackQuality", args: ["hd720"] }), "*");
+                if (!autoPlay) w.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
               }}
             />
-            {/* Block YT chrome from appearing on hover/focus */}
             <div className="absolute inset-0 z-10 pointer-events-auto" aria-hidden="true" />
           </div>
         ) : (
@@ -279,8 +286,8 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
           <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
         </div>
       )}
-      {/* play/pause button */}
-      <div className="absolute inset-0 z-20 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+      {/* play/pause button: always visible when paused, otherwise visible on hover */}
+      <div className={`absolute inset-0 z-30 flex items-center justify-center transition-opacity duration-300 ${playing ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}>
         <button
           type="button"
           onClick={togglePlay}
