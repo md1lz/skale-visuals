@@ -108,7 +108,7 @@ function detectEmbed(url: string, autoplay = true): { kind: "youtube" | "vimeo" 
   const yt = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
   if (yt) return { kind: "youtube", src: `https://www.youtube-nocookie.com/embed/${yt[1]}?autoplay=${auto}&mute=1&loop=1&playlist=${yt[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&cc_load_policy=0&color=white&autohide=1&enablejsapi=1&vq=hd720` };
   const vm = url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
-  if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=${auto}&muted=1&loop=1&background=1&controls=0` };
+  if (vm) return { kind: "vimeo", src: `https://player.vimeo.com/video/${vm[1]}?autoplay=${auto}&muted=1&loop=1&controls=0${autoplay ? "&background=1" : ""}` };
   const dr = url.match(/drive\.google\.com\/file\/d\/([\w-]+)/);
   if (dr) return { kind: "drive", src: `https://drive.google.com/file/d/${dr[1]}/preview` };
   const loom = url.match(/loom\.com\/(?:share|embed)\/([\w-]+)/);
