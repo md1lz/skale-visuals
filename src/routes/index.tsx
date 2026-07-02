@@ -102,8 +102,6 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
 
 // ---------- live video thumb (DB-backed) ----------
 
-// ---------- live video thumb (DB-backed) ----------
-
 function detectEmbed(url: string, autoplay = true): { kind: "youtube" | "vimeo" | "drive" | "loom" | "streamable" | "video" | "image" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
   const auto = autoplay ? "1" : "0";
