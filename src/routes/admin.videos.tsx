@@ -373,6 +373,10 @@ function CaseCard({
   const [source, setSource] = useState(video.source_label);
   const [mediaUrl, setMediaUrl] = useState(video.source_url);
   const [previewUrl, setPreviewUrl] = useState(video.playback_url || video.source_url);
+  const [thumbUrl, setThumbUrl] = useState<string>(video.thumbnail_url ?? "");
+  const [thumbPreview, setThumbPreview] = useState<string>(video.thumbnail_playback_url ?? video.thumbnail_url ?? "");
+  const [uploadingThumb, setUploadingThumb] = useState(false);
+  const thumbInputRef = useRef<HTMLInputElement | null>(null);
   const [dragOver, setDragOver] = useState(false);
   const [uploading, setUploading] = useState(false);
   const fileRef = useRef<HTMLInputElement | null>(null);
@@ -381,6 +385,10 @@ function CaseCard({
   useEffect(() => { setTitle(video.title); }, [video.title]);
   useEffect(() => { setSource(video.source_label); }, [video.source_label]);
   useEffect(() => { setMediaUrl(video.source_url); setPreviewUrl(video.playback_url || video.source_url); }, [video.source_url, video.playback_url]);
+  useEffect(() => {
+    setThumbUrl(video.thumbnail_url ?? "");
+    setThumbPreview(video.thumbnail_playback_url ?? video.thumbnail_url ?? "");
+  }, [video.thumbnail_url, video.thumbnail_playback_url]);
 
   useEffect(() => {
     let alive = true;
@@ -391,6 +399,16 @@ function CaseCard({
       .catch(() => {});
     return () => { alive = false; };
   }, [mediaUrl, previewUrl]);
+
+  useEffect(() => {
+    let alive = true;
+    const path = storagePathFromReference(thumbUrl);
+    if (!path || thumbPreview !== thumbUrl) return;
+    createVideoPlaybackUrl({ data: { path } })
+      .then((res) => { if (alive) setThumbPreview(res.playbackUrl); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [thumbUrl, thumbPreview]);
 
   async function uploadFile(file: File) {
     setUploading(true);
@@ -409,12 +427,30 @@ function CaseCard({
     } finally { setUploading(false); }
   }
 
+  async function uploadThumbFile(file: File) {
+    setUploadingThumb(true);
+    try {
+      const res = await createVideoUploadUrl({
+        data: { filename: file.name, contentType: file.type || "application/octet-stream" },
+      });
+      const { error } = await supabase.storage
+        .from("site-videos")
+        .uploadToSignedUrl(res.path, res.token, file, { contentType: file.type || "application/octet-stream" });
+      if (error) throw error;
+      setThumbUrl(res.publicUrl);
+      setThumbPreview(res.playbackUrl || res.publicUrl);
+    } catch (e) {
+      alert("Échec de l'upload miniature: " + (e as Error).message);
+    } finally { setUploadingThumb(false); }
+  }
+
   async function handleSave() {
     try {
       const patch: Partial<Video> & { id: string } = { id: video.id };
       if (carousel.show_title) patch.title = title;
       if (carousel.show_source) patch.source_label = source;
       patch.source_url = mediaUrl;
+      patch.thumbnail_url = thumbUrl.trim() ? thumbUrl : null;
       const before = video.source_url.trim();
       const after = mediaUrl.trim();
       const action: "create" | "delete" | "update" =
@@ -422,7 +458,7 @@ function CaseCard({
         : before && !after ? "delete"
         : "update";
       await updateVideo({ data: patch });
-      onLocalPatch({ ...patch, playback_url: previewUrl });
+      onLocalPatch({ ...patch, playback_url: previewUrl, thumbnail_playback_url: thumbPreview || null });
       setDirty(video.id, null);
       toast.success("Modifications enregistrées");
       const titleLabel = (carousel.show_title && title.trim()) || (carousel.show_source && source.trim()) || carousel.label;
@@ -441,7 +477,8 @@ function CaseCard({
   const isDirty =
     (carousel.show_title && title !== video.title) ||
     (carousel.show_source && source !== video.source_label) ||
-    mediaUrl !== video.source_url;
+    mediaUrl !== video.source_url ||
+    thumbUrl !== (video.thumbnail_url ?? "");
   const handleSaveRef = useRef(handleSave);
   handleSaveRef.current = handleSave;
   useEffect(() => {
@@ -533,6 +570,51 @@ function CaseCard({
             />
           </div>
         )}
+
+        <div className="pt-2 mt-1 border-t border-white/5">
+          <label className="text-[10px] uppercase tracking-wide text-neutral-500 flex items-center gap-1">
+            <ImageIcon className="h-3 w-3" /> Miniature (affichée avant lecture)
+          </label>
+          <div className="mt-1.5 flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => thumbInputRef.current?.click()}
+              className="relative shrink-0 w-20 h-12 rounded-md overflow-hidden border border-white/10 bg-neutral-900 hover:border-white/25 transition-colors grid place-items-center"
+              title="Choisir une miniature"
+            >
+              {uploadingThumb ? (
+                <Loader2 className="h-4 w-4 animate-spin text-neutral-300" />
+              ) : thumbPreview ? (
+                <img src={thumbPreview} alt="" className="absolute inset-0 w-full h-full object-cover" />
+              ) : (
+                <ImageIcon className="h-4 w-4 text-neutral-500" />
+              )}
+            </button>
+            <div className="flex-1 min-w-0 flex flex-col gap-1">
+              <div className="flex items-center gap-2 text-[11px] text-neutral-400">
+                <button type="button" onClick={() => thumbInputRef.current?.click()} className="inline-flex items-center gap-1 hover:text-white">
+                  <Upload className="h-3 w-3" /> {thumbUrl ? "Remplacer" : "Importer"}
+                </button>
+                {thumbUrl && (
+                  <>
+                    <span className="text-neutral-700">·</span>
+                    <button type="button" onClick={() => { setThumbUrl(""); setThumbPreview(""); }} className="hover:text-red-400">Vider</button>
+                  </>
+                )}
+              </div>
+              <input
+                value={storagePathFromReference(thumbUrl) ? "" : thumbUrl}
+                onChange={(e) => { setThumbUrl(e.target.value); setThumbPreview(e.target.value); }}
+                placeholder={storagePathFromReference(thumbUrl) ? "Fichier importé — colle un lien pour remplacer" : "https://…"}
+                className="w-full bg-neutral-900 border border-white/10 rounded px-2 py-1 text-[11px] focus:border-red-500 outline-none"
+              />
+            </div>
+            <input
+              ref={thumbInputRef} type="file" accept="image/*" className="hidden"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadThumbFile(f); }}
+            />
+          </div>
+        </div>
 
       </div>
     </motion.div>
