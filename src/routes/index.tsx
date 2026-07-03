@@ -33,7 +33,7 @@ export const Route = createFileRoute("/")({
 
 function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.15 });
+  const inView = useInView(ref, { amount: 0.15, once: true });
   return (
     <motion.div
       ref={ref}
@@ -304,10 +304,136 @@ function LiveVideoSurface({ video, btnSize = "md" }: { video: PublicVideo; btnSi
 function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg" }) {
   const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
   const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
+  const { kind, src } = detectEmbed(video.source_url);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const videoRef = useRef<HTMLVideoElement | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
+  const [hovering, setHovering] = useState(false);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || typeof window === "undefined" || !("IntersectionObserver" in window)) return;
+    const io = new IntersectionObserver(([e]) => setVisible(e.isIntersecting), { threshold: 0.1 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const shouldPlay = hovering && visible;
+
+  // Native video
+  useEffect(() => {
+    if (kind !== "video") return;
+    const v = videoRef.current;
+    if (!v) return;
+    if (shouldPlay) {
+      try { v.currentTime = 0; } catch {}
+      v.play().catch(() => {});
+    } else {
+      v.pause();
+      try { v.currentTime = 0; } catch {}
+    }
+  }, [shouldPlay, kind]);
+
+  // YouTube
+  useEffect(() => {
+    if (kind !== "youtube") return;
+    const w = iframeRef.current?.contentWindow;
+    if (!w) return;
+    if (shouldPlay) {
+      w.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }), "*");
+      w.postMessage(JSON.stringify({ event: "command", func: "playVideo", args: [] }), "*");
+    } else {
+      w.postMessage(JSON.stringify({ event: "command", func: "pauseVideo", args: [] }), "*");
+      w.postMessage(JSON.stringify({ event: "command", func: "seekTo", args: [0, true] }), "*");
+    }
+  }, [shouldPlay, kind]);
+
+  // Vimeo
+  useEffect(() => {
+    if (kind !== "vimeo") return;
+    const w = iframeRef.current?.contentWindow;
+    if (!w) return;
+    if (shouldPlay) {
+      w.postMessage(JSON.stringify({ method: "setCurrentTime", value: 0 }), "*");
+      w.postMessage(JSON.stringify({ method: "play" }), "*");
+    } else {
+      w.postMessage(JSON.stringify({ method: "pause" }), "*");
+      w.postMessage(JSON.stringify({ method: "setCurrentTime", value: 0 }), "*");
+    }
+  }, [shouldPlay, kind]);
+
+  // Precomputed embed sources (no autoplay, controls off, jsapi enabled)
+  let embedSrc = "";
+  if (kind === "youtube") {
+    const m = video.source_url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{6,})/);
+    if (m) embedSrc = `https://www.youtube-nocookie.com/embed/${m[1]}?autoplay=0&mute=1&loop=1&playlist=${m[1]}&controls=0&modestbranding=1&playsinline=1&rel=0&showinfo=0&iv_load_policy=3&disablekb=1&fs=0&enablejsapi=1&vq=hd720`;
+  } else if (kind === "vimeo") {
+    const m = video.source_url.match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    if (m) embedSrc = `https://player.vimeo.com/video/${m[1]}?autoplay=0&muted=1&loop=1&background=1&controls=0`;
+  }
+
+  const canHoverPlay = kind === "video" || kind === "youtube" || kind === "vimeo";
+  const thumb = video.thumbnail_url;
+
   return (
-    <div className={`${widths[size]} shrink-0 group cursor-pointer`}>
+    <div
+      ref={containerRef}
+      className={`${widths[size]} shrink-0 group cursor-pointer`}
+      onMouseEnter={() => setHovering(true)}
+      onMouseLeave={() => setHovering(false)}
+      onFocus={() => setHovering(true)}
+      onBlur={() => setHovering(false)}
+    >
       <div className={`relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br ${gradient} card-hover`}>
-        <LiveVideoSurface video={video} />
+        {/* Persistent video/iframe layer — no unmount, only pause/seek */}
+        {kind === "video" ? (
+          <video
+            ref={videoRef}
+            src={src}
+            className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+            muted loop playsInline preload="metadata"
+          />
+        ) : kind === "youtube" || kind === "vimeo" ? (
+          <iframe
+            ref={iframeRef}
+            src={embedSrc}
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            allow="autoplay; encrypted-media; picture-in-picture"
+            tabIndex={-1}
+            aria-hidden="true"
+          />
+        ) : kind !== "none" && kind !== "image" ? (
+          <LiveVideoSurface video={video} />
+        ) : null}
+
+        {/* Thumbnail poster — fades out on hover to reveal the video */}
+        {canHoverPlay && (
+          <div className={`absolute inset-0 transition-opacity duration-300 ${shouldPlay ? "opacity-0 pointer-events-none" : "opacity-100"}`}>
+            {thumb ? (
+              <img src={thumb} alt={video.title} loading="lazy" className="absolute inset-0 w-full h-full object-cover" />
+            ) : (
+              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.6))]" />
+            )}
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-14 h-14 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center group-hover:bg-primary/90 group-hover:scale-110 transition-all duration-300">
+                <Play className="w-5 h-5 text-white fill-white ml-0.5" />
+              </div>
+            </div>
+            {video.source_label && (
+              <div className="absolute top-3 left-3">
+                <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
+                  {video.source_label}
+                </span>
+              </div>
+            )}
+            {video.title && (
+              <div className="absolute bottom-3 left-3 right-3">
+                <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
