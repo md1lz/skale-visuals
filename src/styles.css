@@ -183,3 +183,11 @@
 .marquee.is-offscreen .marquee-y-track-reverse {
   animation-play-state: paused;
 }
+
+.marquee.is-frozen .marquee-track,
+.marquee.is-frozen .marquee-track-reverse,
+.marquee.is-frozen .marquee-track-fast,
+.marquee.is-frozen .marquee-y-track,
+.marquee.is-frozen .marquee-y-track-reverse {
+  animation-play-state: paused;
+}

@@ -122,7 +122,7 @@ function detectEmbed(url: string, autoplay = true): { kind: "youtube" | "vimeo" 
   return { kind: "none", src: url };
 }
 
-function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean }) {
+function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode = false, onPlayingChange }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean; posterMode?: boolean; onPlayingChange?: (playing: boolean) => void }) {
   const { kind, src } = detectEmbed(video.source_url, autoPlay);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -201,6 +201,7 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: P
     e.stopPropagation();
     const next = !playing;
     setPlaying(next);
+    onPlayingChange?.(next);
     if (kind === "video" && videoRef.current) {
       const v = videoRef.current;
       if (next) { v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
@@ -268,6 +269,16 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: P
       ) : video.thumbnail_url ? (
         <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
       ) : null}
+      {/* poster overlay (thumbnail hides media until first play) */}
+      {posterMode && !playing && (
+        <div className="absolute inset-0 z-[25]">
+          {video.thumbnail_url ? (
+            <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+          ) : (
+            <div className="absolute inset-0 bg-black/60" />
+          )}
+        </div>
+      )}
       {/* hover dim */}
       <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       {/* source slides down */}
@@ -284,8 +295,8 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: P
           <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
         </div>
       )}
-      {/* play/pause button: always visible when paused, otherwise visible on hover */}
-      <div className={`absolute inset-0 z-30 flex items-center justify-center transition-opacity duration-300 ${playing ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}>
+      {/* play/pause button */}
+      <div className={`absolute inset-0 z-30 flex items-center justify-center transition-opacity duration-300 ${posterMode ? "opacity-0 group-hover:opacity-100" : (playing ? "opacity-0 group-hover:opacity-100" : "opacity-100")}`}>
         <button
           type="button"
           onClick={togglePlay}
@@ -306,13 +317,13 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: P
   );
 }
 
-function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg" }) {
+function LiveVideoThumb({ video, idx, size = "md", posterMode = false, onPlayingChange }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg"; posterMode?: boolean; onPlayingChange?: (playing: boolean) => void }) {
   const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
   const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
   return (
     <div className={`${widths[size]} shrink-0 group cursor-pointer`}>
       <div className={`relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br ${gradient} card-hover`}>
-        <LiveVideoSurface video={video} />
+        <LiveVideoSurface video={video} autoPlay={!posterMode} posterMode={posterMode} onPlayingChange={onPlayingChange} />
       </div>
     </div>
   );
@@ -1116,19 +1127,33 @@ function Portfolio() {
   const live2 = allLive.filter((v) => v.carousel_key === "realisations_2");
   const live3 = allLive.filter((v) => v.carousel_key === "realisations_3");
 
-  const Row = ({ items, live, reverse, offset = 0 }: { items: { t: string; c: string }[]; live: PublicVideo[]; reverse?: boolean; offset?: number }) => (
-    <div className="marquee overflow-hidden mask-fade">
-      <div className={`flex gap-4 w-max ${reverse ? "marquee-track-reverse" : "marquee-track"}`}>
-        {live.length > 0
-          ? [...live, ...live].map((v, i) => (
-              <LiveVideoThumb key={`${v.id}-${i}`} video={v} idx={i + offset} />
-            ))
-          : [...items, ...items].map((it, i) => (
-              <VideoThumb key={i} title={it.t} category={it.c} idx={i + offset} />
-            ))}
+  const Row = ({ items, live, reverse, offset = 0 }: { items: { t: string; c: string }[]; live: PublicVideo[]; reverse?: boolean; offset?: number }) => {
+    const [playingKey, setPlayingKey] = useState<string | null>(null);
+    return (
+      <div className={`marquee overflow-hidden mask-fade ${playingKey ? "is-frozen" : ""}`}>
+        <div className={`flex gap-4 w-max ${reverse ? "marquee-track-reverse" : "marquee-track"}`}>
+          {live.length > 0
+            ? [...live, ...live].map((v, i) => {
+                const key = `${v.id}-${i}`;
+                return (
+                  <LiveVideoThumb
+                    key={key}
+                    video={v}
+                    idx={i + offset}
+                    posterMode
+                    onPlayingChange={(playing) =>
+                      setPlayingKey((prev) => (playing ? key : prev === key ? null : prev))
+                    }
+                  />
+                );
+              })
+            : [...items, ...items].map((it, i) => (
+                <VideoThumb key={i} title={it.t} category={it.c} idx={i + offset} />
+              ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <section id="realisations" data-section="realisations" className="relative py-12 lg:py-16 border-t border-white/5">
