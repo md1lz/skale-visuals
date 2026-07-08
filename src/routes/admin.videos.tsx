@@ -573,6 +573,49 @@ function CaseCard({
           </div>
         )}
 
+        {supportsThumbnail && (
+          <div className="pt-2 border-t border-white/5">
+            <label className="text-[10px] uppercase tracking-wide text-neutral-500 flex items-center gap-1">
+              <ImageIcon className="h-3 w-3" /> Miniature (image affichée avant lecture)
+            </label>
+            <div className="mt-1.5 flex items-center gap-2">
+              <div className="relative w-24 aspect-video shrink-0 rounded-md overflow-hidden bg-neutral-900 border border-white/10">
+                {thumbPreview ? (
+                  <img src={thumbPreview} alt="" className="absolute inset-0 w-full h-full object-cover" />
+                ) : (
+                  <div className="absolute inset-0 grid place-items-center text-neutral-600">
+                    <ImageIcon className="h-4 w-4" />
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-1 text-[11px] text-neutral-400">
+                <button
+                  type="button"
+                  onClick={() => thumbFileRef.current?.click()}
+                  disabled={thumbUploading}
+                  className="inline-flex items-center gap-1 hover:text-white disabled:opacity-60"
+                >
+                  {thumbUploading ? <Loader2 className="h-3 w-3 animate-spin" /> : <Upload className="h-3 w-3" />}
+                  {thumbUploading ? "Upload…" : (thumbUrl ? "Remplacer" : "Importer une image")}
+                </button>
+                {thumbUrl && (
+                  <button
+                    type="button"
+                    onClick={() => { setThumbUrl(""); setThumbPreview(""); }}
+                    className="hover:text-red-400 text-left"
+                  >
+                    Retirer
+                  </button>
+                )}
+              </div>
+              <input
+                ref={thumbFileRef} type="file" accept="image/*" className="hidden"
+                onChange={(e) => { const f = e.target.files?.[0]; if (f) uploadThumb(f); }}
+              />
+            </div>
+          </div>
+        )}
+
       </div>
     </motion.div>
   );
