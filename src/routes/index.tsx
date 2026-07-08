@@ -122,7 +122,7 @@ function detectEmbed(url: string, autoplay = true): { kind: "youtube" | "vimeo" 
   return { kind: "none", src: url };
 }
 
-function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean }) {
+function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode = false, onPlayingChange }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean; posterMode?: boolean; onPlayingChange?: (playing: boolean) => void }) {
   const { kind, src } = detectEmbed(video.source_url, autoPlay);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -201,6 +201,7 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: P
     e.stopPropagation();
     const next = !playing;
     setPlaying(next);
+    onPlayingChange?.(next);
     if (kind === "video" && videoRef.current) {
       const v = videoRef.current;
       if (next) { v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
@@ -268,6 +269,16 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: P
       ) : video.thumbnail_url ? (
         <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
       ) : null}
+      {/* poster overlay (thumbnail hides media until first play) */}
+      {posterMode && !playing && (
+        <div className="absolute inset-0 z-[25]">
+          {video.thumbnail_url ? (
+            <img src={video.thumbnail_url} alt={video.title} className="absolute inset-0 w-full h-full object-cover" />
+          ) : (
+            <div className="absolute inset-0 bg-black/60" />
+          )}
+        </div>
+      )}
       {/* hover dim */}
       <div className="absolute inset-0 z-20 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       {/* source slides down */}
@@ -284,8 +295,8 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true }: { video: P
           <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
         </div>
       )}
-      {/* play/pause button: always visible when paused, otherwise visible on hover */}
-      <div className={`absolute inset-0 z-30 flex items-center justify-center transition-opacity duration-300 ${playing ? "opacity-0 group-hover:opacity-100" : "opacity-100"}`}>
+      {/* play/pause button */}
+      <div className={`absolute inset-0 z-30 flex items-center justify-center transition-opacity duration-300 ${posterMode ? "opacity-0 group-hover:opacity-100" : (playing ? "opacity-0 group-hover:opacity-100" : "opacity-100")}`}>
         <button
           type="button"
           onClick={togglePlay}
