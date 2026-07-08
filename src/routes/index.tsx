@@ -1127,19 +1127,33 @@ function Portfolio() {
   const live2 = allLive.filter((v) => v.carousel_key === "realisations_2");
   const live3 = allLive.filter((v) => v.carousel_key === "realisations_3");
 
-  const Row = ({ items, live, reverse, offset = 0 }: { items: { t: string; c: string }[]; live: PublicVideo[]; reverse?: boolean; offset?: number }) => (
-    <div className="marquee overflow-hidden mask-fade">
-      <div className={`flex gap-4 w-max ${reverse ? "marquee-track-reverse" : "marquee-track"}`}>
-        {live.length > 0
-          ? [...live, ...live].map((v, i) => (
-              <LiveVideoThumb key={`${v.id}-${i}`} video={v} idx={i + offset} />
-            ))
-          : [...items, ...items].map((it, i) => (
-              <VideoThumb key={i} title={it.t} category={it.c} idx={i + offset} />
-            ))}
+  const Row = ({ items, live, reverse, offset = 0 }: { items: { t: string; c: string }[]; live: PublicVideo[]; reverse?: boolean; offset?: number }) => {
+    const [playingKey, setPlayingKey] = useState<string | null>(null);
+    return (
+      <div className={`marquee overflow-hidden mask-fade ${playingKey ? "is-frozen" : ""}`}>
+        <div className={`flex gap-4 w-max ${reverse ? "marquee-track-reverse" : "marquee-track"}`}>
+          {live.length > 0
+            ? [...live, ...live].map((v, i) => {
+                const key = `${v.id}-${i}`;
+                return (
+                  <LiveVideoThumb
+                    key={key}
+                    video={v}
+                    idx={i + offset}
+                    posterMode
+                    onPlayingChange={(playing) =>
+                      setPlayingKey((prev) => (playing ? key : prev === key ? null : prev))
+                    }
+                  />
+                );
+              })
+            : [...items, ...items].map((it, i) => (
+                <VideoThumb key={i} title={it.t} category={it.c} idx={i + offset} />
+              ))}
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   return (
     <section id="realisations" data-section="realisations" className="relative py-12 lg:py-16 border-t border-white/5">
