@@ -317,13 +317,13 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode =
   );
 }
 
-function LiveVideoThumb({ video, idx, size = "md" }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg" }) {
+function LiveVideoThumb({ video, idx, size = "md", posterMode = false, onPlayingChange }: { video: PublicVideo; idx: number; size?: "sm" | "md" | "lg"; posterMode?: boolean; onPlayingChange?: (playing: boolean) => void }) {
   const widths = { sm: "w-64", md: "w-80", lg: "w-96" };
   const gradient = THUMB_GRADIENTS[idx % THUMB_GRADIENTS.length];
   return (
     <div className={`${widths[size]} shrink-0 group cursor-pointer`}>
       <div className={`relative aspect-video rounded-xl overflow-hidden border border-white/10 bg-gradient-to-br ${gradient} card-hover`}>
-        <LiveVideoSurface video={video} />
+        <LiveVideoSurface video={video} autoPlay={!posterMode} posterMode={posterMode} onPlayingChange={onPlayingChange} />
       </div>
     </div>
   );
