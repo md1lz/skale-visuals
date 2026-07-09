@@ -533,18 +533,37 @@ function Hero() {
       </div>
 
       {/* hero thumbnail strip — tight spacing */}
-      <div className="relative marquee overflow-hidden py-2 mask-fade">
-        <div className="flex gap-4 marquee-track w-max">
-          {liveVideos.length > 0
-            ? [...liveVideos, ...liveVideos].map((v, i) => (
-                <LiveVideoThumb key={`${v.id}-${i}`} video={v} idx={i} size="md" />
-              ))
-            : [...heroThumbs, ...heroThumbs].map((t, i) => (
-                <VideoThumb key={i} title={t.t} category={t.c} idx={i} size="md" />
-              ))}
-        </div>
-      </div>
+      <HeroStrip liveVideos={liveVideos} heroThumbs={heroThumbs} />
     </section>
+  );
+}
+
+function HeroStrip({ liveVideos, heroThumbs }: { liveVideos: PublicVideo[]; heroThumbs: { t: string; c: string }[] }) {
+  const [playingKey, setPlayingKey] = useState<string | null>(null);
+  return (
+    <div className={`relative marquee overflow-hidden py-2 mask-fade ${playingKey ? "is-frozen" : ""}`}>
+      <div className="flex gap-4 marquee-track w-max">
+        {liveVideos.length > 0
+          ? [...liveVideos, ...liveVideos].map((v, i) => {
+              const key = `${v.id}-${i}`;
+              return (
+                <LiveVideoThumb
+                  key={key}
+                  video={v}
+                  idx={i}
+                  size="md"
+                  posterMode
+                  onPlayingChange={(playing) =>
+                    setPlayingKey((prev) => (playing ? key : prev === key ? null : prev))
+                  }
+                />
+              );
+            })
+          : [...heroThumbs, ...heroThumbs].map((t, i) => (
+              <VideoThumb key={i} title={t.t} category={t.c} idx={i} size="md" />
+            ))}
+      </div>
+    </div>
   );
 }
 
