@@ -122,7 +122,7 @@ function detectEmbed(url: string, autoplay = true): { kind: "youtube" | "vimeo" 
   return { kind: "none", src: url };
 }
 
-function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode = false, onPlayingChange }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean; posterMode?: boolean; onPlayingChange?: (playing: boolean) => void }) {
+function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode = false, previewOffsetSeconds, onPlayingChange }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean; posterMode?: boolean; previewOffsetSeconds?: number; onPlayingChange?: (playing: boolean) => void }) {
   const { kind, src } = detectEmbed(video.source_url, autoPlay);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -136,6 +136,19 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode =
     if (autoPlay || kind !== "video") return;
     videoRef.current?.pause();
   }, [autoPlay, kind]);
+
+  // Seek the preview frame to a given offset so the paused poster isn't a black intro frame.
+  useEffect(() => {
+    if (kind !== "video" || playing || previewOffsetSeconds == null) return;
+    const v = videoRef.current;
+    if (!v) return;
+    const seek = () => {
+      try { v.currentTime = Math.min(previewOffsetSeconds, Math.max(0, (v.duration || previewOffsetSeconds + 1) - 0.1)); } catch { /* noop */ }
+    };
+    if (v.readyState >= 1) seek();
+    else v.addEventListener("loadedmetadata", seek, { once: true });
+    return () => v.removeEventListener("loadedmetadata", seek);
+  }, [kind, playing, previewOffsetSeconds, src]);
 
   // Pause video/iframe when scrolled off-screen; resume when back in view (only if already playing).
   useEffect(() => {
@@ -204,7 +217,7 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode =
     onPlayingChange?.(next);
     if (kind === "video" && videoRef.current) {
       const v = videoRef.current;
-      if (next) { v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
+      if (next) { if (previewOffsetSeconds != null) { try { v.currentTime = 0; } catch { /* noop */ } } v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
       else { v.muted = true; v.pause(); }
     } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
       const w = iframeRef.current.contentWindow;
