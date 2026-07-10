@@ -5,7 +5,7 @@ import {
   Play, Film, Sparkles, Zap, Palette, Check, Star, ChevronDown,
   ArrowRight, Type, Music, MessageCircle, Mail, Instagram, X,
   Upload, BarChart3, Send, Menu, ChevronLeft, ChevronRight,
-  TrendingUp, Mic, Target,
+  TrendingUp, Mic, Target, BadgeEuro,
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
 import arrowAsset from "@/assets/arrow-curl.png.asset.json";
@@ -122,7 +122,7 @@ function detectEmbed(url: string, autoplay = true): { kind: "youtube" | "vimeo" 
   return { kind: "none", src: url };
 }
 
-function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode = false, onPlayingChange }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean; posterMode?: boolean; onPlayingChange?: (playing: boolean) => void }) {
+function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode = false, previewOffsetSeconds, onPlayingChange }: { video: PublicVideo; btnSize?: "sm" | "md"; autoPlay?: boolean; posterMode?: boolean; previewOffsetSeconds?: number; onPlayingChange?: (playing: boolean) => void }) {
   const { kind, src } = detectEmbed(video.source_url, autoPlay);
   const videoRef = useRef<HTMLVideoElement | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
@@ -136,6 +136,19 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode =
     if (autoPlay || kind !== "video") return;
     videoRef.current?.pause();
   }, [autoPlay, kind]);
+
+  // Seek the preview frame to a given offset so the paused poster isn't a black intro frame.
+  useEffect(() => {
+    if (kind !== "video" || playing || previewOffsetSeconds == null) return;
+    const v = videoRef.current;
+    if (!v) return;
+    const seek = () => {
+      try { v.currentTime = Math.min(previewOffsetSeconds, Math.max(0, (v.duration || previewOffsetSeconds + 1) - 0.1)); } catch { /* noop */ }
+    };
+    if (v.readyState >= 1) seek();
+    else v.addEventListener("loadedmetadata", seek, { once: true });
+    return () => v.removeEventListener("loadedmetadata", seek);
+  }, [kind, playing, previewOffsetSeconds, src]);
 
   // Pause video/iframe when scrolled off-screen; resume when back in view (only if already playing).
   useEffect(() => {
@@ -204,7 +217,7 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode =
     onPlayingChange?.(next);
     if (kind === "video" && videoRef.current) {
       const v = videoRef.current;
-      if (next) { v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
+      if (next) { if (previewOffsetSeconds != null) { try { v.currentTime = 0; } catch { /* noop */ } } v.muted = false; v.volume = 0.5; v.play().catch(() => {}); }
       else { v.muted = true; v.pause(); }
     } else if (kind === "youtube" && iframeRef.current?.contentWindow) {
       const w = iframeRef.current.contentWindow;
@@ -601,7 +614,7 @@ function SocialProof() {
               <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-primary/25 bg-gradient-to-br from-red-950/60 via-rose-900/30 to-black card-hover cursor-pointer">
                 <div className="absolute inset-0 opacity-25 pointer-events-none" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
                 {v ? (
-                  <LiveVideoSurface video={v} autoPlay={false} />
+                  <LiveVideoSurface video={v} autoPlay={false} previewOffsetSeconds={2} />
                 ) : (
                   <>
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
@@ -658,8 +671,8 @@ function FeaturedTestimonial() {
 function WhySkale() {
   const features = [
     { icon: Film, title: "Montage Premium", desc: "Cuts dynamiques, transitions fluides, rythme maîtrisé. Tes spectateurs ne décrochent pas." },
-    { icon: Palette, title: "Color Grading Cinématique", desc: "Une colorimétrie qui reflète ton univers de marque et donne du relief à chaque plan." },
     { icon: Zap, title: "Livraison Rapide", desc: "Fichier livré sous 24–48h pour les formats courts, avec révisions illimitées incluses." },
+    { icon: BadgeEuro, title: "Tarifs imbattables", desc: "Un devis personnalisé et transparent, calibré à ton besoin. Le meilleur rapport qualité/prix du marché, sans mauvaise surprise." },
   ];
   const pills = [
     { icon: Sparkles, label: "Motion Design inclus" },
@@ -1250,11 +1263,9 @@ function Testimonials() {
     </div>
   );
 
-  const cols = [
-    reviews.slice(0, 4),
-    reviews.slice(4, 8),
-    reviews.slice(8, 12),
-  ];
+  // Même sélection d'avis répétée sur chaque colonne pour éviter la surcharge.
+  const shared = reviews.slice(0, 4);
+  const cols = [shared, shared, shared];
 
   const Column = ({ items, reverse }: { items: R[]; reverse?: boolean }) => (
     <div className="marquee overflow-hidden h-[560px] mask-fade-y relative">
@@ -1272,8 +1283,8 @@ function Testimonials() {
     </div>
   );
 
-  const mobileRow1 = reviews.slice(0, 6);
-  const mobileRow2 = reviews.slice(6, 12);
+  const mobileRow1 = shared;
+  const mobileRow2 = shared;
 
   return (
     <section id="avis" data-section="avis" className="relative py-12 lg:py-16 border-t border-white/5">
