@@ -1263,11 +1263,9 @@ function Testimonials() {
     </div>
   );
 
-  const cols = [
-    reviews.slice(0, 4),
-    reviews.slice(4, 8),
-    reviews.slice(8, 12),
-  ];
+  // Même sélection d'avis répétée sur chaque colonne pour éviter la surcharge.
+  const shared = reviews.slice(0, 4);
+  const cols = [shared, shared, shared];
 
   const Column = ({ items, reverse }: { items: R[]; reverse?: boolean }) => (
     <div className="marquee overflow-hidden h-[560px] mask-fade-y relative">
@@ -1285,8 +1283,8 @@ function Testimonials() {
     </div>
   );
 
-  const mobileRow1 = reviews.slice(0, 6);
-  const mobileRow2 = reviews.slice(6, 12);
+  const mobileRow1 = shared;
+  const mobileRow2 = shared;
 
   return (
     <section id="avis" data-section="avis" className="relative py-12 lg:py-16 border-t border-white/5">
