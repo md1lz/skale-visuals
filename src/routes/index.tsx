@@ -614,7 +614,7 @@ function SocialProof() {
               <div key={i} className="group relative aspect-square rounded-2xl overflow-hidden border border-primary/25 bg-gradient-to-br from-red-950/60 via-rose-900/30 to-black card-hover cursor-pointer">
                 <div className="absolute inset-0 opacity-25 pointer-events-none" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
                 {v ? (
-                  <LiveVideoSurface video={v} autoPlay={false} />
+                  <LiveVideoSurface video={v} autoPlay={false} previewOffsetSeconds={2} />
                 ) : (
                   <>
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
