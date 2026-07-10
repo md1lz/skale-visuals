@@ -5,7 +5,7 @@ import {
   Play, Film, Sparkles, Zap, Palette, Check, Star, ChevronDown,
   ArrowRight, Type, Music, MessageCircle, Mail, Instagram, X,
   Upload, BarChart3, Send, Menu, ChevronLeft, ChevronRight,
-  TrendingUp, Mic, Target,
+  TrendingUp, Mic, Target, BadgeEuro,
 } from "lucide-react";
 import logoAsset from "@/assets/skale-logo.png.asset.json";
 import arrowAsset from "@/assets/arrow-curl.png.asset.json";
