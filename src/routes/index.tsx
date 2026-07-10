@@ -671,8 +671,8 @@ function FeaturedTestimonial() {
 function WhySkale() {
   const features = [
     { icon: Film, title: "Montage Premium", desc: "Cuts dynamiques, transitions fluides, rythme maîtrisé. Tes spectateurs ne décrochent pas." },
-    { icon: Palette, title: "Color Grading Cinématique", desc: "Une colorimétrie qui reflète ton univers de marque et donne du relief à chaque plan." },
     { icon: Zap, title: "Livraison Rapide", desc: "Fichier livré sous 24–48h pour les formats courts, avec révisions illimitées incluses." },
+    { icon: BadgeEuro, title: "Tarifs imbattables", desc: "Un devis personnalisé et transparent, calibré à ton besoin. Le meilleur rapport qualité/prix du marché, sans mauvaise surprise." },
   ];
   const pills = [
     { icon: Sparkles, label: "Motion Design inclus" },
