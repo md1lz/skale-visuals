@@ -37,7 +37,7 @@ function resolveWindow(input: z.infer<typeof rangeSchema>): { start: Date; end: 
     return { start: s, end: e, bucket: diffDays <= 2 ? "hour" : "day" };
   }
   if (input.range === "today") {
-    start.setHours(0, 0, 0, 0);
+    start.setHours(start.getHours() - 24);
     return { start, end, bucket: "hour" };
   }
   if (input.range === "24h") {
@@ -106,7 +106,7 @@ export const getSiteAnalytics = createServerFn({ method: "POST" })
       .gte("created_at", startIso)
       .lte("created_at", endIso)
       .order("created_at", { ascending: true })
-      .limit(50_000);
+      .limit(200_000);
 
 
     if (error) throw new Error(error.message);
