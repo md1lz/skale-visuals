@@ -29,6 +29,12 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+function scrollToTop() {
+  if (typeof window !== "undefined") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
 // ---------- helpers ----------
 
 function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
