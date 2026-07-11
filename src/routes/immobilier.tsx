@@ -13,7 +13,7 @@ const CONTACT_HREF = "#contact";
 export const Route = createFileRoute("/immobilier")({
   head: () => ({
     meta: [
-      { title: "Skale Immobilier — Vidéo & Social Media pour agences" },
+      { title: "Skale Visuals" },
       { name: "description", content: "Accompagnement complet pour les agences immobilières : scripts, hooks, montage Reels et gestion de comptes pour faire exploser vos stats." },
       { property: "og:title", content: "Skale Immobilier — Vidéo & Social Media" },
       { property: "og:description", content: "Scripts, hooks, montage, gestion de comptes. On propulse les agences immobilières sur les réseaux." },

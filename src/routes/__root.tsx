@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import faviconAsset from "@/assets/skale-favicon.png.asset.json";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AdminBubble } from "../components/AdminBubble";
 import { initTracker, trackPageView } from "../lib/tracker";
@@ -81,13 +82,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Skale Visuals - Montage Vidéo" },
+      { title: "Skale Visuals" },
       { name: "description", content: "Montage vidéo professionnel, color grading, sous-titres et motion design. Livraison en 72h. +120 clients, +850 vidéos livrées." },
-      { property: "og:title", content: "Skale Visuals - Montage Vidéo" },
+      { property: "og:title", content: "Skale Visuals" },
       { property: "og:description", content: "Montage vidéo professionnel, color grading, sous-titres et motion design. Livraison en 72h. +120 clients, +850 vidéos livrées." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Skale Visuals - Montage Vidéo" },
+      { name: "twitter:title", content: "Skale Visuals" },
       { name: "twitter:description", content: "Montage vidéo professionnel, color grading, sous-titres et motion design. Livraison en 72h. +120 clients, +850 vidéos livrées." },
       { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1595f4cb-765d-47fa-ba8e-8ea1899c9d85/id-preview-8a89de20--b2671d23-9490-4363-bfc0-aecd2bf36530.lovable.app-1782754415975.png" },
       { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/1595f4cb-765d-47fa-ba8e-8ea1899c9d85/id-preview-8a89de20--b2671d23-9490-4363-bfc0-aecd2bf36530.lovable.app-1782754415975.png" },
@@ -97,7 +98,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       { rel: "stylesheet", href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Allura&display=swap" },
-      { rel: "icon", href: "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23080810'/%3E%3Cpath d='M13 10l9 6-9 6V10z' fill='%23FF6B2B'/%3E%3C/svg%3E" },
+      { rel: "icon", type: "image/png", href: faviconAsset.url },
     ],
   }),
   shellComponent: RootShell,

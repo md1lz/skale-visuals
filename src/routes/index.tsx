@@ -19,15 +19,21 @@ const IG_URL = "https://instagram.com/skalevisuals";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Skale Visuals — Agence de Montage Vidéo" },
+      { title: "Skale Visuals" },
       { name: "description", content: "Montage vidéo qui captive, convertit et scale ton business. Livraison rapide, color grading, sous-titres et motion design inclus." },
-      { property: "og:title", content: "Skale Visuals — Agence de Montage Vidéo" },
+      { property: "og:title", content: "Skale Visuals" },
       { property: "og:description", content: "Montage vidéo qui scale ton business. Devis gratuit." },
       { property: "og:type", content: "website" },
     ],
   }),
   component: Index,
 });
+
+function scrollToTop() {
+  if (typeof window !== "undefined") {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
 
 // ---------- helpers ----------
 
@@ -390,12 +396,17 @@ function Navbar() {
     <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? "py-3" : "py-4"}`}>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
         {/* Left: logo */}
-        <div className="flex items-center gap-2.5 shrink-0 group">
+        <button
+          type="button"
+          onClick={() => { scrollToTop(); setOpen(false); }}
+          className="flex items-center gap-2.5 shrink-0 group cursor-pointer"
+          aria-label="Retour en haut de la page"
+        >
           <span className="inline-block group-hover:scale-110 transition-transform">
             <Logo size={36} />
           </span>
           <span className="font-extrabold text-lg tracking-tight">Skale Visuals</span>
-        </div>
+        </button>
 
         {/* Center: pill nav (absolute centered on desktop) */}
         <nav className="hidden lg:flex liquid-glass rounded-full px-2 py-1.5 absolute left-1/2 -translate-x-1/2">
@@ -1554,10 +1565,15 @@ function Footer() {
     <footer className="relative border-t border-white/10 py-10">
       <div className="max-w-7xl mx-auto px-6 grid gap-8 md:grid-cols-[1.2fr_2fr]">
         <div>
-          <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="flex items-center gap-2.5 cursor-pointer"
+            aria-label="Retour en haut de la page"
+          >
             <Logo size={36} />
             <span className="font-extrabold text-lg">Skale Visuals</span>
-          </div>
+          </button>
           <ul className="mt-4 space-y-2 text-sm">
             <li className="flex items-center gap-2 text-white/80">
               <MessageCircle className="w-4 h-4 text-primary shrink-0" />
