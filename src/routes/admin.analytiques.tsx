@@ -40,7 +40,7 @@ import { getSiteAnalytics } from "@/lib/admin-analytics.functions";
 type Range = "today" | "7d" | "30d" | "custom";
 
 const RANGES: { value: Range; label: string }[] = [
-  { value: "today", label: "Aujourd'hui" },
+  { value: "today", label: "Dernières 24h" },
   { value: "7d", label: "7 jours" },
   { value: "30d", label: "30 jours" },
   { value: "custom", label: "Personnalisé" },
@@ -71,6 +71,8 @@ function AnalyticsPage() {
     queryKey: ["site-analytics", range, range === "custom" ? customFrom?.toISOString() : null, range === "custom" ? customTo?.toISOString() : null],
     queryFn: () => fetchAnalytics({ data: queryArgs }),
     refetchInterval: 60_000,
+    refetchOnWindowFocus: true,
+    staleTime: 0,
     enabled: range !== "custom" || (!!customFrom && !!customTo),
   });
 
@@ -183,7 +185,7 @@ function AnalyticsPage() {
 
       <Panel
         title="Visites"
-        subtitle={range === "today" ? "Sessions par heure" : range === "custom" && customFrom && customTo && (customTo.getTime() - customFrom.getTime()) <= 2 * 86400000 ? "Sessions par heure" : "Sessions par jour"}
+        subtitle={range === "today" ? "Sessions par heure (dernières 24h)" : range === "custom" && customFrom && customTo && (customTo.getTime() - customFrom.getTime()) <= 2 * 86400000 ? "Sessions par heure" : "Sessions par jour"}
         icon={<TrendingUp className="h-4 w-4 text-red-500" />}
       >
         <div className="h-72">

@@ -133,7 +133,7 @@ function AdminHome() {
         <div className="flex items-baseline justify-between mb-4">
           <div>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500">
-              Connexions au site — Aujourd'hui
+              Connexions au site — Dernières 24h
             </p>
             <p className="text-2xl font-semibold text-white mt-1">
               {dayQ.isLoading ? "…" : totalVisitsToday}
