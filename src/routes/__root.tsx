@@ -11,6 +11,7 @@ import {
 import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
+import faviconAsset from "@/assets/skale-favicon.png.asset.json";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AdminBubble } from "../components/AdminBubble";
 import { initTracker, trackPageView } from "../lib/tracker";
