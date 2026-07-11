@@ -396,12 +396,17 @@ function Navbar() {
     <header className={`sticky top-0 z-40 w-full transition-all duration-300 ${scrolled ? "py-3" : "py-4"}`}>
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-3">
         {/* Left: logo */}
-        <div className="flex items-center gap-2.5 shrink-0 group">
+        <button
+          type="button"
+          onClick={() => { scrollToTop(); setOpen(false); }}
+          className="flex items-center gap-2.5 shrink-0 group cursor-pointer"
+          aria-label="Retour en haut de la page"
+        >
           <span className="inline-block group-hover:scale-110 transition-transform">
             <Logo size={36} />
           </span>
           <span className="font-extrabold text-lg tracking-tight">Skale Visuals</span>
-        </div>
+        </button>
 
         {/* Center: pill nav (absolute centered on desktop) */}
         <nav className="hidden lg:flex liquid-glass rounded-full px-2 py-1.5 absolute left-1/2 -translate-x-1/2">
