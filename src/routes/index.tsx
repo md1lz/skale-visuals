@@ -1565,10 +1565,15 @@ function Footer() {
     <footer className="relative border-t border-white/10 py-10">
       <div className="max-w-7xl mx-auto px-6 grid gap-8 md:grid-cols-[1.2fr_2fr]">
         <div>
-          <div className="flex items-center gap-2.5">
+          <button
+            type="button"
+            onClick={scrollToTop}
+            className="flex items-center gap-2.5 cursor-pointer"
+            aria-label="Retour en haut de la page"
+          >
             <Logo size={36} />
             <span className="font-extrabold text-lg">Skale Visuals</span>
-          </div>
+          </button>
           <ul className="mt-4 space-y-2 text-sm">
             <li className="flex items-center gap-2 text-white/80">
               <MessageCircle className="w-4 h-4 text-primary shrink-0" />
