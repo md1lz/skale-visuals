@@ -19,9 +19,9 @@ const IG_URL = "https://instagram.com/skalevisuals";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Skale Visuals — Agence de Montage Vidéo" },
+      { title: "Skale Visuals" },
       { name: "description", content: "Montage vidéo qui captive, convertit et scale ton business. Livraison rapide, color grading, sous-titres et motion design inclus." },
-      { property: "og:title", content: "Skale Visuals — Agence de Montage Vidéo" },
+      { property: "og:title", content: "Skale Visuals" },
       { property: "og:description", content: "Montage vidéo qui scale ton business. Devis gratuit." },
       { property: "og:type", content: "website" },
     ],
