@@ -122,6 +122,60 @@ export type Database = {
         }
         Relationships: []
       }
+      clients: {
+        Row: {
+          budget: number | null
+          created_at: string
+          date_debut: string | null
+          date_fin: string | null
+          email: string | null
+          entreprise: string | null
+          id: string
+          lien_drive: string | null
+          nom_complet: string
+          notes: string | null
+          reseaux_sociaux: string | null
+          statut: Database["public"]["Enums"]["client_status"]
+          telephone: string | null
+          type_projet: string | null
+          updated_at: string
+        }
+        Insert: {
+          budget?: number | null
+          created_at?: string
+          date_debut?: string | null
+          date_fin?: string | null
+          email?: string | null
+          entreprise?: string | null
+          id?: string
+          lien_drive?: string | null
+          nom_complet: string
+          notes?: string | null
+          reseaux_sociaux?: string | null
+          statut?: Database["public"]["Enums"]["client_status"]
+          telephone?: string | null
+          type_projet?: string | null
+          updated_at?: string
+        }
+        Update: {
+          budget?: number | null
+          created_at?: string
+          date_debut?: string | null
+          date_fin?: string | null
+          email?: string | null
+          entreprise?: string | null
+          id?: string
+          lien_drive?: string | null
+          nom_complet?: string
+          notes?: string | null
+          reseaux_sociaux?: string | null
+          statut?: Database["public"]["Enums"]["client_status"]
+          telephone?: string | null
+          type_projet?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       site_carousels: {
         Row: {
           aspect: string
@@ -300,7 +354,7 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      client_status: "Prospect" | "Actif" | "En pause" | "Terminé" | "Archivé"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -427,6 +481,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      client_status: ["Prospect", "Actif", "En pause", "Terminé", "Archivé"],
+    },
   },
 } as const
