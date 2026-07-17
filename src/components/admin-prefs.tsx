@@ -1,6 +1,18 @@
 import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
 
-export type AdminTheme = "red" | "violet" | "blue" | "green" | "yellow" | "gray";
+export type AdminTheme =
+  | "red"
+  | "violet"
+  | "blue"
+  | "green"
+  | "yellow"
+  | "gray"
+  | "orange"
+  | "pink"
+  | "teal"
+  | "indigo"
+  | "emerald"
+  | "rose";
 
 export const ADMIN_THEMES: { id: AdminTheme; label: string; swatch: string; shades: ThemeShades }[] = [
   {
@@ -38,6 +50,42 @@ export const ADMIN_THEMES: { id: AdminTheme; label: string; swatch: string; shad
     label: "Gris",
     swatch: "#a3a3a3",
     shades: { c400: "#d4d4d4", c500: "#a3a3a3", c600: "#737373", c800: "#404040" },
+  },
+  {
+    id: "orange",
+    label: "Orange",
+    swatch: "#f97316",
+    shades: { c400: "#fb923c", c500: "#f97316", c600: "#ea580c", c800: "#9a3412" },
+  },
+  {
+    id: "pink",
+    label: "Rose bonbon",
+    swatch: "#ec4899",
+    shades: { c400: "#f472b6", c500: "#ec4899", c600: "#db2777", c800: "#9d174d" },
+  },
+  {
+    id: "teal",
+    label: "Turquoise",
+    swatch: "#14b8a6",
+    shades: { c400: "#2dd4bf", c500: "#14b8a6", c600: "#0d9488", c800: "#115e59" },
+  },
+  {
+    id: "indigo",
+    label: "Indigo",
+    swatch: "#6366f1",
+    shades: { c400: "#818cf8", c500: "#6366f1", c600: "#4f46e5", c800: "#3730a3" },
+  },
+  {
+    id: "emerald",
+    label: "Émeraude",
+    swatch: "#10b981",
+    shades: { c400: "#34d399", c500: "#10b981", c600: "#059669", c800: "#065f46" },
+  },
+  {
+    id: "rose",
+    label: "Corail",
+    swatch: "#f43f5e",
+    shades: { c400: "#fb7185", c500: "#f43f5e", c600: "#e11d48", c800: "#9f1239" },
   },
 ];
 
