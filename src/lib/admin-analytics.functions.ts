@@ -100,17 +100,35 @@ export const getSiteAnalytics = createServerFn({ method: "POST" })
     const startIso = start.toISOString();
     const endIso = end.toISOString();
 
-    const { data: events, error } = await supabaseAdmin
-      .from("site_events")
-      .select("type, session_id, path, cta_id, duration_ms, device, source, created_at")
-      .gte("created_at", startIso)
-      .lte("created_at", endIso)
-      .order("created_at", { ascending: true })
-      .limit(200_000);
-
-
-    if (error) throw new Error(error.message);
-    const rows = events ?? [];
+    // Centralized paginated fetch: PostgREST caps responses (often ~1000 rows)
+    // even when .limit() is higher, which truncates longer ranges and makes
+    // 7d look bigger than 30d. Loop in chunks until we have every row in the
+    // [startIso, endIso] window.
+    const PAGE = 1000;
+    type EventRow = {
+      type: string;
+      session_id: string;
+      path: string | null;
+      cta_id: string | null;
+      duration_ms: number | null;
+      device: string | null;
+      source: string | null;
+      created_at: string;
+    };
+    const rows: EventRow[] = [];
+    for (let offset = 0; offset < 500_000; offset += PAGE) {
+      const { data: page, error } = await supabaseAdmin
+        .from("site_events")
+        .select("type, session_id, path, cta_id, duration_ms, device, source, created_at")
+        .gte("created_at", startIso)
+        .lte("created_at", endIso)
+        .order("created_at", { ascending: true })
+        .range(offset, offset + PAGE - 1);
+      if (error) throw new Error(error.message);
+      const chunk = (page ?? []) as EventRow[];
+      rows.push(...chunk);
+      if (chunk.length < PAGE) break;
+    }
 
     // Sessions
     const sessionFirstSeen = new Map<string, string>();
