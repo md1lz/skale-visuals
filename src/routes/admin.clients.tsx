@@ -128,11 +128,13 @@ function AdminClientsPage() {
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 overflow-hidden">
-        <div className="grid grid-cols-[1.4fr_1.2fr_1.1fr_0.9fr] gap-3 px-4 py-3 text-xs uppercase tracking-wider text-neutral-500 border-b border-white/10">
+        <div className="grid grid-cols-[1.4fr_1.2fr_0.9fr_1.1fr_0.7fr_0.9fr] gap-3 px-4 py-3 text-xs uppercase tracking-wider text-neutral-500 border-b border-white/10">
           <span>Nom</span>
           <span>Entreprise</span>
-          <span>Instagram</span>
           <span>Statut</span>
+          <span>Type de projet</span>
+          <span>Budget</span>
+          <span>Début</span>
         </div>
         {loading ? (
           <div className="p-10 text-center text-sm text-neutral-500">
@@ -150,11 +152,10 @@ function AdminClientsPage() {
               <li
                 key={c.id}
                 onClick={() => setDetail(c)}
-                className="grid grid-cols-[1.4fr_1.2fr_1.1fr_0.9fr] gap-3 px-4 py-3 items-center text-sm border-b border-white/5 last:border-0 hover:bg-white/[0.03] cursor-pointer transition-colors"
+                className="grid grid-cols-[1.4fr_1.2fr_0.9fr_1.1fr_0.7fr_0.9fr] gap-3 px-4 py-3 items-center text-sm border-b border-white/5 last:border-0 hover:bg-white/[0.03] cursor-pointer transition-colors"
               >
                 <span className="font-medium truncate">{c.nom_complet}</span>
                 <span className="text-neutral-300 truncate">{c.entreprise ?? "—"}</span>
-                <span className="text-neutral-300 truncate">{c.reseaux_sociaux ?? "—"}</span>
                 <span>
                   <span
                     className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${statutBadge[c.statut]}`}
@@ -162,6 +163,11 @@ function AdminClientsPage() {
                     {c.statut}
                   </span>
                 </span>
+                <span className="text-neutral-300 truncate">{c.type_projet ?? "—"}</span>
+                <span className="text-neutral-300">
+                  {c.budget != null ? `${c.budget.toLocaleString("fr-FR")} €` : "—"}
+                </span>
+                <span className="text-neutral-400">{formatDate(c.date_debut)}</span>
               </li>
             ))}
           </ul>
@@ -329,10 +335,10 @@ function ClientFormPanel({
           email: form.email,
           telephone: form.telephone,
           statut: form.statut,
-          type_projet: null,
-          budget: null,
-          date_debut: null,
-          date_fin: null,
+          type_projet: form.type_projet,
+          budget: form.budget,
+          date_debut: form.date_debut,
+          date_fin: form.date_fin,
           lien_drive: form.lien_drive,
           reseaux_sociaux: form.reseaux_sociaux,
           notes: form.notes,
@@ -374,13 +380,6 @@ function ClientFormPanel({
         <Field label="Nom complet *" className="col-span-2">
           <TextInput value={form.nom_complet} onChange={(v) => set("nom_complet", v)} />
         </Field>
-        <Field label="Instagram" className="col-span-2">
-          <TextInput
-            value={form.reseaux_sociaux}
-            onChange={(v) => set("reseaux_sociaux", v)}
-            placeholder="@handle"
-          />
-        </Field>
         <Field label="Entreprise">
           <TextInput value={form.entreprise} onChange={(v) => set("entreprise", v)} />
         </Field>
@@ -403,11 +402,39 @@ function ClientFormPanel({
         <Field label="Téléphone">
           <TextInput value={form.telephone} onChange={(v) => set("telephone", v)} />
         </Field>
-        <Field label="Lien d'espace de travail" className="col-span-2">
+        <Field label="Type de projet">
+          <TextInput
+            value={form.type_projet}
+            onChange={(v) => set("type_projet", v)}
+            placeholder="Vidéo YouTube, Publicité…"
+          />
+        </Field>
+        <Field label="Budget (€)">
+          <TextInput
+            type="number"
+            value={form.budget}
+            onChange={(v) => set("budget", v)}
+            placeholder="0"
+          />
+        </Field>
+        <Field label="Date de début">
+          <TextInput type="date" value={form.date_debut} onChange={(v) => set("date_debut", v)} />
+        </Field>
+        <Field label="Date de fin">
+          <TextInput type="date" value={form.date_fin} onChange={(v) => set("date_fin", v)} />
+        </Field>
+        <Field label="Lien Drive" className="col-span-2">
           <TextInput
             value={form.lien_drive}
             onChange={(v) => set("lien_drive", v)}
-            placeholder="drive.google.com/…"
+            placeholder="https://drive.google.com/…"
+          />
+        </Field>
+        <Field label="Réseaux sociaux" className="col-span-2">
+          <TextInput
+            value={form.reseaux_sociaux}
+            onChange={(v) => set("reseaux_sociaux", v)}
+            placeholder="@handle, liens…"
           />
         </Field>
         <Field label="Notes internes" className="col-span-2">
@@ -545,10 +572,17 @@ function ClientDetailPanel({
       </div>
 
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
-        <Info label="Instagram" value={client.reseaux_sociaux} />
         <Info label="Email" value={client.email} />
         <Info label="Téléphone" value={client.telephone} />
-        <InfoLink label="Lien d'espace de travail" value={client.lien_drive} />
+        <Info label="Type de projet" value={client.type_projet} />
+        <Info
+          label="Budget"
+          value={client.budget != null ? `${client.budget.toLocaleString("fr-FR")} €` : null}
+        />
+        <Info label="Date de début" value={formatDate(client.date_debut)} />
+        <Info label="Date de fin" value={formatDate(client.date_fin)} />
+        <InfoLink label="Lien Drive" value={client.lien_drive} />
+        <Info label="Réseaux sociaux" value={client.reseaux_sociaux} />
       </dl>
 
       {client.notes && (
