@@ -545,17 +545,10 @@ function ClientDetailPanel({
       </div>
 
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
+        <Info label="Instagram" value={client.reseaux_sociaux} />
         <Info label="Email" value={client.email} />
         <Info label="Téléphone" value={client.telephone} />
-        <Info label="Type de projet" value={client.type_projet} />
-        <Info
-          label="Budget"
-          value={client.budget != null ? `${client.budget.toLocaleString("fr-FR")} €` : null}
-        />
-        <Info label="Date de début" value={formatDate(client.date_debut)} />
-        <Info label="Date de fin" value={formatDate(client.date_fin)} />
-        <InfoLink label="Lien Drive" value={client.lien_drive} />
-        <Info label="Réseaux sociaux" value={client.reseaux_sociaux} />
+        <InfoLink label="Lien d'espace de travail" value={client.lien_drive} />
       </dl>
 
       {client.notes && (
