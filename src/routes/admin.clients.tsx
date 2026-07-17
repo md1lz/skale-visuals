@@ -329,10 +329,10 @@ function ClientFormPanel({
           email: form.email,
           telephone: form.telephone,
           statut: form.statut,
-          type_projet: form.type_projet,
-          budget: form.budget,
-          date_debut: form.date_debut,
-          date_fin: form.date_fin,
+          type_projet: null,
+          budget: null,
+          date_debut: null,
+          date_fin: null,
           lien_drive: form.lien_drive,
           reseaux_sociaux: form.reseaux_sociaux,
           notes: form.notes,
@@ -374,6 +374,13 @@ function ClientFormPanel({
         <Field label="Nom complet *" className="col-span-2">
           <TextInput value={form.nom_complet} onChange={(v) => set("nom_complet", v)} />
         </Field>
+        <Field label="Instagram" className="col-span-2">
+          <TextInput
+            value={form.reseaux_sociaux}
+            onChange={(v) => set("reseaux_sociaux", v)}
+            placeholder="@handle"
+          />
+        </Field>
         <Field label="Entreprise">
           <TextInput value={form.entreprise} onChange={(v) => set("entreprise", v)} />
         </Field>
@@ -396,39 +403,11 @@ function ClientFormPanel({
         <Field label="Téléphone">
           <TextInput value={form.telephone} onChange={(v) => set("telephone", v)} />
         </Field>
-        <Field label="Type de projet">
-          <TextInput
-            value={form.type_projet}
-            onChange={(v) => set("type_projet", v)}
-            placeholder="Vidéo YouTube, Publicité…"
-          />
-        </Field>
-        <Field label="Budget (€)">
-          <TextInput
-            type="number"
-            value={form.budget}
-            onChange={(v) => set("budget", v)}
-            placeholder="0"
-          />
-        </Field>
-        <Field label="Date de début">
-          <TextInput type="date" value={form.date_debut} onChange={(v) => set("date_debut", v)} />
-        </Field>
-        <Field label="Date de fin">
-          <TextInput type="date" value={form.date_fin} onChange={(v) => set("date_fin", v)} />
-        </Field>
-        <Field label="Lien Drive" className="col-span-2">
+        <Field label="Lien d'espace de travail" className="col-span-2">
           <TextInput
             value={form.lien_drive}
             onChange={(v) => set("lien_drive", v)}
-            placeholder="https://drive.google.com/…"
-          />
-        </Field>
-        <Field label="Réseaux sociaux" className="col-span-2">
-          <TextInput
-            value={form.reseaux_sociaux}
-            onChange={(v) => set("reseaux_sociaux", v)}
-            placeholder="@handle, liens…"
+            placeholder="drive.google.com/…"
           />
         </Field>
         <Field label="Notes internes" className="col-span-2">
