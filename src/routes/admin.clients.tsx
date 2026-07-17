@@ -128,13 +128,11 @@ function AdminClientsPage() {
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 overflow-hidden">
-        <div className="grid grid-cols-[1.4fr_1.2fr_0.9fr_1.1fr_0.7fr_0.9fr] gap-3 px-4 py-3 text-xs uppercase tracking-wider text-neutral-500 border-b border-white/10">
+        <div className="grid grid-cols-[1.4fr_1.2fr_1.1fr_0.9fr] gap-3 px-4 py-3 text-xs uppercase tracking-wider text-neutral-500 border-b border-white/10">
           <span>Nom</span>
           <span>Entreprise</span>
+          <span>Instagram</span>
           <span>Statut</span>
-          <span>Type de projet</span>
-          <span>Budget</span>
-          <span>Début</span>
         </div>
         {loading ? (
           <div className="p-10 text-center text-sm text-neutral-500">
@@ -152,10 +150,11 @@ function AdminClientsPage() {
               <li
                 key={c.id}
                 onClick={() => setDetail(c)}
-                className="grid grid-cols-[1.4fr_1.2fr_0.9fr_1.1fr_0.7fr_0.9fr] gap-3 px-4 py-3 items-center text-sm border-b border-white/5 last:border-0 hover:bg-white/[0.03] cursor-pointer transition-colors"
+                className="grid grid-cols-[1.4fr_1.2fr_1.1fr_0.9fr] gap-3 px-4 py-3 items-center text-sm border-b border-white/5 last:border-0 hover:bg-white/[0.03] cursor-pointer transition-colors"
               >
                 <span className="font-medium truncate">{c.nom_complet}</span>
                 <span className="text-neutral-300 truncate">{c.entreprise ?? "—"}</span>
+                <span className="text-neutral-300 truncate">{c.reseaux_sociaux ?? "—"}</span>
                 <span>
                   <span
                     className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${statutBadge[c.statut]}`}
@@ -163,11 +162,6 @@ function AdminClientsPage() {
                     {c.statut}
                   </span>
                 </span>
-                <span className="text-neutral-300 truncate">{c.type_projet ?? "—"}</span>
-                <span className="text-neutral-300">
-                  {c.budget != null ? `${c.budget.toLocaleString("fr-FR")} €` : "—"}
-                </span>
-                <span className="text-neutral-400">{formatDate(c.date_debut)}</span>
               </li>
             ))}
           </ul>
