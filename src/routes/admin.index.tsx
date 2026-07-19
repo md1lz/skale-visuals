@@ -315,6 +315,8 @@ function AdminHome() {
           )}
         </div>
       </motion.div>
+
+      <MaintenanceCard />
     </div>
   );
 }
