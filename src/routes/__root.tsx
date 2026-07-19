@@ -16,6 +16,11 @@ import { reportLovableError } from "../lib/lovable-error-reporting";
 import { AdminBubble } from "../components/AdminBubble";
 import { initTracker, trackPageView } from "../lib/tracker";
 import { Toaster } from "../components/ui/sonner";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getMaintenanceStatus } from "@/lib/site-settings.functions";
+import { getAdminSessionFn } from "@/lib/admin-auth.functions";
+import { MaintenancePage } from "../components/MaintenancePage";
 
 function NotFoundComponent() {
   return (
@@ -134,10 +139,37 @@ function RootComponent() {
     trackPageView(pathname);
   }, [pathname]);
 
+  const fetchMaintenance = useServerFn(getMaintenanceStatus);
+  const fetchSession = useServerFn(getAdminSessionFn);
+  const maintenanceQ = useQuery({
+    queryKey: ["site", "maintenance"],
+    queryFn: () => fetchMaintenance(),
+    refetchInterval: 30_000,
+    staleTime: 15_000,
+  });
+  const sessionQ = useQuery({
+    queryKey: ["admin", "session"],
+    queryFn: () => fetchSession(),
+    staleTime: 60_000,
+  });
+
+  const isMaintenance = !!maintenanceQ.data?.enabled;
+  const isAdminUser = !!sessionQ.data?.user;
+  const showMaintenance = isMaintenance && !isAdminUser && !isAdmin;
+
   return (
     <QueryClientProvider client={queryClient}>
       {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      {showMaintenance ? (
+        <MaintenancePage
+          message={
+            maintenanceQ.data?.message ??
+            "Nous effectuons actuellement une maintenance. Merci de revenir un peu plus tard."
+          }
+        />
+      ) : (
+        <Outlet />
+      )}
       {!isAdmin && <AdminBubble />}
       <Toaster richColors position="bottom-right" theme="dark" />
     </QueryClientProvider>
