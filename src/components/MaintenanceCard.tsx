@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { toast } from "sonner";
-import { Wrench, ShieldCheck, Save } from "lucide-react";
+import { Wrench, ShieldCheck, Save, Eye } from "lucide-react";
 import {
   getMaintenanceStatus,
   setMaintenanceStatus,
@@ -105,6 +105,16 @@ export function MaintenanceCard() {
         <p className="text-[11px] text-neutral-500">
           {message.length}/500 — laisser vide pour le message par défaut
         </p>
+        <div className="flex items-center gap-2">
+        <a
+          href="/?maintenance=preview"
+          target="_blank"
+          rel="noreferrer"
+          className="inline-flex items-center gap-2 rounded-lg border border-white/15 hover:bg-white/5 px-3 py-2 text-sm text-neutral-200 transition-colors"
+        >
+          <Eye className="h-4 w-4" />
+          Prévisualiser
+        </a>
         <motion.button
           onClick={handleSave}
           disabled={saving || !dirty}
@@ -114,6 +124,7 @@ export function MaintenanceCard() {
           <Save className="h-4 w-4" />
           {saving ? "Enregistrement…" : "Enregistrer"}
         </motion.button>
+        </div>
       </div>
     </motion.section>
   );
