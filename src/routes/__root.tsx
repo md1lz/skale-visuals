@@ -128,6 +128,14 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  return (
+    <QueryClientProvider client={queryClient}>
+      <RootInner />
+    </QueryClientProvider>
+  );
+}
+
+function RootInner() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const isAdmin = pathname.startsWith("/admin");
 
@@ -158,8 +166,7 @@ function RootComponent() {
   const showMaintenance = isMaintenance && !isAdminUser && !isAdmin;
 
   return (
-    <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
+    <>
       {showMaintenance ? (
         <MaintenancePage
           message={
@@ -172,6 +179,6 @@ function RootComponent() {
       )}
       {!isAdmin && <AdminBubble />}
       <Toaster richColors position="bottom-right" theme="dark" />
-    </QueryClientProvider>
+    </>
   );
 }
