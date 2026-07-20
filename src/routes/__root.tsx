@@ -163,7 +163,11 @@ function RootInner() {
 
   const isMaintenance = !!maintenanceQ.data?.enabled;
   const isAdminUser = !!sessionQ.data?.user;
-  const showMaintenance = isMaintenance && !isAdminUser && !isAdmin;
+  const forcePreview =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("maintenance") === "preview";
+  const showMaintenance =
+    !isAdmin && (forcePreview || (isMaintenance && !isAdminUser));
 
   return (
     <>
