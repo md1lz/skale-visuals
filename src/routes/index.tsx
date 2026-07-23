@@ -373,11 +373,7 @@ function Logo({ size = 36 }: { size?: number }) {
     <img
       src={logoAsset.url}
       alt="Skale Visuals"
-      style={{ filter: "drop-shadow(0 0 12px rgba(226,75,74,0.6))" }}
-      className="w-auto object-contain"
-      // keep the original aspect ratio; only fix the height
-      // eslint-disable-next-line react/forbid-dom-props
-      height={size}
+      style={{ height: size, width: "auto", filter: "drop-shadow(0 0 12px rgba(226,75,74,0.6))" }}
     />
   );
 }
