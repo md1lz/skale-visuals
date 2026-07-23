@@ -1,5 +1,4 @@
 import { motion } from "framer-motion";
-import { Wrench } from "lucide-react";
 import faviconAsset from "@/assets/skale-favicon.png.asset.json";
 
 export function MaintenancePage({ message }: { message: string }) {
@@ -23,21 +22,6 @@ export function MaintenancePage({ message }: { message: string }) {
           className="h-16 w-16 mx-auto mb-8"
         />
 
-        <motion.div
-          initial={{ opacity: 0, scale: 0.7, rotate: -20 }}
-          animate={{ opacity: 1, scale: 1, rotate: 0 }}
-          transition={{ type: "spring", stiffness: 180, damping: 14, delay: 0.1 }}
-          className="inline-grid place-items-center h-20 w-20 rounded-2xl bg-red-600/15 ring-1 ring-red-500/30 mb-8"
-        >
-          <motion.span
-            animate={{ rotate: [0, -18, 18, -12, 12, 0] }}
-            transition={{ duration: 2.6, repeat: Infinity, ease: "easeInOut", repeatDelay: 0.4 }}
-            className="text-red-400"
-          >
-            <Wrench className="h-10 w-10" />
-          </motion.span>
-        </motion.div>
-
         <motion.h1
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
@@ -56,16 +40,6 @@ export function MaintenancePage({ message }: { message: string }) {
         >
           {message}
         </motion.p>
-
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.4, delay: 0.5 }}
-          className="mt-10 flex items-center justify-center gap-2 text-xs text-neutral-500"
-        >
-          <span className="h-1.5 w-1.5 rounded-full bg-red-500 animate-pulse" />
-          <span>Skale Visuals — retour très prochainement</span>
-        </motion.div>
       </div>
     </div>
   );
