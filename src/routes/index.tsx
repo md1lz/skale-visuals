@@ -400,7 +400,7 @@ function Navbar() {
           aria-label="Retour en haut de la page"
         >
           <span className="inline-block group-hover:scale-110 transition-transform">
-            <Logo size={36} />
+            <Logo size={48} />
           </span>
         </button>
 
