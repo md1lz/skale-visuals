@@ -405,7 +405,6 @@ function Navbar() {
           <span className="inline-block group-hover:scale-110 transition-transform">
             <Logo size={36} />
           </span>
-          <span className="font-extrabold text-lg tracking-tight">Skale Visuals</span>
         </button>
 
         {/* Center: pill nav (absolute centered on desktop) */}
@@ -1572,7 +1571,6 @@ function Footer() {
             aria-label="Retour en haut de la page"
           >
             <Logo size={36} />
-            <span className="font-extrabold text-lg">Skale Visuals</span>
           </button>
           <ul className="mt-4 space-y-2 text-sm">
             <li className="flex items-center gap-2 text-white/80">
