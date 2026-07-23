@@ -405,7 +405,6 @@ function Navbar() {
           <span className="inline-block group-hover:scale-110 transition-transform">
             <Logo size={36} />
           </span>
-          <span className="font-extrabold text-lg tracking-tight">Skale Visuals</span>
         </button>
 
         {/* Center: pill nav (absolute centered on desktop) */}
