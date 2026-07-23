@@ -373,10 +373,7 @@ function Logo({ size = 36 }: { size?: number }) {
     <img
       src={logoAsset.url}
       alt="Skale Visuals"
-      width={size}
-      height={size}
-      style={{ filter: "drop-shadow(0 0 12px rgba(226,75,74,0.6))" }}
-      className="object-contain"
+      style={{ height: size, width: "auto", filter: "drop-shadow(0 0 12px rgba(226,75,74,0.6))" }}
     />
   );
 }
