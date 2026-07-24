@@ -19,7 +19,7 @@ export function MaintenancePage({ message }: { message: string }) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="h-auto w-auto max-w-44 sm:max-w-52 mx-auto mb-8"
+          className="h-auto w-auto max-w-40 sm:max-w-44 mx-auto mb-8"
         />
 
         <motion.h1
