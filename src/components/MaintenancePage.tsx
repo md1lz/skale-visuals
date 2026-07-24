@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import faviconAsset from "@/assets/skale-favicon.png.asset.json";
+import logoAsset from "@/assets/skale-logo.png.asset.json";
 
 export function MaintenancePage({ message }: { message: string }) {
   return (
@@ -14,12 +14,12 @@ export function MaintenancePage({ message }: { message: string }) {
       />
       <div className="relative z-10 max-w-lg w-full text-center">
         <motion.img
-          src={faviconAsset.url}
+          src={logoAsset.url}
           alt="Skale Visuals"
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="h-16 w-16 mx-auto mb-8"
+          className="h-auto w-auto max-w-full mx-auto mb-8"
         />
 
         <motion.h1
