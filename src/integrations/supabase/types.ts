@@ -176,6 +176,121 @@ export type Database = {
         }
         Relationships: []
       }
+      project_status_history: {
+        Row: {
+          changed_at: string
+          id: string
+          project_id: string
+          status: Database["public"]["Enums"]["project_status"]
+        }
+        Insert: {
+          changed_at?: string
+          id?: string
+          project_id: string
+          status: Database["public"]["Enums"]["project_status"]
+        }
+        Update: {
+          changed_at?: string
+          id?: string
+          project_id?: string
+          status?: Database["public"]["Enums"]["project_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_status_history_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      projects: {
+        Row: {
+          amount_invoiced_ht: number
+          archived_at: string | null
+          brief: string | null
+          client_id: string | null
+          created_at: string
+          deadline: string | null
+          delivery_link: string | null
+          editor_name: string | null
+          editor_quantity: number | null
+          editor_rate: number | null
+          editor_rate_type: Database["public"]["Enums"]["editor_rate_type"]
+          editor_total_cost: number
+          format: Database["public"]["Enums"]["project_format"]
+          gross_profit: number
+          id: string
+          net_profit: number
+          revision_link: string | null
+          rushs_links: string[]
+          rushs_received: boolean
+          social_charges: number
+          status: Database["public"]["Enums"]["project_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          amount_invoiced_ht?: number
+          archived_at?: string | null
+          brief?: string | null
+          client_id?: string | null
+          created_at?: string
+          deadline?: string | null
+          delivery_link?: string | null
+          editor_name?: string | null
+          editor_quantity?: number | null
+          editor_rate?: number | null
+          editor_rate_type?: Database["public"]["Enums"]["editor_rate_type"]
+          editor_total_cost?: number
+          format?: Database["public"]["Enums"]["project_format"]
+          gross_profit?: number
+          id?: string
+          net_profit?: number
+          revision_link?: string | null
+          rushs_links?: string[]
+          rushs_received?: boolean
+          social_charges?: number
+          status?: Database["public"]["Enums"]["project_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          amount_invoiced_ht?: number
+          archived_at?: string | null
+          brief?: string | null
+          client_id?: string | null
+          created_at?: string
+          deadline?: string | null
+          delivery_link?: string | null
+          editor_name?: string | null
+          editor_quantity?: number | null
+          editor_rate?: number | null
+          editor_rate_type?: Database["public"]["Enums"]["editor_rate_type"]
+          editor_total_cost?: number
+          format?: Database["public"]["Enums"]["project_format"]
+          gross_profit?: number
+          id?: string
+          net_profit?: number
+          revision_link?: string | null
+          rushs_links?: string[]
+          rushs_received?: boolean
+          social_charges?: number
+          status?: Database["public"]["Enums"]["project_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "projects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       site_carousels: {
         Row: {
           aspect: string
@@ -373,6 +488,16 @@ export type Database = {
     }
     Enums: {
       client_status: "Prospect" | "Actif" | "En pause" | "Terminé" | "Archivé"
+      editor_rate_type: "per_video" | "per_minute"
+      project_format: "Court" | "Long"
+      project_status:
+        | "En attente de validation client"
+        | "À faire"
+        | "En cours"
+        | "En révision"
+        | "Corrections"
+        | "Livrée"
+        | "Payée"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -501,6 +626,17 @@ export const Constants = {
   public: {
     Enums: {
       client_status: ["Prospect", "Actif", "En pause", "Terminé", "Archivé"],
+      editor_rate_type: ["per_video", "per_minute"],
+      project_format: ["Court", "Long"],
+      project_status: [
+        "En attente de validation client",
+        "À faire",
+        "En cours",
+        "En révision",
+        "Corrections",
+        "Livrée",
+        "Payée",
+      ],
     },
   },
 } as const
