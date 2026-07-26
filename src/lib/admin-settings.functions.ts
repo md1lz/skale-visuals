@@ -23,7 +23,21 @@ async function requireSession() {
   return session.data.user;
 }
 
-const RESCUE_CODE = "ILFAUTS4UVERSKALE";
+function getRescueCode(): string | null {
+  const v = process.env.ADMIN_RESCUE_CODE;
+  return v && v.length > 0 ? v : null;
+}
+
+function verifyRescueCode(provided: string): boolean {
+  const expected = getRescueCode();
+  if (!expected) return false;
+  if (provided.length !== expected.length) return false;
+  let mismatch = 0;
+  for (let i = 0; i < expected.length; i++) {
+    mismatch |= expected.charCodeAt(i) ^ provided.charCodeAt(i);
+  }
+  return mismatch === 0;
+}
 
 // --- Connections (remembered IPs) ---
 
@@ -96,7 +110,7 @@ export const updateAdminCredentials = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => credsSchema.parse(d))
   .handler(async ({ data }) => {
     await requireSession();
-    if (data.rescueCode !== RESCUE_CODE) {
+    if (!verifyRescueCode(data.rescueCode)) {
       return { ok: false as const, error: "Code de sauvetage invalide." };
     }
     if (!data.newUsername && !data.newPassword) {
@@ -143,7 +157,7 @@ export const createAdminAccount = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => createSchema.parse(d))
   .handler(async ({ data }) => {
     await requireSession();
-    if (data.rescueCode !== RESCUE_CODE) {
+    if (!verifyRescueCode(data.rescueCode)) {
       return { ok: false as const, error: "Code de sauvetage invalide." };
     }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
