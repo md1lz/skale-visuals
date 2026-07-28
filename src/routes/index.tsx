@@ -11,7 +11,7 @@ import logoAsset from "@/assets/skale-logo.png.asset.json";
 import arrowAsset from "@/assets/arrow-curl.png.asset.json";
 import { listPublicVideos, type PublicVideo } from "@/lib/site-videos.functions";
 
-const CTA_URL = "https://tally.so/r/PdPXRQ";
+const CTA_URL = "https://calendly.com/skalevisuals086/30min";
 const WA_URL = "https://wa.me/33766766153?text=" + encodeURIComponent("Bonjour, je souhaite obtenir un devis pour mes vidéos.");
 const MAIL_URL = "mailto:skalevisuals086@gmail.com";
 const IG_URL = "https://instagram.com/skalevisuals";
@@ -428,7 +428,7 @@ function Navbar() {
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
           >
-            Obtenir un devis <ArrowRight className="w-4 h-4 text-primary" />
+            Réserver un appel <ArrowRight className="w-4 h-4 text-primary" />
           </a>
           <button
             onClick={() => setOpen((v) => !v)}
@@ -469,7 +469,7 @@ function Navbar() {
                 rel="noopener noreferrer"
                 className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-semibold"
               >
-                Obtenir un devis <ArrowRight className="w-4 h-4" />
+                Réserver un appel <ArrowRight className="w-4 h-4" />
               </a>
             </motion.div>
           )}
@@ -1381,7 +1381,7 @@ function Comparison() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
             >
-              Obtenir mon devis gratuit <ArrowRight className="w-4 h-4" />
+              Réserver un appel <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </FadeIn>
