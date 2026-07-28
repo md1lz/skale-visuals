@@ -20,7 +20,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Skale Visuals" },
-      { name: "description", content: "Montage vidéo qui captive, convertit et scale ton business. Livraison rapide, color grading, sous-titres et motion design inclus." },
+      { name: "description", content: "Déléguez votre montage vidéo à une équipe qui livre vite et bien — pendant que vous vous concentrez sur ce qui fait vraiment grossir votre activité." },
       { property: "og:title", content: "Skale Visuals" },
       { property: "og:description", content: "Montage vidéo qui scale ton business. Devis gratuit." },
       { property: "og:type", content: "website" },
@@ -91,12 +91,12 @@ function VideoThumb({ title, category, idx, size = "md" }: { title: string; cate
           </div>
         </div>
         <div className="absolute top-3 left-3">
-          <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
+          <span className="text-[10px] uppercase tracking-widest font-medium text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
             {category}
           </span>
         </div>
         <div className="absolute bottom-3 left-3 right-3">
-          <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{title}</p>
+          <p className="text-sm font-medium text-white drop-shadow-lg truncate">{title}</p>
         </div>
         <div className="absolute inset-0 pointer-events-none opacity-30" style={{
           backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.04) 3px, transparent 4px)"
@@ -303,7 +303,7 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode =
       {/* source slides down */}
       {video.source_label && (
         <div className="absolute top-0 left-0 right-0 z-20 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
-          <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
+          <span className="text-[10px] uppercase tracking-widest font-medium text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
             {video.source_label}
           </span>
         </div>
@@ -311,7 +311,7 @@ function LiveVideoSurface({ video, btnSize = "md", autoPlay = true, posterMode =
       {/* title slides up */}
       {video.title && (
         <div className="absolute bottom-0 left-0 right-0 z-20 p-3 pointer-events-none translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
-          <p className="text-sm font-semibold text-white drop-shadow-lg truncate">{video.title}</p>
+          <p className="text-sm font-medium text-white drop-shadow-lg truncate">{video.title}</p>
         </div>
       )}
       {/* play/pause button */}
@@ -426,7 +426,7 @@ function Navbar() {
             href={CTA_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
+            className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-2 text-sm font-medium text-white hover:bg-white/15 transition-colors"
           >
             Réserver un appel <ArrowRight className="w-4 h-4 text-primary" />
           </a>
@@ -467,7 +467,7 @@ function Navbar() {
                 href={CTA_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-semibold"
+                className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-medium"
               >
                 Réserver un appel <ArrowRight className="w-4 h-4" />
               </a>
@@ -504,11 +504,11 @@ function Hero() {
               <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping" />
               <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600" />
             </span>
-            Pour entrepreneurs, agences de contenu, Marketing et Ads
+            Pour entrepreneurs, Agences de contenu, Marketing et Ads
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-semibold text-balance max-w-5xl mx-auto leading-[1.05]">
+          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-medium text-balance max-w-5xl mx-auto leading-[1.05]">
             On monte tes vidéos pour qu'elles{" "}
             <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">captivent</span>,{" "}
             <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">convertissent</span> et{" "}
@@ -517,15 +517,15 @@ function Hero() {
         </FadeIn>
         <FadeIn delay={0.2}>
           <p className="mt-5 max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground text-balance">
-            Montage professionnel, color grading, sous-titres, motion design — on s'occupe de tout pour que ton contenu soit irrésistible.
+            Déléguez votre montage vidéo à une équipe qui livre vite et bien — pendant que vous vous concentrez sur ce qui fait vraiment grossir votre activité.
           </p>
         </FadeIn>
         <FadeIn delay={0.3}>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href={CTA_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow">
-              Lancer mon projet <ArrowRight className="w-4 h-4" />
+            <a href={CTA_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3.5 rounded-full btn-glow">
+              réserver un appel dès maintenant <ArrowRight className="w-4 h-4" />
             </a>
-            <a href="#realisations" className="inline-flex items-center gap-2 liquid-glass text-white font-semibold px-6 py-3.5 rounded-full">
+            <a href="#realisations" className="inline-flex items-center gap-2 liquid-glass text-white font-medium px-6 py-3.5 rounded-full">
               Voir nos réalisations
             </a>
           </div>
@@ -533,12 +533,12 @@ function Hero() {
         <FadeIn delay={0.45}>
           <div className="mt-12 grid grid-cols-3 items-center gap-x-1 gap-y-6 max-w-3xl mx-auto">
             {[
-              { n: 30, p: "+", l: "clients" },
-              { n: 70, p: "+", l: "PROJETS" },
-              { n: 4.8, s: "/5", l: "SATISFACTION" },
+              { n: 50, p: "+", l: "clients" },
+              { n: 200, p: "+", l: "PROJETS" },
+              { n: 100, s: "%", l: "SATISFACTION" },
             ].map((stat, i) => (
               <div key={i} className="text-center">
-                <div className="text-2xl lg:text-3xl font-semibold text-primary">
+                <div className="text-2xl lg:text-3xl font-medium text-primary">
                   {stat.p}
                   {Number.isInteger(stat.n)
                     ? <CountUp to={stat.n} />
@@ -606,8 +606,8 @@ function SocialProof() {
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-semibold text-balance leading-[1.05]">
-            Plus de <CountUp to={30} /> clients<br className="hidden sm:block" /> nous ont déjà fait confiance.
+          <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-medium text-balance leading-[1.05]">
+            Plus de <CountUp to={50} /> clients<br className="hidden sm:block" /> nous ont déjà fait confiance.
           </h2>
         </FadeIn>
         <FadeIn delay={0.2}>
@@ -626,7 +626,7 @@ function SocialProof() {
                   <>
                     <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_40%,rgba(0,0,0,0.55))] pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
                     <div className="absolute top-0 left-0 right-0 p-3 pointer-events-none -translate-y-full group-hover:translate-y-0 opacity-0 group-hover:opacity-100 transition-all duration-700 ease-out">
-                      <span className="text-[10px] uppercase tracking-widest font-semibold text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
+                      <span className="text-[10px] uppercase tracking-widest font-medium text-primary bg-black/50 backdrop-blur px-2 py-1 rounded-md border border-primary/30">
                         Avis client {i + 1}
                       </span>
                     </div>
@@ -661,9 +661,9 @@ function FeaturedTestimonial() {
             « Depuis qu'on travaille avec Skale Visuals, mes vidéos ont doublé leur rétention. Le montage est tellement propre que même mes concurrents me demandent avec qui je travaille. »
           </blockquote>
           <div className="mt-6 flex items-center justify-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-rose-600 grid place-items-center font-bold">T</div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-rose-600 grid place-items-center font-medium">T</div>
             <div className="text-left">
-              <div className="font-semibold">Thomas R.</div>
+              <div className="font-medium">Thomas R.</div>
               <div className="text-sm text-muted-foreground">Créateur YouTube, 45k abonnés</div>
             </div>
           </div>
@@ -691,7 +691,7 @@ function WhySkale() {
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-balance">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance">
               On ne monte pas juste des vidéos.{" "}
               <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">On crée de l'impact.</span>
             </h2>
@@ -707,7 +707,7 @@ function WhySkale() {
                 <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-4">
                   <f.icon className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold">{f.title}</h3>
+                <h3 className="text-xl font-medium">{f.title}</h3>
                 <p className="mt-2 text-muted-foreground">{f.desc}</p>
               </div>
             </FadeIn>
@@ -772,9 +772,9 @@ function HowItWorks() {
     if (i === 1) {
       return (
         <div className="relative w-full h-full grid place-items-center">
-          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">Watchtime · x3</div>
-          <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Rétention</div>
-          <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-semibold">Engagement</div>
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">Watchtime · x3</div>
+          <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-medium">Rétention</div>
+          <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-medium">Engagement</div>
           <svg viewBox="0 0 200 80" className="w-[82%] h-20 mt-10" preserveAspectRatio="none">
             <defs>
               <linearGradient id="cg" x1="0" x2="0" y1="0" y2="1">
@@ -804,7 +804,7 @@ function HowItWorks() {
           <div className="absolute inset-x-0 bottom-0 h-[42%] bg-black/70 backdrop-blur border-t border-white/15 px-1.5 py-1 flex flex-col gap-0.5">
             <div className="flex items-center gap-1 text-[8px] text-white/70">
               <Sparkles className="w-2.5 h-2.5 text-primary" />
-              <span className="font-semibold tracking-wider">PEAUFINAGE</span>
+              <span className="font-medium tracking-wider">PEAUFINAGE</span>
               <span className="ml-auto tabular-nums">04:32</span>
             </div>
             {/* tracks with cut markers */}
@@ -824,7 +824,7 @@ function HowItWorks() {
             <div className="absolute top-2 bottom-1 left-[42%] w-[1px] bg-primary shadow-[0_0_6px_rgba(226,75,74,0.9)]" />
           </div>
         </div>
-        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-bold">Révisions illimitées</div>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">Révisions illimitées</div>
       </div>
     );
   };
@@ -840,7 +840,7 @@ function HowItWorks() {
             }} />
             <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-6 items-center">
               <div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-white">
                   Notre méthode en{" "}
                   <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">3 étapes</span>
                 </h2>
@@ -851,7 +851,7 @@ function HowItWorks() {
                   href={CTA_URL}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="mt-5 inline-flex items-center gap-2 bg-white text-black font-semibold px-5 py-3 rounded-full hover:scale-[1.02] transition-transform"
+                  className="mt-5 inline-flex items-center gap-2 bg-white text-black font-medium px-5 py-3 rounded-full hover:scale-[1.02] transition-transform"
                 >
                   Je veux ma vidéo en 48h <ArrowRight className="w-4 h-4" />
                 </a>
@@ -873,7 +873,7 @@ function HowItWorks() {
                             </div>
                             <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
                               <span className="text-[8px] px-1 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
-                              <span className="text-[8px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-bold">VPH+</span>
+                              <span className="text-[8px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-medium">VPH+</span>
                             </div>
                           </div>
                         ))}
@@ -895,7 +895,7 @@ function HowItWorks() {
                   background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226,75,74,0.18), transparent 70%)"
                 }} />
                 <div className="relative h-48 mb-5">{stepArtwork(i)}</div>
-                <h3 className="relative text-xl font-bold text-white">{s.n} — {s.title}</h3>
+                <h3 className="relative text-xl font-medium text-white">{s.n} — {s.title}</h3>
                 <p className="relative mt-3 text-white/70 leading-relaxed">{s.desc}</p>
               </div>
             </FadeIn>
@@ -938,11 +938,11 @@ function ContentFunnel() {
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-balance text-white">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance text-white">
               Vous êtes dans l'<span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">entrepreneuriat</span> ?
             </h2>
             <p className="mt-4 text-muted-foreground text-lg text-balance">
-              On travaille avec différentes méthodes et on s'adapte à chaque étape de votre <span className="text-primary font-semibold">Content Funnel</span> — du premier scroll jusqu'à la vente.
+              On travaille avec différentes méthodes et on s'adapte à chaque étape de votre <span className="text-primary font-medium">Content Funnel</span> — du premier scroll jusqu'à la vente.
             </p>
           </div>
         </FadeIn>
@@ -958,8 +958,8 @@ function ContentFunnel() {
                     <s.icon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-widest text-white/60 font-bold">{s.tag}</div>
-                    <div className="text-lg font-semibold text-white">{s.goal}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-white/60 font-medium">{s.tag}</div>
+                    <div className="text-lg font-medium text-white">{s.goal}</div>
                   </div>
                 </div>
                 <p className="relative mt-4 text-sm text-white/70">{s.formats}</p>
@@ -981,7 +981,7 @@ function ContentFunnel() {
               className="w-20 sm:w-28 shrink-0 opacity-90 pointer-events-none select-none -rotate-12"
             />
             <p className="text-base sm:text-lg text-white/85 leading-relaxed">
-              En 2026, ceux qui captent l'attention captent leur réussite. On ne fait pas que monter vos vidéos — on vous fait gagner un temps précieux, et donc de l'argent. Vous nous confiez vos rushs, <span className="text-primary font-semibold">on s'occupe de tout</span>.
+              En 2026, ceux qui captent l'attention captent leur réussite. On ne fait pas que monter vos vidéos — on vous fait gagner un temps précieux, et donc de l'argent. Vous nous confiez vos rushs, <span className="text-primary font-medium">on s'occupe de tout</span>.
             </p>
           </div>
         </FadeIn>
@@ -1016,7 +1016,7 @@ function AdsSection() {
       <div className="relative max-w-6xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-balance">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance">
               <span className="text-white">Boostez vos ventes avec des</span>{" "}
               <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Ads</span>{" "}
               <span className="text-white">qui remplissent votre agenda</span>
@@ -1034,15 +1034,15 @@ function AdsSection() {
               background: "radial-gradient(ellipse 50% 80% at 80% 50%, rgba(226,75,74,0.30), transparent 60%)",
             }} />
             <div className="relative flex flex-col sm:flex-row items-center gap-5 sm:gap-7 text-center sm:text-left">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-rose-700 grid place-items-center text-white font-semibold text-xl shrink-0">A</div>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-rose-700 grid place-items-center text-white font-medium text-xl shrink-0">A</div>
               <div className="flex-1">
                 <div className="text-sm text-white/70">Alexis · Fondateur D2C</div>
-                <p className="mt-1 text-lg sm:text-xl font-semibold text-white text-balance">
+                <p className="mt-1 text-lg sm:text-xl font-medium text-white text-balance">
                   « Grâce aux Ads vidéo, j'ai généré plus de <span className="text-primary">120 000 €</span> de CA depuis qu'on travaille ensemble. »
                 </p>
               </div>
               <div className="text-center shrink-0">
-                <div className="text-3xl sm:text-4xl font-semibold text-primary">+120k€</div>
+                <div className="text-3xl sm:text-4xl font-medium text-primary">+120k€</div>
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
               </div>
             </div>
@@ -1095,7 +1095,7 @@ function AdsSection() {
                     <div className={`group relative w-[240px] sm:w-[280px] aspect-[9/16] rounded-[1.75rem] overflow-hidden border border-primary/40 bg-gradient-to-br ${tone} to-black shadow-[0_40px_80px_-20px_rgba(226,75,74,0.55)]`}>
                       <LiveVideoSurface video={s} btnSize="sm" />
                       <div className="absolute inset-0 pointer-events-none opacity-25" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
-                      <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-bold text-white uppercase tracking-widest border border-white/15 pointer-events-none">
+                      <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-medium text-white uppercase tracking-widest border border-white/15 pointer-events-none">
                         Ad
                       </div>
                     </div>
@@ -1123,7 +1123,7 @@ function AdsSection() {
               href={CTA_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3.5 rounded-full btn-glow"
             >
               Je veux des Ads qui closent <ArrowRight className="w-4 h-4" />
             </a>
@@ -1199,7 +1199,7 @@ function Portfolio() {
       <div className="max-w-7xl mx-auto px-6 mb-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
               <span className="text-white">Nos</span> <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">réalisations</span>
             </h2>
             <p className="mt-3 text-muted-foreground text-lg">Un aperçu de ce qu'on crée pour nos clients.</p>
@@ -1237,11 +1237,11 @@ function Testimonials() {
   const Card = ({ r }: { r: R }) => (
     <div className="w-full p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-sm">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-medium text-sm">
           {r.name.charAt(0)}
         </div>
         <div className="min-w-0">
-          <div className="font-semibold truncate text-sm">{r.name}</div>
+          <div className="font-medium truncate text-sm">{r.name}</div>
           <div className="text-xs text-muted-foreground truncate">{r.role}</div>
         </div>
       </div>
@@ -1255,11 +1255,11 @@ function Testimonials() {
   const MobileCard = ({ r }: { r: R }) => (
     <div className="w-60 shrink-0 p-3.5 rounded-xl border border-white/10 bg-card/60 backdrop-blur">
       <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-bold text-xs">
+        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-medium text-xs">
           {r.name.charAt(0)}
         </div>
         <div className="min-w-0">
-          <div className="font-semibold truncate text-xs">{r.name}</div>
+          <div className="font-medium truncate text-xs">{r.name}</div>
           <div className="text-[10px] text-muted-foreground truncate">{r.role}</div>
         </div>
       </div>
@@ -1298,7 +1298,7 @@ function Testimonials() {
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto mb-8">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
               Ce qu'ils pensent de{" "}
               <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Skale Visuals</span>
             </h2>
@@ -1335,14 +1335,14 @@ function Comparison() {
   const renderCell = (v: boolean | string, highlight?: boolean) => {
     if (v === true) return <Check className={`w-5 h-5 mx-auto ${highlight ? "text-primary" : "text-emerald-400"}`} />;
     if (v === false) return <X className="w-4 h-4 mx-auto text-white/30" />;
-    return <span className={`text-sm ${highlight ? "text-primary font-semibold" : "text-white/70"}`}>{v}</span>;
+    return <span className={`text-sm ${highlight ? "text-primary font-medium" : "text-white/70"}`}>{v}</span>;
   };
 
   return (
     <section data-section="partenaire" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-4xl mx-auto px-6">
         <FadeIn>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-center text-balance">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-center text-balance">
             Ce qui fait de Skale Visuals votre{" "}
             <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">partenaire #1</span>
           </h2>
@@ -1351,7 +1351,7 @@ function Comparison() {
           <div className="mt-8 rounded-2xl border border-white/10 bg-card/40 backdrop-blur overflow-hidden">
             <div className="grid grid-cols-[1.4fr_1fr_1fr]">
               <div className="p-4 text-xs uppercase tracking-widest text-muted-foreground font-medium border-b border-white/10" />
-              <div className="p-4 text-center font-bold text-primary bg-primary/10 border-b border-primary/30 border-x border-primary/30">
+              <div className="p-4 text-center font-medium text-primary bg-primary/10 border-b border-primary/30 border-x border-primary/30">
                 Skale Visuals
               </div>
               <div className="p-4 text-center text-muted-foreground font-medium text-sm border-b border-white/10">
@@ -1379,7 +1379,7 @@ function Comparison() {
               href={CTA_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3.5 rounded-full btn-glow"
             >
               Réserver un appel <ArrowRight className="w-4 h-4" />
             </a>
@@ -1433,7 +1433,7 @@ function FAQ() {
       <div className="max-w-6xl mx-auto px-6">
         <FadeIn>
           <div className="text-center">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
               Tes questions.{" "}
               <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Nos réponses.</span>
             </h2>
@@ -1451,7 +1451,7 @@ function FAQ() {
                         onClick={() => setOpen(open === i ? null : i)}
                         className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
                       >
-                        <span className="font-semibold">{it.q}</span>
+                        <span className="font-medium">{it.q}</span>
                         <ChevronDown className={`w-5 h-5 text-primary shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
                       </button>
                       <motion.div
@@ -1526,7 +1526,7 @@ function FinalCTA() {
                   <c.icon className="w-5 h-5 text-primary" />
                 </div>
                 <div className="text-xs uppercase tracking-widest text-muted-foreground">{c.label}</div>
-                <div className="mt-1 font-semibold text-white break-all">{c.value}</div>
+                <div className="mt-1 font-medium text-white break-all">{c.value}</div>
               </a>
             ))}
           </div>
@@ -1537,13 +1537,13 @@ function FinalCTA() {
               href={CTA_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3.5 rounded-full btn-glow"
             >
-              Lancer mon projet <ArrowRight className="w-4 h-4" />
+              réserver un appel dès maintenant <ArrowRight className="w-4 h-4" />
             </a>
             <a
               href="#realisations"
-              className="inline-flex items-center gap-2 liquid-glass text-white font-semibold px-6 py-3.5 rounded-full"
+              className="inline-flex items-center gap-2 liquid-glass text-white font-medium px-6 py-3.5 rounded-full"
             >
               Voir nos réalisations
             </a>
