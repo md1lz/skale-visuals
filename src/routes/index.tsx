@@ -11,7 +11,7 @@ import logoAsset from "@/assets/skale-logo.png.asset.json";
 import arrowAsset from "@/assets/arrow-curl.png.asset.json";
 import { listPublicVideos, type PublicVideo } from "@/lib/site-videos.functions";
 
-const CTA_URL = "https://tally.so/r/PdPXRQ";
+const CTA_URL = "https://calendly.com/skalevisuals086/30min";
 const WA_URL = "https://wa.me/33766766153?text=" + encodeURIComponent("Bonjour, je souhaite obtenir un devis pour mes vidéos.");
 const MAIL_URL = "mailto:skalevisuals086@gmail.com";
 const IG_URL = "https://instagram.com/skalevisuals";
@@ -428,7 +428,7 @@ function Navbar() {
             rel="noopener noreferrer"
             className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-2 text-sm font-semibold text-white hover:bg-white/15 transition-colors"
           >
-            Obtenir un devis <ArrowRight className="w-4 h-4 text-primary" />
+            Réserver un appel <ArrowRight className="w-4 h-4 text-primary" />
           </a>
           <button
             onClick={() => setOpen((v) => !v)}
@@ -469,7 +469,7 @@ function Navbar() {
                 rel="noopener noreferrer"
                 className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-semibold"
               >
-                Obtenir un devis <ArrowRight className="w-4 h-4" />
+                Réserver un appel <ArrowRight className="w-4 h-4" />
               </a>
             </motion.div>
           )}
@@ -501,14 +501,14 @@ function Hero() {
         <FadeIn>
           <div className="inline-flex items-center gap-2.5 text-sm text-white/85">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600" />
             </span>
-            Disponible dès maintenant
+            Pour entrepreneurs, agences de contenu, Marketing et Ads
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-black text-balance max-w-5xl mx-auto leading-[1.05]">
+          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-semibold text-balance max-w-5xl mx-auto leading-[1.05]">
             On monte tes vidéos pour qu'elles{" "}
             <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">captivent</span>,{" "}
             <span className="font-script text-primary text-5xl sm:text-6xl lg:text-8xl">convertissent</span> et{" "}
@@ -538,7 +538,7 @@ function Hero() {
               { n: 4.8, s: "/5", l: "SATISFACTION" },
             ].map((stat, i) => (
               <div key={i} className="text-center">
-                <div className="text-2xl lg:text-3xl font-black text-primary">
+                <div className="text-2xl lg:text-3xl font-semibold text-primary">
                   {stat.p}
                   {Number.isInteger(stat.n)
                     ? <CountUp to={stat.n} />
@@ -606,7 +606,7 @@ function SocialProof() {
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-black text-balance leading-[1.05]">
+          <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-semibold text-balance leading-[1.05]">
             Plus de <CountUp to={30} /> clients<br className="hidden sm:block" /> nous ont déjà fait confiance.
           </h2>
         </FadeIn>
@@ -691,7 +691,7 @@ function WhySkale() {
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-balance">
               On ne monte pas juste des vidéos.{" "}
               <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">On crée de l'impact.</span>
             </h2>
@@ -840,7 +840,7 @@ function HowItWorks() {
             }} />
             <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-6 items-center">
               <div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-white">
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-white">
                   Notre méthode en{" "}
                   <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">3 étapes</span>
                 </h2>
@@ -938,7 +938,7 @@ function ContentFunnel() {
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance text-white">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-balance text-white">
               Vous êtes dans l'<span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">entrepreneuriat</span> ?
             </h2>
             <p className="mt-4 text-muted-foreground text-lg text-balance">
@@ -959,7 +959,7 @@ function ContentFunnel() {
                   </div>
                   <div>
                     <div className="text-[10px] uppercase tracking-widest text-white/60 font-bold">{s.tag}</div>
-                    <div className="text-lg font-black text-white">{s.goal}</div>
+                    <div className="text-lg font-semibold text-white">{s.goal}</div>
                   </div>
                 </div>
                 <p className="relative mt-4 text-sm text-white/70">{s.formats}</p>
@@ -1016,7 +1016,7 @@ function AdsSection() {
       <div className="relative max-w-6xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-balance">
               <span className="text-white">Boostez vos ventes avec des</span>{" "}
               <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Ads</span>{" "}
               <span className="text-white">qui remplissent votre agenda</span>
@@ -1034,7 +1034,7 @@ function AdsSection() {
               background: "radial-gradient(ellipse 50% 80% at 80% 50%, rgba(226,75,74,0.30), transparent 60%)",
             }} />
             <div className="relative flex flex-col sm:flex-row items-center gap-5 sm:gap-7 text-center sm:text-left">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-rose-700 grid place-items-center text-white font-black text-xl shrink-0">A</div>
+              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-rose-700 grid place-items-center text-white font-semibold text-xl shrink-0">A</div>
               <div className="flex-1">
                 <div className="text-sm text-white/70">Alexis · Fondateur D2C</div>
                 <p className="mt-1 text-lg sm:text-xl font-semibold text-white text-balance">
@@ -1042,7 +1042,7 @@ function AdsSection() {
                 </p>
               </div>
               <div className="text-center shrink-0">
-                <div className="text-3xl sm:text-4xl font-black text-primary">+120k€</div>
+                <div className="text-3xl sm:text-4xl font-semibold text-primary">+120k€</div>
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
               </div>
             </div>
@@ -1199,7 +1199,7 @@ function Portfolio() {
       <div className="max-w-7xl mx-auto px-6 mb-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold">
               <span className="text-white">Nos</span> <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">réalisations</span>
             </h2>
             <p className="mt-3 text-muted-foreground text-lg">Un aperçu de ce qu'on crée pour nos clients.</p>
@@ -1298,7 +1298,7 @@ function Testimonials() {
       <div className="max-w-7xl mx-auto px-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto mb-8">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold">
               Ce qu'ils pensent de{" "}
               <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Skale Visuals</span>
             </h2>
@@ -1342,7 +1342,7 @@ function Comparison() {
     <section data-section="partenaire" className="relative py-12 lg:py-16 border-t border-white/5">
       <div className="max-w-4xl mx-auto px-6">
         <FadeIn>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-center text-balance">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold text-center text-balance">
             Ce qui fait de Skale Visuals votre{" "}
             <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">partenaire #1</span>
           </h2>
@@ -1381,7 +1381,7 @@ function Comparison() {
               rel="noopener noreferrer"
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-semibold px-6 py-3.5 rounded-full btn-glow"
             >
-              Obtenir mon devis gratuit <ArrowRight className="w-4 h-4" />
+              Réserver un appel <ArrowRight className="w-4 h-4" />
             </a>
           </div>
         </FadeIn>
@@ -1433,7 +1433,7 @@ function FAQ() {
       <div className="max-w-6xl mx-auto px-6">
         <FadeIn>
           <div className="text-center">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-semibold">
               Tes questions.{" "}
               <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Nos réponses.</span>
             </h2>
