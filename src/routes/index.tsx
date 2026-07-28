@@ -501,10 +501,10 @@ function Hero() {
         <FadeIn>
           <div className="inline-flex items-center gap-2.5 text-sm text-white/85">
             <span className="relative flex h-2.5 w-2.5">
-              <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500" />
+              <span className="absolute inline-flex h-full w-full rounded-full bg-red-500 opacity-75 animate-ping" />
+              <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-600" />
             </span>
-            Disponible dès maintenant
+            Pour entrepreneurs, agences de contenu, Marketing et Ads
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
