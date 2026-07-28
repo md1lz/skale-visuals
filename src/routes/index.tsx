@@ -661,7 +661,7 @@ function FeaturedTestimonial() {
             « Depuis qu'on travaille avec Skale Visuals, mes vidéos ont doublé leur rétention. Le montage est tellement propre que même mes concurrents me demandent avec qui je travaille. »
           </blockquote>
           <div className="mt-6 flex items-center justify-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-rose-600 grid place-items-center font-semibold">T</div>
+            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-rose-600 grid place-items-center font-medium">T</div>
             <div className="text-left">
               <div className="font-medium">Thomas R.</div>
               <div className="text-sm text-muted-foreground">Créateur YouTube, 45k abonnés</div>
@@ -707,7 +707,7 @@ function WhySkale() {
                 <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-4">
                   <f.icon className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="text-xl font-semibold">{f.title}</h3>
+                <h3 className="text-xl font-medium">{f.title}</h3>
                 <p className="mt-2 text-muted-foreground">{f.desc}</p>
               </div>
             </FadeIn>
@@ -772,7 +772,7 @@ function HowItWorks() {
     if (i === 1) {
       return (
         <div className="relative w-full h-full grid place-items-center">
-          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">Watchtime · x3</div>
+          <div className="absolute -top-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">Watchtime · x3</div>
           <div className="absolute left-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-medium">Rétention</div>
           <div className="absolute right-3 top-10 px-2.5 py-1 rounded-full bg-primary/20 border border-primary/40 text-xs text-primary font-medium">Engagement</div>
           <svg viewBox="0 0 200 80" className="w-[82%] h-20 mt-10" preserveAspectRatio="none">
@@ -824,7 +824,7 @@ function HowItWorks() {
             <div className="absolute top-2 bottom-1 left-[42%] w-[1px] bg-primary shadow-[0_0_6px_rgba(226,75,74,0.9)]" />
           </div>
         </div>
-        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-semibold">Révisions illimitées</div>
+        <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 px-3 py-1 rounded-full bg-primary text-primary-foreground text-xs font-medium">Révisions illimitées</div>
       </div>
     );
   };
@@ -873,7 +873,7 @@ function HowItWorks() {
                             </div>
                             <div className="absolute bottom-1 left-1 right-1 flex items-center justify-between">
                               <span className="text-[8px] px-1 py-0.5 rounded bg-black/70 text-white tabular-nums">0{(k % 9) + 1}:{(k * 7) % 60 < 10 ? "0" : ""}{(k * 7) % 60}</span>
-                              <span className="text-[8px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-semibold">VPH+</span>
+                              <span className="text-[8px] px-1 py-0.5 rounded bg-primary text-primary-foreground font-medium">VPH+</span>
                             </div>
                           </div>
                         ))}
@@ -895,7 +895,7 @@ function HowItWorks() {
                   background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226,75,74,0.18), transparent 70%)"
                 }} />
                 <div className="relative h-48 mb-5">{stepArtwork(i)}</div>
-                <h3 className="relative text-xl font-semibold text-white">{s.n} — {s.title}</h3>
+                <h3 className="relative text-xl font-medium text-white">{s.n} — {s.title}</h3>
                 <p className="relative mt-3 text-white/70 leading-relaxed">{s.desc}</p>
               </div>
             </FadeIn>
@@ -958,7 +958,7 @@ function ContentFunnel() {
                     <s.icon className="w-5 h-5 text-primary" />
                   </div>
                   <div>
-                    <div className="text-[10px] uppercase tracking-widest text-white/60 font-semibold">{s.tag}</div>
+                    <div className="text-[10px] uppercase tracking-widest text-white/60 font-medium">{s.tag}</div>
                     <div className="text-lg font-medium text-white">{s.goal}</div>
                   </div>
                 </div>
@@ -1095,7 +1095,7 @@ function AdsSection() {
                     <div className={`group relative w-[240px] sm:w-[280px] aspect-[9/16] rounded-[1.75rem] overflow-hidden border border-primary/40 bg-gradient-to-br ${tone} to-black shadow-[0_40px_80px_-20px_rgba(226,75,74,0.55)]`}>
                       <LiveVideoSurface video={s} btnSize="sm" />
                       <div className="absolute inset-0 pointer-events-none opacity-25" style={{ backgroundImage: "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(255,255,255,0.05) 3px, transparent 4px)" }} />
-                      <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-semibold text-white uppercase tracking-widest border border-white/15 pointer-events-none">
+                      <div className="absolute top-3 left-3 px-2 py-1 rounded-md bg-black/60 backdrop-blur text-[10px] font-medium text-white uppercase tracking-widest border border-white/15 pointer-events-none">
                         Ad
                       </div>
                     </div>
@@ -1237,7 +1237,7 @@ function Testimonials() {
   const Card = ({ r }: { r: R }) => (
     <div className="w-full p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-semibold text-sm">
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-medium text-sm">
           {r.name.charAt(0)}
         </div>
         <div className="min-w-0">
@@ -1255,7 +1255,7 @@ function Testimonials() {
   const MobileCard = ({ r }: { r: R }) => (
     <div className="w-60 shrink-0 p-3.5 rounded-xl border border-white/10 bg-card/60 backdrop-blur">
       <div className="flex items-center gap-2">
-        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-semibold text-xs">
+        <div className="w-7 h-7 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-medium text-xs">
           {r.name.charAt(0)}
         </div>
         <div className="min-w-0">
@@ -1351,7 +1351,7 @@ function Comparison() {
           <div className="mt-8 rounded-2xl border border-white/10 bg-card/40 backdrop-blur overflow-hidden">
             <div className="grid grid-cols-[1.4fr_1fr_1fr]">
               <div className="p-4 text-xs uppercase tracking-widest text-muted-foreground font-medium border-b border-white/10" />
-              <div className="p-4 text-center font-semibold text-primary bg-primary/10 border-b border-primary/30 border-x border-primary/30">
+              <div className="p-4 text-center font-medium text-primary bg-primary/10 border-b border-primary/30 border-x border-primary/30">
                 Skale Visuals
               </div>
               <div className="p-4 text-center text-muted-foreground font-medium text-sm border-b border-white/10">
