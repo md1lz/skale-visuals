@@ -693,7 +693,7 @@ function WhySkale() {
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance">
               On ne monte pas juste des vidéos.{" "}
-              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">On crée de l'impact.</span>
+              <span className="font-script text-primary">On crée de l'impact.</span>
             </h2>
             <p className="mt-3 text-muted-foreground text-lg">
               Chaque seconde de ta vidéo est pensée pour retenir l'attention et déclencher l'action.
@@ -842,7 +842,7 @@ function HowItWorks() {
               <div>
                 <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-white">
                   Notre méthode en{" "}
-                  <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">3 étapes</span>
+                  <span className="font-script text-primary">3 étapes</span>
                 </h2>
                 <p className="mt-3 text-white/70 max-w-md">
                   Chaque étape est pensée pour faire de YouTube ton canal d'acquisition #1.
@@ -939,7 +939,7 @@ function ContentFunnel() {
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance text-white">
-              Vous êtes dans l'<span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">entrepreneuriat</span> ?
+              Vous êtes dans l'<span className="font-script text-primary">entrepreneuriat</span> ?
             </h2>
             <p className="mt-4 text-muted-foreground text-lg text-balance">
               On travaille avec différentes méthodes et on s'adapte à chaque étape de votre <span className="text-primary font-medium">Content Funnel</span> — du premier scroll jusqu'à la vente.
@@ -1018,7 +1018,7 @@ function AdsSection() {
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance">
               <span className="text-white">Boostez vos ventes avec des</span>{" "}
-              <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">Ads</span>{" "}
+              <span className="font-script text-primary">Ads</span>{" "}
               <span className="text-white">qui remplissent votre agenda</span>
             </h2>
             <p className="mt-4 text-muted-foreground text-lg text-balance">
@@ -1200,7 +1200,7 @@ function Portfolio() {
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
-              <span className="text-white">Nos</span> <span className="font-script text-primary text-5xl sm:text-6xl lg:text-7xl">réalisations</span>
+              <span className="text-white">Nos</span> <span className="font-script text-primary">réalisations</span>
             </h2>
             <p className="mt-3 text-muted-foreground text-lg">Un aperçu de ce qu'on crée pour nos clients.</p>
           </div>
@@ -1300,7 +1300,7 @@ function Testimonials() {
           <div className="text-center max-w-3xl mx-auto mb-8">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
               Ce qu'ils pensent de{" "}
-              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Skale Visuals</span>
+              <span className="font-script text-primary">Skale Visuals</span>
             </h2>
             <p className="mt-3 text-muted-foreground text-lg">Des créateurs qui ont vu leur audience et leur business décoller.</p>
           </div>
@@ -1344,7 +1344,7 @@ function Comparison() {
         <FadeIn>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-center text-balance">
             Ce qui fait de Skale Visuals votre{" "}
-            <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">partenaire #1</span>
+            <span className="font-script text-primary">partenaire #1</span>
           </h2>
         </FadeIn>
         <FadeIn delay={0.15}>
@@ -1435,7 +1435,7 @@ function FAQ() {
           <div className="text-center">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
               Tes questions.{" "}
-              <span className="font-script text-primary text-4xl sm:text-5xl lg:text-6xl">Nos réponses.</span>
+              <span className="font-script text-primary">Nos réponses.</span>
             </h2>
           </div>
         </FadeIn>
