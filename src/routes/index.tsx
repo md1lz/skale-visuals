@@ -1506,7 +1506,7 @@ function FinalCTA() {
       <div className="absolute inset-0 cinematic-glow pointer-events-none" />
       <div className="relative max-w-4xl mx-auto px-5 text-center">
         <FadeIn>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-script text-primary leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-script text-primary leading-tight">
             Prêt à passer au niveau supérieur ?
           </h2>
           <p className="mt-3 text-muted-foreground text-base max-w-2xl mx-auto">
