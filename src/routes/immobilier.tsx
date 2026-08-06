@@ -187,9 +187,9 @@ function Hero() {
         <FadeIn delay={0.1}>
           <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-black text-balance max-w-5xl mx-auto leading-[1.05]">
             On accompagne les agences immobilières pour qu'elles{" "}
-            <span className="font-script text-5xl sm:text-6xl lg:text-8xl" style={{ color: ELECTRIC }}>attirent</span>,{" "}
-            <span className="font-script text-5xl sm:text-6xl lg:text-8xl" style={{ color: ELECTRIC }}>convertissent</span> et{" "}
-            <span className="font-script text-5xl sm:text-6xl lg:text-8xl" style={{ color: ELECTRIC }}>explosent</span>.
+            <span className="font-script" style={{ color: ELECTRIC }}>attirent</span>,{" "}
+            <span className="font-script" style={{ color: ELECTRIC }}>convertissent</span> et{" "}
+            <span className="font-script" style={{ color: ELECTRIC }}>explosent</span>.
           </h1>
         </FadeIn>
 
@@ -264,7 +264,7 @@ function ReelsDeck() {
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
               <span className="text-white">Les</span>{" "}
-              <span className="font-script text-5xl sm:text-6xl lg:text-7xl" style={{ color: ELECTRIC }}>Reels</span>{" "}
+              <span className="font-script" style={{ color: ELECTRIC }}>Reels</span>{" "}
               <span className="text-white">qui font vendre plus vite.</span>
             </h2>
             <p className="mt-4 text-muted-foreground text-lg text-balance">
@@ -406,7 +406,7 @@ function ContactSection() {
         <FadeIn>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-balance">
             <span className="text-white">On</span>{" "}
-            <span className="font-script text-5xl sm:text-6xl lg:text-7xl" style={{ color: ELECTRIC }}>discute</span>{" "}
+            <span className="font-script" style={{ color: ELECTRIC }}>discute</span>{" "}
             <span className="text-white">de votre agence ?</span>
           </h2>
           <p className="mt-4 text-muted-foreground text-lg text-balance">
