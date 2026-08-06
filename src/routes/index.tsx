@@ -1051,7 +1051,7 @@ function AdsSection() {
 
         {/* Card-deck carousel */}
         <FadeIn delay={0.2}>
-          <div className="mt-10 relative h-[440px] sm:h-[500px]" flex items-center justify-center select-none [perspective:1400px]">
+          <div className="mt-10 relative h-[440px] sm:h-[500px] flex items-center justify-center select-none [perspective:1400px]">
             <button
               onClick={prev}
               aria-label="Précédent"
