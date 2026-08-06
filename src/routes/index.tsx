@@ -396,11 +396,11 @@ function Navbar() {
         <button
           type="button"
           onClick={() => { scrollToTop(); setOpen(false); }}
-          className="flex items-center gap-2.5 shrink-0 group cursor-pointer"
+          className="flex items-center gap-2 shrink-0 group cursor-pointer"
           aria-label="Retour en haut de la page"
         >
           <span className="inline-block group-hover:scale-110 transition-transform">
-            <Logo size={48} />
+            <Logo size={40} />
           </span>
         </button>
 
@@ -426,7 +426,7 @@ function Navbar() {
             href={CTA_URL}
             target="_blank"
             rel="noopener noreferrer"
-            className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-4 py-2 text-sm font-medium text-white hover:bg-white/15 transition-colors"
+            className="hidden sm:inline-flex items-center gap-2 liquid-glass rounded-full px-3 py-1.5 text-sm font-medium text-white hover:bg-white/15 transition-colors"
           >
             Réserver un appel <ArrowRight className="w-4 h-4 text-primary" />
           </a>
@@ -458,7 +458,7 @@ function Navbar() {
                   initial={{ opacity: 0, x: -8 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: 0.04 * i, duration: 0.2 }}
-                  className="px-3 py-2.5 text-sm text-white/90 hover:bg-white/10 rounded-lg"
+                  className="px-3 py-2 text-sm text-white/90 hover:bg-white/10 rounded-lg"
                 >
                   {l.label}
                 </motion.a>
@@ -467,7 +467,7 @@ function Navbar() {
                 href={CTA_URL}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2.5 rounded-lg text-sm font-medium"
+                className="mt-1 inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-3 py-2 rounded-lg text-sm font-medium"
               >
                 Réserver un appel <ArrowRight className="w-4 h-4" />
               </a>
@@ -497,7 +497,7 @@ function Hero() {
   return (
     <section data-section="accueil" className="relative overflow-hidden">
       <div className="absolute inset-0 cinematic-glow pointer-events-none" />
-      <div className="relative max-w-7xl mx-auto px-6 pt-10 pb-6 lg:pt-16 lg:pb-8 text-center">
+      <div className="relative max-w-6xl mx-auto px-5 pt-6 pb-4 lg:pt-10 lg:pb-6 text-center">
         <FadeIn>
           <div className="inline-flex items-center gap-2.5 text-sm text-white/85">
             <span className="relative flex h-2.5 w-2.5">
@@ -508,7 +508,7 @@ function Hero() {
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h1 className="mt-5 text-4xl sm:text-5xl lg:text-7xl font-medium text-balance max-w-5xl mx-auto leading-[1.05]">
+          <h1 className="mt-5 text-3xl sm:text-4xl lg:text-6xl font-medium text-balance max-w-5xl mx-auto leading-[1.05]">
             On monte tes vidéos pour qu'elles{" "}
             <span className="font-script text-primary">captivent</span>,{" "}
             <span className="font-script text-primary">convertissent</span> et{" "}
@@ -516,16 +516,16 @@ function Hero() {
           </h1>
         </FadeIn>
         <FadeIn delay={0.2}>
-          <p className="mt-5 max-w-2xl mx-auto text-base sm:text-lg text-muted-foreground text-balance">
+          <p className="mt-4 max-w-2xl mx-auto text-sm sm:text-base text-muted-foreground text-balance">
             Déléguez votre montage vidéo à une équipe qui livre vite et bien — pendant que vous vous concentrez sur ce qui fait vraiment grossir votre activité.
           </p>
         </FadeIn>
         <FadeIn delay={0.3}>
           <div className="mt-6 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <a href={CTA_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3.5 rounded-full btn-glow">
+            <a href={CTA_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-5 py-2.5 rounded-full btn-glow">
               réserver un appel dès maintenant <ArrowRight className="w-4 h-4" />
             </a>
-            <a href="#realisations" className="inline-flex items-center gap-2 liquid-glass text-white font-medium px-6 py-3.5 rounded-full">
+            <a href="#realisations" className="inline-flex items-center gap-2 liquid-glass text-white font-medium px-5 py-2.5 rounded-full">
               Voir nos réalisations
             </a>
           </div>
@@ -538,14 +538,14 @@ function Hero() {
               { n: 100, s: "%", l: "SATISFACTION" },
             ].map((stat, i) => (
               <div key={i} className="text-center">
-                <div className="text-2xl lg:text-3xl font-medium text-primary">
+                <div className="text-xl lg:text-2xl font-medium text-primary">
                   {stat.p}
                   {Number.isInteger(stat.n)
                     ? <CountUp to={stat.n} />
                     : stat.n}
                   {stat.s}
                 </div>
-                <div className="mt-1 text-xs uppercase tracking-widest text-muted-foreground">{stat.l}</div>
+                <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground">{stat.l}</div>
               </div>
             ))}
           </div>
@@ -593,10 +593,10 @@ function SocialProof() {
   const liveAvis = useSiteVideos().filter((v) => v.carousel_key === "avis_video");
   const slots: (PublicVideo | null)[] = [liveAvis[0] ?? null, liveAvis[1] ?? null, liveAvis[2] ?? null];
   return (
-    <section data-section="social-proof" className="relative py-12 lg:py-16">
+    <section data-section="social-proof" className="relative py-8 lg:py-12">
 
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
-      <div className="relative max-w-6xl mx-auto px-6 text-center">
+      <div className="relative max-w-5xl mx-auto px-5 text-center">
         <FadeIn>
           <div className="flex items-center justify-center gap-2 text-sm text-white/80">
             <div className="flex gap-0.5 text-primary">
@@ -606,12 +606,12 @@ function SocialProof() {
           </div>
         </FadeIn>
         <FadeIn delay={0.1}>
-          <h2 className="mt-5 text-3xl sm:text-5xl lg:text-6xl font-medium text-balance leading-[1.05]">
+          <h2 className="mt-5 text-2xl sm:text-4xl lg:text-5xl font-medium text-balance leading-[1.05]">
             Plus de <CountUp to={50} /> clients<br className="hidden sm:block" /> nous ont déjà fait confiance.
           </h2>
         </FadeIn>
         <FadeIn delay={0.2}>
-          <p className="mt-5 text-base sm:text-lg text-muted-foreground text-balance">
+          <p className="mt-4 text-sm sm:text-base text-muted-foreground text-balance">
             Et leur watchtime n'a jamais été aussi haut depuis qu'on monte leurs vidéos.
           </p>
         </FadeIn>
@@ -652,16 +652,16 @@ function FeaturedTestimonial() {
   return (
     <section data-section="temoignage" className="relative py-10 lg:py-12">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
-      <div className="relative max-w-4xl mx-auto px-6 text-center">
+      <div className="relative max-w-3xl mx-auto px-5 text-center">
         <FadeIn>
           <div className="flex justify-center gap-1 text-primary mb-4">
             {[...Array(5)].map((_, i) => <Star key={i} className="w-5 h-5 fill-current" />)}
           </div>
-          <blockquote className="text-2xl sm:text-3xl lg:text-4xl font-medium italic text-white leading-snug text-balance">
+          <blockquote className="text-xl sm:text-2xl lg:text-3xl font-medium italic text-white leading-snug text-balance">
             « Depuis qu'on travaille avec Skale Visuals, mes vidéos ont doublé leur rétention. Le montage est tellement propre que même mes concurrents me demandent avec qui je travaille. »
           </blockquote>
           <div className="mt-6 flex items-center justify-center gap-3">
-            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary to-rose-600 grid place-items-center font-medium">T</div>
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-rose-600 grid place-items-center font-medium">T</div>
             <div className="text-left">
               <div className="font-medium">Thomas R.</div>
               <div className="text-sm text-muted-foreground">Créateur YouTube, 45k abonnés</div>
@@ -687,15 +687,15 @@ function WhySkale() {
     { icon: Music, label: "Musique & sound design" },
   ];
   return (
-    <section data-section="services" className="relative py-12 lg:py-16">
-      <div className="max-w-7xl mx-auto px-6">
+    <section data-section="services" className="relative py-8 lg:py-12">
+      <div className="max-w-6xl mx-auto px-5">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-balance">
               On ne monte pas juste des vidéos.{" "}
               <span className="font-script text-primary">On crée de l'impact.</span>
             </h2>
-            <p className="mt-3 text-muted-foreground text-lg">
+            <p className="mt-3 text-muted-foreground text-base">
               Chaque seconde de ta vidéo est pensée pour retenir l'attention et déclencher l'action.
             </p>
           </div>
@@ -703,11 +703,11 @@ function WhySkale() {
         <div className="mt-8 grid md:grid-cols-3 gap-4">
           {features.map((f, i) => (
             <FadeIn key={f.title} delay={i * 0.1}>
-              <div className="h-full p-6 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
-                <div className="w-12 h-12 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-4">
+              <div className="h-full p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover">
+                <div className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-3">
                   <f.icon className="w-5 h-5 text-primary" />
                 </div>
-                <h3 className="text-xl font-medium">{f.title}</h3>
+                <h3 className="text-lg font-medium">{f.title}</h3>
                 <p className="mt-2 text-muted-foreground">{f.desc}</p>
               </div>
             </FadeIn>
@@ -830,8 +830,8 @@ function HowItWorks() {
   };
 
   return (
-    <section id="methode" data-section="methode" className="relative py-12 lg:py-16 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="methode" data-section="methode" className="relative py-8 lg:py-12 border-t border-white/5">
+      <div className="max-w-6xl mx-auto px-5">
         {/* Hero banner */}
         <FadeIn>
           <div className="relative rounded-[2rem] border border-primary/30 overflow-hidden p-6 lg:p-8 bg-gradient-to-br from-red-950/80 via-black to-black">
@@ -840,7 +840,7 @@ function HowItWorks() {
             }} />
             <div className="relative grid lg:grid-cols-[1.2fr_1fr] gap-6 items-center">
               <div>
-                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-white">
+                <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-white">
                   Notre méthode en{" "}
                   <span className="font-script text-primary">3 étapes</span>
                 </h2>
@@ -890,7 +890,7 @@ function HowItWorks() {
         <div className="mt-5 grid md:grid-cols-3 gap-4">
           {steps.map((s, i) => (
             <FadeIn key={s.title} delay={i * 0.1}>
-              <div className="relative h-full p-6 rounded-[1.75rem] border border-primary/25 bg-gradient-to-b from-red-950/40 via-black to-black overflow-hidden card-hover">
+              <div className="relative h-full p-5 rounded-[1.75rem] border border-primary/25 bg-gradient-to-b from-red-950/40 via-black to-black overflow-hidden card-hover">
                 <div className="absolute inset-0 pointer-events-none opacity-60" style={{
                   background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226,75,74,0.18), transparent 70%)"
                 }} />
@@ -933,12 +933,12 @@ function ContentFunnel() {
     },
   ];
   return (
-    <section data-section="funnel" className="relative py-12 lg:py-16 border-t border-white/5">
+    <section data-section="funnel" className="relative py-8 lg:py-12 border-t border-white/5">
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-5">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance text-white">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-balance text-white">
               Vous êtes dans l'<span className="font-script text-primary">entrepreneuriat</span> ?
             </h2>
             <p className="mt-4 text-muted-foreground text-lg text-balance">
@@ -949,7 +949,7 @@ function ContentFunnel() {
         <div className="mt-10 grid md:grid-cols-3 gap-4">
           {stages.map((s, i) => (
             <FadeIn key={s.tag} delay={i * 0.1}>
-              <div className="relative h-full p-6 rounded-[1.75rem] border border-primary/25 bg-gradient-to-b from-red-950/40 via-black to-black overflow-hidden card-hover">
+              <div className="relative h-full p-5 rounded-[1.75rem] border border-primary/25 bg-gradient-to-b from-red-950/40 via-black to-black overflow-hidden card-hover">
                 <div className="absolute inset-0 pointer-events-none opacity-60" style={{
                   background: "radial-gradient(ellipse 80% 60% at 50% 0%, rgba(226,75,74,0.18), transparent 70%)",
                 }} />
@@ -973,14 +973,14 @@ function ContentFunnel() {
 
         {/* Arrow + closing text */}
         <FadeIn delay={0.2}>
-          <div className="mt-8 max-w-3xl mx-auto flex items-start gap-4 sm:gap-6 px-4">
+          <div className="mt-6 max-w-3xl mx-auto flex items-start gap-4 sm:gap-6 px-4">
             <img
               src={arrowAsset.url}
               alt=""
               aria-hidden="true"
-              className="w-20 sm:w-28 shrink-0 opacity-90 pointer-events-none select-none -rotate-12"
+              className="w-16 sm:w-24 shrink-0 opacity-90 pointer-events-none select-none -rotate-12"
             />
-            <p className="text-base sm:text-lg text-white/85 leading-relaxed">
+            <p className="text-sm sm:text-base text-white/85 leading-relaxed">
               En 2026, ceux qui captent l'attention captent leur réussite. On ne fait pas que monter vos vidéos — on vous fait gagner un temps précieux, et donc de l'argent. Vous nous confiez vos rushs, <span className="text-primary font-medium">on s'occupe de tout</span>.
             </p>
           </div>
@@ -1011,12 +1011,12 @@ function AdsSection() {
   ];
 
   return (
-    <section data-section="ads" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+    <section data-section="ads" className="relative py-8 lg:py-12 border-t border-white/5 overflow-hidden">
       <div className="absolute inset-0 cinematic-glow-soft pointer-events-none" />
-      <div className="relative max-w-6xl mx-auto px-6">
+      <div className="relative max-w-5xl mx-auto px-5">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-balance">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-balance">
               <span className="text-white">Boostez vos ventes avec des</span>{" "}
               <span className="font-script text-primary">Ads</span>{" "}
               <span className="text-white">qui remplissent votre agenda</span>
@@ -1029,20 +1029,20 @@ function AdsSection() {
 
         {/* Testimonial banner */}
         <FadeIn delay={0.1}>
-          <div className="mt-8 relative rounded-[1.75rem] border border-primary/30 p-5 lg:p-6 bg-gradient-to-r from-red-950/70 via-black to-black overflow-hidden">
+          <div className="mt-6 relative rounded-[1.75rem] border border-primary/30 p-4 lg:p-5 bg-gradient-to-r from-red-950/70 via-black to-black overflow-hidden">
             <div className="absolute inset-0 pointer-events-none opacity-60" style={{
               background: "radial-gradient(ellipse 50% 80% at 80% 50%, rgba(226,75,74,0.30), transparent 60%)",
             }} />
             <div className="relative flex flex-col sm:flex-row items-center gap-5 sm:gap-7 text-center sm:text-left">
-              <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-rose-700 grid place-items-center text-white font-medium text-xl shrink-0">A</div>
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary to-rose-700 grid place-items-center text-white font-medium text-lg shrink-0">A</div>
               <div className="flex-1">
                 <div className="text-sm text-white/70">Alexis · Fondateur D2C</div>
-                <p className="mt-1 text-lg sm:text-xl font-medium text-white text-balance">
+                <p className="mt-1 text-base sm:text-lg font-medium text-white text-balance">
                   « Grâce aux Ads vidéo, j'ai généré plus de <span className="text-primary">120 000 €</span> de CA depuis qu'on travaille ensemble. »
                 </p>
               </div>
               <div className="text-center shrink-0">
-                <div className="text-3xl sm:text-4xl font-medium text-primary">+120k€</div>
+                <div className="text-2xl sm:text-3xl font-medium text-primary">+120k€</div>
                 <div className="text-[10px] uppercase tracking-widest text-muted-foreground mt-0.5">CA généré</div>
               </div>
             </div>
@@ -1051,7 +1051,7 @@ function AdsSection() {
 
         {/* Card-deck carousel */}
         <FadeIn delay={0.2}>
-          <div className="mt-12 relative h-[520px] sm:h-[580px] flex items-center justify-center select-none [perspective:1400px]">
+          <div className="mt-10 relative h-[440px] sm:h-[500px] flex items-center justify-center select-none [perspective:1400px]">
             <button
               onClick={prev}
               aria-label="Précédent"
@@ -1123,7 +1123,7 @@ function AdsSection() {
               href={CTA_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3.5 rounded-full btn-glow"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-5 py-2.5 rounded-full btn-glow"
             >
               Je veux des Ads qui closent <ArrowRight className="w-4 h-4" />
             </a>
@@ -1195,14 +1195,14 @@ function Portfolio() {
   };
 
   return (
-    <section id="realisations" data-section="realisations" className="relative py-12 lg:py-16 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6 mb-6">
+    <section id="realisations" data-section="realisations" className="relative py-8 lg:py-12 border-t border-white/5">
+      <div className="max-w-6xl mx-auto px-5 mb-6">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium">
               <span className="text-white">Nos</span> <span className="font-script text-primary">réalisations</span>
             </h2>
-            <p className="mt-3 text-muted-foreground text-lg">Un aperçu de ce qu'on crée pour nos clients.</p>
+            <p className="mt-3 text-muted-foreground text-base">Un aperçu de ce qu'on crée pour nos clients.</p>
           </div>
         </FadeIn>
       </div>
@@ -1235,9 +1235,9 @@ function Testimonials() {
 
   type R = typeof reviews[number];
   const Card = ({ r }: { r: R }) => (
-    <div className="w-full p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur">
+    <div className="w-full p-4 rounded-2xl border border-white/10 bg-card/60 backdrop-blur">
       <div className="flex items-center gap-3">
-        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-medium text-sm">
+        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/80 to-rose-600 grid place-items-center font-medium text-sm">
           {r.name.charAt(0)}
         </div>
         <div className="min-w-0">
@@ -1275,7 +1275,7 @@ function Testimonials() {
   const cols = [shared, shared, shared];
 
   const Column = ({ items, reverse }: { items: R[]; reverse?: boolean }) => (
-    <div className="marquee overflow-hidden h-[560px] mask-fade-y relative">
+    <div className="marquee overflow-hidden h-[480px] mask-fade-y relative">
       <div className={`flex flex-col gap-4 ${reverse ? "marquee-y-track-reverse" : "marquee-y-track"}`}>
         {[...items, ...items].map((r, i) => <Card key={i} r={r} />)}
       </div>
@@ -1294,18 +1294,18 @@ function Testimonials() {
   const mobileRow2 = shared;
 
   return (
-    <section id="avis" data-section="avis" className="relative py-12 lg:py-16 border-t border-white/5">
-      <div className="max-w-7xl mx-auto px-6">
+    <section id="avis" data-section="avis" className="relative py-8 lg:py-12 border-t border-white/5">
+      <div className="max-w-6xl mx-auto px-5">
         <FadeIn>
           <div className="text-center max-w-3xl mx-auto mb-8">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium">
               Ce qu'ils pensent de{" "}
               <span className="font-script text-primary">Skale Visuals</span>
             </h2>
-            <p className="mt-3 text-muted-foreground text-lg">Des créateurs qui ont vu leur audience et leur business décoller.</p>
+            <p className="mt-3 text-muted-foreground text-base">Des créateurs qui ont vu leur audience et leur business décoller.</p>
           </div>
         </FadeIn>
-        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="hidden md:grid md:grid-cols-2 lg:grid-cols-3 gap-3">
           <Column items={cols[0]} />
           <Column items={cols[1]} reverse />
           <Column items={cols[2]} />
@@ -1339,16 +1339,16 @@ function Comparison() {
   };
 
   return (
-    <section data-section="partenaire" className="relative py-12 lg:py-16 border-t border-white/5">
-      <div className="max-w-4xl mx-auto px-6">
+    <section data-section="partenaire" className="relative py-8 lg:py-12 border-t border-white/5">
+      <div className="max-w-3xl mx-auto px-5">
         <FadeIn>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium text-center text-balance">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-center text-balance">
             Ce qui fait de Skale Visuals votre{" "}
             <span className="font-script text-primary">partenaire #1</span>
           </h2>
         </FadeIn>
         <FadeIn delay={0.15}>
-          <div className="mt-8 rounded-2xl border border-white/10 bg-card/40 backdrop-blur overflow-hidden">
+          <div className="mt-6 rounded-2xl border border-white/10 bg-card/40 backdrop-blur overflow-hidden">
             <div className="grid grid-cols-[1.4fr_1fr_1fr]">
               <div className="p-4 text-xs uppercase tracking-widest text-muted-foreground font-medium border-b border-white/10" />
               <div className="p-4 text-center font-medium text-primary bg-primary/10 border-b border-primary/30 border-x border-primary/30">
@@ -1379,7 +1379,7 @@ function Comparison() {
               href={CTA_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3.5 rounded-full btn-glow"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-5 py-2.5 rounded-full btn-glow"
             >
               Réserver un appel <ArrowRight className="w-4 h-4" />
             </a>
@@ -1429,11 +1429,11 @@ function FAQ() {
   ];
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <section id="faq" data-section="faq" className="relative py-12 lg:py-16 border-t border-white/5">
-      <div className="max-w-6xl mx-auto px-6">
+    <section id="faq" data-section="faq" className="relative py-8 lg:py-12 border-t border-white/5">
+      <div className="max-w-5xl mx-auto px-5">
         <FadeIn>
           <div className="text-center">
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-medium">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium">
               Tes questions.{" "}
               <span className="font-script text-primary">Nos réponses.</span>
             </h2>
@@ -1449,7 +1449,7 @@ function FAQ() {
                     <div className="rounded-xl border border-white/10 bg-card/60 backdrop-blur overflow-hidden">
                       <button
                         onClick={() => setOpen(open === i ? null : i)}
-                        className="w-full flex items-center justify-between gap-4 p-5 text-left hover:bg-white/[0.02] transition-colors"
+                        className="w-full flex items-center justify-between gap-4 p-4 text-left hover:bg-white/[0.02] transition-colors"
                       >
                         <span className="font-medium">{it.q}</span>
                         <ChevronDown className={`w-5 h-5 text-primary shrink-0 transition-transform ${open === i ? "rotate-180" : ""}`} />
@@ -1460,7 +1460,7 @@ function FAQ() {
                         transition={{ duration: 0.3 }}
                         className="overflow-hidden"
                       >
-                        <p className="px-5 pb-5 text-muted-foreground leading-relaxed">{it.a}</p>
+                        <p className="px-4 pb-4 text-muted-foreground leading-relaxed">{it.a}</p>
                       </motion.div>
                     </div>
                   </FadeIn>
@@ -1502,14 +1502,14 @@ function FinalCTA() {
   ];
 
   return (
-    <section id="contact" data-section="contact" className="relative py-12 lg:py-16 border-t border-white/5 overflow-hidden">
+    <section id="contact" data-section="contact" className="relative py-8 lg:py-12 border-t border-white/5 overflow-hidden">
       <div className="absolute inset-0 cinematic-glow pointer-events-none" />
-      <div className="relative max-w-5xl mx-auto px-6 text-center">
+      <div className="relative max-w-4xl mx-auto px-5 text-center">
         <FadeIn>
-          <h2 className="text-5xl sm:text-6xl lg:text-7xl font-script text-primary leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-script text-primary leading-tight">
             Prêt à passer au niveau supérieur ?
           </h2>
-          <p className="mt-3 text-muted-foreground text-lg max-w-2xl mx-auto">
+          <p className="mt-3 text-muted-foreground text-base max-w-2xl mx-auto">
             On répond rapidement. Choisis le canal qui te convient.
           </p>
         </FadeIn>
@@ -1520,7 +1520,7 @@ function FinalCTA() {
                 key={c.label}
                 href={c.href}
                 {...(c.external ? { target: "_blank", rel: "noopener noreferrer" } : {})}
-                className="group p-6 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover text-left"
+                className="group p-5 rounded-2xl border border-white/10 bg-card/60 backdrop-blur card-hover text-left"
               >
                 <div className="w-11 h-11 rounded-xl bg-primary/15 border border-primary/30 grid place-items-center mb-4 group-hover:bg-primary/30 transition-colors">
                   <c.icon className="w-5 h-5 text-primary" />
@@ -1537,13 +1537,13 @@ function FinalCTA() {
               href={CTA_URL}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-6 py-3.5 rounded-full btn-glow"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground font-medium px-5 py-2.5 rounded-full btn-glow"
             >
               réserver un appel dès maintenant <ArrowRight className="w-4 h-4" />
             </a>
             <a
               href="#realisations"
-              className="inline-flex items-center gap-2 liquid-glass text-white font-medium px-6 py-3.5 rounded-full"
+              className="inline-flex items-center gap-2 liquid-glass text-white font-medium px-5 py-2.5 rounded-full"
             >
               Voir nos réalisations
             </a>
@@ -1558,8 +1558,8 @@ function FinalCTA() {
 
 function Footer() {
   return (
-    <footer className="relative border-t border-white/10 py-10">
-      <div className="max-w-7xl mx-auto px-6 grid gap-8 md:grid-cols-[1.2fr_2fr]">
+    <footer className="relative border-t border-white/10 py-8">
+      <div className="max-w-6xl mx-auto px-5 grid gap-8 md:grid-cols-[1.2fr_2fr]">
         <div>
           <button
             type="button"
@@ -1593,7 +1593,7 @@ function Footer() {
           </ul>
         </div>
       </div>
-      <div className="max-w-7xl mx-auto px-6 mt-8 pt-5 border-t border-white/5 flex flex-col sm:flex-row justify-between gap-3 text-xs text-muted-foreground">
+      <div className="max-w-6xl mx-auto px-5 mt-8 pt-5 border-t border-white/5 flex flex-col sm:flex-row justify-between gap-3 text-xs text-muted-foreground">
         <div>© 2026 Skale Visuals. Tous droits réservés.</div>
         <div>Made in France by md1lz and lorenz.dio</div>
       </div>
