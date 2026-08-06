@@ -29,7 +29,7 @@ export function MaintenancePage({ message }: { message: string }) {
           className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight"
         >
           Site en{" "}
-          <span className="font-script text-red-500 text-5xl md:text-6xl">maintenance</span>
+          <span className="font-script text-red-500">maintenance</span>
         </motion.h1>
 
         <motion.p
