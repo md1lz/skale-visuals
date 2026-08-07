@@ -268,3 +268,19 @@ export const getProjectHistory = createServerFn({ method: "GET" })
     if (error) throw new Error(error.message);
     return (rows ?? []) as ProjectStatusHistoryItem[];
   });
+
+export const resetProjectStatusAuto = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("projects")
+      .update({ status_override: false })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    const { recomputeProjectStatus } = await import("./video-workspace.server");
+    await recomputeProjectStatus(data.id);
+    const { data: row } = await supabaseAdmin.from("projects").select("*").eq("id", data.id).single();
+    return row as Project;
+  });
