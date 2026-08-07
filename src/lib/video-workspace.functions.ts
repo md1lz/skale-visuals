@@ -305,12 +305,6 @@ export const addVideoVersion = createServerFn({ method: "POST" })
     return { ok: true as const, version };
   });
 
-export const deleteVideoVersion = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ version_id: z.string().uuid() }).parse(d))
-  .handler(async ({ data }) => {
-    return data;
-  });
-
 export const renameVideoVersion = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
@@ -343,7 +337,7 @@ export const renameVideoVersion = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-const _deleteVideoVersion = createServerFn({ method: "POST" })
+export const deleteVideoVersion = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ version_id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
