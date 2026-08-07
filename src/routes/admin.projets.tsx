@@ -984,42 +984,75 @@ function ProjectDetailPanel({
             </AnimatePresence>
           </section>
 
-          <section className="grid gap-4 lg:grid-cols-3">
-            <div className="grid grid-cols-2 gap-3 text-sm lg:col-span-2">
-              <Info label="Client" value={client?.nom_complet ?? "—"} />
-              <Info label="Monteur" value={project.editor_name ?? "—"} />
-              <Info
-                label="Tarif"
-                value={
-                  project.editor_rate != null
-                    ? `${project.editor_rate} € ${project.editor_rate_type === "per_video" ? "/ vidéo" : "/ minute"}`
-                    : "—"
-                }
+          <section className="rounded-2xl border border-white/10 bg-neutral-900/40">
+            <button
+              onClick={() => setFinanceOpen((v) => !v)}
+              className="flex w-full items-center gap-2 px-5 py-3.5 text-left"
+            >
+              <Euro className="h-4 w-4 text-red-400" />
+              <span className="text-sm font-semibold uppercase tracking-wider text-white">
+                Informations & Finance
+              </span>
+              <ChevronDown
+                className={`ml-auto h-4 w-4 text-neutral-400 transition-transform duration-300 ${
+                  financeOpen ? "rotate-180" : ""
+                }`}
               />
-              <Info label="Quantité" value={project.editor_quantity != null ? String(project.editor_quantity) : "—"} />
-              <Info label="Coût monteur" value={fmtEuro(project.editor_total_cost)} />
-              <Info label="Facturé (HT)" value={fmtEuro(project.amount_invoiced_ht)} />
-            </div>
-            <div className="space-y-2 rounded-xl border border-white/10 bg-neutral-900/60 p-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-400">Bénéfice brut HT</span>
-                <span className="tabular-nums">{fmtEuro(project.gross_profit)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-400">Charges sociales (22%)</span>
-                <span className="tabular-nums text-neutral-300">−{fmtEuro(project.social_charges)}</span>
-              </div>
-              <div className="flex items-center justify-between border-t border-white/10 pt-2">
-                <span className="text-sm font-medium text-neutral-300">Bénéfice net</span>
-                <span
-                  className={`text-2xl font-bold tabular-nums ${
-                    project.net_profit < 0 ? "text-red-400" : "text-emerald-400"
-                  }`}
+            </button>
+            <AnimatePresence initial={false}>
+              {financeOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="overflow-hidden"
                 >
-                  {fmtEuro(project.net_profit)}
-                </span>
-              </div>
-            </div>
+                  <div className="grid gap-4 px-5 pb-5 lg:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3 text-sm lg:col-span-2">
+                      <Info label="Client" value={client?.nom_complet ?? "—"} />
+                      <Info label="Monteur" value={project.editor_name ?? "—"} />
+                      <Info
+                        label="Tarif"
+                        value={
+                          project.editor_rate != null
+                            ? `${project.editor_rate} € ${
+                                project.editor_rate_type === "per_video" ? "/ vidéo" : "/ minute"
+                              }`
+                            : "—"
+                        }
+                      />
+                      <Info
+                        label="Quantité"
+                        value={project.editor_quantity != null ? String(project.editor_quantity) : "—"}
+                      />
+                      <Info label="Coût monteur" value={fmtEuro(project.editor_total_cost)} />
+                      <Info label="Facturé (HT)" value={fmtEuro(project.amount_invoiced_ht)} />
+                    </div>
+                    <div className="space-y-2 rounded-xl border border-white/10 bg-neutral-900/60 p-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-neutral-400">Bénéfice brut HT</span>
+                        <span className="tabular-nums">{fmtEuro(project.gross_profit)}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-neutral-400">Charges sociales (22%)</span>
+                        <span className="tabular-nums text-neutral-300">−{fmtEuro(project.social_charges)}</span>
+                      </div>
+                      <div className="flex items-center justify-between border-t border-white/10 pt-2">
+                        <span className="text-sm font-medium text-neutral-300">Bénéfice net</span>
+                        <span
+                          className={`text-2xl font-bold tabular-nums ${
+                            project.net_profit < 0 ? "text-red-400" : "text-emerald-400"
+                          }`}
+                        >
+                          {fmtEuro(project.net_profit)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </section>
 
           {q.isLoading ? (
