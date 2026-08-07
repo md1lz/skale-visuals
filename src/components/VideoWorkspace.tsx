@@ -536,6 +536,8 @@ function VideoDetail({
   const unreadIds = useMemo(() => {
     const list = q.data?.comments ?? [];
     return new Set(
+    const list = q.data?.comments ?? [];
+    return new Set(
       list
         .filter((c) =>
           role === "editor"
