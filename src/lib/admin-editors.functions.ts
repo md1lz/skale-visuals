@@ -260,9 +260,6 @@ export const postAdminComment = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ project_id: z.string().uuid(), content: z.string().trim().min(1).max(4000) }).parse(d),
   )
-  .inputValidator((d: unknown) =>
-    z.object({ project_id: z.string().uuid(), content: z.string().trim().min(1).max(4000) }).parse(d),
-  )
   .handler(async ({ data }) => {
     const username = await guard();
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -289,6 +286,16 @@ export const postAdminComment = createServerFn({ method: "POST" })
         message: `Message admin sur ${project.title}`,
       });
     }
+    return { ok: true as const };
+  });
+
+export const deleteProjectComment = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ comment_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    await guard();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("project_comments").delete().eq("id", data.comment_id);
+    if (error) throw new Error(error.message);
     return { ok: true as const };
   });
 
