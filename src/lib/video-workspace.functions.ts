@@ -133,7 +133,7 @@ export const getVideoWorkspace = createServerFn({ method: "GET" })
       : { data: [] as never[] };
 
     return {
-      viewer: { kind: viewer.kind, name: viewer.name },
+      viewer: { kind: viewer.kind, id: viewer.id, name: viewer.name },
       video,
       rushs_links: project.rushs_links ?? [],
       versions: versions ?? [],
