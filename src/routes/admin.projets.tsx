@@ -965,3 +965,101 @@ function LinkOut({ href }: { href: string }) {
     </a>
   );
 }
+function ProjectThread({ projectId }: { projectId: string }) {
+  const [data, setData] = useState<Awaited<ReturnType<typeof getProjectThread>> | null>(null);
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const load = () => {
+    getProjectThread({ data: { id: projectId } })
+      .then(setData)
+      .catch(() => {});
+  };
+
+  useEffect(load, [projectId]);
+
+  const send = async () => {
+    if (!message.trim() || busy) return;
+    setBusy(true);
+    try {
+      await postAdminComment({ data: { project_id: projectId, content: message.trim() } });
+      setMessage("");
+      load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Versions déposées par le monteur</h4>
+        {!data || data.files.length === 0 ? (
+          <p className="text-sm text-neutral-500">Aucune version déposée.</p>
+        ) : (
+          <ul className="space-y-1.5">
+            {data.files.map((f) => (
+              <li key={f.id} className="rounded-lg bg-neutral-900/60 border border-white/5 px-3 py-2">
+                <p className="text-sm text-white">
+                  Version {f.version_number} — {fmt(f.created_at)}
+                </p>
+                <LinkOut href={f.file_url} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Commentaires & retours</h4>
+        <div className="space-y-2 mb-2">
+          {!data || data.comments.length === 0 ? (
+            <p className="text-sm text-neutral-500">Aucun commentaire.</p>
+          ) : (
+            data.comments.map((c) => (
+              <div
+                key={c.id}
+                className={`rounded-xl px-3 py-2.5 border ${
+                  c.author_type === "admin" ? "bg-red-500/10 border-red-500/20" : "bg-white/[0.03] border-white/10"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className="text-xs font-medium text-white">{c.author_name}</span>
+                  <span className="text-[11px] text-neutral-500">{fmt(c.created_at)}</span>
+                </div>
+                <p className="text-sm text-neutral-200 whitespace-pre-wrap">{c.content}</p>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="flex gap-2">
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="Laisser un retour au monteur…"
+            className="flex-1 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm outline-none focus:border-red-500/50"
+          />
+          <button
+            onClick={send}
+            disabled={busy}
+            className="rounded-lg bg-red-600 hover:bg-red-500 px-3 py-2 text-sm text-white transition disabled:opacity-60"
+          >
+            Envoyer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
