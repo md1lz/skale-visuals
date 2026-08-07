@@ -260,6 +260,9 @@ export const postAdminComment = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ project_id: z.string().uuid(), content: z.string().trim().min(1).max(4000) }).parse(d),
   )
+  .inputValidator((d: unknown) =>
+    z.object({ project_id: z.string().uuid(), content: z.string().trim().min(1).max(4000) }).parse(d),
+  )
   .handler(async ({ data }) => {
     const username = await guard();
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
