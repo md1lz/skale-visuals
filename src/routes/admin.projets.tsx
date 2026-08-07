@@ -1190,13 +1190,25 @@ function ProjectThread({ projectId }: { projectId: string }) {
 
   const fmt = (iso: string) =>
     new Date(iso).toLocaleString("fr-FR", {
-    new Date(iso).toLocaleString("fr-FR", {
       day: "2-digit",
       month: "short",
       year: "numeric",
       hour: "2-digit",
       minute: "2-digit",
     });
+
+  const remove = async (id: string) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await deleteProjectComment({ data: { comment_id: id } });
+      load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
 
   return (
     <div className="space-y-5">
