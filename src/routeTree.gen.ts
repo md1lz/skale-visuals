@@ -16,6 +16,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as MonteurIndexRouteImport } from './routes/monteur.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
 import { Route as MonteurProjetsRouteImport } from './routes/monteur.projets'
+import { Route as MonteurParametresRouteImport } from './routes/monteur.parametres'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminProjetsRouteImport } from './routes/admin.projets'
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
@@ -58,6 +59,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const MonteurProjetsRoute = MonteurProjetsRouteImport.update({
   id: '/projets',
   path: '/projets',
+  getParentRoute: () => MonteurRoute,
+} as any)
+const MonteurParametresRoute = MonteurParametresRouteImport.update({
+  id: '/parametres',
+  path: '/parametres',
   getParentRoute: () => MonteurRoute,
 } as any)
 const AdminVideosRoute = AdminVideosRouteImport.update({
@@ -113,6 +119,7 @@ export interface FileRoutesByFullPath {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/monteur/parametres': typeof MonteurParametresRoute
   '/monteur/projets': typeof MonteurProjetsRoute
   '/admin/': typeof AdminIndexRoute
   '/monteur/': typeof MonteurIndexRoute
@@ -128,6 +135,7 @@ export interface FileRoutesByTo {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/monteur/parametres': typeof MonteurParametresRoute
   '/monteur/projets': typeof MonteurProjetsRoute
   '/admin': typeof AdminIndexRoute
   '/monteur': typeof MonteurIndexRoute
@@ -146,6 +154,7 @@ export interface FileRoutesById {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/monteur/parametres': typeof MonteurParametresRoute
   '/monteur/projets': typeof MonteurProjetsRoute
   '/admin/': typeof AdminIndexRoute
   '/monteur/': typeof MonteurIndexRoute
@@ -165,6 +174,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
+    | '/monteur/parametres'
     | '/monteur/projets'
     | '/admin/'
     | '/monteur/'
@@ -180,6 +190,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
+    | '/monteur/parametres'
     | '/monteur/projets'
     | '/admin'
     | '/monteur'
@@ -197,6 +208,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
+    | '/monteur/parametres'
     | '/monteur/projets'
     | '/admin/'
     | '/monteur/'
@@ -260,6 +272,13 @@ declare module '@tanstack/react-router' {
       path: '/projets'
       fullPath: '/monteur/projets'
       preLoaderRoute: typeof MonteurProjetsRouteImport
+      parentRoute: typeof MonteurRoute
+    }
+    '/monteur/parametres': {
+      id: '/monteur/parametres'
+      path: '/parametres'
+      fullPath: '/monteur/parametres'
+      preLoaderRoute: typeof MonteurParametresRouteImport
       parentRoute: typeof MonteurRoute
     }
     '/admin/videos': {
@@ -346,11 +365,13 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface MonteurRouteChildren {
+  MonteurParametresRoute: typeof MonteurParametresRoute
   MonteurProjetsRoute: typeof MonteurProjetsRoute
   MonteurIndexRoute: typeof MonteurIndexRoute
 }
 
 const MonteurRouteChildren: MonteurRouteChildren = {
+  MonteurParametresRoute: MonteurParametresRoute,
   MonteurProjetsRoute: MonteurProjetsRoute,
   MonteurIndexRoute: MonteurIndexRoute,
 }
