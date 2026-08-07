@@ -77,3 +77,29 @@ export function generateStrongPassword(length = 12): string {
   }
   return chars.join("");
 }
+
+type AdminSessionData = { user?: string; loggedInAt?: number };
+
+export function adminSessionConfig() {
+  const password = process.env.ADMIN_SESSION_SECRET;
+  if (!password || password.length < 32) {
+    throw new Error("ADMIN_SESSION_SECRET is not configured");
+  }
+  return {
+    password,
+    name: "skale_admin",
+    maxAge: 60 * 60 * 8,
+    cookie: {
+      httpOnly: true,
+      secure: true,
+      sameSite: "none" as const,
+      path: "/",
+    },
+  };
+}
+
+export async function requireAdminUser() {
+  const session = await useSession<AdminSessionData>(adminSessionConfig());
+  if (!session.data.user) throw new Error("Unauthorized");
+  return session.data.user;
+}
