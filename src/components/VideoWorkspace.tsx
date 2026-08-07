@@ -480,6 +480,7 @@ function VideoDetail({
   const makeUploadUrl = useServerFn(createVideoUploadUrl);
   const pushVersion = useServerFn(addVideoVersion);
   const dropVersion = useServerFn(deleteVideoVersion);
+  const renameVersion = useServerFn(renameVideoVersion);
   const sendComment = useServerFn(postVideoComment);
   const markRead = useServerFn(markVideoCommentsRead);
   const react = useServerFn(toggleCommentReaction);
@@ -491,6 +492,8 @@ function VideoDetail({
   const [signed, setSigned] = useState<Record<string, string>>({});
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const [editingVersion, setEditingVersion] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
   const [pickerFor, setPickerFor] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -611,6 +614,31 @@ function VideoDetail({
   }
 
   async function confirmDeleteVersion(id: string) {
+    setPendingDelete(null);
+    try {
+      await dropVersion({ data: { version_id: id } });
+      if (playingId === id) setPlayingId(null);
+      toast.success("Version supprimée");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    }
+  }
+
+  async function saveVersionTitle(id: string) {
+    const title = editingTitle.trim();
+    setEditingVersion(null);
+    if (!title) return;
+    try {
+      await renameVersion({ data: { version_id: id, title } });
+      toast.success("Titre mis à jour");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    }
+  }
+
+  async function _confirmDeleteVersionOld(id: string) {
     setPendingDelete(null);
     try {
       await dropVersion({ data: { version_id: id } });
