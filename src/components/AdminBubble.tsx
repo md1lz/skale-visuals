@@ -113,9 +113,9 @@ export function AdminBubble() {
             >
               <div className="flex items-center gap-2 mb-1">
                 <span className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
-                <h2 className="text-white text-lg font-semibold">Connexion admin</h2>
+                <h2 className="text-white text-lg font-semibold">Connexion</h2>
               </div>
-              <p className="text-xs text-neutral-400 mb-5">Accès réservé à l'équipe.</p>
+              <p className="text-xs text-neutral-400 mb-5">Accès réservé à l'équipe et aux monteurs.</p>
 
               <label className="block text-xs text-neutral-300 mb-1">Identifiant</label>
               <input
