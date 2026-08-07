@@ -266,12 +266,14 @@ export function ProjectVideosBoard({
   }
 
   return (
-    <div className={`flex gap-5 ${openId ? "h-[calc(100vh-230px)] min-h-[520px] items-start" : ""}`}>
+    <div
+      style={openId && listMaxH ? { height: listMaxH } : undefined}
+      className={`flex gap-5 ${openId ? "min-h-[420px] items-stretch" : ""}`}
+    >
       <div
-        style={openId && listMaxH ? { maxHeight: listMaxH } : undefined}
         className={
           openId
-            ? "w-[30%] shrink-0 min-h-0 overflow-y-auto pr-1.5 [scrollbar-width:thin]"
+            ? "h-full w-[30%] shrink-0 min-h-0 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
             : "w-full"
         }
       >
