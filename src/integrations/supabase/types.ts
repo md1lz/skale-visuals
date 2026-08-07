@@ -368,6 +368,41 @@ export type Database = {
           },
         ]
       }
+      project_videos: {
+        Row: {
+          created_at: string
+          id: string
+          project_id: string
+          status: string
+          updated_at: string
+          video_number: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          project_id: string
+          status?: string
+          updated_at?: string
+          video_number: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          project_id?: string
+          status?: string
+          updated_at?: string
+          video_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_videos_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           amount_invoiced_ht: number
@@ -634,6 +669,95 @@ export type Database = {
           },
         ]
       }
+      video_comments: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          author_type: string
+          content: string
+          created_at: string
+          id: string
+          project_video_id: string
+          read_by_admin: boolean
+          read_by_editor: boolean
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string
+          author_type: string
+          content: string
+          created_at?: string
+          id?: string
+          project_video_id: string
+          read_by_admin?: boolean
+          read_by_editor?: boolean
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          author_type?: string
+          content?: string
+          created_at?: string
+          id?: string
+          project_video_id?: string
+          read_by_admin?: boolean
+          read_by_editor?: boolean
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_comments_project_video_id_fkey"
+            columns: ["project_video_id"]
+            isOneToOne: false
+            referencedRelation: "project_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      video_versions: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_url: string
+          id: string
+          project_video_id: string
+          uploaded_by: string | null
+          version_number: number
+        }
+        Insert: {
+          created_at?: string
+          file_name?: string
+          file_url: string
+          id?: string
+          project_video_id: string
+          uploaded_by?: string | null
+          version_number: number
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          project_video_id?: string
+          uploaded_by?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "video_versions_project_video_id_fkey"
+            columns: ["project_video_id"]
+            isOneToOne: false
+            referencedRelation: "project_videos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_versions_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "editor_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -686,6 +810,7 @@ export type Database = {
         | "En cours"
         | "En révision"
         | "Corrections"
+        | "Montage terminé"
         | "Livrée"
         | "Payée"
     }
@@ -824,6 +949,7 @@ export const Constants = {
         "En cours",
         "En révision",
         "Corrections",
+        "Montage terminé",
         "Livrée",
         "Payée",
       ],
