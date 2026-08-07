@@ -21,6 +21,7 @@ import {
   CheckCheck,
   SmilePlus,
   AlertTriangle,
+  Pencil,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -30,6 +31,7 @@ import {
   createVideoUploadUrl,
   addVideoVersion,
   deleteVideoVersion,
+  renameVideoVersion,
   postVideoComment,
   markVideoCommentsRead,
   toggleCommentReaction,
@@ -478,6 +480,7 @@ function VideoDetail({
   const makeUploadUrl = useServerFn(createVideoUploadUrl);
   const pushVersion = useServerFn(addVideoVersion);
   const dropVersion = useServerFn(deleteVideoVersion);
+  const renameVersion = useServerFn(renameVideoVersion);
   const sendComment = useServerFn(postVideoComment);
   const markRead = useServerFn(markVideoCommentsRead);
   const react = useServerFn(toggleCommentReaction);
@@ -489,6 +492,8 @@ function VideoDetail({
   const [signed, setSigned] = useState<Record<string, string>>({});
   const [playingId, setPlayingId] = useState<string | null>(null);
   const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const [editingVersion, setEditingVersion] = useState<string | null>(null);
+  const [editingTitle, setEditingTitle] = useState("");
   const [pickerFor, setPickerFor] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
@@ -614,6 +619,19 @@ function VideoDetail({
       await dropVersion({ data: { version_id: id } });
       if (playingId === id) setPlayingId(null);
       toast.success("Version supprimée");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    }
+  }
+
+  async function saveVersionTitle(id: string) {
+    const title = editingTitle.trim();
+    setEditingVersion(null);
+    if (!title) return;
+    try {
+      await renameVersion({ data: { version_id: id, title } });
+      toast.success("Titre mis à jour");
       refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
@@ -776,9 +794,38 @@ function VideoDetail({
                         V{v.version_number}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-white">
-                          {v.title || v.file_name || `Version ${v.version_number}`}
-                        </p>
+                        {editingVersion === v.id ? (
+                          <input
+                            autoFocus
+                            value={editingTitle}
+                            onChange={(e) => setEditingTitle(e.target.value)}
+                            onBlur={() => void saveVersionTitle(v.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                void saveVersionTitle(v.id);
+                              }
+                              if (e.key === "Escape") setEditingVersion(null);
+                            }}
+                            maxLength={200}
+                            className="w-full rounded-lg border border-white/15 bg-neutral-900 px-2 py-1 text-sm text-white outline-none focus:border-red-500/50"
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingVersion(v.id);
+                              setEditingTitle(v.title || v.file_name || `Version ${v.version_number}`);
+                            }}
+                            title="Renommer cette version"
+                            className="flex max-w-full items-center gap-1.5 text-left"
+                          >
+                            <span className="truncate text-sm font-medium text-white">
+                              {v.title || v.file_name || `Version ${v.version_number}`}
+                            </span>
+                            <Pencil className="h-3 w-3 shrink-0 text-neutral-600 opacity-0 transition group-hover:opacity-100" />
+                          </button>
+                        )}
                         <p className="text-[11px] text-neutral-500">{fmtDateTimeFR(v.created_at)}</p>
                         {v.description && (
                           <p className="mt-1 whitespace-pre-wrap text-xs text-neutral-300">{v.description}</p>

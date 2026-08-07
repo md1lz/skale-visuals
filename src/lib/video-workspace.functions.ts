@@ -305,6 +305,38 @@ export const addVideoVersion = createServerFn({ method: "POST" })
     return { ok: true as const, version };
   });
 
+export const renameVideoVersion = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({ version_id: z.string().uuid(), title: z.string().trim().min(1).max(200) })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await supabaseAdmin
+      .from("video_versions")
+      .select("id, project_video_id, version_number")
+      .eq("id", data.version_id)
+      .maybeSingle();
+    if (!row) throw new Error("Version introuvable");
+    const { project, video } = await assertVideoAccess(row.project_video_id, viewer);
+    const { error } = await supabaseAdmin
+      .from("video_versions")
+      .update({ title: data.title })
+      .eq("id", data.version_id);
+    if (error) throw new Error(error.message);
+    await supabaseAdmin.from("admin_activity").insert({
+      kind: "projet",
+      message: `V${row.version_number} renommée « ${data.title} » sur la vidéo #${String(
+        video.video_number,
+      ).padStart(2, "0")} de « ${project.title} »`,
+      actor_username: viewer.username,
+    });
+    return { ok: true as const };
+  });
+
 export const deleteVideoVersion = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ version_id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
