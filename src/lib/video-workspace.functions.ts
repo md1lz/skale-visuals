@@ -72,7 +72,13 @@ export const getProjectWorkspace = createServerFn({ method: "GET" })
         rushs_links: project.rushs_links ?? [],
       },
       videos: (videos ?? []).map((v) => {
-        const vv = (versions ?? []).filter((x) => x.project_video_id === v.id);
+        const vv = (versions ?? [])
+          .filter((x) => x.project_video_id === v.id)
+          .sort(
+            (a, b) =>
+              new Date(b.created_at).getTime() - new Date(a.created_at).getTime() ||
+              b.version_number - a.version_number,
+          );
         const unread = (comments ?? []).filter(
           (c) =>
             c.project_video_id === v.id &&
