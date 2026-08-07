@@ -329,7 +329,7 @@ export function ProjectVideosBoard({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.22 }}
-            className="min-h-0 min-w-0 flex-1"
+            className="min-h-0 min-w-0 flex-1 self-stretch"
           >
             <VideoDetail
               videoId={openId}
