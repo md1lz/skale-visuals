@@ -33,6 +33,7 @@ import {
   postVideoComment,
   markVideoCommentsRead,
   toggleCommentReaction,
+  deleteVideoComment,
   signWorkspaceUrls,
 } from "@/lib/video-workspace.functions";
 import {
@@ -480,6 +481,7 @@ function VideoDetail({
   const sendComment = useServerFn(postVideoComment);
   const markRead = useServerFn(markVideoCommentsRead);
   const react = useServerFn(toggleCommentReaction);
+  const removeComment = useServerFn(deleteVideoComment);
   const signUrls = useServerFn(signWorkspaceUrls);
 
   const [message, setMessage] = useState("");
@@ -636,6 +638,17 @@ function VideoDetail({
     setPickerFor(null);
     try {
       await react({ data: { comment_id: commentId, emoji } });
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    }
+  }
+
+  async function handleDeleteComment(commentId: string) {
+    setPickerFor(null);
+    try {
+      await removeComment({ data: { comment_id: commentId } });
+      toast.success("Message supprimé");
       refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
@@ -886,6 +899,18 @@ function VideoDetail({
                       >
                         <SmilePlus className="h-4 w-4" />
                       </button>
+
+                      {role === "admin" && (
+                        <button
+                          onClick={() => handleDeleteComment(c.id)}
+                          title="Supprimer ce message"
+                          className={`absolute top-8 ${
+                            mine ? "-left-7" : "-right-7"
+                          } rounded-full p-1 text-neutral-500 opacity-0 transition group-hover:opacity-100 hover:text-red-400`}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      )}
 
                       {pickerFor === c.id && (
                         <>
