@@ -457,46 +457,6 @@ export const deleteVideoComment = createServerFn({ method: "POST" })
     });
     return { ok: true as const };
   });
-
-const _unusedPostVideoComment = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    z.object({ video_id: z.string().uuid(), content: z.string().trim().min(1).max(4000) }).parse(d),
-  )
-  .handler(async ({ data }) => {
-    const { resolveViewer, assertVideoAccess, notifyAdmins } = await import("./video-workspace.server");
-    const viewer = await resolveViewer();
-    const { video, project } = await assertVideoAccess(data.video_id, viewer);
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { error } = await supabaseAdmin.from("video_comments").insert({
-      project_video_id: data.video_id,
-      author_type: viewer.kind,
-      author_id: viewer.id,
-      author_name: viewer.name,
-      content: data.content,
-      read_by_editor: viewer.kind === "editor",
-      read_by_admin: viewer.kind === "admin",
-    });
-    if (error) throw new Error(error.message);
-
-    const label = `#${String(video.video_number).padStart(2, "0")}`;
-    if (viewer.kind === "editor") {
-      await notifyAdmins({
-        type: "comment",
-        project_id: project.id,
-        message: `💬 ${viewer.name} a commenté la vidéo ${label} — ${project.title}`,
-      });
-    } else if (project.editor_id) {
-      const { notifyEditor } = await import("./notifications.server");
-      await notifyEditor({
-        recipient_id: project.editor_id,
-        type: "comment",
-        project_id: project.id,
-        message: `💬 Message admin sur la vidéo ${label} — ${project.title}`,
-      });
-    }
-    return { ok: true as const };
-  });
-
 export const sendProjectForRevision = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ project_id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
