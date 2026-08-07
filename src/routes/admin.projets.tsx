@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink, ArrowLeft, ChevronDown, FileText, Inbox, Pencil } from "lucide-react";
+import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink, ArrowLeft, ChevronDown, FileText, Inbox, Pencil, Euro, RefreshCw, AlertTriangle } from "lucide-react";
 import { ProjectVideosBoard, ValidateRevisionButton, RushLink, useWorkspace } from "@/components/VideoWorkspace";
 import { ProjectProgress } from "@/components/ProjectProgress";
 import { validateProjectRevision } from "@/lib/video-workspace.functions";
@@ -12,6 +12,7 @@ import {
   deleteProject,
   archiveProject,
   getProjectHistory,
+  resetProjectStatusAuto,
   PROJECT_STATUSES,
   PROJECT_FORMATS,
   type Project,
