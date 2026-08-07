@@ -21,6 +21,7 @@ import {
   CheckCheck,
   SmilePlus,
   AlertTriangle,
+  Pencil,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -30,6 +31,7 @@ import {
   createVideoUploadUrl,
   addVideoVersion,
   deleteVideoVersion,
+  renameVideoVersion,
   postVideoComment,
   markVideoCommentsRead,
   toggleCommentReaction,
