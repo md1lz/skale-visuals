@@ -22,7 +22,12 @@ import {
   type ProjectStatusHistoryItem,
 } from "@/lib/admin-projects.functions";
 import { listClients, type Client } from "@/lib/admin-clients.functions";
-import { listActiveEditors, getProjectThread, postAdminComment } from "@/lib/admin-editors.functions";
+import {
+  listActiveEditors,
+  getProjectThread,
+  postAdminComment,
+  deleteProjectComment,
+} from "@/lib/admin-editors.functions";
 import { logAdminActivity } from "@/lib/admin-activity.functions";
 
 export const Route = createFileRoute("/admin/projets")({ component: AdminProjectsPage });
@@ -1192,26 +1197,21 @@ function ProjectThread({ projectId }: { projectId: string }) {
       minute: "2-digit",
     });
 
+  const remove = async (id: string) => {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await deleteProjectComment({ data: { comment_id: id } });
+      load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   return (
     <div className="space-y-5">
-      <div>
-        <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Versions déposées par le monteur</h4>
-        {!data || data.files.length === 0 ? (
-          <p className="text-sm text-neutral-500">Aucune version déposée.</p>
-        ) : (
-          <ul className="space-y-1.5">
-            {data.files.map((f) => (
-              <li key={f.id} className="rounded-lg bg-neutral-900/60 border border-white/5 px-3 py-2">
-                <p className="text-sm text-white">
-                  Version {f.version_number} — {fmt(f.created_at)}
-                </p>
-                <LinkOut href={f.file_url} />
-              </li>
-            ))}
-          </ul>
-        )}
-      </div>
-
       <div>
         <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Commentaires & retours</h4>
         <div className="space-y-2 mb-2">
@@ -1221,13 +1221,22 @@ function ProjectThread({ projectId }: { projectId: string }) {
             data.comments.map((c) => (
               <div
                 key={c.id}
-                className={`rounded-xl px-3 py-2.5 border ${
+                className={`group rounded-xl px-3 py-2.5 border ${
                   c.author_type === "admin" ? "bg-red-500/10 border-red-500/20" : "bg-white/[0.03] border-white/10"
                 }`}
               >
                 <div className="flex items-center justify-between gap-2 mb-1">
                   <span className="text-xs font-medium text-white">{c.author_name}</span>
-                  <span className="text-[11px] text-neutral-500">{fmt(c.created_at)}</span>
+                  <div className="flex items-center gap-2">
+                    <span className="text-[11px] text-neutral-500">{fmt(c.created_at)}</span>
+                    <button
+                      onClick={() => remove(c.id)}
+                      title="Supprimer ce retour"
+                      className="rounded-full p-1 text-neutral-500 opacity-0 transition group-hover:opacity-100 hover:text-red-400"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
                 <p className="text-sm text-neutral-200 whitespace-pre-wrap">{c.content}</p>
               </div>

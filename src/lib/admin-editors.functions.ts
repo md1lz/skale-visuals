@@ -289,6 +289,16 @@ export const postAdminComment = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+export const deleteProjectComment = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ comment_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    await guard();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin.from("project_comments").delete().eq("id", data.comment_id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
 export const listAdminNotifications = createServerFn({ method: "GET" }).handler(async () => {
   await guard();
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
