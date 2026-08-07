@@ -11,7 +11,7 @@ import {
 } from "@/lib/video-workspace.functions";
 import { ProjectVideosBoard, RushLink, useWorkspace } from "@/components/VideoWorkspace";
 import { ProjectProgress } from "@/components/ProjectProgress";
-import { statusBadgeClass, deadlineTone, fmtDateFR, fmtDateTimeFR } from "@/lib/project-display";
+import { statusBadgeClass, deadlineTone, fmtDateFR } from "@/lib/project-display";
 
 export const Route = createFileRoute("/monteur/projets")({
   validateSearch: (s: Record<string, unknown>) => ({ p: typeof s.p === "string" ? s.p : undefined }),
