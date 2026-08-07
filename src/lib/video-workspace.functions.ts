@@ -163,7 +163,9 @@ export const setVideoStatus = createServerFn({ method: "POST" })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { resolveViewer, assertVideoAccess, notifyAdmins } = await import("./video-workspace.server");
+    const { resolveViewer, assertVideoAccess, notifyAdmins, recomputeProjectStatus } = await import(
+      "./video-workspace.server"
+    );
     const viewer = await resolveViewer();
     const { video, project } = await assertVideoAccess(data.video_id, viewer);
     const editorOnly = ["À faire", "En cours", "En révision"];
@@ -176,6 +178,8 @@ export const setVideoStatus = createServerFn({ method: "POST" })
       .update({ status: data.status })
       .eq("id", data.video_id);
     if (error) throw new Error(error.message);
+
+    await recomputeProjectStatus(project.id);
 
     const label = `#${String(video.video_number).padStart(2, "0")}`;
     if (viewer.kind === "editor") {
