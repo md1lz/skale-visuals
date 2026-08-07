@@ -71,11 +71,11 @@ function AdminLayout() {
 function AdminLayoutInner() {
   const session = Route.useRouteContext().session;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const { background } = useAdminPrefs();
+  const { background, mode } = useAdminPrefs();
 
   return (
     <div
-      className="admin-themed min-h-screen flex bg-neutral-950 text-white relative"
+      className={`admin-themed mode-${mode} min-h-screen flex bg-neutral-950 text-white relative`}
       style={{ zoom: 1.25 }}
     >
       {background && (
