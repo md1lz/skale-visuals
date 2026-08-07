@@ -714,10 +714,16 @@ function VideoDetail({
           )}
         </select>
         {role === "admin" && video?.status === "En révision" && (
-          <ValidateRevisionButton
-            onClick={() => handleStatus("Montage terminé")}
-            busy={busy}
-          />
+          <>
+            <ValidateRevisionButton
+              onClick={() => handleStatus("Montage terminé")}
+              busy={busy}
+            />
+            <RequestCorrectionsButton
+              onClick={() => handleStatus("Corrections à faire")}
+              busy={busy}
+            />
+          </>
         )}
         <button
           onClick={onClose}
@@ -1035,6 +1041,18 @@ export function ValidateRevisionButton({ onClick, busy }: { onClick: () => void;
       className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
     >
       <Check className="h-4 w-4" /> Valider la révision
+    </button>
+  );
+}
+
+export function RequestCorrectionsButton({ onClick, busy }: { onClick: () => void; busy?: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={busy}
+      className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-500 disabled:opacity-60"
+    >
+      <Pencil className="h-4 w-4" /> Demander des corrections
     </button>
   );
 }
