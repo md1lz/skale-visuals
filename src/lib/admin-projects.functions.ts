@@ -46,6 +46,7 @@ export type Project = {
   editor_id: string | null;
   format: ProjectFormat;
   status: ProjectStatus;
+  status_override: boolean;
   editor_name: string | null;
   editor_rate: number | null;
   editor_rate_type: EditorRateType;
@@ -178,12 +179,14 @@ export const upsertProject = createServerFn({ method: "POST" })
     if (data.id) {
       const { data: before } = await supabaseAdmin
         .from("projects")
-        .select("editor_id")
+        .select("editor_id, status")
         .eq("id", data.id)
         .maybeSingle();
       const { data: row, error } = await supabaseAdmin
         .from("projects")
-        .update(payload)
+        .update(
+          before && before.status !== payload.status ? { ...payload, status_override: true } : payload,
+        )
         .eq("id", data.id)
         .select("*")
         .single();
