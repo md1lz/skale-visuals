@@ -178,78 +178,86 @@ function VersionThumb({
 /* ---------------- Inline player ---------------- */
 
 function InlinePlayer({ url, aspect }: { url: string; aspect: string }) {
+  const videoRef = useRef<HTMLVideoElement | null>(null);
   const kind = linkKind(url);
   const embed = driveEmbed(url);
   const frameio = useFrameioPreview(url);
 
-  if (kind === "frameio" && frameio?.embedUrl) {
-    return (
-      <div className="mt-3">
+  useEffect(() => {
+    if (videoRef.current) videoRef.current.volume = 0.5;
+  }, [url]);
+
+  const wrapper = (children: React.ReactNode, hint: React.ReactNode) => (
+    <div className="mt-3">
+      <div className="mx-auto w-1/2 max-w-full">
         <div className={`${aspect} w-full overflow-hidden rounded-xl border border-white/10 bg-black`}>
-          <iframe
-            src={frameio.embedUrl}
-            allow="autoplay; fullscreen; encrypted-media"
-            allowFullScreen
-            className="h-full w-full"
-            title="Lecteur Frame.io"
-          />
+          {children}
         </div>
-        <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500">
-          <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />
-          La vidéo ne se charge pas ? Vérifiez que le lien Frame.io est public (partage sans mot de
-          passe).
-          <a
-            href={normalizeHref(url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-red-300 underline hover:text-red-200"
-          >
-            Ouvrir dans Frame.io →
-          </a>
-        </p>
       </div>
+      {hint}
+    </div>
+  );
+
+  if (kind === "frameio" && frameio?.embedUrl) {
+    return wrapper(
+      <iframe
+        src={frameio.embedUrl}
+        allow="autoplay; fullscreen; encrypted-media"
+        allowFullScreen
+        className="h-full w-full"
+        title="Lecteur Frame.io"
+      />,
+      <p className="mt-2 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-neutral-500">
+        <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />
+        La vidéo ne se charge pas ? Vérifiez que le lien Frame.io est public (partage sans mot de
+        passe).
+        <a
+          href={normalizeHref(url)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-red-300 underline hover:text-red-200"
+        >
+          Ouvrir dans Frame.io →
+        </a>
+      </p>
     );
   }
 
   if (kind === "drive" && embed) {
-    return (
-      <div className="mt-3">
-        <div className={`${aspect} w-full overflow-hidden rounded-xl border border-white/10 bg-black`}>
-          <iframe
-            src={embed}
-            allow="autoplay; encrypted-media"
-            allowFullScreen
-            className="h-full w-full"
-            title="Lecteur vidéo"
-          />
-        </div>
-        <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500">
-          <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />
-          La vidéo ne se charge pas ? Vérifiez que le partage Drive est réglé sur « Tout le monde avec le
-          lien ».
-          <a
-            href={normalizeHref(url)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-red-300 underline hover:text-red-200"
-          >
-            Ouvrir dans Drive →
-          </a>
-        </p>
-      </div>
+    return wrapper(
+      <iframe
+        src={embed}
+        allow="autoplay; encrypted-media"
+        allowFullScreen
+        className="h-full w-full"
+        title="Lecteur vidéo"
+      />,
+      <p className="mt-2 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-neutral-500">
+        <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />
+        La vidéo ne se charge pas ? Vérifiez que le partage Drive est réglé sur « Tout le monde avec le
+        lien ».
+        <a
+          href={normalizeHref(url)}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-red-300 underline hover:text-red-200"
+        >
+          Ouvrir dans Drive →
+        </a>
+      </p>
     );
   }
 
   if (kind === "mp4") {
-    return (
-      <div className="mt-3">
-        <video
-          src={url}
-          controls
-          preload="metadata"
-          className={`${aspect} w-full rounded-xl border border-white/10 bg-black`}
-        />
-      </div>
+    return wrapper(
+      <video
+        ref={videoRef}
+        src={url}
+        controls
+        preload="metadata"
+        className="h-full w-full"
+      />,
+      null
     );
   }
 
