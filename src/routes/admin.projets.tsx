@@ -18,6 +18,7 @@ import {
   type ProjectStatusHistoryItem,
 } from "@/lib/admin-projects.functions";
 import { listClients, type Client } from "@/lib/admin-clients.functions";
+import { listActiveEditors, getProjectThread, postAdminComment } from "@/lib/admin-editors.functions";
 import { logAdminActivity } from "@/lib/admin-activity.functions";
 
 export const Route = createFileRoute("/admin/projets")({ component: AdminProjectsPage });
