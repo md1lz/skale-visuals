@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink, ArrowLeft, ChevronDown, FileText, Inbox, Pencil } from "lucide-react";
+import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink, ArrowLeft, ChevronDown, FileText, Inbox, Pencil, Euro, RefreshCw, AlertTriangle } from "lucide-react";
 import { ProjectVideosBoard, ValidateRevisionButton, RushLink, useWorkspace } from "@/components/VideoWorkspace";
 import { ProjectProgress } from "@/components/ProjectProgress";
 import { validateProjectRevision } from "@/lib/video-workspace.functions";
@@ -12,6 +12,7 @@ import {
   deleteProject,
   archiveProject,
   getProjectHistory,
+  resetProjectStatusAuto,
   PROJECT_STATUSES,
   PROJECT_FORMATS,
   type Project,
@@ -761,7 +762,9 @@ function ProjectDetailPanel({
   const [history, setHistory] = useState<ProjectStatusHistoryItem[]>([]);
   const [confirmDel, setConfirmDel] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [briefOpen, setBriefOpen] = useState(false);
+  const [briefOpen, setBriefOpen] = useState(true);
+  const [financeOpen, setFinanceOpen] = useState(false);
+  const [delText, setDelText] = useState("");
 
   const q = useWorkspace(project.id);
   const videos = q.data?.videos ?? [];
@@ -774,6 +777,10 @@ function ProjectDetailPanel({
   }, [project.id]);
 
   const doDelete = async () => {
+    if (delText.trim() !== project.title.trim()) {
+      toast.error("Le nom saisi ne correspond pas au titre du projet.");
+      return;
+    }
     setBusy(true);
     try {
       await deleteProject({ data: { id: project.id } });
@@ -814,6 +821,19 @@ function ProjectDetailPanel({
     }
   };
 
+  const doAutoStatus = async () => {
+    setBusy(true);
+    try {
+      await resetProjectStatusAuto({ data: { id: project.id } });
+      toast.success("Statut recalculé automatiquement");
+      onChanged();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
+
   const dl = deadlineStyle(project);
 
   return (
@@ -837,13 +857,22 @@ function ProjectDetailPanel({
           <span className={`rounded-full border px-2 py-0.5 text-[11px] ${statusBadge[project.status]}`}>
             {project.status}
           </span>
+          {project.status_override && (
+            <button
+              onClick={doAutoStatus}
+              disabled={busy}
+              title="Le statut est figé manuellement — cliquer pour repasser en automatique"
+              className="inline-flex items-center gap-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-[11px] text-yellow-300 transition hover:bg-yellow-500/20"
+            >
+              <RefreshCw className="h-3 w-3" /> Statut manuel — repasser en auto
+            </button>
+          )}
           <span className={`rounded-full border px-2 py-0.5 text-[11px] ${formatBadge[project.format]}`}>
             {project.format}
           </span>
           <span className={`text-xs ${dl.className}`}>Deadline {dl.label}</span>
 
           <div className="ml-auto flex flex-wrap items-center gap-3">
-            <ProjectProgress approved={approved} total={videos.length} />
             {project.status === "En révision" && <ValidateRevisionButton onClick={doValidate} busy={busy} />}
             <button
               onClick={onEdit}
@@ -868,31 +897,19 @@ function ProjectDetailPanel({
                 </>
               )}
             </button>
-            {confirmDel ? (
-              <>
-                <button
-                  onClick={() => setConfirmDel(false)}
-                  className="rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-white/5"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={doDelete}
-                  disabled={busy}
-                  className="inline-flex items-center gap-2 rounded-lg bg-red-700 px-3 py-2 text-sm text-white hover:bg-red-600"
-                >
-                  {busy && <Loader2 className="h-4 w-4 animate-spin" />} Confirmer
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setConfirmDel(true)}
-                className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
-              >
-                <Trash2 className="h-4 w-4" /> Supprimer
-              </button>
-            )}
+            <button
+              onClick={() => {
+                setDelText("");
+                setConfirmDel(true);
+              }}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
+            >
+              <Trash2 className="h-4 w-4" /> Supprimer
+            </button>
           </div>
+        </div>
+        <div className="mt-3 flex justify-center">
+          <ProjectProgress approved={approved} total={videos.length} />
         </div>
       </div>
 
@@ -967,42 +984,75 @@ function ProjectDetailPanel({
             </AnimatePresence>
           </section>
 
-          <section className="grid gap-4 lg:grid-cols-3">
-            <div className="grid grid-cols-2 gap-3 text-sm lg:col-span-2">
-              <Info label="Client" value={client?.nom_complet ?? "—"} />
-              <Info label="Monteur" value={project.editor_name ?? "—"} />
-              <Info
-                label="Tarif"
-                value={
-                  project.editor_rate != null
-                    ? `${project.editor_rate} € ${project.editor_rate_type === "per_video" ? "/ vidéo" : "/ minute"}`
-                    : "—"
-                }
+          <section className="rounded-2xl border border-white/10 bg-neutral-900/40">
+            <button
+              onClick={() => setFinanceOpen((v) => !v)}
+              className="flex w-full items-center gap-2 px-5 py-3.5 text-left"
+            >
+              <Euro className="h-4 w-4 text-red-400" />
+              <span className="text-sm font-semibold uppercase tracking-wider text-white">
+                Informations & Finance
+              </span>
+              <ChevronDown
+                className={`ml-auto h-4 w-4 text-neutral-400 transition-transform duration-300 ${
+                  financeOpen ? "rotate-180" : ""
+                }`}
               />
-              <Info label="Quantité" value={project.editor_quantity != null ? String(project.editor_quantity) : "—"} />
-              <Info label="Coût monteur" value={fmtEuro(project.editor_total_cost)} />
-              <Info label="Facturé (HT)" value={fmtEuro(project.amount_invoiced_ht)} />
-            </div>
-            <div className="space-y-2 rounded-xl border border-white/10 bg-neutral-900/60 p-4">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-400">Bénéfice brut HT</span>
-                <span className="tabular-nums">{fmtEuro(project.gross_profit)}</span>
-              </div>
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-neutral-400">Charges sociales (22%)</span>
-                <span className="tabular-nums text-neutral-300">−{fmtEuro(project.social_charges)}</span>
-              </div>
-              <div className="flex items-center justify-between border-t border-white/10 pt-2">
-                <span className="text-sm font-medium text-neutral-300">Bénéfice net</span>
-                <span
-                  className={`text-2xl font-bold tabular-nums ${
-                    project.net_profit < 0 ? "text-red-400" : "text-emerald-400"
-                  }`}
+            </button>
+            <AnimatePresence initial={false}>
+              {financeOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="overflow-hidden"
                 >
-                  {fmtEuro(project.net_profit)}
-                </span>
-              </div>
-            </div>
+                  <div className="grid gap-4 px-5 pb-5 lg:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3 text-sm lg:col-span-2">
+                      <Info label="Client" value={client?.nom_complet ?? "—"} />
+                      <Info label="Monteur" value={project.editor_name ?? "—"} />
+                      <Info
+                        label="Tarif"
+                        value={
+                          project.editor_rate != null
+                            ? `${project.editor_rate} € ${
+                                project.editor_rate_type === "per_video" ? "/ vidéo" : "/ minute"
+                              }`
+                            : "—"
+                        }
+                      />
+                      <Info
+                        label="Quantité"
+                        value={project.editor_quantity != null ? String(project.editor_quantity) : "—"}
+                      />
+                      <Info label="Coût monteur" value={fmtEuro(project.editor_total_cost)} />
+                      <Info label="Facturé (HT)" value={fmtEuro(project.amount_invoiced_ht)} />
+                    </div>
+                    <div className="space-y-2 rounded-xl border border-white/10 bg-neutral-900/60 p-4">
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-neutral-400">Bénéfice brut HT</span>
+                        <span className="tabular-nums">{fmtEuro(project.gross_profit)}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-sm">
+                        <span className="text-neutral-400">Charges sociales (22%)</span>
+                        <span className="tabular-nums text-neutral-300">−{fmtEuro(project.social_charges)}</span>
+                      </div>
+                      <div className="flex items-center justify-between border-t border-white/10 pt-2">
+                        <span className="text-sm font-medium text-neutral-300">Bénéfice net</span>
+                        <span
+                          className={`text-2xl font-bold tabular-nums ${
+                            project.net_profit < 0 ? "text-red-400" : "text-emerald-400"
+                          }`}
+                        >
+                          {fmtEuro(project.net_profit)}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </section>
 
           {q.isLoading ? (
@@ -1038,6 +1088,58 @@ function ProjectDetailPanel({
           </section>
         </div>
       </div>
+
+      <AnimatePresence>
+        {confirmDel && (
+          <div
+            className="fixed inset-0 z-[400] grid place-items-center bg-black/75 p-4"
+            onClick={() => setConfirmDel(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md rounded-2xl border border-red-500/30 bg-neutral-900 p-6"
+            >
+              <div className="mb-3 flex items-center gap-2 text-red-400">
+                <AlertTriangle className="h-5 w-5" />
+                <h3 className="text-base font-semibold">Suppression définitive</h3>
+              </div>
+              <p className="text-sm text-neutral-300">
+                Cette action supprimera le projet, ses vidéos, versions et commentaires. Elle est
+                irréversible.
+              </p>
+              <p className="mt-3 text-sm text-neutral-400">
+                Pour confirmer, saisis le titre exact du projet :{" "}
+                <span className="font-medium text-white">{project.title}</span>
+              </p>
+              <input
+                autoFocus
+                value={delText}
+                onChange={(e) => setDelText(e.target.value)}
+                placeholder="Titre du projet"
+                className="mt-2 w-full rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
+              />
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  onClick={() => setConfirmDel(false)}
+                  className="rounded-lg border border-white/10 px-4 py-2 text-sm text-neutral-300 transition hover:bg-white/5"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={doDelete}
+                  disabled={busy || delText.trim() !== project.title.trim()}
+                  className="inline-flex items-center gap-2 rounded-lg bg-red-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600 disabled:opacity-40"
+                >
+                  {busy && <Loader2 className="h-4 w-4 animate-spin" />} Supprimer définitivement
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }

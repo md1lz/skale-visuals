@@ -176,6 +176,44 @@ export type Database = {
         }
         Relationships: []
       }
+      comment_reactions: {
+        Row: {
+          author_id: string
+          author_name: string
+          author_type: string
+          comment_id: string
+          created_at: string
+          emoji: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          author_name?: string
+          author_type: string
+          comment_id: string
+          created_at?: string
+          emoji: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          author_name?: string
+          author_type?: string
+          comment_id?: string
+          created_at?: string
+          emoji?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "comment_reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "video_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       editor_accounts: {
         Row: {
           avatar_url: string | null
@@ -424,6 +462,7 @@ export type Database = {
           rushs_received: boolean
           social_charges: number
           status: Database["public"]["Enums"]["project_status"]
+          status_override: boolean
           title: string
           updated_at: string
         }
@@ -450,6 +489,7 @@ export type Database = {
           rushs_received?: boolean
           social_charges?: number
           status?: Database["public"]["Enums"]["project_status"]
+          status_override?: boolean
           title: string
           updated_at?: string
         }
@@ -476,6 +516,7 @@ export type Database = {
           rushs_received?: boolean
           social_charges?: number
           status?: Database["public"]["Enums"]["project_status"]
+          status_override?: boolean
           title?: string
           updated_at?: string
         }
@@ -675,6 +716,7 @@ export type Database = {
           created_at: string
           id: string
           project_video_id: string
+          read_at: string | null
           read_by_admin: boolean
           read_by_editor: boolean
         }
@@ -686,6 +728,7 @@ export type Database = {
           created_at?: string
           id?: string
           project_video_id: string
+          read_at?: string | null
           read_by_admin?: boolean
           read_by_editor?: boolean
         }
@@ -697,6 +740,7 @@ export type Database = {
           created_at?: string
           id?: string
           project_video_id?: string
+          read_at?: string | null
           read_by_admin?: boolean
           read_by_editor?: boolean
         }
@@ -712,29 +756,38 @@ export type Database = {
       }
       video_versions: {
         Row: {
+          additional_links: Json
           created_at: string
+          description: string | null
           file_name: string
           file_url: string
           id: string
           project_video_id: string
+          title: string
           uploaded_by: string | null
           version_number: number
         }
         Insert: {
+          additional_links?: Json
           created_at?: string
+          description?: string | null
           file_name?: string
           file_url: string
           id?: string
           project_video_id: string
+          title?: string
           uploaded_by?: string | null
           version_number: number
         }
         Update: {
+          additional_links?: Json
           created_at?: string
+          description?: string | null
           file_name?: string
           file_url?: string
           id?: string
           project_video_id?: string
+          title?: string
           uploaded_by?: string | null
           version_number?: number
         }

@@ -46,6 +46,7 @@ export type Project = {
   editor_id: string | null;
   format: ProjectFormat;
   status: ProjectStatus;
+  status_override: boolean;
   editor_name: string | null;
   editor_rate: number | null;
   editor_rate_type: EditorRateType;
@@ -178,12 +179,14 @@ export const upsertProject = createServerFn({ method: "POST" })
     if (data.id) {
       const { data: before } = await supabaseAdmin
         .from("projects")
-        .select("editor_id")
+        .select("editor_id, status")
         .eq("id", data.id)
         .maybeSingle();
       const { data: row, error } = await supabaseAdmin
         .from("projects")
-        .update(payload)
+        .update(
+          before && before.status !== payload.status ? { ...payload, status_override: true } : payload,
+        )
         .eq("id", data.id)
         .select("*")
         .single();
@@ -264,4 +267,20 @@ export const getProjectHistory = createServerFn({ method: "GET" })
       .order("changed_at", { ascending: false });
     if (error) throw new Error(error.message);
     return (rows ?? []) as ProjectStatusHistoryItem[];
+  });
+
+export const resetProjectStatusAuto = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("projects")
+      .update({ status_override: false })
+      .eq("id", data.id);
+    if (error) throw new Error(error.message);
+    const { recomputeProjectStatus } = await import("./video-workspace.server");
+    await recomputeProjectStatus(data.id);
+    const { data: row } = await supabaseAdmin.from("projects").select("*").eq("id", data.id).single();
+    return row as Project;
   });
