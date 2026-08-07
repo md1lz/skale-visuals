@@ -536,8 +536,6 @@ function VideoDetail({
   const unreadIds = useMemo(() => {
     const list = q.data?.comments ?? [];
     return new Set(
-    const list = q.data?.comments ?? [];
-    return new Set(
       list
         .filter((c) =>
           role === "editor"
@@ -547,6 +545,21 @@ function VideoDetail({
         .map((c) => c.id),
     );
   }, [q.data, role]);
+
+  useEffect(() => {
+    setVisibleCount(10);
+    setLoadingOlder(false);
+  }, [videoId]);
+
+  function loadOlder() {
+    if (loadingOlder) return;
+    setLoadingOlder(true);
+    const delay = 1000 + Math.random() * 1000;
+    setTimeout(() => {
+      setVisibleCount((c) => c + 10);
+      setLoadingOlder(false);
+    }, delay);
+  }
 
   useEffect(() => {
     if (unreadIds.size === 0) return;
