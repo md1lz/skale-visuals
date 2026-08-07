@@ -1190,6 +1190,7 @@ function ProjectThread({ projectId }: { projectId: string }) {
 
   const fmt = (iso: string) =>
     new Date(iso).toLocaleString("fr-FR", {
+    new Date(iso).toLocaleString("fr-FR", {
       day: "2-digit",
       month: "short",
       year: "numeric",
