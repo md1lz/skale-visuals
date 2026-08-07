@@ -187,14 +187,26 @@ export const upsertProject = createServerFn({ method: "POST" })
         .select("*")
         .single();
       if (error) throw new Error(error.message);
-      if (payload.editor_id && before?.editor_id !== payload.editor_id) {
-        await supabaseAdmin.from("notifications").insert({
-          recipient_type: "editor",
-          recipient_id: payload.editor_id,
-          type: "assign",
-          project_id: data.id,
-          message: `Tu as été assigné au projet ${data.title}`,
-        });
+      if (before?.editor_id !== payload.editor_id) {
+        const { notifyEditor } = await import("./notifications.server");
+        if (payload.editor_id) {
+          await notifyEditor({
+            recipient_id: payload.editor_id,
+            type: "assign",
+            project_id: data.id,
+            message: before?.editor_id
+              ? `Vous avez repris le projet ${data.title}`
+              : `Tu as été assigné au projet ${data.title}`,
+          });
+        }
+        if (before?.editor_id) {
+          await notifyEditor({
+            recipient_id: before.editor_id,
+            type: "reassign",
+            project_id: data.id,
+            message: `Vous avez été remplacé sur le projet ${data.title}`,
+          });
+        }
       }
       return row as Project;
     }
@@ -205,12 +217,12 @@ export const upsertProject = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
     if (payload.editor_id) {
-      await supabaseAdmin.from("notifications").insert({
-        recipient_type: "editor",
+      const { notifyEditor } = await import("./notifications.server");
+      await notifyEditor({
         recipient_id: payload.editor_id,
-        type: "assign",
+        type: "created",
         project_id: (row as Project).id,
-        message: `Tu as été assigné au projet ${data.title}`,
+        message: `Nouveau projet créé pour vous : ${data.title}`,
       });
     }
     return row as Project;

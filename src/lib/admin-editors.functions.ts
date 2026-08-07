@@ -278,12 +278,12 @@ export const postAdminComment = createServerFn({ method: "POST" })
       .maybeSingle();
 
     if (project?.editor_id) {
-      await supabaseAdmin.from("notifications").insert({
-        recipient_type: "editor",
+      const { notifyEditor } = await import("./notifications.server");
+      await notifyEditor({
         recipient_id: project.editor_id,
         type: "comment",
         project_id: data.project_id,
-        message: `Nouveau commentaire sur ${project.title}`,
+        message: `Message admin sur ${project.title}`,
       });
     }
     return { ok: true as const };

@@ -2,7 +2,7 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Bell, MessageSquare, Paperclip, AlertTriangle, CheckCircle2, FolderOpen, Clock } from "lucide-react";
+import { Bell, MessageSquare, Paperclip, AlertTriangle, CheckCircle2, FolderOpen, Clock, FolderPlus, Repeat2 } from "lucide-react";
 import { listMyNotifications, listMyProjects, getEditorSessionFn } from "@/lib/editor.functions";
 import { statusBadgeClass, deadlineTone, fmtDateFR } from "@/lib/project-display";
 
@@ -15,6 +15,8 @@ function Initials({ name }: { name: string }) {
 
 const NOTIF_ICONS: Record<string, React.ElementType> = {
   assign: FolderOpen,
+  created: FolderPlus,
+  reassign: Repeat2,
   comment: MessageSquare,
   file: Paperclip,
   deadline: AlertTriangle,
