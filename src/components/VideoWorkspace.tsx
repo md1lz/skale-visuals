@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
@@ -9,12 +9,18 @@ import {
   Send,
   MessageSquare,
   Loader2,
-  FileVideo,
   Film,
+  Plus,
+  Trash2,
+  Play,
+  EyeOff,
   Link as LinkIcon,
   ExternalLink,
   HardDrive,
   Check,
+  CheckCheck,
+  SmilePlus,
+  AlertTriangle,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -23,8 +29,10 @@ import {
   setVideoStatus,
   createVideoUploadUrl,
   addVideoVersion,
+  deleteVideoVersion,
   postVideoComment,
   markVideoCommentsRead,
+  toggleCommentReaction,
   signWorkspaceUrls,
 } from "@/lib/video-workspace.functions";
 import {
@@ -33,8 +41,32 @@ import {
   EDITOR_VIDEO_STATUSES,
   fmtDateTimeFR,
 } from "@/lib/project-display";
+import { driveEmbed, driveThumbnail, linkKind, normalizeHref } from "@/lib/video-preview";
 
 export type WorkspaceRole = "editor" | "admin";
+
+const REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "👏", "✅"];
+
+type VersionRow = {
+  id: string;
+  version_number: number;
+  file_url: string;
+  file_name: string;
+  title: string | null;
+  description: string | null;
+  additional_links: unknown;
+  created_at: string;
+};
+
+type ExtraLink = { title: string; url: string };
+
+function extraLinks(v: { additional_links: unknown }): ExtraLink[] {
+  const raw = v.additional_links;
+  if (!Array.isArray(raw)) return [];
+  return raw
+    .filter((x): x is ExtraLink => !!x && typeof x === "object" && typeof (x as ExtraLink).url === "string")
+    .map((x) => ({ title: String(x.title ?? ""), url: String(x.url) }));
+}
 
 export function useWorkspace(projectId: string) {
   const fetchWorkspace = useServerFn(getProjectWorkspace);
@@ -46,7 +78,7 @@ export function useWorkspace(projectId: string) {
 }
 
 export function RushLink({ href, label }: { href: string; label?: string }) {
-  const url = href.startsWith("http") ? href : `https://${href}`;
+  const url = normalizeHref(href);
   const drive = /drive\.google|docs\.google/.test(url);
   const wetransfer = /wetransfer|we\.tl/.test(url);
   const Icon = drive ? HardDrive : wetransfer ? Upload : LinkIcon;
@@ -64,6 +96,120 @@ export function RushLink({ href, label }: { href: string; label?: string }) {
   );
 }
 
+/* ---------------- Thumbnails ---------------- */
+
+function VersionThumb({
+  url,
+  aspect,
+  label,
+}: {
+  url: string | null;
+  aspect: string;
+  label?: string | null;
+}) {
+  const [failed, setFailed] = useState(false);
+  const thumb = url ? driveThumbnail(url) : null;
+
+  if (!url) {
+    return (
+      <div
+        className={`${aspect} grid place-items-center rounded-lg border border-dashed border-white/10 bg-neutral-950/70`}
+      >
+        <Plus className="h-5 w-5 text-neutral-600" />
+        <span className="mt-1 text-[10px] text-neutral-600">Aucune version</span>
+      </div>
+    );
+  }
+
+  if (thumb && !failed) {
+    return (
+      <div className={`${aspect} overflow-hidden rounded-lg border border-white/5 bg-neutral-950/70`}>
+        <img
+          src={thumb}
+          alt={label || "Aperçu de la version"}
+          loading="lazy"
+          onError={() => setFailed(true)}
+          className="h-full w-full object-cover"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={`${aspect} grid place-items-center gap-1 rounded-lg border border-white/5 bg-neutral-950/70 px-2 text-center`}
+    >
+      <Film className="h-5 w-5 text-red-400" />
+      {label && <span className="line-clamp-2 text-[10px] text-neutral-500">{label}</span>}
+    </div>
+  );
+}
+
+/* ---------------- Inline player ---------------- */
+
+function InlinePlayer({ url, aspect }: { url: string; aspect: string }) {
+  const kind = linkKind(url);
+  const embed = driveEmbed(url);
+
+  if (kind === "drive" && embed) {
+    return (
+      <div className="mt-3">
+        <div className={`${aspect} w-full overflow-hidden rounded-xl border border-white/10 bg-black`}>
+          <iframe
+            src={embed}
+            allow="autoplay; encrypted-media"
+            allowFullScreen
+            className="h-full w-full"
+            title="Lecteur vidéo"
+          />
+        </div>
+        <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500">
+          <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />
+          La vidéo ne se charge pas ? Vérifiez que le partage Drive est réglé sur « Tout le monde avec le
+          lien ».
+          <a
+            href={normalizeHref(url)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-red-300 underline hover:text-red-200"
+          >
+            Ouvrir dans Drive →
+          </a>
+        </p>
+      </div>
+    );
+  }
+
+  if (kind === "mp4") {
+    return (
+      <div className="mt-3">
+        <video
+          src={url}
+          controls
+          preload="metadata"
+          className={`${aspect} w-full rounded-xl border border-white/10 bg-black`}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="mt-3 rounded-xl border border-white/10 bg-neutral-950/60 px-4 py-4 text-center">
+      <p className="text-sm text-neutral-400">Ce type de lien ne peut pas être lu directement ici.</p>
+      <a
+        href={normalizeHref(url)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="mt-2 inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-2 text-sm text-white transition hover:bg-red-500"
+      >
+        Ouvrir dans un nouvel onglet →
+      </a>
+    </div>
+  );
+}
+
+/* ---------------- Board ---------------- */
+
 export function ProjectVideosBoard({
   projectId,
   role,
@@ -76,6 +222,7 @@ export function ProjectVideosBoard({
   const q = useWorkspace(projectId);
   const [openId, setOpenId] = useState<string | null>(null);
   const videos = q.data?.videos ?? [];
+  const aspect = q.data?.project.format === "Court" ? "aspect-[9/16]" : "aspect-video";
 
   if (q.isLoading) {
     return (
@@ -121,12 +268,12 @@ export function ProjectVideosBoard({
                   </span>
                 )}
               </div>
-              <div className="mb-2 grid aspect-video place-items-center rounded-lg border border-white/5 bg-neutral-950/70">
-                {v.last_version ? (
-                  <FileVideo className="h-5 w-5 text-red-400" />
-                ) : (
-                  <Film className="h-5 w-5 text-neutral-600" />
-                )}
+              <div className="mb-2">
+                <VersionThumb
+                  url={v.last_version?.file_url ?? null}
+                  aspect={aspect}
+                  label={v.last_version?.title || v.last_version?.file_name || null}
+                />
               </div>
               <span
                 className={`inline-flex rounded-full border px-2 py-0.5 text-[11px] ${videoStatusBadgeClass(v.status)}`}
@@ -155,6 +302,7 @@ export function ProjectVideosBoard({
               videoId={openId}
               projectId={projectId}
               role={role}
+              aspect={aspect}
               onClose={() => setOpenId(null)}
               onChanged={onRefresh}
             />
@@ -165,16 +313,161 @@ export function ProjectVideosBoard({
   );
 }
 
+/* ---------------- New version form ---------------- */
+
+function NewVersionForm({
+  busy,
+  onSubmit,
+}: {
+  busy: boolean;
+  onSubmit: (payload: {
+    title: string;
+    url: string;
+    description: string;
+    additional: ExtraLink[];
+  }) => Promise<void>;
+}) {
+  const [title, setTitle] = useState("");
+  const [url, setUrl] = useState("");
+  const [description, setDescription] = useState("");
+  const [additional, setAdditional] = useState<ExtraLink[]>([]);
+
+  const submit = async () => {
+    if (!title.trim()) return toast.error("Le titre de la version est obligatoire.");
+    if (!url.trim()) return toast.error("Le lien principal est obligatoire.");
+    await onSubmit({
+      title: title.trim(),
+      url: url.trim(),
+      description: description.trim(),
+      additional: additional.filter((a) => a.url.trim()).map((a) => ({ title: a.title.trim(), url: a.url.trim() })),
+    });
+    setTitle("");
+    setUrl("");
+    setDescription("");
+    setAdditional([]);
+  };
+
+  const input =
+    "w-full rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none";
+
+  return (
+    <div className="mb-3 space-y-2.5 rounded-xl border border-white/10 bg-neutral-950/50 p-3">
+      <input
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+        placeholder="Titre de la version (ex : V1 - Première version) *"
+        className={input}
+      />
+      <input
+        value={url}
+        onChange={(e) => setUrl(e.target.value)}
+        placeholder="Lien principal (Drive, WeTransfer, lien direct…) *"
+        className={input}
+      />
+      {additional.map((a, i) => (
+        <div key={i} className="flex gap-2">
+          <input
+            value={a.title}
+            onChange={(e) =>
+              setAdditional((list) => list.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)))
+            }
+            placeholder="Titre court"
+            className={`${input} w-1/3`}
+          />
+          <input
+            value={a.url}
+            onChange={(e) =>
+              setAdditional((list) => list.map((x, j) => (j === i ? { ...x, url: e.target.value } : x)))
+            }
+            placeholder="Lien supplémentaire"
+            className={input}
+          />
+          <button
+            onClick={() => setAdditional((list) => list.filter((_, j) => j !== i))}
+            className="rounded-lg p-2 text-neutral-500 transition hover:text-red-400"
+          >
+            <Trash2 className="h-4 w-4" />
+          </button>
+        </div>
+      ))}
+      <button
+        onClick={() => setAdditional((l) => [...l, { title: "", url: "" }])}
+        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] text-neutral-300 transition hover:bg-white/5"
+      >
+        <Plus className="h-3 w-3" /> Ajouter un lien
+      </button>
+      <textarea
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+        rows={3}
+        placeholder="Description (optionnel) — explique tes choix, pose une question…"
+        className={`${input} resize-y`}
+      />
+      <button
+        onClick={submit}
+        disabled={busy}
+        className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-red-500 disabled:opacity-60"
+      >
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Envoyer cette
+        version
+      </button>
+    </div>
+  );
+}
+
+/* ---------------- Confirm modal ---------------- */
+
+function ConfirmDialog({
+  message,
+  onConfirm,
+  onCancel,
+}: {
+  message: string;
+  onConfirm: () => void;
+  onCancel: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 z-[400] grid place-items-center bg-black/70 p-4" onClick={onCancel}>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-900 p-5 text-center"
+      >
+        <p className="text-sm text-white">{message}</p>
+        <div className="mt-4 flex justify-center gap-2">
+          <button
+            onClick={onConfirm}
+            className="rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
+          >
+            Oui, supprimer
+          </button>
+          <button
+            onClick={onCancel}
+            className="rounded-lg border border-white/10 px-4 py-2 text-sm text-neutral-300 transition hover:bg-white/5"
+          >
+            Non, annuler
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+/* ---------------- Detail ---------------- */
+
 function VideoDetail({
   videoId,
   projectId,
   role,
+  aspect,
   onClose,
   onChanged,
 }: {
   videoId: string;
   projectId: string;
   role: WorkspaceRole;
+  aspect: string;
   onClose: () => void;
   onChanged?: () => void;
 }) {
@@ -183,14 +476,18 @@ function VideoDetail({
   const updateStatus = useServerFn(setVideoStatus);
   const makeUploadUrl = useServerFn(createVideoUploadUrl);
   const pushVersion = useServerFn(addVideoVersion);
+  const dropVersion = useServerFn(deleteVideoVersion);
   const sendComment = useServerFn(postVideoComment);
   const markRead = useServerFn(markVideoCommentsRead);
+  const react = useServerFn(toggleCommentReaction);
   const signUrls = useServerFn(signWorkspaceUrls);
 
-  const [link, setLink] = useState("");
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [signed, setSigned] = useState<Record<string, string>>({});
+  const [playingId, setPlayingId] = useState<string | null>(null);
+  const [pendingDelete, setPendingDelete] = useState<string | null>(null);
+  const [pickerFor, setPickerFor] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = useQuery({
@@ -198,6 +495,28 @@ function VideoDetail({
     queryFn: () => fetchVideo({ data: { video_id: videoId } }),
     refetchInterval: 15_000,
   });
+
+  const refresh = useCallback(() => {
+    qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
+    qc.invalidateQueries({ queryKey: ["workspace", projectId] });
+    onChanged?.();
+  }, [qc, videoId, projectId, onChanged]);
+
+  // Realtime: read receipts + reactions
+  useEffect(() => {
+    const channel = supabase
+      .channel(`video-${videoId}`)
+      .on("postgres_changes", { event: "*", schema: "public", table: "comment_reactions" }, () => {
+        qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
+      })
+      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "video_comments" }, () => {
+        qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
+      })
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [videoId, qc]);
 
   const unreadIds = useMemo(() => {
     const list = q.data?.comments ?? [];
@@ -216,14 +535,17 @@ function VideoDetail({
     if (unreadIds.size === 0) return;
     const t = setTimeout(() => {
       markRead({ data: { video_id: videoId } })
-        .then(() => qc.invalidateQueries({ queryKey: ["workspace", projectId] }))
+        .then(() => {
+          qc.invalidateQueries({ queryKey: ["workspace", projectId] });
+          qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
+        })
         .catch(() => {});
-    }, 1500);
+    }, 1200);
     return () => clearTimeout(t);
   }, [unreadIds, videoId, projectId, markRead, qc]);
 
   useEffect(() => {
-    const paths = (q.data?.versions ?? [])
+    const paths = ((q.data?.versions ?? []) as VersionRow[])
       .map((v) => v.file_url)
       .filter((u) => u.startsWith("storage://"));
     if (paths.length === 0) return;
@@ -231,12 +553,6 @@ function VideoDetail({
       .then(setSigned)
       .catch(() => {});
   }, [q.data, signUrls]);
-
-  const refresh = () => {
-    qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
-    qc.invalidateQueries({ queryKey: ["workspace", projectId] });
-    onChanged?.();
-  };
 
   async function handleFile(file: File) {
     if (busy) return;
@@ -246,7 +562,12 @@ function VideoDetail({
       const { error } = await supabase.storage.from("site-videos").uploadToSignedUrl(path, token, file);
       if (error) throw new Error(error.message);
       await pushVersion({
-        data: { video_id: videoId, file_url: `storage://site-videos/${path}`, file_name: file.name },
+        data: {
+          video_id: videoId,
+          file_url: `storage://site-videos/${path}`,
+          file_name: file.name,
+          title: file.name,
+        },
       });
       toast.success("Version envoyée");
       refresh();
@@ -257,18 +578,43 @@ function VideoDetail({
     }
   }
 
-  async function handleLink() {
-    if (!link.trim() || busy) return;
+  async function submitVersion(payload: {
+    title: string;
+    url: string;
+    description: string;
+    additional: ExtraLink[];
+  }) {
+    if (busy) return;
     setBusy(true);
     try {
-      await pushVersion({ data: { video_id: videoId, file_url: link.trim(), file_name: "" } });
-      setLink("");
+      await pushVersion({
+        data: {
+          video_id: videoId,
+          file_url: payload.url,
+          file_name: payload.title,
+          title: payload.title,
+          description: payload.description,
+          additional_links: payload.additional,
+        },
+      });
       toast.success("Version envoyée");
       refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function confirmDeleteVersion(id: string) {
+    setPendingDelete(null);
+    try {
+      await dropVersion({ data: { version_id: id } });
+      if (playingId === id) setPlayingId(null);
+      toast.success("Version supprimée");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
     }
   }
 
@@ -283,6 +629,16 @@ function VideoDetail({
       toast.error(e instanceof Error ? e.message : "Erreur");
     } finally {
       setBusy(false);
+    }
+  }
+
+  async function handleReaction(commentId: string, emoji: string) {
+    setPickerFor(null);
+    try {
+      await react({ data: { comment_id: commentId, emoji } });
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
     }
   }
 
@@ -301,6 +657,9 @@ function VideoDetail({
 
   const video = q.data?.video;
   const options = role === "admin" ? [...VIDEO_STATUSES] : EDITOR_VIDEO_STATUSES;
+  const versions = (q.data?.versions ?? []) as VersionRow[];
+  const reactions = q.data?.reactions ?? [];
+  const me = q.data?.viewer;
 
   return (
     <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
@@ -351,7 +710,8 @@ function VideoDetail({
           <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Versions</h4>
 
           {role === "editor" && (
-            <div className="mb-3 rounded-xl border border-white/10 bg-neutral-950/50 p-3">
+            <>
+              <NewVersionForm busy={busy} onSubmit={submitVersion} />
               <div
                 onDragOver={(e) => e.preventDefault()}
                 onDrop={(e) => {
@@ -360,15 +720,12 @@ function VideoDetail({
                   if (f) handleFile(f);
                 }}
                 onClick={() => fileRef.current?.click()}
-                className="cursor-pointer rounded-lg border border-dashed border-white/15 px-4 py-5 text-center transition hover:border-red-500/50"
+                className="mb-3 cursor-pointer rounded-lg border border-dashed border-white/15 px-4 py-4 text-center transition hover:border-red-500/50"
               >
-                <Upload className="mx-auto mb-1.5 h-5 w-5 text-neutral-500" />
-                <p className="text-xs text-neutral-400">
-                  {busy ? "Envoi en cours…" : "Glisse un fichier ici"}
+                <Upload className="mx-auto mb-1.5 h-4 w-4 text-neutral-500" />
+                <p className="text-[11px] text-neutral-400">
+                  {busy ? "Envoi en cours…" : "Ou glisse directement un fichier ici"}
                 </p>
-                <span className="mt-1 inline-block text-[11px] text-red-300 underline">
-                  Parcourir les fichiers
-                </span>
                 <input
                   ref={fileRef}
                   type="file"
@@ -380,73 +737,164 @@ function VideoDetail({
                   }}
                 />
               </div>
-              <div className="mt-2 flex gap-2">
-                <input
-                  value={link}
-                  onChange={(e) => setLink(e.target.value)}
-                  placeholder="Ou coller un lien (Drive, WeTransfer…)"
-                  className="flex-1 rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
-                />
-                <button
-                  onClick={handleLink}
-                  disabled={busy}
-                  className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-2 text-sm text-white transition hover:bg-red-500 disabled:opacity-60"
-                >
-                  <Send className="h-4 w-4" /> Envoyer cette version
-                </button>
-              </div>
-            </div>
+            </>
           )}
 
-          {(q.data?.versions ?? []).length === 0 ? (
+          {versions.length === 0 ? (
             <p className="text-sm text-neutral-500">Aucune version déposée.</p>
           ) : (
             <ul className="space-y-2">
-              {(q.data?.versions ?? []).map((v, i) => (
-                <li
-                  key={v.id}
-                  className="flex items-center gap-3 rounded-xl border border-white/5 bg-neutral-950/60 px-3 py-2.5"
-                >
-                  <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-red-500/15 text-xs font-semibold text-red-300">
-                    V{v.version_number}
-                  </span>
-                  <div className="min-w-0 flex-1">
-                    <p className="text-xs text-neutral-400">{fmtDateTimeFR(v.created_at)}</p>
-                    <RushLink href={signed[v.file_url] ?? v.file_url} label={v.file_name} />
-                  </div>
-                  {i === 0 && (
-                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[11px] text-emerald-300">
-                      Actuelle
-                    </span>
-                  )}
-                </li>
-              ))}
+              {versions.map((v, i) => {
+                const src = signed[v.file_url] ?? v.file_url;
+                const open = playingId === v.id;
+                return (
+                  <li
+                    key={v.id}
+                    className="group rounded-xl border border-white/5 bg-neutral-950/60 px-3 py-2.5"
+                  >
+                    <div className="flex items-start gap-3">
+                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-red-500/15 text-xs font-semibold text-red-300">
+                        V{v.version_number}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium text-white">
+                          {v.title || v.file_name || `Version ${v.version_number}`}
+                        </p>
+                        <p className="text-[11px] text-neutral-500">{fmtDateTimeFR(v.created_at)}</p>
+                        {v.description && (
+                          <p className="mt-1 whitespace-pre-wrap text-xs text-neutral-300">{v.description}</p>
+                        )}
+                        <div className="mt-1">
+                          <RushLink href={src} label={v.file_name || v.title || undefined} />
+                        </div>
+                        {extraLinks(v).length > 0 && (
+                          <ul className="mt-1 space-y-0.5">
+                            {extraLinks(v).map((l, j) => (
+                              <li key={j}>
+                                <RushLink href={l.url} label={l.title || l.url} />
+                              </li>
+                            ))}
+                          </ul>
+                        )}
+                      </div>
+                      {i === 0 && (
+                        <span className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[11px] text-emerald-300">
+                          Actuelle
+                        </span>
+                      )}
+                      <button
+                        onClick={() => setPendingDelete(v.id)}
+                        title="Supprimer cette version"
+                        className="shrink-0 rounded-lg p-1.5 text-neutral-600 opacity-0 transition group-hover:opacity-100 hover:text-red-400"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </button>
+                    </div>
+                    <button
+                      onClick={() => setPlayingId(open ? null : v.id)}
+                      className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] text-neutral-200 transition hover:bg-white/5"
+                    >
+                      {open ? (
+                        <>
+                          <EyeOff className="h-3.5 w-3.5" /> Masquer la vidéo
+                        </>
+                      ) : (
+                        <>
+                          <Play className="h-3.5 w-3.5" /> Voir la vidéo
+                        </>
+                      )}
+                    </button>
+                    {open && <InlinePlayer url={src} aspect={aspect} />}
+                  </li>
+                );
+              })}
             </ul>
           )}
         </section>
 
         <section>
           <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Commentaires</h4>
-          <div className="mb-3 space-y-2">
+          <div className="mb-3 space-y-3">
             {(q.data?.comments ?? []).length === 0 ? (
               <p className="text-sm text-neutral-500">Aucun commentaire sur cette vidéo.</p>
             ) : (
               (q.data?.comments ?? []).map((c) => {
                 const mine = c.author_type === role;
+                const mineReaction = reactions.find(
+                  (r) => r.comment_id === c.id && me && r.author_name === me.name,
+                );
+                const grouped = new Map<string, number>();
+                reactions
+                  .filter((r) => r.comment_id === c.id)
+                  .forEach((r) => grouped.set(r.emoji, (grouped.get(r.emoji) ?? 0) + 1));
                 return (
                   <div key={c.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                    <div
-                      className={`max-w-[85%] rounded-xl px-3 py-2 ${
-                        mine
-                          ? "border border-red-500/20 bg-red-500/10"
-                          : "border border-white/10 bg-white/[0.04]"
-                      } ${unreadIds.has(c.id) ? "border-l-2 border-l-red-500" : ""}`}
-                    >
-                      <div className="mb-0.5 flex items-center gap-2">
-                        <span className="text-xs font-medium text-white">{c.author_name}</span>
-                        <span className="text-[11px] text-neutral-500">{fmtDateTimeFR(c.created_at)}</span>
+                    <div className="group relative max-w-[85%]">
+                      <div
+                        className={`rounded-xl px-3 py-2 ${
+                          mine
+                            ? "border border-red-500/20 bg-red-500/10"
+                            : "border border-white/10 bg-white/[0.04]"
+                        } ${unreadIds.has(c.id) ? "border-l-2 border-l-red-500" : ""}`}
+                      >
+                        <div className="mb-0.5 flex items-center gap-2">
+                          <span className="text-xs font-medium text-white">{c.author_name}</span>
+                          <span className="text-[11px] text-neutral-500">{fmtDateTimeFR(c.created_at)}</span>
+                        </div>
+                        <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
+                        {mine && (
+                          <div className="mt-0.5 flex justify-end">
+                            <CheckCheck
+                              className={`h-3.5 w-3.5 ${c.read_at ? "text-emerald-400" : "text-neutral-500"}`}
+                            />
+                          </div>
+                        )}
                       </div>
-                      <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
+
+                      {grouped.size > 0 && (
+                        <div className={`mt-1 flex flex-wrap gap-1 ${mine ? "justify-end" : ""}`}>
+                          {[...grouped.entries()].map(([emoji, count]) => (
+                            <button
+                              key={emoji}
+                              onClick={() => handleReaction(c.id, emoji)}
+                              className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[11px] transition ${
+                                mineReaction?.emoji === emoji
+                                  ? "border-red-500/40 bg-red-500/15 text-white"
+                                  : "border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10"
+                              }`}
+                            >
+                              <span>{emoji}</span>
+                              {count > 1 && <span>{count}</span>}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      <button
+                        onClick={() => setPickerFor(pickerFor === c.id ? null : c.id)}
+                        className={`absolute top-1 ${
+                          mine ? "-left-7" : "-right-7"
+                        } rounded-full p-1 text-neutral-500 opacity-0 transition group-hover:opacity-100 hover:text-white`}
+                      >
+                        <SmilePlus className="h-4 w-4" />
+                      </button>
+
+                      {pickerFor === c.id && (
+                        <>
+                          <div className="fixed inset-0 z-[290]" onClick={() => setPickerFor(null)} />
+                          <div className="absolute bottom-full z-[300] mb-1 flex gap-1 rounded-full border border-white/10 bg-neutral-900 px-2 py-1 shadow-xl">
+                            {REACTION_EMOJIS.map((e) => (
+                              <button
+                                key={e}
+                                onClick={() => handleReaction(c.id, e)}
+                                className="rounded-full px-1 text-base transition hover:scale-125"
+                              >
+                                {e}
+                              </button>
+                            ))}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
                 );
@@ -457,8 +905,14 @@ function VideoDetail({
             <textarea
               value={message}
               onChange={(e) => setMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  handleComment();
+                }
+              }}
               rows={2}
-              placeholder="Écrire un message…"
+              placeholder="Écrire un message…  (Entrée pour envoyer, Maj+Entrée pour un saut de ligne)"
               className="flex-1 resize-none rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
             />
             <button
@@ -471,6 +925,14 @@ function VideoDetail({
           </div>
         </section>
       </div>
+
+      {pendingDelete && (
+        <ConfirmDialog
+          message="Êtes-vous sûr de vouloir supprimer cette version ?"
+          onConfirm={() => confirmDeleteVersion(pendingDelete)}
+          onCancel={() => setPendingDelete(null)}
+        />
+      )}
     </div>
   );
 }
