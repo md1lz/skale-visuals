@@ -695,6 +695,12 @@ function VideoDetail({
             <option value={video.status}>{video.status}</option>
           )}
         </select>
+        {role === "admin" && video?.status === "En révision" && (
+          <ValidateRevisionButton
+            onClick={() => handleStatus("Montage terminé")}
+            busy={busy}
+          />
+        )}
         <button
           onClick={onClose}
           className="ml-auto inline-flex items-center gap-1 text-sm text-neutral-400 transition hover:text-white"

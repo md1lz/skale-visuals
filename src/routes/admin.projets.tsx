@@ -2,9 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink, ArrowLeft, ChevronDown, FileText, Inbox, Pencil, Euro, RefreshCw, AlertTriangle } from "lucide-react";
-import { ProjectVideosBoard, ValidateRevisionButton, RushLink, useWorkspace } from "@/components/VideoWorkspace";
+import { ProjectVideosBoard, RushLink, useWorkspace } from "@/components/VideoWorkspace";
 import { ProjectProgress } from "@/components/ProjectProgress";
-import { validateProjectRevision } from "@/lib/video-workspace.functions";
+
 import { toast } from "sonner";
 import {
   listProjects,
@@ -809,18 +809,6 @@ function ProjectDetailPanel({
     }
   };
 
-  const doValidate = async () => {
-    setBusy(true);
-    try {
-      await validateProjectRevision({ data: { project_id: project.id } });
-      toast.success("Révision validée — Montage terminé");
-      onChanged();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erreur");
-    } finally {
-      setBusy(false);
-    }
-  };
 
   const doAutoStatus = async () => {
     setBusy(true);
@@ -874,7 +862,6 @@ function ProjectDetailPanel({
           <span className={`text-xs ${dl.className}`}>Deadline {dl.label}</span>
 
           <div className="ml-auto flex flex-wrap items-center gap-3">
-            {project.status === "En révision" && <ValidateRevisionButton onClick={doValidate} busy={busy} />}
             <button
               onClick={onEdit}
               className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
