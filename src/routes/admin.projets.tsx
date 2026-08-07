@@ -922,6 +922,8 @@ function ProjectDetailPanel({
           <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Historique des statuts</h4>
         </div>
 
+        <ProjectVideosSection projectId={project.id} status={project.status} onChanged={onChanged} />
+
         <ProjectThread projectId={project.id} />
 
         <div>
