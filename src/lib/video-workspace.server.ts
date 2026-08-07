@@ -25,7 +25,7 @@ export async function assertProjectAccess(projectId: string, viewer: Viewer) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data } = await supabaseAdmin
     .from("projects")
-    .select("id, title, status, deadline, brief, rushs_links, editor_id, editor_quantity")
+    .select("id, title, status, status_override, format, deadline, brief, rushs_links, editor_id, editor_quantity")
     .eq("id", projectId)
     .maybeSingle();
   if (!data) throw new Error("Projet introuvable");
