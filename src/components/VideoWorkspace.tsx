@@ -226,6 +226,28 @@ export function ProjectVideosBoard({
   const [openId, setOpenId] = useState<string | null>(null);
   const videos = q.data?.videos ?? [];
   const aspect = q.data?.project.format === "Court" ? "aspect-[9/16]" : "aspect-video";
+  const gridRef = useRef<HTMLDivElement>(null);
+  const [listMaxH, setListMaxH] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!openId) {
+      setListMaxH(null);
+      return;
+    }
+    const measure = () => {
+      const el = gridRef.current;
+      const first = el?.firstElementChild as HTMLElement | undefined;
+      if (!first) return;
+      const gap = 12;
+      setListMaxH(first.offsetHeight * 3 + gap * 2 + 4);
+    };
+    const t = setTimeout(measure, 60);
+    window.addEventListener("resize", measure);
+    return () => {
+      clearTimeout(t);
+      window.removeEventListener("resize", measure);
+    };
+  }, [openId, videos.length, aspect]);
 
   if (q.isLoading) {
     return (
@@ -244,8 +266,9 @@ export function ProjectVideosBoard({
   }
 
   return (
-    <div className={`flex gap-5 ${openId ? "h-[calc(100vh-230px)] min-h-[520px]" : ""}`}>
+    <div className={`flex gap-5 ${openId ? "h-[calc(100vh-230px)] min-h-[520px] items-start" : ""}`}>
       <div
+        style={openId && listMaxH ? { maxHeight: listMaxH } : undefined}
         className={
           openId
             ? "w-[30%] shrink-0 min-h-0 overflow-y-auto pr-1.5 [scrollbar-width:thin]"
@@ -253,6 +276,7 @@ export function ProjectVideosBoard({
         }
       >
         <div
+          ref={gridRef}
           className={`grid gap-3 ${
             openId ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
           }`}
