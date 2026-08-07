@@ -104,15 +104,27 @@ export const getVideoWorkspace = createServerFn({ method: "GET" })
     const [{ data: versions }, { data: comments }] = await Promise.all([
       supabaseAdmin
         .from("video_versions")
-        .select("id, version_number, file_url, file_name, created_at")
+        .select(
+          "id, version_number, file_url, file_name, title, description, additional_links, created_at",
+        )
         .eq("project_video_id", data.video_id)
         .order("version_number", { ascending: false }),
       supabaseAdmin
         .from("video_comments")
-        .select("id, author_type, author_name, content, read_by_editor, read_by_admin, created_at")
+        .select(
+          "id, author_type, author_id, author_name, content, read_by_editor, read_by_admin, read_at, created_at",
+        )
         .eq("project_video_id", data.video_id)
         .order("created_at", { ascending: true }),
     ]);
+
+    const commentIds = (comments ?? []).map((c) => c.id);
+    const { data: reactions } = commentIds.length
+      ? await supabaseAdmin
+          .from("comment_reactions")
+          .select("id, comment_id, author_type, author_id, author_name, emoji")
+          .in("comment_id", commentIds)
+      : { data: [] as never[] };
 
     return {
       viewer: { kind: viewer.kind, name: viewer.name },
@@ -120,6 +132,7 @@ export const getVideoWorkspace = createServerFn({ method: "GET" })
       rushs_links: project.rushs_links ?? [],
       versions: versions ?? [],
       comments: comments ?? [],
+      reactions: reactions ?? [],
     };
   });
 
@@ -131,6 +144,11 @@ export const markVideoCommentsRead = createServerFn({ method: "POST" })
     await assertVideoAccess(data.video_id, viewer);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const patch = viewer.kind === "editor" ? { read_by_editor: true } : { read_by_admin: true };
+    await supabaseAdmin
+      .from("video_comments")
+      .update({ ...patch, read_at: new Date().toISOString() })
+      .eq("project_video_id", data.video_id)
+      .neq("author_type", viewer.kind);
     await supabaseAdmin.from("video_comments").update(patch).eq("project_video_id", data.video_id);
     return { ok: true as const };
   });
