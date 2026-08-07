@@ -295,9 +295,9 @@ export const listMyNotifications = createServerFn({ method: "GET" }).handler(asy
     .eq("recipient_type", "editor")
     .eq("recipient_id", me.id)
     .order("created_at", { ascending: false })
-    .limit(20);
+    .limit(8);
 
-  return [...alerts, ...((data ?? []) as typeof alerts)];
+  return [...alerts, ...((data ?? []) as typeof alerts)].slice(0, 8);
 });
 
 export const markMyNotificationsRead = createServerFn({ method: "POST" }).handler(async () => {
