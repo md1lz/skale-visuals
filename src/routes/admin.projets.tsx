@@ -384,6 +384,7 @@ function Select<T extends string>({ value, onChange, options }: { value: T; onCh
 type FormState = {
   title: string;
   client_id: string;
+  editor_id: string;
   format: ProjectFormat;
   status: ProjectStatus;
   editor_name: string;
@@ -403,6 +404,7 @@ function toForm(p: Project | null): FormState {
   return {
     title: p?.title ?? "",
     client_id: p?.client_id ?? "",
+    editor_id: p?.editor_id ?? "",
     format: p?.format ?? "Court",
     status: p?.status ?? "En attente de validation client",
     editor_name: p?.editor_name ?? "",
@@ -433,7 +435,14 @@ function ProjectFormPanel({
   const [form, setForm] = useState<FormState>(() => toForm(initial));
   const [saving, setSaving] = useState(false);
   const [clientQuery, setClientQuery] = useState("");
+  const [editors, setEditors] = useState<{ id: string; display_name: string; username: string }[]>([]);
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setForm((f) => ({ ...f, [k]: v }));
+
+  useEffect(() => {
+    listActiveEditors()
+      .then(setEditors)
+      .catch(() => {});
+  }, []);
 
   const rate = Number(form.editor_rate) || 0;
   const qty = Number(form.editor_quantity) || 0;
@@ -464,6 +473,7 @@ function ProjectFormPanel({
           id: initial?.id ?? null,
           title: form.title.trim(),
           client_id: form.client_id,
+          editor_id: form.editor_id || null,
           format: form.format,
           status: form.status,
           editor_name: form.editor_name,
@@ -570,8 +580,29 @@ function ProjectFormPanel({
         <div className="col-span-2 border-t border-white/10 pt-4">
           <h3 className="text-sm font-semibold text-white mb-3">Monteur & coût</h3>
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Nom du monteur" className="col-span-2">
-              <TextInput value={form.editor_name} onChange={(v) => set("editor_name", v)} placeholder="Blase / prénom" />
+            <Field label="Monteur assigné" className="col-span-2">
+              <select
+                value={form.editor_id}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  set("editor_id", id);
+                  const ed = editors.find((x) => x.id === id);
+                  set("editor_name", ed?.display_name ?? "");
+                }}
+                className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm outline-none focus:border-red-500/50"
+              >
+                <option value="">— Aucun monteur —</option>
+                {editors.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.display_name} (@{e.username})
+                  </option>
+                ))}
+              </select>
+              {editors.length === 0 && (
+                <p className="text-xs text-neutral-500 mt-1.5">
+                  Aucun compte monteur actif. Crée-en un dans « Monteurs ».
+                </p>
+              )}
             </Field>
             <Field label="Tarif">
               <div className="flex gap-2">
