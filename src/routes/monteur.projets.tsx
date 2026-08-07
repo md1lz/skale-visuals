@@ -1,33 +1,16 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { Loader2, FileText, Inbox, ArrowLeft, ChevronDown, Send } from "lucide-react";
 import {
-  X,
-  Link as LinkIcon,
-  ExternalLink,
-  Upload,
-  Send,
-  MessageSquare,
-  Loader2,
-  FileVideo,
-  FileText,
-  History,
-  Inbox,
-  ArrowLeft,
-} from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import {
-  listMyProjects,
-  getMyProject,
-  addProjectVersion,
-  createVersionUploadUrl,
-  sendForRevision,
-  postEditorComment,
-  signVersionUrls,
-} from "@/lib/editor.functions";
+  listMyProjectsOverview,
+  sendProjectForRevision,
+} from "@/lib/video-workspace.functions";
+import { ProjectVideosBoard, RushLink, useWorkspace } from "@/components/VideoWorkspace";
+import { ProjectProgress } from "@/components/ProjectProgress";
 import { statusBadgeClass, deadlineTone, fmtDateFR, fmtDateTimeFR } from "@/lib/project-display";
 
 export const Route = createFileRoute("/monteur/projets")({
@@ -38,12 +21,11 @@ export const Route = createFileRoute("/monteur/projets")({
 function EditorProjectsPage() {
   const navigate = useNavigate();
   const { p: selected } = Route.useSearch();
-  const fetchProjects = useServerFn(listMyProjects);
+  const fetchProjects = useServerFn(listMyProjectsOverview);
 
   const q = useQuery({
     queryKey: ["editor", "projects"],
     queryFn: () => fetchProjects(),
-    initialData: [] as Awaited<ReturnType<typeof fetchProjects>>,
     refetchInterval: 30_000,
   });
 
@@ -68,9 +50,10 @@ function EditorProjectsPage() {
             <thead className="bg-white/5 text-neutral-400">
               <tr>
                 <th className="text-left font-medium px-4 py-3">Projet</th>
+                <th className="text-left font-medium px-4 py-3">Vidéos</th>
                 <th className="text-left font-medium px-4 py-3">Statut</th>
                 <th className="text-left font-medium px-4 py-3">Deadline</th>
-                <th className="text-left font-medium px-4 py-3">Dernière activité</th>
+                <th className="text-left font-medium px-4 py-3">Progression</th>
               </tr>
             </thead>
             <tbody>
@@ -81,13 +64,18 @@ function EditorProjectsPage() {
                   className="border-t border-white/5 hover:bg-white/[0.03] cursor-pointer transition"
                 >
                   <td className="px-4 py-3 text-white">{p.title}</td>
+                  <td className="px-4 py-3 text-neutral-300">
+                    {p.total_videos} vidéo{p.total_videos > 1 ? "s" : ""}
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`text-[11px] rounded-full border px-2 py-0.5 ${statusBadgeClass(p.status)}`}>
                       {p.status}
                     </span>
                   </td>
                   <td className={`px-4 py-3 ${deadlineTone(p.deadline)}`}>{fmtDateFR(p.deadline)}</td>
-                  <td className="px-4 py-3 text-neutral-400">{fmtDateTimeFR(p.updated_at)}</td>
+                  <td className="px-4 py-3">
+                    <ProjectProgress approved={p.approved_videos} total={p.total_videos} compact />
+                  </td>
                 </tr>
               ))}
             </tbody>
@@ -97,7 +85,7 @@ function EditorProjectsPage() {
 
       <AnimatePresence>
         {selected && (
-          <ProjectPanel id={selected} onClose={() => navigate({ to: "/monteur/projets", search: {} })} />
+          <ProjectFullscreen id={selected} onClose={() => navigate({ to: "/monteur/projets", search: {} })} />
         )}
       </AnimatePresence>
     </div>
