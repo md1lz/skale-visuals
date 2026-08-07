@@ -80,7 +80,7 @@ export async function recomputeProjectStatus(projectId: string) {
   const list = (videos ?? []).map((v) => v.status);
   if (list.length === 0) return;
 
-  let next: string;
+  let next: "En cours" | "Corrections" | "En révision" | "Montage terminé" | "À faire";
   if (list.includes("En cours")) next = "En cours";
   else if (list.includes("Corrections à faire")) next = "Corrections";
   else if (list.includes("En révision")) next = "En révision";
