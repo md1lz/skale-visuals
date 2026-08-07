@@ -13,6 +13,10 @@ import {
   MessageSquare,
   Loader2,
   FileVideo,
+  FileText,
+  History,
+  Inbox,
+  ArrowLeft,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
