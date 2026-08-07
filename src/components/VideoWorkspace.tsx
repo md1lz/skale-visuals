@@ -45,9 +45,34 @@ import {
   ADMIN_VIDEO_STATUSES,
   fmtDateTimeFR,
 } from "@/lib/project-display";
-import { driveEmbed, driveThumbnail, linkKind, normalizeHref } from "@/lib/video-preview";
+import {
+  driveEmbed,
+  driveThumbnail,
+  frameioFallbackEmbed,
+  linkKind,
+  normalizeHref,
+} from "@/lib/video-preview";
+import { getFrameioPreview } from "@/lib/frameio.functions";
 
 export type WorkspaceRole = "editor" | "admin";
+
+/** Resolves Frame.io embed + poster (no-op for other links). */
+function useFrameioPreview(url: string | null) {
+  const fetchPreview = useServerFn(getFrameioPreview);
+  const enabled = !!url && linkKind(url) === "frameio";
+  const { data } = useQuery({
+    queryKey: ["frameio-preview", url],
+    queryFn: () => fetchPreview({ data: { url: url! } }),
+    enabled,
+    staleTime: 1000 * 60 * 30,
+    retry: false,
+  });
+  if (!enabled) return null;
+  return {
+    embedUrl: data?.embedUrl ?? frameioFallbackEmbed(url!),
+    thumbnailUrl: data?.thumbnailUrl ?? null,
+  };
+}
 
 const REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "👏", "✅"];
 
@@ -112,7 +137,8 @@ function VersionThumb({
   label?: string | null;
 }) {
   const [failed, setFailed] = useState(false);
-  const thumb = url ? driveThumbnail(url) : null;
+  const frameio = useFrameioPreview(url);
+  const thumb = url ? (frameio ? frameio.thumbnailUrl : driveThumbnail(url)) : null;
 
   if (!url) {
     return (
@@ -154,6 +180,36 @@ function VersionThumb({
 function InlinePlayer({ url, aspect }: { url: string; aspect: string }) {
   const kind = linkKind(url);
   const embed = driveEmbed(url);
+  const frameio = useFrameioPreview(url);
+
+  if (kind === "frameio" && frameio?.embedUrl) {
+    return (
+      <div className="mt-3">
+        <div className={`${aspect} w-full overflow-hidden rounded-xl border border-white/10 bg-black`}>
+          <iframe
+            src={frameio.embedUrl}
+            allow="autoplay; fullscreen; encrypted-media"
+            allowFullScreen
+            className="h-full w-full"
+            title="Lecteur Frame.io"
+          />
+        </div>
+        <p className="mt-2 flex flex-wrap items-center gap-1.5 text-[11px] text-neutral-500">
+          <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />
+          La vidéo ne se charge pas ? Vérifiez que le lien Frame.io est public (partage sans mot de
+          passe).
+          <a
+            href={normalizeHref(url)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-red-300 underline hover:text-red-200"
+          >
+            Ouvrir dans Frame.io →
+          </a>
+        </p>
+      </div>
+    );
+  }
 
   if (kind === "drive" && embed) {
     return (
