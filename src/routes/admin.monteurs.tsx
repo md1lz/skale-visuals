@@ -372,13 +372,13 @@ function CredentialsEditor({
         />
       </label>
       <div>
-        <span className="block text-xs text-neutral-400 mb-1.5">Mot de passe</span>
+        <span className="block text-xs text-neutral-400 mb-1.5">Nouveau mot de passe</span>
         <div className="flex gap-2">
           <div className="relative flex-1">
             <input
               value={p}
               onChange={(e) => setP(e.target.value)}
-              placeholder="Aucun mot de passe enregistré — générez-en un"
+              placeholder="Définir un nouveau mot de passe"
               className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 pr-10 text-sm text-white font-mono focus:outline-none focus:border-red-500"
             />
             <button
@@ -404,13 +404,14 @@ function CredentialsEditor({
           </button>
         </div>
         <p className="text-[11px] text-neutral-500 mt-1.5">
-          Visible en permanence. Le monteur ne peut pas modifier ses identifiants lui-même.
+          Le mot de passe est chiffré et ne peut plus être consulté après enregistrement — copiez-le avant de valider. Le
+          monteur ne peut pas modifier ses identifiants lui-même.
         </p>
       </div>
       <button
         type="button"
         onClick={submit}
-        disabled={busy || !dirty || u.trim().length < 3 || (p !== password && p.length < 8)}
+        disabled={busy || !dirty || u.trim().length < 3 || (p.length > 0 && p.length < 8)}
         className="rounded-lg bg-red-600 hover:bg-red-500 px-4 py-2 text-xs font-medium text-white transition disabled:opacity-50"
       >
         {busy ? "Enregistrement…" : "Enregistrer les identifiants"}
@@ -489,7 +490,6 @@ function EditorDetailPanel({
               <CredentialsEditor
                 id={id}
                 username={d.account.username}
-                password={d.account.password_plain ?? ""}
                 onSaved={() => {
                   q.refetch();
                   onChanged();
