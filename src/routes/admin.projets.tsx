@@ -769,6 +769,7 @@ function ProjectDetailPanel({
   const q = useWorkspace(project.id);
   const videos = q.data?.videos ?? [];
   const approved = videos.filter((v) => v.status === "Approuvée").length;
+  const refreshWorkspace = () => q.refetch();
 
   useEffect(() => {
     getProjectHistory({ data: { id: project.id } })
@@ -1060,7 +1061,7 @@ function ProjectDetailPanel({
               <Loader2 className="h-4 w-4 animate-spin" /> Chargement du projet…
             </div>
           ) : (
-            <ProjectVideosBoard projectId={project.id} role="admin" onRefresh={onChanged} />
+            <ProjectVideosBoard projectId={project.id} role="admin" onRefresh={refreshWorkspace} />
           )}
 
           <ProjectThread projectId={project.id} />
