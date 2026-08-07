@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink } from "lucide-react";
+import { ProjectVideosBoard, ValidateRevisionButton, useWorkspace } from "@/components/VideoWorkspace";
+import { ProjectProgress } from "@/components/ProjectProgress";
+import { validateProjectRevision } from "@/lib/video-workspace.functions";
 import { toast } from "sonner";
 import {
   listProjects,
@@ -29,6 +32,7 @@ const statusBadge: Record<ProjectStatus, string> = {
   "En cours": "bg-blue-500/15 text-blue-300 border-blue-500/30",
   "En révision": "bg-orange-500/15 text-orange-300 border-orange-500/30",
   Corrections: "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
+  "Montage terminé": "bg-violet-500/15 text-violet-300 border-violet-500/30",
   Livrée: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   Payée: "bg-green-700/25 text-green-300 border-green-700/40",
 };
@@ -44,6 +48,7 @@ const statusIcon: Record<ProjectStatus, string> = {
   "En cours": "🎬",
   "En révision": "👀",
   Corrections: "🔧",
+  "Montage terminé": "🟣",
   Livrée: "🟢",
   Payée: "✅",
 };
@@ -917,6 +922,8 @@ function ProjectDetailPanel({
           <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Historique des statuts</h4>
         </div>
 
+        <ProjectVideosSection projectId={project.id} status={project.status} onChanged={onChanged} />
+
         <ProjectThread projectId={project.id} />
 
         <div>
@@ -938,6 +945,45 @@ function ProjectDetailPanel({
         </div>
       </div>
     </SidePanel>
+  );
+}
+
+function ProjectVideosSection({
+  projectId,
+  status,
+  onChanged,
+}: {
+  projectId: string;
+  status: ProjectStatus;
+  onChanged: () => void;
+}) {
+  const q = useWorkspace(projectId);
+  const [busy, setBusy] = useState(false);
+  const videos = q.data?.videos ?? [];
+  const approved = videos.filter((v) => v.status === "Approuvée").length;
+
+  const validate = async () => {
+    setBusy(true);
+    try {
+      await validateProjectRevision({ data: { project_id: projectId } });
+      toast.success("Révision validée — Montage terminé");
+      onChanged();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h4 className="text-xs uppercase tracking-wider text-neutral-500">Vidéos du projet</h4>
+        {status === "En révision" && <ValidateRevisionButton onClick={validate} busy={busy} />}
+      </div>
+      <ProjectProgress approved={approved} total={videos.length} />
+      <ProjectVideosBoard projectId={projectId} role="admin" onRefresh={onChanged} />
+    </div>
   );
 }
 

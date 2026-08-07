@@ -27,6 +27,7 @@ export const PROJECT_STATUSES = [
   "En cours",
   "En révision",
   "Corrections",
+  "Montage terminé",
   "Livrée",
   "Payée",
 ] as const;
