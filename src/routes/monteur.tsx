@@ -8,7 +8,12 @@ import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/compone
 export const Route = createFileRoute("/monteur")({
   beforeLoad: async () => {
     const session = await getEditorSessionFn();
-    if (!session) throw redirect({ to: "/" });
+    if (!session) {
+      const { getAdminSessionFn } = await import("@/lib/admin-auth.functions");
+      const admin = await getAdminSessionFn();
+      if (admin) throw redirect({ to: "/admin" });
+      throw redirect({ to: "/" });
+    }
     return { editor: session };
   },
   component: EditorLayout,
