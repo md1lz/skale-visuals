@@ -244,8 +244,14 @@ export function ProjectVideosBoard({
   }
 
   return (
-    <div className="flex gap-5">
-      <div className={openId ? "w-[30%] shrink-0" : "w-full"}>
+    <div className={`flex gap-5 ${openId ? "h-[calc(100vh-230px)] min-h-[520px]" : ""}`}>
+      <div
+        className={
+          openId
+            ? "w-[30%] shrink-0 min-h-0 overflow-y-auto pr-1.5 [scrollbar-width:thin]"
+            : "w-full"
+        }
+      >
         <div
           className={`grid gap-3 ${
             openId ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
