@@ -2,6 +2,9 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink } from "lucide-react";
+import { ProjectVideosBoard, ValidateRevisionButton, useWorkspace } from "@/components/VideoWorkspace";
+import { ProjectProgress } from "@/components/ProjectProgress";
+import { validateProjectRevision } from "@/lib/video-workspace.functions";
 import { toast } from "sonner";
 import {
   listProjects,
@@ -29,6 +32,7 @@ const statusBadge: Record<ProjectStatus, string> = {
   "En cours": "bg-blue-500/15 text-blue-300 border-blue-500/30",
   "En révision": "bg-orange-500/15 text-orange-300 border-orange-500/30",
   Corrections: "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
+  "Montage terminé": "bg-violet-500/15 text-violet-300 border-violet-500/30",
   Livrée: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   Payée: "bg-green-700/25 text-green-300 border-green-700/40",
 };
@@ -44,6 +48,7 @@ const statusIcon: Record<ProjectStatus, string> = {
   "En cours": "🎬",
   "En révision": "👀",
   Corrections: "🔧",
+  "Montage terminé": "🟣",
   Livrée: "🟢",
   Payée: "✅",
 };
