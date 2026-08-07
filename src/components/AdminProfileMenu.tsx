@@ -73,9 +73,17 @@ export function AdminProfileMenu({ initialUsername }: { initialUsername: string 
   }, [open]);
 
   async function handleLogout() {
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      await supabase.auth.signOut();
+    } catch {
+      /* pas de session Supabase active */
+    }
     await logout();
     await router.invalidate();
-    navigate({ to: "/" });
+    // Rechargement complet : empêche de revenir sur le panel via le bouton précédent
+    if (typeof window !== "undefined") window.location.replace("/");
+    else navigate({ to: "/" });
   }
 
   const displayName =

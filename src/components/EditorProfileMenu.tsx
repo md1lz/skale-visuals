@@ -51,9 +51,16 @@ export function EditorProfileMenu({ initial }: { initial: Profile }) {
   }, [open]);
 
   async function handleLogout() {
+    try {
+      const { supabase } = await import("@/integrations/supabase/client");
+      await supabase.auth.signOut();
+    } catch {
+      /* pas de session Supabase active */
+    }
     await logout();
     await router.invalidate();
-    navigate({ to: "/" });
+    if (typeof window !== "undefined") window.location.replace("/");
+    else navigate({ to: "/" });
   }
 
   return (
