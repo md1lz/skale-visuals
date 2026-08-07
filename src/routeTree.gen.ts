@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as MonteurRouteImport } from './routes/monteur'
 import { Route as ImmobilierRouteImport } from './routes/immobilier'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -22,6 +23,11 @@ import { Route as AdminAvisRouteImport } from './routes/admin.avis'
 import { Route as AdminAnalytiquesRouteImport } from './routes/admin.analytiques'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 
+const MonteurRoute = MonteurRouteImport.update({
+  id: '/monteur',
+  path: '/monteur',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ImmobilierRoute = ImmobilierRouteImport.update({
   id: '/immobilier',
   path: '/immobilier',
@@ -87,6 +93,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/immobilier': typeof ImmobilierRoute
+  '/monteur': typeof MonteurRoute
   '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
@@ -100,6 +107,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/immobilier': typeof ImmobilierRoute
+  '/monteur': typeof MonteurRoute
   '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
@@ -115,6 +123,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/immobilier': typeof ImmobilierRoute
+  '/monteur': typeof MonteurRoute
   '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
   '/admin/clients': typeof AdminClientsRoute
@@ -131,6 +140,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/immobilier'
+    | '/monteur'
     | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
@@ -144,6 +154,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/immobilier'
+    | '/monteur'
     | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
@@ -158,6 +169,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/immobilier'
+    | '/monteur'
     | '/admin/analytiques'
     | '/admin/avis'
     | '/admin/clients'
@@ -173,11 +185,19 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   ImmobilierRoute: typeof ImmobilierRoute
+  MonteurRoute: typeof MonteurRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/monteur': {
+      id: '/monteur'
+      path: '/monteur'
+      fullPath: '/monteur'
+      preLoaderRoute: typeof MonteurRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/immobilier': {
       id: '/immobilier'
       path: '/immobilier'
@@ -293,18 +313,9 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   ImmobilierRoute: ImmobilierRoute,
+  MonteurRoute: MonteurRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
