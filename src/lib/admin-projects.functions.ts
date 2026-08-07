@@ -42,6 +42,7 @@ export type Project = {
   id: string;
   title: string;
   client_id: string | null;
+  editor_id: string | null;
   format: ProjectFormat;
   status: ProjectStatus;
   editor_name: string | null;
@@ -97,6 +98,7 @@ const upsertSchema = z.object({
   id: z.string().uuid().optional().nullable(),
   title: z.string().trim().min(1, "Titre requis").max(200),
   client_id: z.string().uuid().nullable(),
+  editor_id: z.string().uuid().nullable().optional().default(null),
   format: z.enum(PROJECT_FORMATS),
   status: z.enum(PROJECT_STATUSES),
   editor_name: nullableStr,
@@ -153,6 +155,7 @@ export const upsertProject = createServerFn({ method: "POST" })
     const payload = {
       title: data.title,
       client_id: data.client_id,
+      editor_id: data.editor_id ?? null,
       format: data.format,
       status: data.status,
       editor_name: data.editor_name,
@@ -172,6 +175,11 @@ export const upsertProject = createServerFn({ method: "POST" })
       revision_link: data.revision_link,
     };
     if (data.id) {
+      const { data: before } = await supabaseAdmin
+        .from("projects")
+        .select("editor_id")
+        .eq("id", data.id)
+        .maybeSingle();
       const { data: row, error } = await supabaseAdmin
         .from("projects")
         .update(payload)
@@ -179,6 +187,15 @@ export const upsertProject = createServerFn({ method: "POST" })
         .select("*")
         .single();
       if (error) throw new Error(error.message);
+      if (payload.editor_id && before?.editor_id !== payload.editor_id) {
+        await supabaseAdmin.from("notifications").insert({
+          recipient_type: "editor",
+          recipient_id: payload.editor_id,
+          type: "assign",
+          project_id: data.id,
+          message: `Tu as été assigné au projet ${data.title}`,
+        });
+      }
       return row as Project;
     }
     const { data: row, error } = await supabaseAdmin
@@ -187,6 +204,15 @@ export const upsertProject = createServerFn({ method: "POST" })
       .select("*")
       .single();
     if (error) throw new Error(error.message);
+    if (payload.editor_id) {
+      await supabaseAdmin.from("notifications").insert({
+        recipient_type: "editor",
+        recipient_id: payload.editor_id,
+        type: "assign",
+        project_id: (row as Project).id,
+        message: `Tu as été assigné au projet ${data.title}`,
+      });
+    }
     return row as Project;
   });
 

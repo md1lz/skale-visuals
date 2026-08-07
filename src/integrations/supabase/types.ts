@@ -176,6 +176,166 @@ export type Database = {
         }
         Relationships: []
       }
+      editor_accounts: {
+        Row: {
+          avatar_url: string | null
+          created_at: string
+          display_name: string
+          id: string
+          last_login_at: string | null
+          password_hash: string
+          status: string
+          updated_at: string
+          username: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name: string
+          id?: string
+          last_login_at?: string | null
+          password_hash: string
+          status?: string
+          updated_at?: string
+          username: string
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string
+          display_name?: string
+          id?: string
+          last_login_at?: string | null
+          password_hash?: string
+          status?: string
+          updated_at?: string
+          username?: string
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          project_id: string | null
+          read: boolean
+          recipient_id: string | null
+          recipient_type: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          project_id?: string | null
+          read?: boolean
+          recipient_id?: string | null
+          recipient_type: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          project_id?: string | null
+          read?: boolean
+          recipient_id?: string | null
+          recipient_type?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_comments: {
+        Row: {
+          author_id: string | null
+          author_name: string
+          author_type: string
+          content: string
+          created_at: string
+          id: string
+          project_id: string
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string
+          author_type: string
+          content: string
+          created_at?: string
+          id?: string
+          project_id: string
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string
+          author_type?: string
+          content?: string
+          created_at?: string
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_comments_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      project_files: {
+        Row: {
+          created_at: string
+          file_name: string
+          file_url: string
+          id: string
+          project_id: string
+          uploaded_by: string | null
+          version_number: number
+        }
+        Insert: {
+          created_at?: string
+          file_name?: string
+          file_url: string
+          id?: string
+          project_id: string
+          uploaded_by?: string | null
+          version_number?: number
+        }
+        Update: {
+          created_at?: string
+          file_name?: string
+          file_url?: string
+          id?: string
+          project_id?: string
+          uploaded_by?: string | null
+          version_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_files_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_files_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "editor_accounts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_status_history: {
         Row: {
           changed_at: string
@@ -214,6 +374,7 @@ export type Database = {
           created_at: string
           deadline: string | null
           delivery_link: string | null
+          editor_id: string | null
           editor_name: string | null
           editor_quantity: number | null
           editor_rate: number | null
@@ -239,6 +400,7 @@ export type Database = {
           created_at?: string
           deadline?: string | null
           delivery_link?: string | null
+          editor_id?: string | null
           editor_name?: string | null
           editor_quantity?: number | null
           editor_rate?: number | null
@@ -264,6 +426,7 @@ export type Database = {
           created_at?: string
           deadline?: string | null
           delivery_link?: string | null
+          editor_id?: string | null
           editor_name?: string | null
           editor_quantity?: number | null
           editor_rate?: number | null
@@ -287,6 +450,13 @@ export type Database = {
             columns: ["client_id"]
             isOneToOne: false
             referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "projects_editor_id_fkey"
+            columns: ["editor_id"]
+            isOneToOne: false
+            referencedRelation: "editor_accounts"
             referencedColumns: ["id"]
           },
         ]
@@ -470,6 +640,10 @@ export type Database = {
         Args: { _password: string; _username: string }
         Returns: string
       }
+      create_editor: {
+        Args: { _display_name: string; _password: string; _username: string }
+        Returns: string
+      }
       rename_admin: {
         Args: { _new_username: string; _old_username: string }
         Returns: boolean
@@ -478,10 +652,23 @@ export type Database = {
         Args: { _new_password: string; _username: string }
         Returns: boolean
       }
+      set_editor_password: {
+        Args: { _id: string; _new_password: string }
+        Returns: boolean
+      }
       verify_admin: {
         Args: { _password: string; _username: string }
         Returns: {
           id: string
+          username: string
+        }[]
+      }
+      verify_editor: {
+        Args: { _password: string; _username: string }
+        Returns: {
+          display_name: string
+          id: string
+          status: string
           username: string
         }[]
       }

@@ -16,8 +16,10 @@ import {
   FileSignature,
   Star,
   Settings,
+  Scissors,
 } from "lucide-react";
 import { getAdminSessionFn } from "@/lib/admin-auth.functions";
+import { getEditorSessionFn } from "@/lib/editor.functions";
 import { AdminProfileMenu } from "@/components/AdminProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 
@@ -25,7 +27,11 @@ import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/compone
 export const Route = createFileRoute("/admin")({
   beforeLoad: async () => {
     const session = await getAdminSessionFn();
-    if (!session) throw redirect({ to: "/" });
+    if (!session) {
+      const editor = await getEditorSessionFn();
+      if (editor) throw redirect({ to: "/monteur" });
+      throw redirect({ to: "/" });
+    }
     return { session };
   },
   component: AdminLayout,
@@ -47,6 +53,7 @@ const NAV: { to: string; label: string; icon: typeof BarChart3; exact?: boolean 
   { to: "/admin/videos", label: "Vidéos", icon: Video },
   { to: "/admin/clients", label: "Clients", icon: Users },
   { to: "/admin/projets", label: "Projets", icon: FolderKanban },
+  { to: "/admin/monteurs", label: "Monteurs", icon: Scissors },
   { to: "/admin/devis", label: "Devis Tally", icon: FileSignature },
   { to: "/admin/avis", label: "Avis clients", icon: Star },
   { to: "/admin/parametres", label: "Paramètres", icon: Settings },

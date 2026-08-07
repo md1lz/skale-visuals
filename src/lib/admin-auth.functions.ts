@@ -62,16 +62,49 @@ export const loginAdmin = createServerFn({ method: "POST" })
       }
     })();
 
+    if (error || !match) {
+      // Fallback: maybe it's a freelance editor account (same login door)
+      const { data: eRows } = await supabaseAdmin.rpc("verify_editor", {
+        _username: data.username,
+        _password: data.password,
+      });
+      const editor = Array.isArray(eRows) && eRows.length > 0 ? eRows[0] : null;
+
+      await supabaseAdmin.from("admin_login_events").insert({
+        username: data.username,
+        success: !!editor,
+        ip,
+        user_agent: userAgent,
+      });
+
+      if (!editor) return { ok: false as const };
+      if (editor.status !== "active") {
+        return { ok: false as const, suspended: true as const };
+      }
+
+      await supabaseAdmin
+        .from("editor_accounts")
+        .update({ last_login_at: new Date().toISOString() })
+        .eq("id", editor.id);
+
+      const { getEditorSession } = await import("./auth-sessions.server");
+      const eSession = await getEditorSession();
+      await eSession.update({
+        editorId: editor.id,
+        username: editor.username,
+        displayName: editor.display_name,
+        loggedInAt: Date.now(),
+      });
+
+      return { ok: true as const, role: "editor" as const, user: editor.username };
+    }
+
     await supabaseAdmin.from("admin_login_events").insert({
       username: data.username,
       success: !!match,
       ip,
       user_agent: userAgent,
     });
-
-    if (error || !match) {
-      return { ok: false as const };
-    }
 
     await supabaseAdmin
       .from("admins")
@@ -89,7 +122,7 @@ export const loginAdmin = createServerFn({ method: "POST" })
     const session = await useSession<AdminSessionData>(sessionConfig());
     await session.update({ user: match.username, loggedInAt: Date.now() });
 
-    return { ok: true as const, user: match.username };
+    return { ok: true as const, role: "admin" as const, user: match.username };
   });
 
 const profileSchema = z.object({

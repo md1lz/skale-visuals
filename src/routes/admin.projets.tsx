@@ -18,6 +18,7 @@ import {
   type ProjectStatusHistoryItem,
 } from "@/lib/admin-projects.functions";
 import { listClients, type Client } from "@/lib/admin-clients.functions";
+import { listActiveEditors, getProjectThread, postAdminComment } from "@/lib/admin-editors.functions";
 import { logAdminActivity } from "@/lib/admin-activity.functions";
 
 export const Route = createFileRoute("/admin/projets")({ component: AdminProjectsPage });
@@ -384,6 +385,7 @@ function Select<T extends string>({ value, onChange, options }: { value: T; onCh
 type FormState = {
   title: string;
   client_id: string;
+  editor_id: string;
   format: ProjectFormat;
   status: ProjectStatus;
   editor_name: string;
@@ -403,6 +405,7 @@ function toForm(p: Project | null): FormState {
   return {
     title: p?.title ?? "",
     client_id: p?.client_id ?? "",
+    editor_id: p?.editor_id ?? "",
     format: p?.format ?? "Court",
     status: p?.status ?? "En attente de validation client",
     editor_name: p?.editor_name ?? "",
@@ -433,7 +436,14 @@ function ProjectFormPanel({
   const [form, setForm] = useState<FormState>(() => toForm(initial));
   const [saving, setSaving] = useState(false);
   const [clientQuery, setClientQuery] = useState("");
+  const [editors, setEditors] = useState<{ id: string; display_name: string; username: string }[]>([]);
   const set = <K extends keyof FormState>(k: K, v: FormState[K]) => setForm((f) => ({ ...f, [k]: v }));
+
+  useEffect(() => {
+    listActiveEditors()
+      .then(setEditors)
+      .catch(() => {});
+  }, []);
 
   const rate = Number(form.editor_rate) || 0;
   const qty = Number(form.editor_quantity) || 0;
@@ -464,6 +474,7 @@ function ProjectFormPanel({
           id: initial?.id ?? null,
           title: form.title.trim(),
           client_id: form.client_id,
+          editor_id: form.editor_id || null,
           format: form.format,
           status: form.status,
           editor_name: form.editor_name,
@@ -570,8 +581,29 @@ function ProjectFormPanel({
         <div className="col-span-2 border-t border-white/10 pt-4">
           <h3 className="text-sm font-semibold text-white mb-3">Monteur & coût</h3>
           <div className="grid grid-cols-2 gap-4">
-            <Field label="Nom du monteur" className="col-span-2">
-              <TextInput value={form.editor_name} onChange={(v) => set("editor_name", v)} placeholder="Blase / prénom" />
+            <Field label="Monteur assigné" className="col-span-2">
+              <select
+                value={form.editor_id}
+                onChange={(e) => {
+                  const id = e.target.value;
+                  set("editor_id", id);
+                  const ed = editors.find((x) => x.id === id);
+                  set("editor_name", ed?.display_name ?? "");
+                }}
+                className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm outline-none focus:border-red-500/50"
+              >
+                <option value="">— Aucun monteur —</option>
+                {editors.map((e) => (
+                  <option key={e.id} value={e.id}>
+                    {e.display_name} (@{e.username})
+                  </option>
+                ))}
+              </select>
+              {editors.length === 0 && (
+                <p className="text-xs text-neutral-500 mt-1.5">
+                  Aucun compte monteur actif. Crée-en un dans « Monteurs ».
+                </p>
+              )}
             </Field>
             <Field label="Tarif">
               <div className="flex gap-2">
@@ -883,6 +915,11 @@ function ProjectDetailPanel({
 
         <div>
           <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Historique des statuts</h4>
+        </div>
+
+        <ProjectThread projectId={project.id} />
+
+        <div>
           {history.length === 0 ? (
             <p className="text-sm text-neutral-500">Aucun changement pour l'instant.</p>
           ) : (
@@ -926,5 +963,103 @@ function LinkOut({ href }: { href: string }) {
       <span className="truncate">{href}</span>
       <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
     </a>
+  );
+}
+function ProjectThread({ projectId }: { projectId: string }) {
+  const [data, setData] = useState<Awaited<ReturnType<typeof getProjectThread>> | null>(null);
+  const [message, setMessage] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const load = () => {
+    getProjectThread({ data: { id: projectId } })
+      .then(setData)
+      .catch(() => {});
+  };
+
+  useEffect(load, [projectId]);
+
+  const send = async () => {
+    if (!message.trim() || busy) return;
+    setBusy(true);
+    try {
+      await postAdminComment({ data: { project_id: projectId, content: message.trim() } });
+      setMessage("");
+      load();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const fmt = (iso: string) =>
+    new Date(iso).toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+  return (
+    <div className="space-y-5">
+      <div>
+        <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Versions déposées par le monteur</h4>
+        {!data || data.files.length === 0 ? (
+          <p className="text-sm text-neutral-500">Aucune version déposée.</p>
+        ) : (
+          <ul className="space-y-1.5">
+            {data.files.map((f) => (
+              <li key={f.id} className="rounded-lg bg-neutral-900/60 border border-white/5 px-3 py-2">
+                <p className="text-sm text-white">
+                  Version {f.version_number} — {fmt(f.created_at)}
+                </p>
+                <LinkOut href={f.file_url} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div>
+        <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Commentaires & retours</h4>
+        <div className="space-y-2 mb-2">
+          {!data || data.comments.length === 0 ? (
+            <p className="text-sm text-neutral-500">Aucun commentaire.</p>
+          ) : (
+            data.comments.map((c) => (
+              <div
+                key={c.id}
+                className={`rounded-xl px-3 py-2.5 border ${
+                  c.author_type === "admin" ? "bg-red-500/10 border-red-500/20" : "bg-white/[0.03] border-white/10"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 mb-1">
+                  <span className="text-xs font-medium text-white">{c.author_name}</span>
+                  <span className="text-[11px] text-neutral-500">{fmt(c.created_at)}</span>
+                </div>
+                <p className="text-sm text-neutral-200 whitespace-pre-wrap">{c.content}</p>
+              </div>
+            ))
+          )}
+        </div>
+        <div className="flex gap-2">
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && send()}
+            placeholder="Laisser un retour au monteur…"
+            className="flex-1 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm outline-none focus:border-red-500/50"
+          />
+          <button
+            onClick={send}
+            disabled={busy}
+            className="rounded-lg bg-red-600 hover:bg-red-500 px-3 py-2 text-sm text-white transition disabled:opacity-60"
+          >
+            Envoyer
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
