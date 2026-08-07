@@ -1213,7 +1213,7 @@ function ProjectThread({ projectId }: { projectId: string }) {
   return (
     <div className="space-y-5">
       <div>
-        <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Commentaires & retours</h4>
+        <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">COMMENTAIRES & RETOURS SUR LE PROJET</h4>
         <div className="space-y-2 mb-2">
           {!data || data.comments.length === 0 ? (
             <p className="text-sm text-neutral-500">Aucun commentaire.</p>
