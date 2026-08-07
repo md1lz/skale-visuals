@@ -1,0 +1,2 @@
+ALTER TABLE public.project_videos DROP CONSTRAINT IF EXISTS project_videos_status_check;
+ALTER TABLE public.project_videos ADD CONSTRAINT project_videos_status_check CHECK (status = ANY (ARRAY['À faire'::text, 'En cours'::text, 'En révision'::text, 'Approuvée'::text, 'Corrections à faire'::text, 'Livrée'::text]));
