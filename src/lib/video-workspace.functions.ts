@@ -60,7 +60,7 @@ export const getProjectWorkspace = createServerFn({ method: "GET" })
     ]);
 
     return {
-      viewer: { kind: viewer.kind, name: viewer.name },
+      viewer: { kind: viewer.kind, id: viewer.id, name: viewer.name },
       project: {
         id: project.id,
         title: project.title,
