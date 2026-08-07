@@ -244,8 +244,14 @@ export function ProjectVideosBoard({
   }
 
   return (
-    <div className="flex gap-5">
-      <div className={openId ? "w-[30%] shrink-0" : "w-full"}>
+    <div className={`flex gap-5 ${openId ? "h-[calc(100vh-230px)] min-h-[520px]" : ""}`}>
+      <div
+        className={
+          openId
+            ? "w-[30%] shrink-0 min-h-0 overflow-y-auto pr-1.5 [scrollbar-width:thin]"
+            : "w-full"
+        }
+      >
         <div
           className={`grid gap-3 ${
             openId ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
@@ -299,7 +305,7 @@ export function ProjectVideosBoard({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.22 }}
-            className="min-w-0 flex-1"
+            className="min-h-0 min-w-0 flex-1"
           >
             <VideoDetail
               videoId={openId}
@@ -495,6 +501,8 @@ function VideoDetail({
   const [editingVersion, setEditingVersion] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
   const [pickerFor, setPickerFor] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [loadingOlder, setLoadingOlder] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = useQuery({
@@ -537,6 +545,21 @@ function VideoDetail({
         .map((c) => c.id),
     );
   }, [q.data, role]);
+
+  useEffect(() => {
+    setVisibleCount(10);
+    setLoadingOlder(false);
+  }, [videoId]);
+
+  function loadOlder() {
+    if (loadingOlder) return;
+    setLoadingOlder(true);
+    const delay = 1000 + Math.random() * 1000;
+    setTimeout(() => {
+      setVisibleCount((c) => c + 10);
+      setLoadingOlder(false);
+    }, delay);
+  }
 
   useEffect(() => {
     if (unreadIds.size === 0) return;
@@ -886,11 +909,28 @@ function VideoDetail({
 
         <section>
           <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Commentaires</h4>
-          <div className="mb-3 space-y-3">
+          <div className="mb-3 max-h-[48vh] space-y-3 overflow-y-auto pr-1.5 [scrollbar-width:thin]">
             {(q.data?.comments ?? []).length === 0 ? (
               <p className="text-sm text-neutral-500">Aucun commentaire sur cette vidéo.</p>
             ) : (
-              (q.data?.comments ?? []).map((c) => {
+              <>
+                {(q.data?.comments ?? []).length > visibleCount && (
+                  <div className="flex justify-center pb-1">
+                    {loadingOlder ? (
+                      <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-neutral-400">
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Chargement des anciens messages…
+                      </span>
+                    ) : (
+                      <button
+                        onClick={loadOlder}
+                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-neutral-300 transition hover:bg-white/10 hover:text-white"
+                      >
+                        Charger les anciens messages
+                      </button>
+                    )}
+                  </div>
+                )}
+                {(q.data?.comments ?? []).slice(-visibleCount).map((c) => {
                 const mine = me
                   ? c.author_type === me.kind && (c.author_id ? c.author_id === me.id : true)
                   : c.author_type === role;
@@ -994,7 +1034,8 @@ function VideoDetail({
                     </div>
                   </div>
                 );
-              })
+                })}
+              </>
             )}
           </div>
           <div className="flex gap-2">
