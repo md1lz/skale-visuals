@@ -948,6 +948,45 @@ function ProjectDetailPanel({
   );
 }
 
+function ProjectVideosSection({
+  projectId,
+  status,
+  onChanged,
+}: {
+  projectId: string;
+  status: ProjectStatus;
+  onChanged: () => void;
+}) {
+  const q = useWorkspace(projectId);
+  const [busy, setBusy] = useState(false);
+  const videos = q.data?.videos ?? [];
+  const approved = videos.filter((v) => v.status === "Approuvée").length;
+
+  const validate = async () => {
+    setBusy(true);
+    try {
+      await validateProjectRevision({ data: { project_id: projectId } });
+      toast.success("Révision validée — Montage terminé");
+      onChanged();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h4 className="text-xs uppercase tracking-wider text-neutral-500">Vidéos du projet</h4>
+        {status === "En révision" && <ValidateRevisionButton onClick={validate} busy={busy} />}
+      </div>
+      <ProjectProgress approved={approved} total={videos.length} />
+      <ProjectVideosBoard projectId={projectId} role="admin" onRefresh={onChanged} />
+    </div>
+  );
+}
+
 function Info({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg bg-neutral-900/60 border border-white/10 px-3 py-2">
