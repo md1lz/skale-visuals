@@ -4,9 +4,28 @@ export type Viewer =
 
 export async function resolveViewer(): Promise<Viewer> {
   const { readEditorSession, requireAdminUser } = await import("./auth-sessions.server");
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+  // An admin session always wins over a leftover editor cookie in the same browser.
+  let adminUsername: string | null = null;
+  try {
+    adminUsername = await requireAdminUser();
+  } catch {
+    adminUsername = null;
+  }
+  if (adminUsername) {
+    const { data: admin } = await supabaseAdmin
+      .from("admins")
+      .select("id, username, first_name, last_name")
+      .eq("username", adminUsername)
+      .maybeSingle();
+    const name =
+      [admin?.first_name, admin?.last_name].filter(Boolean).join(" ").trim() || adminUsername;
+    return { kind: "admin", id: admin?.id ?? adminUsername, name, username: adminUsername };
+  }
+
   const sess = await readEditorSession();
   if (sess) {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data } = await supabaseAdmin
       .from("editor_accounts")
       .select("id, username, display_name, status")
@@ -16,8 +35,7 @@ export async function resolveViewer(): Promise<Viewer> {
       return { kind: "editor", id: data.id, name: data.display_name, username: data.username };
     }
   }
-  const user = await requireAdminUser();
-  return { kind: "admin", id: user, name: "Admin Skale", username: user };
+  throw new Error("Unauthorized");
 }
 
 /** Ensures the viewer may access this project; returns the project row. */

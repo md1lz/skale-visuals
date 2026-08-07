@@ -832,7 +832,9 @@ function VideoDetail({
               <p className="text-sm text-neutral-500">Aucun commentaire sur cette vidéo.</p>
             ) : (
               (q.data?.comments ?? []).map((c) => {
-                const mine = c.author_type === role;
+                const mine = me
+                  ? c.author_type === me.kind && (c.author_id ? c.author_id === me.id : true)
+                  : c.author_type === role;
                 const mineReaction = reactions.find(
                   (r) => r.comment_id === c.id && me && r.author_name === me.name,
                 );
@@ -851,7 +853,9 @@ function VideoDetail({
                         } ${unreadIds.has(c.id) ? "border-l-2 border-l-red-500" : ""}`}
                       >
                         <div className="mb-0.5 flex items-center gap-2">
-                          <span className="text-xs font-medium text-white">{c.author_name}</span>
+                          <span className="text-xs font-medium text-white">
+                            {mine ? "Moi" : c.author_name}
+                          </span>
                           <span className="text-[11px] text-neutral-500">{fmtDateTimeFR(c.created_at)}</span>
                         </div>
                         <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
