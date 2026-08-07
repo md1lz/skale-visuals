@@ -1,8 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink } from "lucide-react";
-import { ProjectVideosBoard, ValidateRevisionButton, useWorkspace } from "@/components/VideoWorkspace";
+import { Plus, Search, Loader2, X, Archive, ArchiveRestore, Trash2, Link as LinkIcon, ExternalLink, ArrowLeft, ChevronDown, FileText, Inbox, Pencil } from "lucide-react";
+import { ProjectVideosBoard, ValidateRevisionButton, RushLink, useWorkspace } from "@/components/VideoWorkspace";
 import { ProjectProgress } from "@/components/ProjectProgress";
 import { validateProjectRevision } from "@/lib/video-workspace.functions";
 import { toast } from "sonner";
@@ -761,6 +761,11 @@ function ProjectDetailPanel({
   const [history, setHistory] = useState<ProjectStatusHistoryItem[]>([]);
   const [confirmDel, setConfirmDel] = useState(false);
   const [busy, setBusy] = useState(false);
+  const [briefOpen, setBriefOpen] = useState(false);
+
+  const q = useWorkspace(project.id);
+  const videos = q.data?.videos ?? [];
+  const approved = videos.filter((v) => v.status === "Approuvée").length;
 
   useEffect(() => {
     getProjectHistory({ data: { id: project.id } })
@@ -796,176 +801,10 @@ function ProjectDetailPanel({
     }
   };
 
-  const dl = deadlineStyle(project);
-
-  return (
-    <SidePanel
-      title={project.title}
-      onClose={onClose}
-      footer={
-        <>
-          {confirmDel ? (
-            <>
-              <button onClick={() => setConfirmDel(false)} className="rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-white/5">
-                Annuler
-              </button>
-              <button
-                onClick={doDelete}
-                disabled={busy}
-                className="inline-flex items-center gap-2 rounded-lg bg-red-700 hover:bg-red-600 text-white text-sm px-4 py-2"
-              >
-                {busy && <Loader2 className="h-4 w-4 animate-spin" />} Confirmer suppression
-              </button>
-            </>
-          ) : (
-            <>
-              <button onClick={() => setConfirmDel(true)} className="rounded-lg px-3 py-2 text-sm text-red-400 hover:bg-red-500/10">
-                Supprimer
-              </button>
-              <button onClick={doArchive} disabled={busy} className="rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-white/5 inline-flex items-center gap-2">
-                {project.archived_at ? <><ArchiveRestore className="h-4 w-4" />Restaurer</> : <><Archive className="h-4 w-4" />Archiver</>}
-              </button>
-              <button onClick={onEdit} className="inline-flex items-center gap-2 rounded-lg bg-red-600 hover:bg-red-500 text-white text-sm px-4 py-2">
-                Modifier
-              </button>
-            </>
-          )}
-        </>
-      }
-    >
-      <div className="space-y-5">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${statusBadge[project.status]}`}>
-            {project.status}
-          </span>
-          <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${formatBadge[project.format]}`}>
-            {project.format}
-          </span>
-          <span className={`text-sm ${dl.className}`}>Deadline : {dl.label}</span>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 text-sm">
-          <Info label="Client" value={client?.nom_complet ?? "—"} />
-          <Info label="Monteur" value={project.editor_name ?? "—"} />
-          <Info
-            label="Tarif"
-            value={
-              project.editor_rate != null
-                ? `${project.editor_rate} € ${project.editor_rate_type === "per_video" ? "/ vidéo" : "/ minute"}`
-                : "—"
-            }
-          />
-          <Info label="Quantité" value={project.editor_quantity != null ? String(project.editor_quantity) : "—"} />
-          <Info label="Coût monteur" value={fmtEuro(project.editor_total_cost)} />
-          <Info label="Facturé (HT)" value={fmtEuro(project.amount_invoiced_ht)} />
-        </div>
-
-        <div className="rounded-xl border border-white/10 bg-neutral-900/60 p-4 space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-neutral-400">Bénéfice brut HT</span>
-            <span className="tabular-nums">{fmtEuro(project.gross_profit)}</span>
-          </div>
-          <div className="flex items-center justify-between text-sm">
-            <span className="text-neutral-400">Charges sociales (22%)</span>
-            <span className="tabular-nums text-neutral-300">−{fmtEuro(project.social_charges)}</span>
-          </div>
-          <div className="flex items-center justify-between pt-2 border-t border-white/10">
-            <span className="text-sm font-medium text-neutral-300">Bénéfice net</span>
-            <span className={`text-2xl font-bold tabular-nums ${project.net_profit < 0 ? "text-red-400" : "text-emerald-400"}`}>
-              {fmtEuro(project.net_profit)}
-            </span>
-          </div>
-        </div>
-
-        {project.brief && (
-          <div>
-            <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Brief & instructions</h4>
-            <p className="whitespace-pre-wrap text-sm text-neutral-200 rounded-lg bg-neutral-900/60 border border-white/10 p-3">
-              {project.brief}
-            </p>
-          </div>
-        )}
-
-        {(project.rushs_received || project.delivery_link || project.revision_link) && (
-          <div>
-            <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Fichiers</h4>
-            <div className="space-y-2">
-              {project.rushs_received && project.rushs_links.length > 0 && (
-                <div className="text-sm">
-                  <div className="text-neutral-400 mb-1">Rushs</div>
-                  <ul className="space-y-1">
-                    {project.rushs_links.map((l, i) => (
-                      <li key={i}>
-                        <LinkOut href={l} />
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-              {project.delivery_link && (
-                <div className="text-sm">
-                  <div className="text-neutral-400 mb-1">Livraison</div>
-                  <LinkOut href={project.delivery_link} />
-                </div>
-              )}
-              {project.revision_link && (
-                <div className="text-sm">
-                  <div className="text-neutral-400 mb-1">Frame.io</div>
-                  <LinkOut href={project.revision_link} />
-                </div>
-              )}
-            </div>
-          </div>
-        )}
-
-        <div>
-          <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Historique des statuts</h4>
-        </div>
-
-        <ProjectVideosSection projectId={project.id} status={project.status} onChanged={onChanged} />
-
-        <ProjectThread projectId={project.id} />
-
-        <div>
-          {history.length === 0 ? (
-            <p className="text-sm text-neutral-500">Aucun changement pour l'instant.</p>
-          ) : (
-            <ul className="space-y-1.5">
-              {history.map((h) => (
-                <li key={h.id} className="flex items-center justify-between text-sm rounded-lg bg-neutral-900/60 border border-white/5 px-3 py-2">
-                  <span className="flex items-center gap-2">
-                    <span>{statusIcon[h.status]}</span>
-                    <span className="font-medium">{h.status}</span>
-                  </span>
-                  <span className="text-xs text-neutral-500">{fmtDateTimeFR(h.changed_at)}</span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      </div>
-    </SidePanel>
-  );
-}
-
-function ProjectVideosSection({
-  projectId,
-  status,
-  onChanged,
-}: {
-  projectId: string;
-  status: ProjectStatus;
-  onChanged: () => void;
-}) {
-  const q = useWorkspace(projectId);
-  const [busy, setBusy] = useState(false);
-  const videos = q.data?.videos ?? [];
-  const approved = videos.filter((v) => v.status === "Approuvée").length;
-
-  const validate = async () => {
+  const doValidate = async () => {
     setBusy(true);
     try {
-      await validateProjectRevision({ data: { project_id: projectId } });
+      await validateProjectRevision({ data: { project_id: project.id } });
       toast.success("Révision validée — Montage terminé");
       onChanged();
     } catch (e) {
@@ -975,15 +814,231 @@ function ProjectVideosSection({
     }
   };
 
+  const dl = deadlineStyle(project);
+
   return (
-    <div className="space-y-3">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <h4 className="text-xs uppercase tracking-wider text-neutral-500">Vidéos du projet</h4>
-        {status === "En révision" && <ValidateRevisionButton onClick={validate} busy={busy} />}
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.25 }}
+      className="fixed inset-0 z-[200] flex flex-col bg-neutral-950"
+    >
+      <div className="shrink-0 border-b border-white/10 bg-neutral-950/95 px-6 py-3 backdrop-blur">
+        <div className="flex flex-wrap items-center gap-4">
+          <button
+            onClick={onClose}
+            className="inline-flex items-center gap-1.5 text-sm text-neutral-400 transition hover:text-white"
+          >
+            <ArrowLeft className="h-4 w-4" /> Projets
+          </button>
+          <div className="h-6 w-px bg-white/10" />
+          <h1 className="truncate text-lg font-semibold text-white">{project.title}</h1>
+          <span className={`rounded-full border px-2 py-0.5 text-[11px] ${statusBadge[project.status]}`}>
+            {project.status}
+          </span>
+          <span className={`rounded-full border px-2 py-0.5 text-[11px] ${formatBadge[project.format]}`}>
+            {project.format}
+          </span>
+          <span className={`text-xs ${dl.className}`}>Deadline {dl.label}</span>
+
+          <div className="ml-auto flex flex-wrap items-center gap-3">
+            <ProjectProgress approved={approved} total={videos.length} />
+            {project.status === "En révision" && <ValidateRevisionButton onClick={doValidate} busy={busy} />}
+            <button
+              onClick={onEdit}
+              className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
+            >
+              <Pencil className="h-4 w-4" /> Modifier
+            </button>
+            <button
+              onClick={doArchive}
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-neutral-300 transition hover:bg-white/5"
+            >
+              {project.archived_at ? (
+                <>
+                  <ArchiveRestore className="h-4 w-4" />
+                  Restaurer
+                </>
+              ) : (
+                <>
+                  <Archive className="h-4 w-4" />
+                  Archiver
+                </>
+              )}
+            </button>
+            {confirmDel ? (
+              <>
+                <button
+                  onClick={() => setConfirmDel(false)}
+                  className="rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-white/5"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={doDelete}
+                  disabled={busy}
+                  className="inline-flex items-center gap-2 rounded-lg bg-red-700 px-3 py-2 text-sm text-white hover:bg-red-600"
+                >
+                  {busy && <Loader2 className="h-4 w-4 animate-spin" />} Confirmer
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => setConfirmDel(true)}
+                className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
+              >
+                <Trash2 className="h-4 w-4" /> Supprimer
+              </button>
+            )}
+          </div>
+        </div>
       </div>
-      <ProjectProgress approved={approved} total={videos.length} />
-      <ProjectVideosBoard projectId={projectId} role="admin" onRefresh={onChanged} />
-    </div>
+
+      <div className="min-h-0 flex-1 overflow-y-auto p-6">
+        <div className="mx-auto max-w-[1600px] space-y-5">
+          <section className="rounded-2xl border border-white/10 bg-neutral-900/40">
+            <button
+              onClick={() => setBriefOpen((v) => !v)}
+              className="flex w-full items-center gap-2 px-5 py-3.5 text-left"
+            >
+              <FileText className="h-4 w-4 text-red-400" />
+              <span className="text-sm font-semibold uppercase tracking-wider text-white">
+                Brief & Rushs du projet
+              </span>
+              <ChevronDown
+                className={`ml-auto h-4 w-4 text-neutral-400 transition-transform duration-300 ${
+                  briefOpen ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+            <AnimatePresence initial={false}>
+              {briefOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25 }}
+                  className="overflow-hidden"
+                >
+                  <div className="space-y-4 px-5 pb-5">
+                    <div className="whitespace-pre-wrap rounded-xl border border-white/5 bg-neutral-950/60 px-4 py-3 text-sm leading-relaxed text-neutral-200">
+                      {project.brief?.trim() || "Aucun brief pour l'instant."}
+                    </div>
+                    <div>
+                      <div className="mb-2 flex items-center gap-2">
+                        <Inbox className="h-4 w-4 text-red-400" />
+                        <span className="text-xs font-semibold uppercase tracking-wider text-neutral-400">
+                          Rushs
+                        </span>
+                      </div>
+                      {project.rushs_links.length === 0 ? (
+                        <p className="text-sm text-neutral-500">Aucun rush déposé.</p>
+                      ) : (
+                        <ul className="space-y-1.5">
+                          {project.rushs_links.map((l, i) => (
+                            <li key={i} className="rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2">
+                              <RushLink href={l} />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                    {(project.delivery_link || project.revision_link) && (
+                      <div className="grid gap-2 sm:grid-cols-2">
+                        {project.delivery_link && (
+                          <div className="rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2">
+                            <div className="mb-1 text-[10px] uppercase tracking-wider text-neutral-500">Livraison</div>
+                            <LinkOut href={project.delivery_link} />
+                          </div>
+                        )}
+                        {project.revision_link && (
+                          <div className="rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2">
+                            <div className="mb-1 text-[10px] uppercase tracking-wider text-neutral-500">Frame.io</div>
+                            <LinkOut href={project.revision_link} />
+                          </div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </section>
+
+          <section className="grid gap-4 lg:grid-cols-3">
+            <div className="grid grid-cols-2 gap-3 text-sm lg:col-span-2">
+              <Info label="Client" value={client?.nom_complet ?? "—"} />
+              <Info label="Monteur" value={project.editor_name ?? "—"} />
+              <Info
+                label="Tarif"
+                value={
+                  project.editor_rate != null
+                    ? `${project.editor_rate} € ${project.editor_rate_type === "per_video" ? "/ vidéo" : "/ minute"}`
+                    : "—"
+                }
+              />
+              <Info label="Quantité" value={project.editor_quantity != null ? String(project.editor_quantity) : "—"} />
+              <Info label="Coût monteur" value={fmtEuro(project.editor_total_cost)} />
+              <Info label="Facturé (HT)" value={fmtEuro(project.amount_invoiced_ht)} />
+            </div>
+            <div className="space-y-2 rounded-xl border border-white/10 bg-neutral-900/60 p-4">
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-neutral-400">Bénéfice brut HT</span>
+                <span className="tabular-nums">{fmtEuro(project.gross_profit)}</span>
+              </div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-neutral-400">Charges sociales (22%)</span>
+                <span className="tabular-nums text-neutral-300">−{fmtEuro(project.social_charges)}</span>
+              </div>
+              <div className="flex items-center justify-between border-t border-white/10 pt-2">
+                <span className="text-sm font-medium text-neutral-300">Bénéfice net</span>
+                <span
+                  className={`text-2xl font-bold tabular-nums ${
+                    project.net_profit < 0 ? "text-red-400" : "text-emerald-400"
+                  }`}
+                >
+                  {fmtEuro(project.net_profit)}
+                </span>
+              </div>
+            </div>
+          </section>
+
+          {q.isLoading ? (
+            <div className="flex items-center gap-2 text-sm text-neutral-400">
+              <Loader2 className="h-4 w-4 animate-spin" /> Chargement du projet…
+            </div>
+          ) : (
+            <ProjectVideosBoard projectId={project.id} role="admin" onRefresh={onChanged} />
+          )}
+
+          <ProjectThread projectId={project.id} />
+
+          <section className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5">
+            <h4 className="mb-3 text-xs uppercase tracking-wider text-neutral-500">Historique des statuts</h4>
+            {history.length === 0 ? (
+              <p className="text-sm text-neutral-500">Aucun changement pour l'instant.</p>
+            ) : (
+              <ul className="space-y-1.5">
+                {history.map((h) => (
+                  <li
+                    key={h.id}
+                    className="flex items-center justify-between rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2 text-sm"
+                  >
+                    <span className="flex items-center gap-2">
+                      <span>{statusIcon[h.status]}</span>
+                      <span className="font-medium">{h.status}</span>
+                    </span>
+                    <span className="text-xs text-neutral-500">{fmtDateTimeFR(h.changed_at)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      </div>
+    </motion.div>
   );
 }
 
