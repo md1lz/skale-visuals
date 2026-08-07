@@ -45,7 +45,9 @@ export const getProjectWorkspace = createServerFn({ method: "GET" })
       ids.length
         ? supabaseAdmin
             .from("video_versions")
-            .select("id, project_video_id, version_number, file_url, file_name, created_at")
+            .select(
+              "id, project_video_id, version_number, file_url, file_name, title, description, additional_links, created_at",
+            )
             .in("project_video_id", ids)
             .order("version_number", { ascending: false })
         : Promise.resolve({ data: [] as never[] }),
@@ -63,6 +65,8 @@ export const getProjectWorkspace = createServerFn({ method: "GET" })
         id: project.id,
         title: project.title,
         status: project.status as string,
+        status_override: project.status_override,
+        format: project.format as string,
         deadline: project.deadline,
         brief: project.brief,
         rushs_links: project.rushs_links ?? [],
