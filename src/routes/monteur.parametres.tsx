@@ -1,11 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Palette, ImageIcon, KeyRound, Upload, Trash2, Check, Eye, EyeOff } from "lucide-react";
-import { toast } from "sonner";
+import { Palette, ImageIcon, Upload, Trash2, Check } from "lucide-react";
 import { ADMIN_THEMES, useAdminPrefs, type AdminTheme } from "@/components/admin-prefs";
-import { changeEditorCredentialsFn } from "@/lib/editor.functions";
 
 export const Route = createFileRoute("/monteur/parametres")({ component: EditorSettingsPage });
 
@@ -46,11 +43,10 @@ function EditorSettingsPage() {
     <div className="px-8 pt-10 pb-12 max-w-5xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Paramètres</h1>
-        <p className="text-sm text-neutral-400 mt-1">Personnalisation et sécurité de ton compte.</p>
+        <p className="text-sm text-neutral-400 mt-1">Personnalisation de ton espace.</p>
       </div>
       <ThemeSection />
       <BackgroundSection />
-      <CredentialsSection />
     </div>
   );
 }
@@ -147,103 +143,6 @@ function BackgroundSection() {
           />
         </div>
       </div>
-    </Section>
-  );
-}
-
-function PasswordInput({
-  value,
-  onChange,
-  placeholder,
-}: {
-  value: string;
-  onChange: (v: string) => void;
-  placeholder?: string;
-}) {
-  const [show, setShow] = useState(false);
-  return (
-    <div className="relative">
-      <input
-        type={show ? "text" : "password"}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder={placeholder}
-        className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 pr-9 text-sm text-white focus:outline-none focus:border-red-500"
-      />
-      <button
-        type="button"
-        onClick={() => setShow((s) => !s)}
-        className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
-        tabIndex={-1}
-      >
-        {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-      </button>
-    </div>
-  );
-}
-
-function CredentialsSection() {
-  const save = useServerFn(changeEditorCredentialsFn);
-  const [current, setCurrent] = useState("");
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [busy, setBusy] = useState(false);
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    if (busy) return;
-    setBusy(true);
-    try {
-      await save({
-        data: {
-          currentPassword: current,
-          newUsername: username.trim() || undefined,
-          newPassword: password || undefined,
-        },
-      });
-      setCurrent("");
-      setUsername("");
-      setPassword("");
-      toast.success("Identifiants mis à jour");
-    } catch (err) {
-      toast.error(err instanceof Error ? err.message : "Erreur");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  return (
-    <Section
-      icon={KeyRound}
-      title="Mes identifiants"
-      description="Modifie ton identifiant de connexion ou ton mot de passe."
-    >
-      <form onSubmit={submit} className="space-y-3 max-w-md">
-        <label className="block">
-          <span className="block text-xs text-neutral-400 mb-1.5">Mot de passe actuel</span>
-          <PasswordInput value={current} onChange={setCurrent} />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-neutral-400 mb-1.5">Nouvel identifiant (optionnel)</span>
-          <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            placeholder="sans espaces"
-            className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500"
-          />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-neutral-400 mb-1.5">Nouveau mot de passe (optionnel)</span>
-          <PasswordInput value={password} onChange={setPassword} placeholder="8 caractères minimum" />
-        </label>
-        <button
-          type="submit"
-          disabled={busy || !current}
-          className="rounded-lg bg-red-600 hover:bg-red-500 px-4 py-2 text-sm font-medium text-white transition disabled:opacity-60"
-        >
-          {busy ? "Enregistrement…" : "Enregistrer"}
-        </button>
-      </form>
     </Section>
   );
 }

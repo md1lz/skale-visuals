@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import {
@@ -22,7 +22,7 @@ import {
   listEditors,
   createEditorAccount,
   updateEditorAccount,
-  resetEditorPassword,
+  updateEditorCredentials,
   deleteEditorAccount,
   getEditorDetail,
   generateEditorPassword,
@@ -318,6 +318,108 @@ function CreateEditorModal({ onClose, onCreated }: { onClose: () => void; onCrea
   );
 }
 
+function CredentialsEditor({
+  id,
+  username,
+  password,
+  onSaved,
+}: {
+  id: string;
+  username: string;
+  password: string;
+  onSaved: () => void;
+}) {
+  const save = useServerFn(updateEditorCredentials);
+  const gen = useServerFn(generateEditorPassword);
+  const [u, setU] = useState(username);
+  const [p, setP] = useState(password);
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setU(username);
+    setP(password);
+  }, [username, password]);
+
+  const dirty = u.trim().toLowerCase() !== username || p !== password;
+
+  async function submit() {
+    if (busy) return;
+    setBusy(true);
+    try {
+      await save({
+        data: {
+          id,
+          username: u.trim().toLowerCase() !== username ? u.trim() : undefined,
+          password: p && p !== password ? p : undefined,
+        },
+      });
+      toast.success("Identifiants mis à jour");
+      onSaved();
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  return (
+    <div className="space-y-3">
+      <label className="block">
+        <span className="block text-xs text-neutral-400 mb-1.5">Identifiant de connexion</span>
+        <input
+          value={u}
+          onChange={(e) => setU(e.target.value.replace(/\s+/g, ""))}
+          className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500"
+        />
+      </label>
+      <div>
+        <span className="block text-xs text-neutral-400 mb-1.5">Mot de passe</span>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <input
+              value={p}
+              onChange={(e) => setP(e.target.value)}
+              placeholder="Aucun mot de passe enregistré — générez-en un"
+              className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 pr-10 text-sm text-white font-mono focus:outline-none focus:border-red-500"
+            />
+            <button
+              type="button"
+              onClick={() => {
+                navigator.clipboard?.writeText(p);
+                toast.success("Copié");
+              }}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white"
+            >
+              <Copy className="h-4 w-4" />
+            </button>
+          </div>
+          <button
+            type="button"
+            onClick={async () => {
+              const r = await gen();
+              setP(r.password);
+            }}
+            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-2 text-xs text-neutral-200 hover:bg-white/5 transition"
+          >
+            <RefreshCw className="h-3.5 w-3.5" /> Générer
+          </button>
+        </div>
+        <p className="text-[11px] text-neutral-500 mt-1.5">
+          Visible en permanence. Le monteur ne peut pas modifier ses identifiants lui-même.
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={submit}
+        disabled={busy || !dirty || u.trim().length < 3 || (p !== password && p.length < 8)}
+        className="rounded-lg bg-red-600 hover:bg-red-500 px-4 py-2 text-xs font-medium text-white transition disabled:opacity-50"
+      >
+        {busy ? "Enregistrement…" : "Enregistrer les identifiants"}
+      </button>
+    </div>
+  );
+}
+
 function EditorDetailPanel({
   id,
   onClose,
@@ -328,9 +430,6 @@ function EditorDetailPanel({
   onChanged: () => void;
 }) {
   const fetchDetail = useServerFn(getEditorDetail);
-  const resetPw = useServerFn(resetEditorPassword);
-  const [newPassword, setNewPassword] = useState<string | null>(null);
-
   const q = useQuery({ queryKey: ["admin", "editor", id], queryFn: () => fetchDetail({ data: { id } }) });
   const d = q.data;
 
@@ -387,19 +486,16 @@ function EditorDetailPanel({
                 {d?.account.status === "active" ? "Suspendre" : "Réactiver"}
               </button>
             </div>
-            {newPassword ? (
-              <PasswordField value={newPassword} />
-            ) : (
-              <button
-                onClick={async () => {
-                  const r = await resetPw({ data: { id } });
-                  setNewPassword(r.password);
-                  toast.success("Nouveau mot de passe généré");
+            {d && (
+              <CredentialsEditor
+                id={id}
+                username={d.account.username}
+                password={d.account.password_plain ?? ""}
+                onSaved={() => {
+                  q.refetch();
+                  onChanged();
                 }}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs text-neutral-200 hover:bg-white/5 transition"
-              >
-                <RefreshCw className="h-3.5 w-3.5" /> Régénérer le mot de passe
-              </button>
+              />
             )}
           </section>
 

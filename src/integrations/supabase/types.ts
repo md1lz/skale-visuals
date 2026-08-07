@@ -184,6 +184,7 @@ export type Database = {
           id: string
           last_login_at: string | null
           password_hash: string
+          password_plain: string | null
           status: string
           updated_at: string
           username: string
@@ -195,6 +196,7 @@ export type Database = {
           id?: string
           last_login_at?: string | null
           password_hash: string
+          password_plain?: string | null
           status?: string
           updated_at?: string
           username: string
@@ -206,6 +208,7 @@ export type Database = {
           id?: string
           last_login_at?: string | null
           password_hash?: string
+          password_plain?: string | null
           status?: string
           updated_at?: string
           username?: string
