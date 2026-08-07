@@ -96,16 +96,22 @@ type Ctx = {
   setTheme: (t: AdminTheme) => void;
   background: string | null;
   setBackground: (b: string | null) => void;
+  mode: PanelMode;
+  setMode: (m: PanelMode) => void;
 };
+
+export type PanelMode = "dark" | "light";
 
 const AdminPrefsCtx = createContext<Ctx | null>(null);
 
 const THEME_KEY = "skale.admin.theme";
 const BG_KEY = "skale.admin.bg";
+const MODE_KEY = "skale.admin.mode";
 
 export function AdminPrefsProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<AdminTheme>("red");
   const [background, setBackgroundState] = useState<string | null>(null);
+  const [mode, setModeState] = useState<PanelMode>("dark");
 
   useEffect(() => {
     try {
@@ -113,6 +119,8 @@ export function AdminPrefsProvider({ children }: { children: ReactNode }) {
       if (t) setThemeState(t);
       const b = localStorage.getItem(BG_KEY);
       if (b) setBackgroundState(b);
+      const m = localStorage.getItem(MODE_KEY) as PanelMode | null;
+      if (m === "light" || m === "dark") setModeState(m);
     } catch {}
   }, []);
 
@@ -127,8 +135,15 @@ export function AdminPrefsProvider({ children }: { children: ReactNode }) {
       else localStorage.removeItem(BG_KEY);
     } catch {}
   };
+  const setMode = (m: PanelMode) => {
+    setModeState(m);
+    try { localStorage.setItem(MODE_KEY, m); } catch {}
+  };
 
-  const value = useMemo(() => ({ theme, setTheme, background, setBackground }), [theme, background]);
+  const value = useMemo(
+    () => ({ theme, setTheme, background, setBackground, mode, setMode }),
+    [theme, background, mode],
+  );
 
   return <AdminPrefsCtx.Provider value={value}>{children}</AdminPrefsCtx.Provider>;
 }
@@ -140,7 +155,7 @@ export function useAdminPrefs() {
 }
 
 export function ThemeStyleInjector() {
-  const { theme } = useAdminPrefs();
+  const { theme, mode } = useAdminPrefs();
   const shades = (ADMIN_THEMES.find((t) => t.id === theme) ?? ADMIN_THEMES[0]).shades;
   // Override Tailwind red-* utilities used across the admin UI, scoped to .admin-themed.
   const css = `
@@ -163,6 +178,40 @@ export function ThemeStyleInjector() {
 .admin-themed [stroke="#ef4444"] { stroke: ${shades.c500} !important; }
 .admin-themed [fill="#ef4444"] { fill: ${shades.c500} !important; }
 .admin-themed [stop-color="#ef4444"] { stop-color: ${shades.c500} !important; }
-`;
+${mode === "light" ? LIGHT_CSS : ""}`;
   return <style dangerouslySetInnerHTML={{ __html: css }} />;
 }
+
+const LIGHT_CSS = `
+.admin-themed.mode-light { color-scheme: light; }
+.admin-themed.mode-light, .admin-themed.mode-light .bg-neutral-950 { background-color: #f6f6f7 !important; }
+.admin-themed.mode-light .bg-neutral-950\\/95,
+.admin-themed.mode-light .bg-neutral-950\\/60,
+.admin-themed.mode-light .bg-neutral-950\\/70,
+.admin-themed.mode-light .bg-neutral-950\\/50 { background-color: #ffffff !important; }
+.admin-themed.mode-light .bg-neutral-900,
+.admin-themed.mode-light .bg-neutral-900\\/40,
+.admin-themed.mode-light .bg-neutral-900\\/50,
+.admin-themed.mode-light .bg-neutral-900\\/60 { background-color: #ffffff !important; }
+.admin-themed.mode-light .bg-white\\/5,
+.admin-themed.mode-light .bg-white\\/\\[0\\.04\\],
+.admin-themed.mode-light .bg-white\\/\\[0\\.03\\] { background-color: rgba(0,0,0,0.04) !important; }
+.admin-themed.mode-light .hover\\:bg-white\\/5:hover,
+.admin-themed.mode-light .hover\\:bg-white\\/10:hover { background-color: rgba(0,0,0,0.06) !important; }
+.admin-themed.mode-light .text-white { color: #111214 !important; }
+.admin-themed.mode-light .text-neutral-200,
+.admin-themed.mode-light .text-neutral-300 { color: #3f3f46 !important; }
+.admin-themed.mode-light .text-neutral-400 { color: #55555e !important; }
+.admin-themed.mode-light .text-neutral-500,
+.admin-themed.mode-light .text-neutral-600 { color: #71717a !important; }
+.admin-themed.mode-light .border-white\\/5 { border-color: rgba(0,0,0,0.06) !important; }
+.admin-themed.mode-light .border-white\\/10 { border-color: rgba(0,0,0,0.10) !important; }
+.admin-themed.mode-light .border-white\\/15,
+.admin-themed.mode-light .border-white\\/20,
+.admin-themed.mode-light .border-white\\/25 { border-color: rgba(0,0,0,0.16) !important; }
+.admin-themed.mode-light .divide-white\\/5 > * + * { border-color: rgba(0,0,0,0.06) !important; }
+.admin-themed.mode-light input,
+.admin-themed.mode-light textarea,
+.admin-themed.mode-light select { background-color: #ffffff !important; color: #111214 !important; }
+.admin-themed.mode-light .backdrop-blur { backdrop-filter: none; }
+`;
