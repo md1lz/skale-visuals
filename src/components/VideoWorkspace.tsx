@@ -501,6 +501,8 @@ function VideoDetail({
   const [editingVersion, setEditingVersion] = useState<string | null>(null);
   const [editingTitle, setEditingTitle] = useState("");
   const [pickerFor, setPickerFor] = useState<string | null>(null);
+  const [visibleCount, setVisibleCount] = useState(10);
+  const [loadingOlder, setLoadingOlder] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = useQuery({
