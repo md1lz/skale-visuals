@@ -862,7 +862,6 @@ function ProjectDetailPanel({
           <span className={`text-xs ${dl.className}`}>Deadline {dl.label}</span>
 
           <div className="ml-auto flex flex-wrap items-center gap-3">
-            {project.status === "En révision" && <ValidateRevisionButton onClick={doValidate} busy={busy} />}
             <button
               onClick={onEdit}
               className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
