@@ -915,6 +915,11 @@ function ProjectDetailPanel({
 
         <div>
           <h4 className="text-xs uppercase tracking-wider text-neutral-500 mb-2">Historique des statuts</h4>
+        </div>
+
+        <ProjectThread projectId={project.id} />
+
+        <div>
           {history.length === 0 ? (
             <p className="text-sm text-neutral-500">Aucun changement pour l'instant.</p>
           ) : (
