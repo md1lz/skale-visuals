@@ -1088,6 +1088,58 @@ function ProjectDetailPanel({
           </section>
         </div>
       </div>
+
+      <AnimatePresence>
+        {confirmDel && (
+          <div
+            className="fixed inset-0 z-[400] grid place-items-center bg-black/75 p-4"
+            onClick={() => setConfirmDel(false)}
+          >
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-md rounded-2xl border border-red-500/30 bg-neutral-900 p-6"
+            >
+              <div className="mb-3 flex items-center gap-2 text-red-400">
+                <AlertTriangle className="h-5 w-5" />
+                <h3 className="text-base font-semibold">Suppression définitive</h3>
+              </div>
+              <p className="text-sm text-neutral-300">
+                Cette action supprimera le projet, ses vidéos, versions et commentaires. Elle est
+                irréversible.
+              </p>
+              <p className="mt-3 text-sm text-neutral-400">
+                Pour confirmer, saisis le titre exact du projet :{" "}
+                <span className="font-medium text-white">{project.title}</span>
+              </p>
+              <input
+                autoFocus
+                value={delText}
+                onChange={(e) => setDelText(e.target.value)}
+                placeholder="Titre du projet"
+                className="mt-2 w-full rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
+              />
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  onClick={() => setConfirmDel(false)}
+                  className="rounded-lg border border-white/10 px-4 py-2 text-sm text-neutral-300 transition hover:bg-white/5"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={doDelete}
+                  disabled={busy || delText.trim() !== project.title.trim()}
+                  className="inline-flex items-center gap-2 rounded-lg bg-red-700 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600 disabled:opacity-40"
+                >
+                  {busy && <Loader2 className="h-4 w-4 animate-spin" />} Supprimer définitivement
+                </button>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </motion.div>
   );
 }
