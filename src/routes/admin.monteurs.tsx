@@ -321,26 +321,24 @@ function CreateEditorModal({ onClose, onCreated }: { onClose: () => void; onCrea
 function CredentialsEditor({
   id,
   username,
-  password,
   onSaved,
 }: {
   id: string;
   username: string;
-  password: string;
   onSaved: () => void;
 }) {
   const save = useServerFn(updateEditorCredentials);
   const gen = useServerFn(generateEditorPassword);
   const [u, setU] = useState(username);
-  const [p, setP] = useState(password);
+  const [p, setP] = useState("");
   const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     setU(username);
-    setP(password);
-  }, [username, password]);
+    setP("");
+  }, [username]);
 
-  const dirty = u.trim().toLowerCase() !== username || p !== password;
+  const dirty = u.trim().toLowerCase() !== username || p.length > 0;
 
   async function submit() {
     if (busy) return;
@@ -350,10 +348,11 @@ function CredentialsEditor({
         data: {
           id,
           username: u.trim().toLowerCase() !== username ? u.trim() : undefined,
-          password: p && p !== password ? p : undefined,
+          password: p ? p : undefined,
         },
       });
       toast.success("Identifiants mis à jour");
+      setP("");
       onSaved();
     } catch (err) {
       toast.error(err instanceof Error ? err.message : "Erreur");
