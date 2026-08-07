@@ -244,7 +244,7 @@ function ProfileEditor({
         </div>
 
         <label className="block mb-5">
-          <span className="block text-xs text-neutral-400 mb-1.5">Prénom / blase</span>
+          <span className="block text-xs text-neutral-400 mb-1.5">Prénom</span>
           <input
             type="text"
             value={draft.displayName}
