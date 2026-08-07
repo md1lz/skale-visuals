@@ -17,6 +17,8 @@ import {
   EyeOff,
   Pencil,
   X,
+  Sun,
+  Moon,
 } from "lucide-react";
 import {
   ADMIN_THEMES,
@@ -89,9 +91,27 @@ function ParametresPage() {
 
 /* ---------- THEME ---------- */
 function ThemeSection() {
-  const { theme, setTheme } = useAdminPrefs();
+  const { theme, setTheme, mode, setMode } = useAdminPrefs();
   return (
     <Section icon={Palette} title="Changer de thème" description="La couleur d'accent du panneau admin, mémorisée sur cet appareil.">
+      <div className="mb-4 inline-flex rounded-xl border border-white/10 p-1">
+        <button
+          onClick={() => setMode("dark")}
+          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition ${
+            mode === "dark" ? "bg-white/10 text-white" : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <Moon className="h-3.5 w-3.5" /> Mode sombre
+        </button>
+        <button
+          onClick={() => setMode("light")}
+          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition ${
+            mode === "light" ? "bg-white/10 text-white" : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <Sun className="h-3.5 w-3.5" /> Mode clair
+        </button>
+      </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
         {ADMIN_THEMES.map((t) => {
           const active = theme === t.id;
