@@ -857,13 +857,22 @@ function ProjectDetailPanel({
           <span className={`rounded-full border px-2 py-0.5 text-[11px] ${statusBadge[project.status]}`}>
             {project.status}
           </span>
+          {project.status_override && (
+            <button
+              onClick={doAutoStatus}
+              disabled={busy}
+              title="Le statut est figé manuellement — cliquer pour repasser en automatique"
+              className="inline-flex items-center gap-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 px-2 py-0.5 text-[11px] text-yellow-300 transition hover:bg-yellow-500/20"
+            >
+              <RefreshCw className="h-3 w-3" /> Statut manuel — repasser en auto
+            </button>
+          )}
           <span className={`rounded-full border px-2 py-0.5 text-[11px] ${formatBadge[project.format]}`}>
             {project.format}
           </span>
           <span className={`text-xs ${dl.className}`}>Deadline {dl.label}</span>
 
           <div className="ml-auto flex flex-wrap items-center gap-3">
-            <ProjectProgress approved={approved} total={videos.length} />
             {project.status === "En révision" && <ValidateRevisionButton onClick={doValidate} busy={busy} />}
             <button
               onClick={onEdit}
@@ -888,31 +897,19 @@ function ProjectDetailPanel({
                 </>
               )}
             </button>
-            {confirmDel ? (
-              <>
-                <button
-                  onClick={() => setConfirmDel(false)}
-                  className="rounded-lg px-3 py-2 text-sm text-neutral-300 hover:bg-white/5"
-                >
-                  Annuler
-                </button>
-                <button
-                  onClick={doDelete}
-                  disabled={busy}
-                  className="inline-flex items-center gap-2 rounded-lg bg-red-700 px-3 py-2 text-sm text-white hover:bg-red-600"
-                >
-                  {busy && <Loader2 className="h-4 w-4 animate-spin" />} Confirmer
-                </button>
-              </>
-            ) : (
-              <button
-                onClick={() => setConfirmDel(true)}
-                className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
-              >
-                <Trash2 className="h-4 w-4" /> Supprimer
-              </button>
-            )}
+            <button
+              onClick={() => {
+                setDelText("");
+                setConfirmDel(true);
+              }}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
+            >
+              <Trash2 className="h-4 w-4" /> Supprimer
+            </button>
           </div>
+        </div>
+        <div className="mt-3 flex justify-center">
+          <ProjectProgress approved={approved} total={videos.length} />
         </div>
       </div>
 
