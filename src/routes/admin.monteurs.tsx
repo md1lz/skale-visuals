@@ -259,7 +259,7 @@ function CreateEditorModal({ onClose, onCreated }: { onClose: () => void; onCrea
         </div>
 
         <label className="block mb-3">
-          <span className="block text-xs text-neutral-400 mb-1.5">Prénom / blase</span>
+          <span className="block text-xs text-neutral-400 mb-1.5">Prénom</span>
           <input
             value={displayName}
             onChange={(e) => setDisplayName(e.target.value)}
