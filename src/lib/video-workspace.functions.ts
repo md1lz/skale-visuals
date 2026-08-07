@@ -430,6 +430,33 @@ export const postVideoComment = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+/** Admin-only: delete any comment (and its reactions) on a video. */
+export const deleteVideoComment = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ comment_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    if (viewer.kind !== "admin") throw new Error("Réservé aux admins");
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: comment } = await supabaseAdmin
+      .from("video_comments")
+      .select("id, project_video_id, author_name")
+      .eq("id", data.comment_id)
+      .maybeSingle();
+    if (!comment) throw new Error("Message introuvable");
+    const { video, project } = await assertVideoAccess(comment.project_video_id, viewer);
+    await supabaseAdmin.from("comment_reactions").delete().eq("comment_id", data.comment_id);
+    const { error } = await supabaseAdmin.from("video_comments").delete().eq("id", data.comment_id);
+    if (error) throw new Error(error.message);
+    await supabaseAdmin.from("admin_activity").insert({
+      kind: "projet",
+      message: `Message de ${comment.author_name || "?"} supprimé sur la vidéo #${String(
+        video.video_number,
+      ).padStart(2, "0")} de « ${project.title} »`,
+      actor_username: viewer.username,
+    });
+    return { ok: true as const };
+  });
 export const sendProjectForRevision = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ project_id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {

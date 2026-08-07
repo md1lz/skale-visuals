@@ -182,36 +182,58 @@ ${mode === "light" ? LIGHT_CSS : ""}`;
   return <style dangerouslySetInnerHTML={{ __html: css }} />;
 }
 
+/**
+ * Light mode is built from utility-token matching so it covers every
+ * dark utility used across the admin/monteur panels, whatever the opacity
+ * suffix. `sel` matches a token only at a class-name boundary, so variants
+ * like `hover:bg-white/5` are not caught by the base rule.
+ */
+const sel = (tokens: string[], suffix = "") =>
+  tokens
+    .flatMap((t) => [
+      `.admin-themed.mode-light [class^="${t}"]${suffix}`,
+      `.admin-themed.mode-light [class*=" ${t}"]${suffix}`,
+    ])
+    .join(",\n");
+
 const LIGHT_CSS = `
-.admin-themed.mode-light { color-scheme: light; }
-.admin-themed.mode-light, .admin-themed.mode-light .bg-neutral-950 { background-color: #f6f6f7 !important; }
-.admin-themed.mode-light .bg-neutral-950\\/95,
-.admin-themed.mode-light .bg-neutral-950\\/60,
-.admin-themed.mode-light .bg-neutral-950\\/70,
-.admin-themed.mode-light .bg-neutral-950\\/50 { background-color: #ffffff !important; }
-.admin-themed.mode-light .bg-neutral-900,
-.admin-themed.mode-light .bg-neutral-900\\/40,
-.admin-themed.mode-light .bg-neutral-900\\/50,
-.admin-themed.mode-light .bg-neutral-900\\/60 { background-color: #ffffff !important; }
-.admin-themed.mode-light .bg-white\\/5,
-.admin-themed.mode-light .bg-white\\/\\[0\\.04\\],
-.admin-themed.mode-light .bg-white\\/\\[0\\.03\\] { background-color: rgba(0,0,0,0.04) !important; }
-.admin-themed.mode-light .hover\\:bg-white\\/5:hover,
-.admin-themed.mode-light .hover\\:bg-white\\/10:hover { background-color: rgba(0,0,0,0.06) !important; }
-.admin-themed.mode-light .text-white { color: #111214 !important; }
-.admin-themed.mode-light .text-neutral-200,
-.admin-themed.mode-light .text-neutral-300 { color: #3f3f46 !important; }
-.admin-themed.mode-light .text-neutral-400 { color: #55555e !important; }
-.admin-themed.mode-light .text-neutral-500,
-.admin-themed.mode-light .text-neutral-600 { color: #71717a !important; }
-.admin-themed.mode-light .border-white\\/5 { border-color: rgba(0,0,0,0.06) !important; }
-.admin-themed.mode-light .border-white\\/10 { border-color: rgba(0,0,0,0.10) !important; }
-.admin-themed.mode-light .border-white\\/15,
-.admin-themed.mode-light .border-white\\/20,
-.admin-themed.mode-light .border-white\\/25 { border-color: rgba(0,0,0,0.16) !important; }
-.admin-themed.mode-light .divide-white\\/5 > * + * { border-color: rgba(0,0,0,0.06) !important; }
+.admin-themed.mode-light { color-scheme: light; background-color: #e7e8eb !important; color: #17181b !important; }
+
+/* Surfaces — soft greys, never pure white slabs */
+${sel(["bg-neutral-950", "bg-black"])} { background-color: #e7e8eb !important; }
+${sel(["bg-neutral-900"])} { background-color: #f1f2f4 !important; }
+${sel(["bg-neutral-800"])} { background-color: #e2e3e7 !important; }
+${sel(["bg-white/", "bg-white "])} { background-color: rgba(15,17,21,0.05) !important; }
+.admin-themed.mode-light [class*="hover:bg-white/"]:hover,
+.admin-themed.mode-light [class*="hover:bg-neutral-9"]:hover,
+.admin-themed.mode-light [class*="hover:bg-neutral-8"]:hover { background-color: rgba(15,17,21,0.08) !important; }
+
+/* Text */
+${sel(["text-white"])} { color: #17181b !important; }
+${sel(["text-neutral-100", "text-neutral-200", "text-neutral-300"])} { color: #3f3f46 !important; }
+${sel(["text-neutral-400"])} { color: #52525b !important; }
+${sel(["text-neutral-500", "text-neutral-600"])} { color: #71717a !important; }
+.admin-themed.mode-light [class*="hover:text-white"]:hover { color: #09090b !important; }
+.admin-themed.mode-light ::placeholder { color: #8a8a93 !important; }
+
+/* Borders & dividers */
+${sel(["border-white"])} { border-color: rgba(15,17,21,0.12) !important; }
+${sel(["border-neutral-800", "border-neutral-900"])} { border-color: rgba(15,17,21,0.12) !important; }
+${sel(["divide-white"], " > * + *")} { border-color: rgba(15,17,21,0.10) !important; }
+${sel(["ring-white"])} { --tw-ring-color: rgba(15,17,21,0.12) !important; }
+
+/* Form controls */
 .admin-themed.mode-light input,
 .admin-themed.mode-light textarea,
-.admin-themed.mode-light select { background-color: #ffffff !important; color: #111214 !important; }
-.admin-themed.mode-light .backdrop-blur { backdrop-filter: none; }
+.admin-themed.mode-light select {
+  background-color: #ffffff !important;
+  color: #17181b !important;
+  border-color: rgba(15,17,21,0.14) !important;
+}
+.admin-themed.mode-light option { background-color: #ffffff !important; color: #17181b !important; }
+
+/* Overlays / effects */
+.admin-themed.mode-light [class*="backdrop-blur"] { backdrop-filter: none !important; }
+.admin-themed.mode-light [class*="bg-black/"] { background-color: rgba(15,17,21,0.35) !important; }
+.admin-themed.mode-light [class*="shadow-"] { --tw-shadow-color: rgba(15,17,21,0.12) !important; }
 `;
