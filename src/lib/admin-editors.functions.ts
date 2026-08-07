@@ -188,7 +188,7 @@ export const getEditorDetail = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: account } = await supabaseAdmin
       .from("editor_accounts")
-      .select("id, display_name, username, status, avatar_url, last_login_at, created_at, password_plain")
+      .select("id, display_name, username, status, avatar_url, last_login_at, created_at")
       .eq("id", data.id)
       .maybeSingle();
     if (!account) throw new Error("Monteur introuvable");
@@ -201,7 +201,7 @@ export const getEditorDetail = createServerFn({ method: "GET" })
 
     const list = projects ?? [];
     return {
-      account: account as EditorAccount & { password_plain: string | null },
+      account: account as EditorAccount,
       stats: {
         done: list.filter((p) => DONE_STATUSES.includes(p.status as string)).length,
         active: list.filter((p) => !DONE_STATUSES.includes(p.status as string)).length,
