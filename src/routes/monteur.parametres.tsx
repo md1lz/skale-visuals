@@ -1,11 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useServerFn } from "@tanstack/react-start";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { Palette, ImageIcon, KeyRound, Upload, Trash2, Check, Eye, EyeOff } from "lucide-react";
-import { toast } from "sonner";
+import { Palette, ImageIcon, Upload, Trash2, Check } from "lucide-react";
 import { ADMIN_THEMES, useAdminPrefs, type AdminTheme } from "@/components/admin-prefs";
-import { changeEditorCredentialsFn } from "@/lib/editor.functions";
 
 export const Route = createFileRoute("/monteur/parametres")({ component: EditorSettingsPage });
 
@@ -46,11 +43,10 @@ function EditorSettingsPage() {
     <div className="px-8 pt-10 pb-12 max-w-5xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Paramètres</h1>
-        <p className="text-sm text-neutral-400 mt-1">Personnalisation et sécurité de ton compte.</p>
+        <p className="text-sm text-neutral-400 mt-1">Personnalisation de ton espace.</p>
       </div>
       <ThemeSection />
       <BackgroundSection />
-      <CredentialsSection />
     </div>
   );
 }

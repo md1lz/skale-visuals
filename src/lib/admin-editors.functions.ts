@@ -134,6 +134,42 @@ export const resetEditorPassword = createServerFn({ method: "POST" })
     return { password };
   });
 
+export const updateEditorCredentials = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        id: z.string().uuid(),
+        username: z
+          .string()
+          .trim()
+          .min(3)
+          .max(48)
+          .regex(/^[a-zA-Z0-9._-]+$/, "Identifiant invalide (pas d'espaces)")
+          .optional(),
+        password: z.string().min(8).max(128).optional(),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    await guard();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (data.username) {
+      const { error } = await supabaseAdmin
+        .from("editor_accounts")
+        .update({ username: data.username.toLowerCase() })
+        .eq("id", data.id);
+      if (error) throw new Error("Cet identifiant est déjà utilisé.");
+    }
+    if (data.password) {
+      const { error } = await supabaseAdmin.rpc("set_editor_password", {
+        _id: data.id,
+        _new_password: data.password,
+      });
+      if (error) throw new Error(error.message);
+    }
+    return { ok: true as const };
+  });
+
 export const deleteEditorAccount = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
@@ -152,7 +188,7 @@ export const getEditorDetail = createServerFn({ method: "GET" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: account } = await supabaseAdmin
       .from("editor_accounts")
-      .select("id, display_name, username, status, avatar_url, last_login_at, created_at")
+      .select("id, display_name, username, status, avatar_url, last_login_at, created_at, password_plain")
       .eq("id", data.id)
       .maybeSingle();
     if (!account) throw new Error("Monteur introuvable");
@@ -165,7 +201,7 @@ export const getEditorDetail = createServerFn({ method: "GET" })
 
     const list = projects ?? [];
     return {
-      account: account as EditorAccount,
+      account: account as EditorAccount & { password_plain: string | null },
       stats: {
         done: list.filter((p) => DONE_STATUSES.includes(p.status as string)).length,
         active: list.filter((p) => !DONE_STATUSES.includes(p.status as string)).length,
