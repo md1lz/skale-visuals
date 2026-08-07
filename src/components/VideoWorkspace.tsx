@@ -794,9 +794,38 @@ function VideoDetail({
                         V{v.version_number}
                       </span>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate text-sm font-medium text-white">
-                          {v.title || v.file_name || `Version ${v.version_number}`}
-                        </p>
+                        {editingVersion === v.id ? (
+                          <input
+                            autoFocus
+                            value={editingTitle}
+                            onChange={(e) => setEditingTitle(e.target.value)}
+                            onBlur={() => void saveVersionTitle(v.id)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault();
+                                void saveVersionTitle(v.id);
+                              }
+                              if (e.key === "Escape") setEditingVersion(null);
+                            }}
+                            maxLength={200}
+                            className="w-full rounded-lg border border-white/15 bg-neutral-900 px-2 py-1 text-sm text-white outline-none focus:border-red-500/50"
+                          />
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setEditingVersion(v.id);
+                              setEditingTitle(v.title || v.file_name || `Version ${v.version_number}`);
+                            }}
+                            title="Renommer cette version"
+                            className="flex max-w-full items-center gap-1.5 text-left"
+                          >
+                            <span className="truncate text-sm font-medium text-white">
+                              {v.title || v.file_name || `Version ${v.version_number}`}
+                            </span>
+                            <Pencil className="h-3 w-3 shrink-0 text-neutral-600 opacity-0 transition group-hover:opacity-100" />
+                          </button>
+                        )}
                         <p className="text-[11px] text-neutral-500">{fmtDateTimeFR(v.created_at)}</p>
                         {v.description && (
                           <p className="mt-1 whitespace-pre-wrap text-xs text-neutral-300">{v.description}</p>
