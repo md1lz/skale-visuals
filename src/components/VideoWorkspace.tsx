@@ -638,18 +638,6 @@ function VideoDetail({
     }
   }
 
-  async function _confirmDeleteVersionOld(id: string) {
-    setPendingDelete(null);
-    try {
-      await dropVersion({ data: { version_id: id } });
-      if (playingId === id) setPlayingId(null);
-      toast.success("Version supprimée");
-      refresh();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erreur");
-    }
-  }
-
   async function handleComment() {
     if (!message.trim() || busy) return;
     setBusy(true);
