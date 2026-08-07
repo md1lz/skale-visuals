@@ -42,6 +42,7 @@ import {
   videoStatusBadgeClass,
   VIDEO_STATUSES,
   EDITOR_VIDEO_STATUSES,
+  ADMIN_VIDEO_STATUSES,
   fmtDateTimeFR,
 } from "@/lib/project-display";
 import { driveEmbed, driveThumbnail, linkKind, normalizeHref } from "@/lib/video-preview";
@@ -736,7 +737,7 @@ function VideoDetail({
   }
 
   const video = q.data?.video;
-  const options = role === "admin" ? [...VIDEO_STATUSES] : EDITOR_VIDEO_STATUSES;
+  const options: string[] = role === "admin" ? [...ADMIN_VIDEO_STATUSES] : [...EDITOR_VIDEO_STATUSES];
   const versions = (q.data?.versions ?? []) as VersionRow[];
   const reactions = q.data?.reactions ?? [];
   const me = q.data?.viewer;
@@ -758,7 +759,7 @@ function VideoDetail({
               {s}
             </option>
           ))}
-          {video && !options.includes(video.status as (typeof options)[number]) && (
+          {video && !options.includes(video.status) && (
             <option value={video.status}>{video.status}</option>
           )}
         </select>
@@ -886,13 +887,16 @@ function VideoDetail({
                           <p className="mt-1 whitespace-pre-wrap text-xs text-neutral-300">{v.description}</p>
                         )}
                         <div className="mt-1">
-                          <RushLink href={src} label={v.file_name || v.title || undefined} />
+                          <RushLink href={src} label={normalizeHref(v.file_url)} />
                         </div>
                         {extraLinks(v).length > 0 && (
                           <ul className="mt-1 space-y-0.5">
                             {extraLinks(v).map((l, j) => (
                               <li key={j}>
-                                <RushLink href={l.url} label={l.title || l.url} />
+                                {l.title && (
+                                  <p className="text-xs font-medium text-neutral-200">{l.title}</p>
+                                )}
+                                <RushLink href={l.url} label={normalizeHref(l.url)} />
                               </li>
                             ))}
                           </ul>
