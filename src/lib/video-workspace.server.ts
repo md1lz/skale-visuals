@@ -55,3 +55,38 @@ export async function notifyAdmins(input: { type: string; project_id: string; me
     message: input.message,
   });
 }
+
+/**
+ * Recompute the global project status from its individual video statuses.
+ * No-op when the admin forced the status manually, or when the project is in a
+ * terminal/commercial state.
+ */
+const FROZEN_STATUSES = ["En attente de validation client", "Livrée", "Payée"];
+
+export async function recomputeProjectStatus(projectId: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { data: project } = await supabaseAdmin
+    .from("projects")
+    .select("id, status, status_override")
+    .eq("id", projectId)
+    .maybeSingle();
+  if (!project || project.status_override) return;
+  if (FROZEN_STATUSES.includes(project.status)) return;
+
+  const { data: videos } = await supabaseAdmin
+    .from("project_videos")
+    .select("status")
+    .eq("project_id", projectId);
+  const list = (videos ?? []).map((v) => v.status);
+  if (list.length === 0) return;
+
+  let next: string;
+  if (list.includes("En cours")) next = "En cours";
+  else if (list.includes("Corrections à faire")) next = "Corrections";
+  else if (list.includes("En révision")) next = "En révision";
+  else if (list.every((s) => s === "Approuvée")) next = "Montage terminé";
+  else next = "À faire";
+
+  if (next === project.status) return;
+  await supabaseAdmin.from("projects").update({ status: next }).eq("id", projectId);
+}
