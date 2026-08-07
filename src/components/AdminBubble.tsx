@@ -44,7 +44,7 @@ export function AdminBubble() {
         setOpen(false);
         setUsername("");
         setPassword("");
-        window.location.assign("/admin");
+        window.location.assign("role" in res && res.role === "editor" ? "/monteur" : "/admin");
       } else {
         setError(true);
       }
