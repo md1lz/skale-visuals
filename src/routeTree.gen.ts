@@ -15,6 +15,7 @@ import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as MonteurIndexRouteImport } from './routes/monteur.index'
 import { Route as AdminIndexRouteImport } from './routes/admin.index'
+import { Route as MonteurProjetsRouteImport } from './routes/monteur.projets'
 import { Route as AdminVideosRouteImport } from './routes/admin.videos'
 import { Route as AdminProjetsRouteImport } from './routes/admin.projets'
 import { Route as AdminParametresRouteImport } from './routes/admin.parametres'
@@ -53,6 +54,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => AdminRoute,
+} as any)
+const MonteurProjetsRoute = MonteurProjetsRouteImport.update({
+  id: '/projets',
+  path: '/projets',
+  getParentRoute: () => MonteurRoute,
 } as any)
 const AdminVideosRoute = AdminVideosRouteImport.update({
   id: '/videos',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/monteur/projets': typeof MonteurProjetsRoute
   '/admin/': typeof AdminIndexRoute
   '/monteur/': typeof MonteurIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -121,6 +128,7 @@ export interface FileRoutesByTo {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/monteur/projets': typeof MonteurProjetsRoute
   '/admin': typeof AdminIndexRoute
   '/monteur': typeof MonteurIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -138,6 +146,7 @@ export interface FileRoutesById {
   '/admin/parametres': typeof AdminParametresRoute
   '/admin/projets': typeof AdminProjetsRoute
   '/admin/videos': typeof AdminVideosRoute
+  '/monteur/projets': typeof MonteurProjetsRoute
   '/admin/': typeof AdminIndexRoute
   '/monteur/': typeof MonteurIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -156,6 +165,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
+    | '/monteur/projets'
     | '/admin/'
     | '/monteur/'
     | '/api/public/track'
@@ -170,6 +180,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
+    | '/monteur/projets'
     | '/admin'
     | '/monteur'
     | '/api/public/track'
@@ -186,6 +197,7 @@ export interface FileRouteTypes {
     | '/admin/parametres'
     | '/admin/projets'
     | '/admin/videos'
+    | '/monteur/projets'
     | '/admin/'
     | '/monteur/'
     | '/api/public/track'
@@ -242,6 +254,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/admin/'
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof AdminRoute
+    }
+    '/monteur/projets': {
+      id: '/monteur/projets'
+      path: '/projets'
+      fullPath: '/monteur/projets'
+      preLoaderRoute: typeof MonteurProjetsRouteImport
+      parentRoute: typeof MonteurRoute
     }
     '/admin/videos': {
       id: '/admin/videos'
@@ -327,10 +346,12 @@ const AdminRouteChildren: AdminRouteChildren = {
 const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface MonteurRouteChildren {
+  MonteurProjetsRoute: typeof MonteurProjetsRoute
   MonteurIndexRoute: typeof MonteurIndexRoute
 }
 
 const MonteurRouteChildren: MonteurRouteChildren = {
+  MonteurProjetsRoute: MonteurProjetsRoute,
   MonteurIndexRoute: MonteurIndexRoute,
 }
 
