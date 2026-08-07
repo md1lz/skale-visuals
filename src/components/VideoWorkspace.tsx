@@ -830,7 +830,7 @@ function VideoDetail({
         {role === "admin" && video?.status === "En révision" && (
           <>
             <ValidateRevisionButton
-              onClick={() => handleStatus("Montage terminé")}
+              onClick={() => handleStatus("Approuvée")}
               busy={busy}
             />
             <RequestCorrectionsButton

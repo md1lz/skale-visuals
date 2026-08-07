@@ -165,15 +165,12 @@ export const setVideoStatus = createServerFn({ method: "POST" })
       .object({
         video_id: z.string().uuid(),
         status: z.enum([
-          "En attente de validation client",
           "À faire",
           "En cours",
           "En révision",
           "Corrections à faire",
           "Approuvée",
-          "Montage terminé",
           "Livrée",
-          "Payée",
         ]),
       })
       .parse(d),

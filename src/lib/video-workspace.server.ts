@@ -79,7 +79,7 @@ export async function notifyAdmins(input: { type: string; project_id: string; me
  * No-op when the admin forced the status manually, or when the project is in a
  * terminal/commercial state.
  */
-const FROZEN_STATUSES = ["En attente de validation client", "Livrée", "Payée"];
+const FROZEN_STATUSES = ["En attente de validation client", "Payée"];
 
 export async function recomputeProjectStatus(projectId: string) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -98,11 +98,12 @@ export async function recomputeProjectStatus(projectId: string) {
   const list = (videos ?? []).map((v) => v.status);
   if (list.length === 0) return;
 
-  let next: "En cours" | "Corrections" | "En révision" | "Montage terminé" | "À faire";
+  let next: "En cours" | "Corrections" | "En révision" | "Montage terminé" | "Livrée" | "À faire";
   if (list.includes("En cours")) next = "En cours";
   else if (list.includes("Corrections à faire")) next = "Corrections";
   else if (list.includes("En révision")) next = "En révision";
-  else if (list.every((s) => s === "Approuvée")) next = "Montage terminé";
+  else if (list.every((s) => s === "Livrée")) next = "Livrée";
+  else if (list.every((s) => s === "Approuvée" || s === "Livrée")) next = "Montage terminé";
   else next = "À faire";
 
   if (next === project.status) return;
