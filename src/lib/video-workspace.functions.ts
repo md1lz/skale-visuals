@@ -236,11 +236,25 @@ export const addVideoVersion = createServerFn({ method: "POST" })
         video_id: z.string().uuid(),
         file_url: z.string().trim().min(1).max(2000),
         file_name: z.string().trim().max(200).optional().default(""),
+        title: z.string().trim().max(200).optional().default(""),
+        description: z.string().trim().max(4000).optional().default(""),
+        additional_links: z
+          .array(
+            z.object({
+              title: z.string().trim().max(200).default(""),
+              url: z.string().trim().min(1).max(2000),
+            }),
+          )
+          .max(10)
+          .optional()
+          .default([]),
       })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { resolveViewer, assertVideoAccess, notifyAdmins } = await import("./video-workspace.server");
+    const { resolveViewer, assertVideoAccess, notifyAdmins, recomputeProjectStatus } = await import(
+      "./video-workspace.server"
+    );
     const viewer = await resolveViewer();
     if (viewer.kind !== "editor") throw new Error("Réservé aux monteurs");
     const { video, project } = await assertVideoAccess(data.video_id, viewer);
@@ -259,12 +273,16 @@ export const addVideoVersion = createServerFn({ method: "POST" })
       version_number: version,
       file_url: data.file_url,
       file_name: data.file_name || `Version ${version}`,
+      title: data.title || `V${version}`,
+      description: data.description || null,
+      additional_links: data.additional_links,
       uploaded_by: viewer.id,
     });
     if (error) throw new Error(error.message);
 
     if (video.status === "À faire") {
       await supabaseAdmin.from("project_videos").update({ status: "En cours" }).eq("id", data.video_id);
+      await recomputeProjectStatus(project.id);
     }
 
     const label = `#${String(video.video_number).padStart(2, "0")}`;
@@ -279,6 +297,92 @@ export const addVideoVersion = createServerFn({ method: "POST" })
       actor_username: viewer.username,
     });
     return { ok: true as const, version };
+  });
+
+export const deleteVideoVersion = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ version_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: row } = await supabaseAdmin
+      .from("video_versions")
+      .select("id, project_video_id, version_number")
+      .eq("id", data.version_id)
+      .maybeSingle();
+    if (!row) throw new Error("Version introuvable");
+    const { project, video } = await assertVideoAccess(row.project_video_id, viewer);
+    const { error } = await supabaseAdmin.from("video_versions").delete().eq("id", data.version_id);
+    if (error) throw new Error(error.message);
+    await supabaseAdmin.from("admin_activity").insert({
+      kind: "projet",
+      message: `V${row.version_number} supprimée sur la vidéo #${String(video.video_number).padStart(
+        2,
+        "0",
+      )} de « ${project.title} »`,
+      actor_username: viewer.username,
+    });
+    return { ok: true as const };
+  });
+
+export const toggleCommentReaction = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ comment_id: z.string().uuid(), emoji: z.string().trim().min(1).max(8) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess, notifyAdmins } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: comment } = await supabaseAdmin
+      .from("video_comments")
+      .select("id, project_video_id")
+      .eq("id", data.comment_id)
+      .maybeSingle();
+    if (!comment) throw new Error("Message introuvable");
+    const { video, project } = await assertVideoAccess(comment.project_video_id, viewer);
+
+    const { data: existing } = await supabaseAdmin
+      .from("comment_reactions")
+      .select("id, emoji")
+      .eq("comment_id", data.comment_id)
+      .eq("author_id", viewer.id)
+      .maybeSingle();
+
+    let removed = false;
+    if (existing && existing.emoji === data.emoji) {
+      await supabaseAdmin.from("comment_reactions").delete().eq("id", existing.id);
+      removed = true;
+    } else if (existing) {
+      await supabaseAdmin
+        .from("comment_reactions")
+        .update({ emoji: data.emoji, created_at: new Date().toISOString() })
+        .eq("id", existing.id);
+    } else {
+      const { error } = await supabaseAdmin.from("comment_reactions").insert({
+        comment_id: data.comment_id,
+        author_type: viewer.kind,
+        author_id: viewer.id,
+        author_name: viewer.name,
+        emoji: data.emoji,
+      });
+      if (error) throw new Error(error.message);
+    }
+
+    if (!removed) {
+      const label = `#${String(video.video_number).padStart(2, "0")}`;
+      const message = `${viewer.name} a réagi ${data.emoji} à un message dans Vidéo ${label} — ${project.title}`;
+      await notifyAdmins({ type: "reaction", project_id: project.id, message });
+      if (project.editor_id) {
+        const { notifyEditor } = await import("./notifications.server");
+        await notifyEditor({
+          recipient_id: project.editor_id,
+          type: "reaction",
+          project_id: project.id,
+          message,
+        });
+      }
+    }
+    return { ok: true as const, removed };
   });
 
 export const postVideoComment = createServerFn({ method: "POST" })
