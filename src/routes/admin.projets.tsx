@@ -809,18 +809,6 @@ function ProjectDetailPanel({
     }
   };
 
-  const doValidate = async () => {
-    setBusy(true);
-    try {
-      await validateProjectRevision({ data: { project_id: project.id } });
-      toast.success("Révision validée — Montage terminé");
-      onChanged();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erreur");
-    } finally {
-      setBusy(false);
-    }
-  };
 
   const doAutoStatus = async () => {
     setBusy(true);
