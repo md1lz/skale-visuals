@@ -15,33 +15,28 @@ export const VIDEO_STATUSES = [
   "En révision",
   "Approuvée",
   "Corrections à faire",
+  "Livrée",
 ] as const;
 export type VideoStatus = (typeof VIDEO_STATUSES)[number];
 
 export const EDITOR_VIDEO_STATUSES: VideoStatus[] = ["À faire", "En cours", "En révision"];
 
 export const ADMIN_VIDEO_STATUSES = [
-  "En attente de validation client",
   "À faire",
   "En cours",
   "En révision",
   "Corrections à faire",
   "Approuvée",
-  "Montage terminé",
   "Livrée",
-  "Payée",
 ] as const;
 
 const VIDEO_STATUS_BADGE: Record<string, string> = {
-  "En attente de validation client": "bg-neutral-400/15 text-neutral-200 border-neutral-400/30",
   "À faire": "bg-neutral-500/15 text-neutral-300 border-neutral-500/30",
   "En cours": "bg-blue-500/15 text-blue-300 border-blue-500/30",
   "En révision": "bg-orange-500/15 text-orange-300 border-orange-500/30",
   Approuvée: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
   "Corrections à faire": "bg-yellow-500/15 text-yellow-300 border-yellow-500/30",
-  "Montage terminé": "bg-violet-500/15 text-violet-300 border-violet-500/30",
-  Livrée: "bg-emerald-500/15 text-emerald-300 border-emerald-500/30",
-  Payée: "bg-green-700/25 text-green-300 border-green-700/40",
+  Livrée: "bg-teal-500/15 text-teal-300 border-teal-500/30",
 };
 
 export function videoStatusBadgeClass(status: string) {
