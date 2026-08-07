@@ -364,6 +364,9 @@ export const signVersionUrls = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ paths: z.array(z.string().max(500)).max(50) }).parse(d))
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { readEditorSession, requireAdminUser } = await import("./auth-sessions.server");
+    const editor = await readEditorSession();
+    if (!editor) await requireAdminUser();
     const out: Record<string, string> = {};
     await Promise.all(
       data.paths.map(async (p) => {
