@@ -328,9 +328,6 @@ function EditorDetailPanel({
   onChanged: () => void;
 }) {
   const fetchDetail = useServerFn(getEditorDetail);
-  const resetPw = useServerFn(resetEditorPassword);
-  const [newPassword, setNewPassword] = useState<string | null>(null);
-
   const q = useQuery({ queryKey: ["admin", "editor", id], queryFn: () => fetchDetail({ data: { id } }) });
   const d = q.data;
 
@@ -387,19 +384,16 @@ function EditorDetailPanel({
                 {d?.account.status === "active" ? "Suspendre" : "Réactiver"}
               </button>
             </div>
-            {newPassword ? (
-              <PasswordField value={newPassword} />
-            ) : (
-              <button
-                onClick={async () => {
-                  const r = await resetPw({ data: { id } });
-                  setNewPassword(r.password);
-                  toast.success("Nouveau mot de passe généré");
+            {d && (
+              <CredentialsEditor
+                id={id}
+                username={d.account.username}
+                password={d.account.password_plain ?? ""}
+                onSaved={() => {
+                  q.refetch();
+                  onChanged();
                 }}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-xs text-neutral-200 hover:bg-white/5 transition"
-              >
-                <RefreshCw className="h-3.5 w-3.5" /> Régénérer le mot de passe
-              </button>
+              />
             )}
           </section>
 
