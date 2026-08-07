@@ -137,7 +137,8 @@ function RootComponent() {
 
 function RootInner() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const isAdmin = pathname.startsWith("/admin");
+  const isAdmin =
+    pathname.startsWith("/admin") || pathname.startsWith("/monteur");
 
   useEffect(() => {
     initTracker();
