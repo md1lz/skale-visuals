@@ -73,53 +73,6 @@ export const updateEditorProfileFn = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-export const changeEditorCredentialsFn = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    z
-      .object({
-        currentPassword: z.string().min(1).max(128),
-        newUsername: z
-          .string()
-          .trim()
-          .min(3)
-          .max(48)
-          .regex(/^[a-zA-Z0-9._-]+$/)
-          .optional(),
-        newPassword: z.string().min(8).max(128).optional(),
-      })
-      .parse(d),
-  )
-  .handler(async ({ data }) => {
-    const { requireEditor, getEditorSession } = await import("./auth-sessions.server");
-    const me = await requireEditor();
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-
-    const { data: rows } = await supabaseAdmin.rpc("verify_editor", {
-      _username: me.username,
-      _password: data.currentPassword,
-    });
-    if (!Array.isArray(rows) || rows.length === 0) throw new Error("Mot de passe actuel incorrect.");
-
-    if (data.newUsername && data.newUsername.toLowerCase() !== me.username) {
-      const { error } = await supabaseAdmin
-        .from("editor_accounts")
-        .update({ username: data.newUsername.toLowerCase() })
-        .eq("id", me.id);
-      if (error) throw new Error("Cet identifiant est déjà utilisé.");
-      const s = await getEditorSession();
-      await s.update({ username: data.newUsername.toLowerCase() });
-    }
-
-    if (data.newPassword) {
-      const { error } = await supabaseAdmin.rpc("set_editor_password", {
-        _id: me.id,
-        _new_password: data.newPassword,
-      });
-      if (error) throw new Error(error.message);
-    }
-    return { ok: true as const };
-  });
-
 export const listMyProjects = createServerFn({ method: "GET" }).handler(async () => {
   const { requireEditor } = await import("./auth-sessions.server");
   const me = await requireEditor();
