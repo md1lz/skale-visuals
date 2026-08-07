@@ -762,7 +762,9 @@ function ProjectDetailPanel({
   const [history, setHistory] = useState<ProjectStatusHistoryItem[]>([]);
   const [confirmDel, setConfirmDel] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [briefOpen, setBriefOpen] = useState(false);
+  const [briefOpen, setBriefOpen] = useState(true);
+  const [financeOpen, setFinanceOpen] = useState(false);
+  const [delText, setDelText] = useState("");
 
   const q = useWorkspace(project.id);
   const videos = q.data?.videos ?? [];
@@ -775,6 +777,10 @@ function ProjectDetailPanel({
   }, [project.id]);
 
   const doDelete = async () => {
+    if (delText.trim() !== project.title.trim()) {
+      toast.error("Le nom saisi ne correspond pas au titre du projet.");
+      return;
+    }
     setBusy(true);
     try {
       await deleteProject({ data: { id: project.id } });
@@ -807,6 +813,19 @@ function ProjectDetailPanel({
     try {
       await validateProjectRevision({ data: { project_id: project.id } });
       toast.success("Révision validée — Montage terminé");
+      onChanged();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const doAutoStatus = async () => {
+    setBusy(true);
+    try {
+      await resetProjectStatusAuto({ data: { id: project.id } });
+      toast.success("Statut recalculé automatiquement");
       onChanged();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
