@@ -111,7 +111,7 @@ export const updateEditorAccount = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     await guard();
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const patch: Record<string, unknown> = {};
+    const patch: { display_name?: string; status?: string } = {};
     if (data.display_name) patch.display_name = data.display_name;
     if (data.status) patch.status = data.status;
     const { error } = await supabaseAdmin.from("editor_accounts").update(patch).eq("id", data.id);
