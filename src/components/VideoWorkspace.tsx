@@ -843,10 +843,18 @@ function VideoDetail({
                         </div>
                         <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
                         {mine && (
-                          <div className="mt-0.5 flex justify-end">
-                            <CheckCheck
-                              className={`h-3.5 w-3.5 ${c.read_at ? "text-emerald-400" : "text-neutral-500"}`}
-                            />
+                          <div className="mt-0.5 flex items-center justify-end gap-1">
+                            {c.read_at ? (
+                              <>
+                                <span className="text-[10px] text-emerald-400">Lu</span>
+                                <CheckCheck className="h-3.5 w-3.5 text-emerald-400" />
+                              </>
+                            ) : (
+                              <>
+                                <span className="text-[10px] text-neutral-500">Envoyé</span>
+                                <Check className="h-3.5 w-3.5 text-neutral-500" />
+                              </>
+                            )}
                           </div>
                         )}
                       </div>
