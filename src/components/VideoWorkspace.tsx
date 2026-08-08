@@ -37,6 +37,7 @@ import {
   toggleCommentReaction,
   deleteVideoComment,
   signWorkspaceUrls,
+  setVideoScript,
 } from "@/lib/video-workspace.functions";
 import {
   videoStatusBadgeClass,
@@ -583,6 +584,7 @@ function VideoDetail({
   const react = useServerFn(toggleCommentReaction);
   const removeComment = useServerFn(deleteVideoComment);
   const signUrls = useServerFn(signWorkspaceUrls);
+  const saveScript = useServerFn(setVideoScript);
 
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -594,6 +596,9 @@ function VideoDetail({
   const [pickerFor, setPickerFor] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(10);
   const [loadingOlder, setLoadingOlder] = useState(false);
+  const [script, setScript] = useState("");
+  const [scriptDirty, setScriptDirty] = useState(false);
+  const [savingScript, setSavingScript] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = useQuery({
