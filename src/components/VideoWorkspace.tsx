@@ -849,7 +849,8 @@ function VideoDetail({
   const me = q.data?.viewer;
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
       <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3">
         <h3 className="text-base font-semibold text-white">
           Vidéo #{video ? String(video.video_number).padStart(2, "0") : "…"}
@@ -889,7 +890,7 @@ function VideoDetail({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-5">
+      <div className="space-y-5 p-5">
         <section className="rounded-xl border border-white/5 bg-neutral-950/40">
           <div className="flex items-center gap-2 px-3 py-2">
             <button
