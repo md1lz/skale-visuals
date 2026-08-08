@@ -85,7 +85,7 @@ function EditorProjectsPage() {
 
       <AnimatePresence>
         {selected && (
-          <ProjectFullscreen id={selected} onClose={() => navigate({ to: "/monteur/projets", search: () => ({}) })} />
+          <ProjectFullscreen id={selected} onClose={() => navigate({ to: "/monteur/projets", search: { p: undefined } })} />
         )}
       </AnimatePresence>
     </div>
