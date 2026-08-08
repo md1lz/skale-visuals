@@ -601,6 +601,7 @@ function VideoDetail({
   const [pickerFor, setPickerFor] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(10);
   const [loadingOlder, setLoadingOlder] = useState(false);
+  const [chatUnlocked, setChatUnlocked] = useState(false);
   const [script, setScript] = useState("");
   const [scriptDirty, setScriptDirty] = useState(false);
   const [savingScript, setSavingScript] = useState(false);
@@ -655,6 +656,7 @@ function VideoDetail({
     setLoadingOlder(false);
     setChatOpen(true);
     setScriptOpen(false);
+    setChatUnlocked(false);
   }, [videoId]);
 
   // Leaving the page (or unmounting this video) must always reset the chat to
@@ -665,6 +667,7 @@ function VideoDetail({
       setLoadingOlder(false);
       setChatOpen(true);
       setScriptOpen(false);
+      setChatUnlocked(false);
     };
   }, []);
 
@@ -672,9 +675,32 @@ function VideoDetail({
   // non-scrollable view automatically.
   const totalComments = (q.data?.comments ?? []).length;
   useEffect(() => {
-    if (totalComments <= 10) setVisibleCount(10);
+    if (totalComments <= 10) {
+      setVisibleCount(10);
+      setChatUnlocked(false);
+    }
   }, [totalComments]);
-  const chatScrollable = visibleCount > 10 && totalComments > 10;
+  const chatScrollable = chatUnlocked;
+
+  // Locked mode always pins the view to the most recent message.
+  useEffect(() => {
+    if (chatUnlocked) return;
+    const el = chatScrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [chatUnlocked, totalComments, chatOpen, visibleCount]);
+
+  function toggleChatLock() {
+    if (chatUnlocked) {
+      setChatUnlocked(false);
+      setVisibleCount(10);
+      requestAnimationFrame(() => {
+        const el = chatScrollRef.current;
+        if (el) el.scrollTop = el.scrollHeight;
+      });
+    } else {
+      setChatUnlocked(true);
+    }
+  }
 
   // Load the video-level script (not per version) when the video changes.
   useEffect(() => {
