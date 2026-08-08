@@ -1072,7 +1072,13 @@ function VideoDetail({
 
         <section>
           <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Commentaires</h4>
-          <div className="mb-3 max-h-[48vh] space-y-3 overflow-y-auto pr-1.5 [scrollbar-width:thin]">
+          <div
+            className={`mb-3 space-y-3 pr-1.5 ${
+              visibleCount > 10
+                ? "max-h-[48vh] overflow-y-auto overscroll-contain [scrollbar-width:thin]"
+                : "overflow-visible"
+            }`}
+          >
             {(q.data?.comments ?? []).length === 0 ? (
               <p className="text-sm text-neutral-500">Aucun commentaire sur cette vidéo.</p>
             ) : (
