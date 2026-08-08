@@ -1206,10 +1206,10 @@ function VideoDetail({
             </button>
             <div
               ref={chatScrollRef}
-              className={`flex h-full flex-col justify-end gap-3 pr-1.5 ${
+              className={`flex h-full flex-col gap-3 pr-1.5 ${
                 chatScrollable
                   ? "overflow-y-auto overscroll-contain [scrollbar-width:thin]"
-                  : "overflow-hidden"
+                  : "justify-end overflow-hidden"
               }`}
             >
             <div className="mt-auto space-y-3">
