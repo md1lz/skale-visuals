@@ -602,6 +602,8 @@ function VideoDetail({
   const [scriptDirty, setScriptDirty] = useState(false);
   const [savingScript, setSavingScript] = useState(false);
   const [scriptOpen, setScriptOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(true);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = useQuery({
@@ -794,6 +796,11 @@ function VideoDetail({
       await sendComment({ data: { video_id: videoId, content: message.trim() } });
       setMessage("");
       refresh();
+      setChatOpen(true);
+      setTimeout(() => {
+        const el = chatScrollRef.current;
+        if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+      }, 250);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
     } finally {
