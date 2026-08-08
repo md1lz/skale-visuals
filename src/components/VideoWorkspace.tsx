@@ -1387,3 +1387,15 @@ export function RequestCorrectionsButton({ onClick, busy }: { onClick: () => voi
     </button>
   );
 }
+
+export function ResubmitRevisionButton({ onClick, busy }: { onClick: () => void; busy?: boolean }) {
+  return (
+    <button
+      onClick={onClick}
+      disabled={busy}
+      className="inline-flex items-center gap-2 rounded-lg bg-sky-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-sky-500 disabled:opacity-60"
+    >
+      <Check className="h-4 w-4" /> Renvoyer en révision
+    </button>
+  );
+}
