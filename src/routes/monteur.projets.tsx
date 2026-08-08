@@ -95,7 +95,7 @@ function ProjectFullscreen({ id, onClose }: { id: string; onClose: () => void })
 
   const project = q.data?.project;
   const videos = q.data?.videos ?? [];
-  const approved = videos.filter((v) => v.status === "Approuvée").length;
+  const approved = videos.filter((v) => v.status === "Approuvée" || v.status === "Livrée").length;
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["workspace", id] });
