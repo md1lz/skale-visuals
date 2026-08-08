@@ -1105,9 +1105,29 @@ function VideoDetail({
           )}
         </section>
 
-        <section>
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Commentaires</h4>
+      </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-neutral-900/50">
+        <button
+          onClick={() => setChatOpen((o) => !o)}
+          className="flex w-full items-center gap-2 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
+        >
+          <ChevronDown className={`h-4 w-4 transition-transform ${chatOpen ? "rotate-0" : "-rotate-90"}`} />
+          Chat de la vidéo
+          <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
+            {(q.data?.comments ?? []).length} message{(q.data?.comments ?? []).length > 1 ? "s" : ""}
+          </span>
+          {unreadIds.size > 0 && (
+            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
+              {unreadIds.size}
+            </span>
+          )}
+        </button>
+        {chatOpen && (
+        <section className="border-t border-white/10 px-5 py-4">
           <div
+            ref={chatScrollRef}
             className={`mb-3 space-y-3 pr-1.5 ${
               visibleCount > 10
                 ? "max-h-[48vh] overflow-y-auto overscroll-contain [scrollbar-width:thin]"
