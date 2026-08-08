@@ -773,7 +773,7 @@ function ProjectDetailPanel({
 
   const q = useWorkspace(project.id);
   const videos = q.data?.videos ?? [];
-  const approved = videos.filter((v) => v.status === "Approuvée").length;
+  const approved = videos.filter((v) => v.status === "Approuvée" || v.status === "Livrée").length;
   const refreshWorkspace = () => q.refetch();
 
   useEffect(() => {

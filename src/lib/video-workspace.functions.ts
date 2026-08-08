@@ -21,7 +21,7 @@ export const listMyProjectsOverview = createServerFn({ method: "GET" }).handler(
     return {
       ...p,
       total_videos: mine.length,
-      approved_videos: mine.filter((v) => v.status === "Approuvée").length,
+      approved_videos: mine.filter((v) => v.status === "Approuvée" || v.status === "Livrée").length,
     };
   });
 });
