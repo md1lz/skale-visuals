@@ -3,7 +3,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { toast } from "sonner";
 import { Loader2, FileText, Inbox, ArrowLeft, ChevronDown } from "lucide-react";
 import { listMyProjectsOverview } from "@/lib/video-workspace.functions";
 import { ProjectVideosBoard, RushLink, useWorkspace } from "@/components/VideoWorkspace";
