@@ -1176,14 +1176,24 @@ function VideoDetail({
         </button>
         {chatOpen && (
         <section className="border-t border-white/10 px-5 py-4">
-          <div
-            ref={chatScrollRef}
-            className={`mb-3 space-y-3 pr-1.5 ${
-              chatScrollable
-                ? "max-h-[48vh] overflow-y-auto overscroll-contain [scrollbar-width:thin]"
-                : "overflow-visible"
-            }`}
-          >
+          <div className="relative mb-3 h-[22rem]">
+            <div className="chat-fade-top pointer-events-none absolute inset-x-0 top-0 z-20 h-16 rounded-t-xl" />
+            <button
+              type="button"
+              onClick={toggleChatLock}
+              className="absolute right-1.5 top-1.5 z-30 rounded-full border border-white/10 bg-neutral-900/80 px-2.5 py-1 text-[11px] text-neutral-300 backdrop-blur transition hover:bg-white/10 hover:text-white"
+            >
+              {chatUnlocked ? "Verrouiller" : "↑ Voir les anciens messages"}
+            </button>
+            <div
+              ref={chatScrollRef}
+              className={`flex h-full flex-col justify-end gap-3 pr-1.5 ${
+                chatScrollable
+                  ? "overflow-y-auto overscroll-contain [scrollbar-width:thin]"
+                  : "overflow-hidden"
+              }`}
+            >
+            <div className="mt-auto space-y-3">
             {(q.data?.comments ?? []).length === 0 ? (
               <p className="text-sm text-neutral-500">Aucun commentaire sur cette vidéo.</p>
             ) : (
@@ -1311,6 +1321,8 @@ function VideoDetail({
                 })}
               </>
             )}
+            </div>
+            </div>
           </div>
           <div className="flex gap-2">
             <textarea
