@@ -214,10 +214,13 @@ export const setVideoStatus = createServerFn({ method: "POST" })
     const label = `#${String(video.video_number).padStart(2, "0")}`;
     if (viewer.kind === "editor") {
       if (data.status === "En révision") {
+        const corrected = video.status === "Corrections à faire";
         await notifyAdmins({
           type: "status",
           project_id: project.id,
-          message: `🔍 ${viewer.name} a envoyé la vidéo ${label} de « ${project.title} » en révision`,
+          message: corrected
+            ? `🔁 ${viewer.name} a corrigé la vidéo ${label} de « ${project.title} » et l'a renvoyée en révision`
+            : `🔍 ${viewer.name} a envoyé la vidéo ${label} de « ${project.title} » en révision`,
         });
       }
     } else if (project.editor_id) {
