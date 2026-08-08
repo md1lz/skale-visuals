@@ -655,6 +655,14 @@ function VideoDetail({
     setLoadingOlder(false);
   }, [videoId]);
 
+  // If messages get deleted and 10 or fewer remain, collapse back to the
+  // non-scrollable view automatically.
+  const totalComments = (q.data?.comments ?? []).length;
+  useEffect(() => {
+    if (totalComments <= 10) setVisibleCount(10);
+  }, [totalComments]);
+  const chatScrollable = visibleCount > 10 && totalComments > 10;
+
   // Load the video-level script (not per version) when the video changes.
   useEffect(() => {
     const v = q.data?.video as { script?: string | null } | undefined;
@@ -1132,7 +1140,7 @@ function VideoDetail({
           <div
             ref={chatScrollRef}
             className={`mb-3 space-y-3 pr-1.5 ${
-              visibleCount > 10
+              chatScrollable
                 ? "max-h-[48vh] overflow-y-auto overscroll-contain [scrollbar-width:thin]"
                 : "overflow-visible"
             }`}
