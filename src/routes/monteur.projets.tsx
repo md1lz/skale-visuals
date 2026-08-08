@@ -91,40 +91,18 @@ function EditorProjectsPage() {
 
 function ProjectFullscreen({ id, onClose }: { id: string; onClose: () => void }) {
   const qc = useQueryClient();
-  const revision = useServerFn(sendProjectForRevision);
   const q = useWorkspace(id);
   const [briefOpen, setBriefOpen] = useState(false);
-  const [busy, setBusy] = useState(false);
 
   const project = q.data?.project;
   const videos = q.data?.videos ?? [];
   const approved = videos.filter((v) => v.status === "Approuvée").length;
-  const canSend = project?.status === "En cours" || project?.status === "Corrections";
-  const waiting =
-    project?.status === "En révision" ||
-    project?.status === "Montage terminé" ||
-    project?.status === "Livrée" ||
-    project?.status === "Payée";
 
   const refresh = () => {
     qc.invalidateQueries({ queryKey: ["workspace", id] });
     qc.invalidateQueries({ queryKey: ["editor", "projects"] });
     qc.invalidateQueries({ queryKey: ["editor", "notifications"] });
   };
-
-  async function handleRevision() {
-    if (busy) return;
-    setBusy(true);
-    try {
-      await revision({ data: { project_id: id } });
-      toast.success("Projet envoyé en révision");
-      refresh();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erreur");
-    } finally {
-      setBusy(false);
-    }
-  }
 
   return (
     <motion.div
@@ -156,17 +134,6 @@ function ProjectFullscreen({ id, onClose }: { id: string; onClose: () => void })
           )}
           <div className="ml-auto flex items-center gap-4">
             <ProjectProgress approved={approved} total={videos.length} />
-            {canSend ? (
-              <button
-                onClick={handleRevision}
-                disabled={busy}
-                className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500 disabled:opacity-60"
-              >
-                <Send className="h-4 w-4" /> Envoyer en révision
-              </button>
-            ) : waiting ? (
-              <span className="text-sm text-neutral-500">En attente de validation</span>
-            ) : null}
           </div>
         </div>
       </div>
