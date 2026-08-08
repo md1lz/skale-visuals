@@ -295,6 +295,7 @@ export function ProjectVideosBoard({
   const videos = q.data?.videos ?? [];
   const aspect = q.data?.project.format === "Court" ? "aspect-[9/16]" : "aspect-video";
   const gridRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
   const [listMaxH, setListMaxH] = useState<number | null>(null);
 
   useEffect(() => {
@@ -302,17 +303,20 @@ export function ProjectVideosBoard({
       setListMaxH(null);
       return;
     }
+    // The left list matches the height of the open video panel, and scrolls
+    // internally while the panel itself grows with its content.
     const measure = () => {
-      const el = gridRef.current;
-      const first = el?.firstElementChild as HTMLElement | undefined;
-      if (!first) return;
-      const gap = 12;
-      setListMaxH(first.offsetHeight * 3 + gap * 2 + 4);
+      const el = detailRef.current;
+      if (!el) return;
+      setListMaxH(Math.max(320, el.offsetHeight));
     };
     const t = setTimeout(measure, 60);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    if (detailRef.current && ro) ro.observe(detailRef.current);
     window.addEventListener("resize", measure);
     return () => {
       clearTimeout(t);
+      ro?.disconnect();
       window.removeEventListener("resize", measure);
     };
   }, [openId, videos.length, aspect]);
@@ -334,14 +338,12 @@ export function ProjectVideosBoard({
   }
 
   return (
-    <div
-      style={openId && listMaxH ? { height: listMaxH } : undefined}
-      className={`flex gap-5 ${openId ? "min-h-[420px] items-stretch" : ""}`}
-    >
+    <div className={`flex gap-5 ${openId ? "items-start" : ""}`}>
       <div
+        style={openId && listMaxH ? { maxHeight: listMaxH } : undefined}
         className={
           openId
-            ? "h-full w-[30%] shrink-0 min-h-0 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
+            ? "w-[30%] shrink-0 min-h-0 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
             : "w-full"
         }
       >
@@ -399,7 +401,8 @@ export function ProjectVideosBoard({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.22 }}
-            className="min-h-0 min-w-0 flex-1 self-stretch"
+            ref={detailRef}
+            className="min-w-0 flex-1"
           >
             <VideoDetail
               videoId={openId}
@@ -602,6 +605,8 @@ function VideoDetail({
   const [scriptDirty, setScriptDirty] = useState(false);
   const [savingScript, setSavingScript] = useState(false);
   const [scriptOpen, setScriptOpen] = useState(false);
+  const [chatOpen, setChatOpen] = useState(true);
+  const chatScrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = useQuery({
@@ -794,6 +799,11 @@ function VideoDetail({
       await sendComment({ data: { video_id: videoId, content: message.trim() } });
       setMessage("");
       refresh();
+      setChatOpen(true);
+      setTimeout(() => {
+        const el = chatScrollRef.current;
+        if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
+      }, 250);
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
     } finally {
@@ -842,7 +852,8 @@ function VideoDetail({
   const me = q.data?.viewer;
 
   return (
-    <div className="flex h-full flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
       <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3">
         <h3 className="text-base font-semibold text-white">
           Vidéo #{video ? String(video.video_number).padStart(2, "0") : "…"}
@@ -882,7 +893,7 @@ function VideoDetail({
         </button>
       </div>
 
-      <div className="min-h-0 flex-1 space-y-5 overflow-y-auto p-5">
+      <div className="space-y-5 p-5">
         <section className="rounded-xl border border-white/5 bg-neutral-950/40">
           <div className="flex items-center gap-2 px-3 py-2">
             <button
@@ -1097,9 +1108,29 @@ function VideoDetail({
           )}
         </section>
 
-        <section>
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Commentaires</h4>
+      </div>
+      </div>
+
+      <div className="rounded-2xl border border-white/10 bg-neutral-900/50">
+        <button
+          onClick={() => setChatOpen((o) => !o)}
+          className="flex w-full items-center gap-2 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
+        >
+          <ChevronDown className={`h-4 w-4 transition-transform ${chatOpen ? "rotate-0" : "-rotate-90"}`} />
+          Chat de la vidéo
+          <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
+            {(q.data?.comments ?? []).length} message{(q.data?.comments ?? []).length > 1 ? "s" : ""}
+          </span>
+          {unreadIds.size > 0 && (
+            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
+              {unreadIds.size}
+            </span>
+          )}
+        </button>
+        {chatOpen && (
+        <section className="border-t border-white/10 px-5 py-4">
           <div
+            ref={chatScrollRef}
             className={`mb-3 space-y-3 pr-1.5 ${
               visibleCount > 10
                 ? "max-h-[48vh] overflow-y-auto overscroll-contain [scrollbar-width:thin]"
@@ -1257,6 +1288,7 @@ function VideoDetail({
             </button>
           </div>
         </section>
+        )}
       </div>
 
       {pendingDelete && (
