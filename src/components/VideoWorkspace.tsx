@@ -1285,6 +1285,7 @@ function VideoDetail({
             </button>
           </div>
         </section>
+        )}
       </div>
 
       {pendingDelete && (
