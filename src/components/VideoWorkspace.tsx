@@ -295,6 +295,7 @@ export function ProjectVideosBoard({
   const videos = q.data?.videos ?? [];
   const aspect = q.data?.project.format === "Court" ? "aspect-[9/16]" : "aspect-video";
   const gridRef = useRef<HTMLDivElement>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
   const [listMaxH, setListMaxH] = useState<number | null>(null);
 
   useEffect(() => {
@@ -302,17 +303,20 @@ export function ProjectVideosBoard({
       setListMaxH(null);
       return;
     }
+    // The left list matches the height of the open video panel, and scrolls
+    // internally while the panel itself grows with its content.
     const measure = () => {
-      const el = gridRef.current;
-      const first = el?.firstElementChild as HTMLElement | undefined;
-      if (!first) return;
-      const gap = 12;
-      setListMaxH(first.offsetHeight * 3 + gap * 2 + 4);
+      const el = detailRef.current;
+      if (!el) return;
+      setListMaxH(Math.max(320, el.offsetHeight));
     };
     const t = setTimeout(measure, 60);
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    if (detailRef.current && ro) ro.observe(detailRef.current);
     window.addEventListener("resize", measure);
     return () => {
       clearTimeout(t);
+      ro?.disconnect();
       window.removeEventListener("resize", measure);
     };
   }, [openId, videos.length, aspect]);
@@ -334,14 +338,12 @@ export function ProjectVideosBoard({
   }
 
   return (
-    <div
-      style={openId && listMaxH ? { height: listMaxH } : undefined}
-      className={`flex gap-5 ${openId ? "min-h-[420px] items-stretch" : ""}`}
-    >
+    <div className={`flex gap-5 ${openId ? "items-start" : ""}`}>
       <div
+        style={openId && listMaxH ? { maxHeight: listMaxH } : undefined}
         className={
           openId
-            ? "h-full w-[30%] shrink-0 min-h-0 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
+            ? "w-[30%] shrink-0 min-h-0 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
             : "w-full"
         }
       >
@@ -399,7 +401,8 @@ export function ProjectVideosBoard({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 24 }}
             transition={{ duration: 0.22 }}
-            className="min-h-0 min-w-0 flex-1 self-stretch"
+            ref={detailRef}
+            className="min-w-0 flex-1"
           >
             <VideoDetail
               videoId={openId}
