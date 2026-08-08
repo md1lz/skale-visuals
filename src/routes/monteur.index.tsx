@@ -110,7 +110,7 @@ function EditorHome() {
                     onClick={() =>
                       n.project_id
                         ? navigate({ to: "/monteur/projets", search: { p: n.project_id } })
-                        : navigate({ to: "/monteur/projets" })
+                        : navigate({ to: "/monteur/projets", search: {} })
                     }
                     className="w-full text-left flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5 hover:bg-white/[0.05] transition"
                   >
