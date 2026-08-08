@@ -710,6 +710,11 @@ function VideoDetail({
       });
     } else {
       setChatUnlocked(true);
+      setVisibleCount((c) => Math.max(c, totalComments));
+      requestAnimationFrame(() => {
+        const el = chatScrollRef.current;
+        if (el) el.scrollTop = el.scrollHeight;
+      });
     }
   }
 
