@@ -647,6 +647,33 @@ function VideoDetail({
     setLoadingOlder(false);
   }, [videoId]);
 
+  // Load the video-level script (not per version) when the video changes.
+  useEffect(() => {
+    const v = q.data?.video as { script?: string | null } | undefined;
+    if (!v) return;
+    setScript((prev) => (scriptDirty ? prev : v.script ?? ""));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q.data?.video, videoId]);
+
+  useEffect(() => {
+    setScriptDirty(false);
+  }, [videoId]);
+
+  async function submitScript() {
+    if (savingScript) return;
+    setSavingScript(true);
+    try {
+      await saveScript({ data: { video_id: videoId, script } });
+      setScriptDirty(false);
+      toast.success("Script enregistré");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSavingScript(false);
+    }
+  }
+
   function loadOlder() {
     if (loadingOlder) return;
     setLoadingOlder(true);
