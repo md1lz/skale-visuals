@@ -37,6 +37,7 @@ import {
   toggleCommentReaction,
   deleteVideoComment,
   signWorkspaceUrls,
+  setVideoScript,
 } from "@/lib/video-workspace.functions";
 import {
   videoStatusBadgeClass,
@@ -583,6 +584,7 @@ function VideoDetail({
   const react = useServerFn(toggleCommentReaction);
   const removeComment = useServerFn(deleteVideoComment);
   const signUrls = useServerFn(signWorkspaceUrls);
+  const saveScript = useServerFn(setVideoScript);
 
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -594,6 +596,9 @@ function VideoDetail({
   const [pickerFor, setPickerFor] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(10);
   const [loadingOlder, setLoadingOlder] = useState(false);
+  const [script, setScript] = useState("");
+  const [scriptDirty, setScriptDirty] = useState(false);
+  const [savingScript, setSavingScript] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const q = useQuery({
@@ -641,6 +646,33 @@ function VideoDetail({
     setVisibleCount(10);
     setLoadingOlder(false);
   }, [videoId]);
+
+  // Load the video-level script (not per version) when the video changes.
+  useEffect(() => {
+    const v = q.data?.video as { script?: string | null } | undefined;
+    if (!v) return;
+    setScript((prev) => (scriptDirty ? prev : v.script ?? ""));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [q.data?.video, videoId]);
+
+  useEffect(() => {
+    setScriptDirty(false);
+  }, [videoId]);
+
+  async function submitScript() {
+    if (savingScript) return;
+    setSavingScript(true);
+    try {
+      await saveScript({ data: { video_id: videoId, script } });
+      setScriptDirty(false);
+      toast.success("Script enregistré");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSavingScript(false);
+    }
+  }
 
   function loadOlder() {
     if (loadingOlder) return;
@@ -864,6 +896,43 @@ function VideoDetail({
         </section>
 
         <section>
+          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+            Script (transcription des dialogues)
+          </h4>
+          {role === "editor" ? (
+            <div className="space-y-2">
+              <textarea
+                value={script}
+                onChange={(e) => {
+                  setScript(e.target.value);
+                  setScriptDirty(true);
+                }}
+                rows={6}
+                placeholder="Écris ici la transcription des dialogues de cette vidéo…"
+                className="w-full resize-y rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
+              />
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={submitScript}
+                  disabled={savingScript || !scriptDirty}
+                  className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-500 disabled:opacity-50"
+                >
+                  {savingScript ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Check className="h-3.5 w-3.5" />}
+                  Enregistrer le script
+                </button>
+                {scriptDirty && <span className="text-[11px] text-orange-300">Modifications non enregistrées</span>}
+              </div>
+            </div>
+          ) : script ? (
+            <p className="whitespace-pre-wrap rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2.5 text-sm text-neutral-200">
+              {script}
+            </p>
+          ) : (
+            <p className="text-sm text-neutral-500">Aucun script fourni par le monteur.</p>
+          )}
+        </section>
+
+        <section>
           <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Versions</h4>
 
           {role === "editor" && (
@@ -1003,7 +1072,13 @@ function VideoDetail({
 
         <section>
           <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Commentaires</h4>
-          <div className="mb-3 max-h-[48vh] space-y-3 overflow-y-auto pr-1.5 [scrollbar-width:thin]">
+          <div
+            className={`mb-3 space-y-3 pr-1.5 ${
+              visibleCount > 10
+                ? "max-h-[48vh] overflow-y-auto overscroll-contain [scrollbar-width:thin]"
+                : "overflow-visible"
+            }`}
+          >
             {(q.data?.comments ?? []).length === 0 ? (
               <p className="text-sm text-neutral-500">Aucun commentaire sur cette vidéo.</p>
             ) : (

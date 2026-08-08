@@ -55,7 +55,7 @@ export async function assertVideoAccess(videoId: string, viewer: Viewer) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   const { data: video } = await supabaseAdmin
     .from("project_videos")
-    .select("id, project_id, video_number, status")
+    .select("id, project_id, video_number, status, script")
     .eq("id", videoId)
     .maybeSingle();
   if (!video) throw new Error("Vidéo introuvable");
