@@ -197,3 +197,11 @@
   0% { background-position: 200% 0; }
   100% { background-position: -200% 0; }
 }
+
+/* Fondu haut de la zone de commentaires (vue vidéo) */
+.chat-fade-top {
+  background-image: linear-gradient(to bottom, #1A1A1A 0%, rgba(26,26,26,0.85) 40%, rgba(26,26,26,0) 100%);
+}
+.admin-themed.mode-light .chat-fade-top {
+  background-image: linear-gradient(to bottom, #FFFFFF 0%, rgba(255,255,255,0.85) 40%, rgba(255,255,255,0) 100%);
+}
