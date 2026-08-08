@@ -932,6 +932,9 @@ function VideoDetail({
             />
           </>
         )}
+        {role === "editor" && video?.status === "Corrections à faire" && (
+          <ResubmitRevisionButton onClick={() => handleStatus("En révision")} busy={busy} />
+        )}
         <button
           onClick={onClose}
           className="ml-auto inline-flex items-center gap-1 text-sm text-neutral-400 transition hover:text-white"
