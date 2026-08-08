@@ -601,6 +601,7 @@ function VideoDetail({
   const [pickerFor, setPickerFor] = useState<string | null>(null);
   const [visibleCount, setVisibleCount] = useState(10);
   const [loadingOlder, setLoadingOlder] = useState(false);
+  const [chatUnlocked, setChatUnlocked] = useState(false);
   const [script, setScript] = useState("");
   const [scriptDirty, setScriptDirty] = useState(false);
   const [savingScript, setSavingScript] = useState(false);
@@ -655,6 +656,7 @@ function VideoDetail({
     setLoadingOlder(false);
     setChatOpen(true);
     setScriptOpen(false);
+    setChatUnlocked(false);
   }, [videoId]);
 
   // Leaving the page (or unmounting this video) must always reset the chat to
@@ -665,6 +667,7 @@ function VideoDetail({
       setLoadingOlder(false);
       setChatOpen(true);
       setScriptOpen(false);
+      setChatUnlocked(false);
     };
   }, []);
 
@@ -672,9 +675,32 @@ function VideoDetail({
   // non-scrollable view automatically.
   const totalComments = (q.data?.comments ?? []).length;
   useEffect(() => {
-    if (totalComments <= 10) setVisibleCount(10);
+    if (totalComments <= 10) {
+      setVisibleCount(10);
+      setChatUnlocked(false);
+    }
   }, [totalComments]);
-  const chatScrollable = visibleCount > 10 && totalComments > 10;
+  const chatScrollable = chatUnlocked;
+
+  // Locked mode always pins the view to the most recent message.
+  useEffect(() => {
+    if (chatUnlocked) return;
+    const el = chatScrollRef.current;
+    if (el) el.scrollTop = el.scrollHeight;
+  }, [chatUnlocked, totalComments, chatOpen, visibleCount]);
+
+  function toggleChatLock() {
+    if (chatUnlocked) {
+      setChatUnlocked(false);
+      setVisibleCount(10);
+      requestAnimationFrame(() => {
+        const el = chatScrollRef.current;
+        if (el) el.scrollTop = el.scrollHeight;
+      });
+    } else {
+      setChatUnlocked(true);
+    }
+  }
 
   // Load the video-level script (not per version) when the video changes.
   useEffect(() => {
@@ -1150,14 +1176,24 @@ function VideoDetail({
         </button>
         {chatOpen && (
         <section className="border-t border-white/10 px-5 py-4">
-          <div
-            ref={chatScrollRef}
-            className={`mb-3 space-y-3 pr-1.5 ${
-              chatScrollable
-                ? "max-h-[48vh] overflow-y-auto overscroll-contain [scrollbar-width:thin]"
-                : "overflow-visible"
-            }`}
-          >
+          <div className="relative mb-3 h-[22rem]">
+            <div className="chat-fade-top pointer-events-none absolute inset-x-0 top-0 z-20 h-16 rounded-t-xl" />
+            <button
+              type="button"
+              onClick={toggleChatLock}
+              className="absolute right-1.5 top-1.5 z-30 rounded-full border border-white/10 bg-neutral-900/80 px-2.5 py-1 text-[11px] text-neutral-300 backdrop-blur transition hover:bg-white/10 hover:text-white"
+            >
+              {chatUnlocked ? "Verrouiller" : "↑ Voir les anciens messages"}
+            </button>
+            <div
+              ref={chatScrollRef}
+              className={`flex h-full flex-col justify-end gap-3 pr-1.5 ${
+                chatScrollable
+                  ? "overflow-y-auto overscroll-contain [scrollbar-width:thin]"
+                  : "overflow-hidden"
+              }`}
+            >
+            <div className="mt-auto space-y-3">
             {(q.data?.comments ?? []).length === 0 ? (
               <p className="text-sm text-neutral-500">Aucun commentaire sur cette vidéo.</p>
             ) : (
@@ -1285,6 +1321,8 @@ function VideoDetail({
                 })}
               </>
             )}
+            </div>
+            </div>
           </div>
           <div className="flex gap-2">
             <textarea
