@@ -142,8 +142,6 @@ export const getVideoWorkspace = createServerFn({ method: "GET" })
     };
   });
 
-export const markVideoCommentsRead = createServerFn({ method: "POST" })
-
 export const setVideoScript = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ video_id: z.string().uuid(), script: z.string().max(50000) }).parse(d),
@@ -161,7 +159,7 @@ export const setVideoScript = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-const _markVideoCommentsRead = createServerFn({ method: "POST" })
+export const markVideoCommentsRead = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ video_id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
