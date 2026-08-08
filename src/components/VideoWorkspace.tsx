@@ -367,11 +367,22 @@ export function ProjectVideosBoard({
                 <span className="text-sm font-semibold text-white">
                   #{String(v.video_number).padStart(2, "0")}
                 </span>
-                {v.unread_comments > 0 && (
-                  <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
-                    {v.unread_comments}
-                  </span>
-                )}
+                <span className="flex items-center gap-1.5">
+                  {role === "admin" && v.status === "En révision" && (
+                    <span
+                      title="Nouvelle version à réviser"
+                      className="relative flex h-2.5 w-2.5"
+                    >
+                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
+                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sky-500" />
+                    </span>
+                  )}
+                  {v.unread_comments > 0 && (
+                    <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
+                      {v.unread_comments}
+                    </span>
+                  )}
+                </span>
               </div>
               <div className="mb-2">
                 <VersionThumb
