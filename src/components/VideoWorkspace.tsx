@@ -653,7 +653,20 @@ function VideoDetail({
   useEffect(() => {
     setVisibleCount(10);
     setLoadingOlder(false);
+    setChatOpen(true);
+    setScriptOpen(false);
   }, [videoId]);
+
+  // Leaving the page (or unmounting this video) must always reset the chat to
+  // its default state so old messages are not still "loaded" when coming back.
+  useEffect(() => {
+    return () => {
+      setVisibleCount(10);
+      setLoadingOlder(false);
+      setChatOpen(true);
+      setScriptOpen(false);
+    };
+  }, []);
 
   // If messages get deleted and 10 or fewer remain, collapse back to the
   // non-scrollable view automatically.
