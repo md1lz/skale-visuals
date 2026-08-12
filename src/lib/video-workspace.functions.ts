@@ -635,3 +635,87 @@ export const signWorkspaceUrls = createServerFn({ method: "POST" })
     );
     return out;
   });
+/** Signed upload URL for a chat attachment (image or voice note). */
+export const createChatUploadUrl = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        video_id: z.string().uuid(),
+        file_name: z.string().trim().min(1).max(200),
+        kind: z.enum(["image", "audio"]),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    const { project } = await assertVideoAccess(data.video_id, viewer);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const safe = data.file_name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120);
+    const path = `chat/${project.id}/${data.video_id}/${data.kind}/${Date.now()}-${safe}`;
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("site-videos")
+      .createSignedUploadUrl(path);
+    if (error || !signed) throw new Error(error?.message ?? "Upload impossible");
+    return { path, token: signed.token };
+  });
+
+/** Upsert / clear the "is typing" or "is recording" state of the current viewer. */
+export const setTypingIndicator = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        video_id: z.string().uuid(),
+        state: z.enum(["typing", "recording", "off"]),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    await assertVideoAccess(data.video_id, viewer);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (data.state === "off") {
+      await supabaseAdmin
+        .from("typing_indicators")
+        .delete()
+        .eq("project_video_id", data.video_id)
+        .eq("author_id", viewer.id);
+      return { ok: true as const };
+    }
+    await supabaseAdmin.from("typing_indicators").upsert(
+      {
+        project_video_id: data.video_id,
+        author_type: viewer.kind,
+        author_id: viewer.id,
+        author_name: viewer.name,
+        is_recording_audio: data.state === "recording",
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "project_video_id,author_type,author_id" },
+    );
+    return { ok: true as const };
+  });
+
+/** The other party's live typing / recording state (stale after 4 seconds). */
+export const getTypingIndicator = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => z.object({ video_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    await assertVideoAccess(data.video_id, viewer);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows } = await supabaseAdmin
+      .from("typing_indicators")
+      .select("author_name, author_id, is_recording_audio, updated_at")
+      .eq("project_video_id", data.video_id);
+    const cutoff = Date.now() - 4000;
+    const active = (rows ?? [])
+      .filter((r) => r.author_id !== viewer.id && new Date(r.updated_at).getTime() > cutoff)
+      .sort((a, b) => Number(b.is_recording_audio) - Number(a.is_recording_audio))[0];
+    if (!active) return null;
+    return {
+      name: active.author_name || "Quelqu'un",
+      recording: active.is_recording_audio,
+    };
+  });
