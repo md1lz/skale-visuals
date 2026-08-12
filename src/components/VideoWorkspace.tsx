@@ -1419,3 +1419,105 @@ export function ResubmitRevisionButton({ onClick, busy }: { onClick: () => void;
     </button>
   );
 }
+/* ------------------------------ Chat médias ------------------------------ */
+
+export function fmtSec(total: number) {
+  const s = Math.max(0, Math.floor(total || 0));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return (
+    <div
+      className="fixed inset-0 z-[400] flex items-center justify-center bg-black/90 p-6"
+      onClick={onClose}
+    >
+      <button
+        onClick={onClose}
+        className="absolute right-5 top-5 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+      >
+        <X className="h-5 w-5" />
+      </button>
+      <img
+        src={src}
+        alt="Pièce jointe"
+        onClick={(e) => e.stopPropagation()}
+        className="max-h-full max-w-full rounded-lg object-contain"
+      />
+    </div>
+  );
+}
+
+const WAVE_BARS = Array.from({ length: 32 }, (_, i) => 30 + ((i * 37) % 70));
+
+function VoiceBubble({ src, duration }: { src: string; duration: number | null }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [time, setTime] = useState(0);
+  const [rate, setRate] = useState(1);
+  const total = duration || 0;
+  const pct = total ? Math.min(100, (time / total) * 100) : 0;
+
+  function toggle() {
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) {
+      a.playbackRate = rate;
+      void a.play();
+    } else a.pause();
+  }
+
+  function cycleRate() {
+    const next = rate === 1 ? 1.5 : rate === 1.5 ? 2 : 1;
+    setRate(next);
+    if (audioRef.current) audioRef.current.playbackRate = next;
+  }
+
+  return (
+    <div className="mt-1 flex items-center gap-2 rounded-lg bg-black/20 px-2 py-1.5">
+      <audio
+        ref={audioRef}
+        src={src}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => {
+          setPlaying(false);
+          setTime(0);
+        }}
+        onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+        className="hidden"
+      />
+      <button
+        onClick={toggle}
+        className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+      >
+        {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+      </button>
+      <div className="flex h-7 flex-1 items-center gap-[2px]">
+        {WAVE_BARS.map((h, i) => (
+          <span
+            key={i}
+            style={{ height: `${h}%` }}
+            className={`w-[3px] rounded-full ${
+              (i / WAVE_BARS.length) * 100 <= pct ? "bg-red-400" : "bg-white/25"
+            }`}
+          />
+        ))}
+      </div>
+      <span className="shrink-0 text-[11px] tabular-nums text-neutral-400">
+        {fmtSec(time)} / {fmtSec(total)}
+      </span>
+      <button
+        onClick={cycleRate}
+        className="shrink-0 rounded-full border border-white/10 px-1.5 py-0.5 text-[10px] text-neutral-300 transition hover:bg-white/10"
+      >
+        x{rate}
+      </button>
+    </div>
+  );
+}
