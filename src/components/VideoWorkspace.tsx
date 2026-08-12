@@ -1533,6 +1533,7 @@ function VideoDetail({
             </div>
             </div>
           </div>
+          {lightbox && <ImageLightbox src={lightbox} onClose={() => setLightbox(null)} />}
           <div className="h-5 px-1">
             <AnimatePresence>
               {typingQ.data && (
