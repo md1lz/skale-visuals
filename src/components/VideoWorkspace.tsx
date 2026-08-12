@@ -25,6 +25,7 @@ import {
   ChevronDown,
   Copy,
 } from "lucide-react";
+import { ImageIcon, Mic, Pause, Square } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getProjectWorkspace,
@@ -40,6 +41,9 @@ import {
   deleteVideoComment,
   signWorkspaceUrls,
   setVideoScript,
+  createChatUploadUrl,
+  setTypingIndicator,
+  getTypingIndicator,
 } from "@/lib/video-workspace.functions";
 import {
   videoStatusBadgeClass,
