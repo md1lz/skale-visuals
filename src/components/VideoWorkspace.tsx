@@ -640,6 +640,7 @@ function VideoDetail({
   const recChunksRef = useRef<BlobPart[]>([]);
   const recTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recCancelledRef = useRef(false);
+  const recSecondsRef = useRef(0);
   const typingSentAtRef = useRef(0);
   const typingOffRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
