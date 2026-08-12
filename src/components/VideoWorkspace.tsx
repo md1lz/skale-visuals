@@ -1036,10 +1036,42 @@ function VideoDetail({
     const rec = new MediaRecorder(stream, { mimeType: mime });
     recChunksRef.current = [];
     recCancelledRef.current = false;
+    sendOnStopRef.current = false;
+    // Live waveform driven by the microphone signal (Web Audio AnalyserNode).
+    try {
+      const ctx = new AudioContext();
+      audioCtxRef.current = ctx;
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      ctx.createMediaStreamSource(stream).connect(analyser);
+      const buf = new Uint8Array(analyser.frequencyBinCount);
+      const tick = () => {
+        analyser.getByteFrequencyData(buf);
+        const bars = 40;
+        const step = Math.floor(buf.length / bars) || 1;
+        const next: number[] = [];
+        for (let i = 0; i < bars; i++) {
+          let sum = 0;
+          for (let j = 0; j < step; j++) sum += buf[i * step + j] ?? 0;
+          const avg = sum / step / 255;
+          next.push(Math.max(4, Math.min(28, 4 + avg * 60)));
+        }
+        setLevels(next);
+        rafRef.current = requestAnimationFrame(tick);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+    } catch {
+      /* waveform is decorative */
+    }
     rec.ondataavailable = (e) => e.data.size && recChunksRef.current.push(e.data);
     rec.onstop = () => {
       stream.getTracks().forEach((t) => t.stop());
       if (recTimerRef.current) clearInterval(recTimerRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      void audioCtxRef.current?.close().catch(() => {});
+      audioCtxRef.current = null;
+      setLevels(Array.from({ length: 40 }, () => 4));
       sendTyping("off");
       setRecording(false);
       const seconds = recSecondsRef.current;
@@ -1047,6 +1079,11 @@ function VideoDetail({
       if (recCancelledRef.current) return;
       const blob = new Blob(recChunksRef.current, { type: mime });
       if (!blob.size) return;
+      if (sendOnStopRef.current) {
+        sendOnStopRef.current = false;
+        void handleComment({ blob, seconds: Math.max(1, seconds) });
+        return;
+      }
       setAudioBlob(blob);
       setAudioDuration(Math.max(1, seconds));
       setAudioLocalUrl(URL.createObjectURL(blob));
@@ -1070,8 +1107,14 @@ function VideoDetail({
     if (rec && rec.state !== "inactive") rec.stop();
   }
 
+  function stopAndSendRecording() {
+    sendOnStopRef.current = true;
+    stopRecording();
+  }
+
   function cancelRecording() {
     recCancelledRef.current = true;
+    sendOnStopRef.current = false;
     stopRecording();
     clearAudio();
   }
