@@ -1533,10 +1533,142 @@ function VideoDetail({
             </div>
             </div>
           </div>
+          <div className="h-5 px-1">
+            <AnimatePresence>
+              {typingQ.data && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  className="flex items-center gap-1.5 text-[11px] text-neutral-400"
+                >
+                  {typingQ.data.recording ? (
+                    <>
+                      <Mic className="h-3.5 w-3.5 animate-pulse text-red-400" />
+                      <span>{typingQ.data.name} est en train d'enregistrer un vocal 🎙</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{typingQ.data.name} est en train d'écrire</span>
+                      <span className="flex gap-0.5">
+                        {[0, 1, 2].map((i) => (
+                          <span
+                            key={i}
+                            style={{ animationDelay: `${i * 150}ms` }}
+                            className="h-1 w-1 animate-pulse rounded-full bg-neutral-400"
+                          />
+                        ))}
+                      </span>
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {(imagePreview || audioLocalUrl || recording) && (
+            <div className="mb-2 flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-2">
+              {imagePreview && (
+                <div className="relative">
+                  <img src={imagePreview} alt="Aperçu" className="h-16 w-16 rounded-md object-cover" />
+                  <button
+                    onClick={clearImage}
+                    className="absolute -right-2 -top-2 rounded-full bg-neutral-800 p-1 text-neutral-300 transition hover:text-white"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
+              {recording && (
+                <div className="flex items-center gap-2 text-sm text-red-400">
+                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
+                  Enregistrement… {fmtSec(recSeconds)} / 2:00
+                  <button
+                    onClick={stopRecording}
+                    className="rounded-full bg-white/10 p-1 text-white transition hover:bg-white/20"
+                    title="Arrêter"
+                  >
+                    <Square className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={cancelRecording}
+                    className="rounded-full bg-white/10 p-1 text-white transition hover:bg-white/20"
+                    title="Annuler"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+              {audioLocalUrl && !recording && (
+                <div className="flex min-w-[16rem] flex-1 items-center gap-2">
+                  <div className="flex-1">
+                    <VoiceBubble src={audioLocalUrl} duration={audioDuration} />
+                  </div>
+                  <button
+                    onClick={clearAudio}
+                    className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-neutral-300 transition hover:bg-white/10"
+                  >
+                    <X className="h-3 w-3" /> Annuler
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex gap-2">
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              className="hidden"
+              onChange={(e) => pickImage(e.target.files?.[0])}
+            />
+            <div className="flex flex-col justify-end gap-1">
+              <button
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+                title="Envoyer une image"
+                className="rounded-lg border border-white/10 p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
+              >
+                <ImageIcon className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex flex-col justify-end gap-1">
+              <button
+                type="button"
+                onClick={() => (recording ? stopRecording() : startRecording())}
+                title={recording ? "Arrêter l'enregistrement" : "Enregistrer un vocal"}
+                className={`rounded-lg border p-2 transition ${
+                  recording
+                    ? "animate-pulse border-red-500/40 bg-red-600 text-white"
+                    : "border-white/10 text-neutral-300 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+            </div>
             <textarea
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                notifyTyping(e.target.value);
+              }}
+              onPaste={(e) => {
+                const item = Array.from(e.clipboardData.items).find((i) => i.type.startsWith("image/"));
+                const file = item?.getAsFile();
+                if (file) {
+                  e.preventDefault();
+                  pickImage(file);
+                }
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                const file = e.dataTransfer.files?.[0];
+                if (file?.type.startsWith("image/")) {
+                  e.preventDefault();
+                  pickImage(file);
+                }
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -1552,7 +1684,8 @@ function VideoDetail({
               disabled={busy}
               className="inline-flex items-center gap-1.5 self-end rounded-lg bg-red-600 px-3 py-2 text-sm text-white transition hover:bg-red-500 disabled:opacity-60"
             >
-              <MessageSquare className="h-4 w-4" /> Envoyer
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}{" "}
+              Envoyer
             </button>
           </div>
         </section>
