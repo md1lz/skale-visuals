@@ -25,7 +25,7 @@ import {
   ChevronDown,
   Copy,
 } from "lucide-react";
-import { ImageIcon, Mic, Pause, Square } from "lucide-react";
+import { ImageIcon, Mic, Pause, ArrowUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getProjectWorkspace,
@@ -641,6 +641,10 @@ function VideoDetail({
   const recTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recCancelledRef = useRef(false);
   const recSecondsRef = useRef(0);
+  const sendOnStopRef = useRef(false);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const [levels, setLevels] = useState<number[]>(() => Array.from({ length: 40 }, () => 4));
 
   // Reset attachments / typing state when the viewer switches video or leaves.
   useEffect(() => {
@@ -932,16 +936,17 @@ function VideoDetail({
     }
   }
 
-  async function handleComment() {
-    if ((!message.trim() && !imageFile && !audioBlob) || busy) return;
+  async function handleComment(voice?: { blob: Blob; seconds: number }) {
+    const blob = voice?.blob ?? audioBlob;
+    if ((!message.trim() && !imageFile && !blob) || busy) return;
     setBusy(true);
     try {
       let image_path: string | null = null;
       let audio_path: string | null = null;
       if (imageFile) image_path = await uploadChatFile(imageFile, "image", imageFile.name);
-      if (audioBlob) {
-        const ext = (audioBlob.type.includes("mp4") ? "mp4" : "webm") as string;
-        audio_path = await uploadChatFile(audioBlob, "audio", `vocal.${ext}`);
+      if (blob) {
+        const ext = (blob.type.includes("mp4") ? "mp4" : "webm") as string;
+        audio_path = await uploadChatFile(blob, "audio", `vocal.${ext}`);
       }
       await sendComment({
         data: {
@@ -949,7 +954,7 @@ function VideoDetail({
           content: message.trim(),
           image_path,
           audio_path,
-          audio_duration: audioBlob ? Math.max(1, Math.round(audioDuration)) : null,
+          audio_duration: blob ? Math.max(1, Math.round(voice?.seconds ?? audioDuration)) : null,
         },
       });
       setMessage("");
@@ -1031,10 +1036,42 @@ function VideoDetail({
     const rec = new MediaRecorder(stream, { mimeType: mime });
     recChunksRef.current = [];
     recCancelledRef.current = false;
+    sendOnStopRef.current = false;
+    // Live waveform driven by the microphone signal (Web Audio AnalyserNode).
+    try {
+      const ctx = new AudioContext();
+      audioCtxRef.current = ctx;
+      const analyser = ctx.createAnalyser();
+      analyser.fftSize = 256;
+      ctx.createMediaStreamSource(stream).connect(analyser);
+      const buf = new Uint8Array(analyser.frequencyBinCount);
+      const tick = () => {
+        analyser.getByteFrequencyData(buf);
+        const bars = 40;
+        const step = Math.floor(buf.length / bars) || 1;
+        const next: number[] = [];
+        for (let i = 0; i < bars; i++) {
+          let sum = 0;
+          for (let j = 0; j < step; j++) sum += buf[i * step + j] ?? 0;
+          const avg = sum / step / 255;
+          next.push(Math.max(4, Math.min(28, 4 + avg * 60)));
+        }
+        setLevels(next);
+        rafRef.current = requestAnimationFrame(tick);
+      };
+      rafRef.current = requestAnimationFrame(tick);
+    } catch {
+      /* waveform is decorative */
+    }
     rec.ondataavailable = (e) => e.data.size && recChunksRef.current.push(e.data);
     rec.onstop = () => {
       stream.getTracks().forEach((t) => t.stop());
       if (recTimerRef.current) clearInterval(recTimerRef.current);
+      if (rafRef.current) cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+      void audioCtxRef.current?.close().catch(() => {});
+      audioCtxRef.current = null;
+      setLevels(Array.from({ length: 40 }, () => 4));
       sendTyping("off");
       setRecording(false);
       const seconds = recSecondsRef.current;
@@ -1042,6 +1079,11 @@ function VideoDetail({
       if (recCancelledRef.current) return;
       const blob = new Blob(recChunksRef.current, { type: mime });
       if (!blob.size) return;
+      if (sendOnStopRef.current) {
+        sendOnStopRef.current = false;
+        void handleComment({ blob, seconds: Math.max(1, seconds) });
+        return;
+      }
       setAudioBlob(blob);
       setAudioDuration(Math.max(1, seconds));
       setAudioLocalUrl(URL.createObjectURL(blob));
@@ -1065,8 +1107,14 @@ function VideoDetail({
     if (rec && rec.state !== "inactive") rec.stop();
   }
 
+  function stopAndSendRecording() {
+    sendOnStopRef.current = true;
+    stopRecording();
+  }
+
   function cancelRecording() {
     recCancelledRef.current = true;
+    sendOnStopRef.current = false;
     stopRecording();
     clearAudio();
   }
@@ -1585,9 +1633,8 @@ function VideoDetail({
             </AnimatePresence>
           </div>
 
-          {(imagePreview || audioLocalUrl || recording) && (
+          {imagePreview && !recording && (
             <div className="mb-2 flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-2">
-              {imagePreview && (
                 <div className="relative">
                   <img src={imagePreview} alt="Aperçu" className="h-16 w-16 rounded-md object-cover" />
                   <button
@@ -1597,44 +1644,43 @@ function VideoDetail({
                     <X className="h-3 w-3" />
                   </button>
                 </div>
-              )}
-              {recording && (
-                <div className="flex items-center gap-2 text-sm text-red-400">
-                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
-                  Enregistrement… {fmtSec(recSeconds)} / 2:00
-                  <button
-                    onClick={stopRecording}
-                    className="rounded-full bg-white/10 p-1 text-white transition hover:bg-white/20"
-                    title="Arrêter"
-                  >
-                    <Square className="h-3.5 w-3.5" />
-                  </button>
-                  <button
-                    onClick={cancelRecording}
-                    className="rounded-full bg-white/10 p-1 text-white transition hover:bg-white/20"
-                    title="Annuler"
-                  >
-                    <X className="h-3.5 w-3.5" />
-                  </button>
-                </div>
-              )}
-              {audioLocalUrl && !recording && (
-                <div className="flex min-w-[16rem] flex-1 items-center gap-2">
-                  <div className="flex-1">
-                    <VoiceBubble src={audioLocalUrl} duration={audioDuration} />
-                  </div>
-                  <button
-                    onClick={clearAudio}
-                    className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-neutral-300 transition hover:bg-white/10"
-                  >
-                    <X className="h-3 w-3" /> Annuler
-                  </button>
-                </div>
-              )}
             </div>
           )}
 
-          <div className="flex gap-2">
+          {recording ? (
+            <div className="flex items-center gap-3 rounded-lg border border-red-500/30 bg-neutral-950 px-3 py-2">
+              <span className="flex items-center gap-1.5 text-sm tabular-nums text-red-400">
+                <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
+                {fmtSec(recSeconds)}
+              </span>
+              <div className="flex h-8 flex-1 items-center justify-center gap-[2px] overflow-hidden">
+                {levels.map((h, i) => (
+                  <span
+                    key={i}
+                    style={{ height: `${h}px` }}
+                    className="w-[3px] rounded-full bg-red-400/80 transition-[height] duration-75"
+                  />
+                ))}
+              </div>
+              <button
+                type="button"
+                onClick={cancelRecording}
+                title="Annuler l'enregistrement"
+                className="rounded-full p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                onClick={stopAndSendRecording}
+                title="Envoyer le vocal"
+                className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-500"
+              >
+                <ArrowUp className="h-4 w-4" />
+              </button>
+            </div>
+          ) : (
+          <div className="flex items-end gap-2">
             <input
               ref={imageInputRef}
               type="file"
@@ -1642,30 +1688,6 @@ function VideoDetail({
               className="hidden"
               onChange={(e) => pickImage(e.target.files?.[0])}
             />
-            <div className="flex flex-col justify-end gap-1">
-              <button
-                type="button"
-                onClick={() => imageInputRef.current?.click()}
-                title="Envoyer une image"
-                className="rounded-lg border border-white/10 p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
-              >
-                <ImageIcon className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="flex flex-col justify-end gap-1">
-              <button
-                type="button"
-                onClick={() => (recording ? stopRecording() : startRecording())}
-                title={recording ? "Arrêter l'enregistrement" : "Enregistrer un vocal"}
-                className={`rounded-lg border p-2 transition ${
-                  recording
-                    ? "animate-pulse border-red-500/40 bg-red-600 text-white"
-                    : "border-white/10 text-neutral-300 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                <Mic className="h-4 w-4" />
-              </button>
-            </div>
             <textarea
               value={message}
               onChange={(e) => {
@@ -1699,14 +1721,31 @@ function VideoDetail({
               className="flex-1 resize-none rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
             />
             <button
-              onClick={handleComment}
-              disabled={busy}
-              className="inline-flex items-center gap-1.5 self-end rounded-lg bg-red-600 px-3 py-2 text-sm text-white transition hover:bg-red-500 disabled:opacity-60"
+              type="button"
+              onClick={() => imageInputRef.current?.click()}
+              title="Envoyer une image"
+              className="rounded-full p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
             >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}{" "}
-              Envoyer
+              <ImageIcon className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => startRecording()}
+              title="Enregistrer un vocal"
+              className="rounded-full p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
+            >
+              <Mic className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handleComment()}
+              disabled={busy}
+              title="Envoyer"
+              className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-500 disabled:opacity-60"
+            >
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
             </button>
           </div>
+          )}
         </section>
         )}
       </div>
@@ -1800,6 +1839,9 @@ function VoiceBubble({ src, duration }: { src: string; duration: number | null }
   const [rate, setRate] = useState(1);
   const total = duration || 0;
   const pct = total ? Math.min(100, (time / total) * 100) : 0;
+  // Freeze the source: refreshed signed URLs must not reload/interrupt playback.
+  const stableSrcRef = useRef(src);
+  const stableSrc = stableSrcRef.current;
 
   function toggle() {
     const a = audioRef.current;
@@ -1820,7 +1862,7 @@ function VoiceBubble({ src, duration }: { src: string; duration: number | null }
     <div className="mt-1 flex items-center gap-2 rounded-lg bg-black/20 px-2 py-1.5">
       <audio
         ref={audioRef}
-        src={src}
+        src={stableSrc}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => {
