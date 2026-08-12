@@ -641,6 +641,24 @@ function VideoDetail({
   const recTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recCancelledRef = useRef(false);
   const recSecondsRef = useRef(0);
+
+  // Reset attachments / typing state when the viewer switches video or leaves.
+  useEffect(() => {
+    return () => {
+      if (typingOffRef.current) clearTimeout(typingOffRef.current);
+      if (recTimerRef.current) clearInterval(recTimerRef.current);
+      recCancelledRef.current = true;
+      if (recorderRef.current && recorderRef.current.state !== "inactive") recorderRef.current.stop();
+      void pingTyping({ data: { video_id: videoId, state: "off" as const } }).catch(() => {});
+      setImageFile(null);
+      setImagePreview(null);
+      setAudioBlob(null);
+      setAudioLocalUrl(null);
+      setRecording(false);
+      setRecSeconds(0);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoId]);
   const typingSentAtRef = useRef(0);
   const typingOffRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
