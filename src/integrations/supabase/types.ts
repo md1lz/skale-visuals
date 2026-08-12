@@ -710,38 +710,85 @@ export type Database = {
           },
         ]
       }
+      typing_indicators: {
+        Row: {
+          author_id: string
+          author_name: string
+          author_type: string
+          id: string
+          is_recording_audio: boolean
+          project_video_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          author_name?: string
+          author_type: string
+          id?: string
+          is_recording_audio?: boolean
+          project_video_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          author_name?: string
+          author_type?: string
+          id?: string
+          is_recording_audio?: boolean
+          project_video_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "typing_indicators_project_video_id_fkey"
+            columns: ["project_video_id"]
+            isOneToOne: false
+            referencedRelation: "project_videos"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       video_comments: {
         Row: {
+          audio_duration: number | null
+          audio_url: string | null
           author_id: string | null
           author_name: string
           author_type: string
           content: string
           created_at: string
           id: string
+          image_url: string | null
           project_video_id: string
           read_at: string | null
           read_by_admin: boolean
           read_by_editor: boolean
         }
         Insert: {
+          audio_duration?: number | null
+          audio_url?: string | null
           author_id?: string | null
           author_name?: string
           author_type: string
-          content: string
+          content?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           project_video_id: string
           read_at?: string | null
           read_by_admin?: boolean
           read_by_editor?: boolean
         }
         Update: {
+          audio_duration?: number | null
+          audio_url?: string | null
           author_id?: string | null
           author_name?: string
           author_type?: string
           content?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           project_video_id?: string
           read_at?: string | null
           read_by_admin?: boolean

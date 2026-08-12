@@ -118,11 +118,27 @@ export const getVideoWorkspace = createServerFn({ method: "GET" })
       supabaseAdmin
         .from("video_comments")
         .select(
-          "id, author_type, author_id, author_name, content, read_by_editor, read_by_admin, read_at, created_at",
+          "id, author_type, author_id, author_name, content, image_url, audio_url, audio_duration, read_by_editor, read_by_admin, read_at, created_at",
         )
         .eq("project_video_id", data.video_id)
         .order("created_at", { ascending: true }),
     ]);
+
+    // Chat attachments are private storage objects: hand back short-lived signed URLs.
+    const signRef = async (ref: string | null) => {
+      const m = ref?.match(/^storage:\/\/site-videos\/(.+)$/);
+      if (!m) return ref ?? null;
+      const { data: s } = await supabaseAdmin.storage
+        .from("site-videos")
+        .createSignedUrl(decodeURIComponent(m[1]!), 60 * 60 * 24);
+      return s?.signedUrl ?? null;
+    };
+    await Promise.all(
+      (comments ?? []).map(async (c) => {
+        c.image_url = await signRef(c.image_url);
+        c.audio_url = await signRef(c.audio_url);
+      }),
+    );
 
     const commentIds = (comments ?? []).map((c) => c.id);
     const { data: reactions } = commentIds.length
@@ -452,7 +468,18 @@ export const toggleCommentReaction = createServerFn({ method: "POST" })
 
 export const postVideoComment = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
-    z.object({ video_id: z.string().uuid(), content: z.string().trim().min(1).max(4000) }).parse(d),
+    z
+      .object({
+        video_id: z.string().uuid(),
+        content: z.string().trim().max(4000).optional().default(""),
+        image_path: z.string().trim().max(500).nullish(),
+        audio_path: z.string().trim().max(500).nullish(),
+        audio_duration: z.number().int().min(0).max(600).nullish(),
+      })
+      .refine((v) => Boolean(v.content || v.image_path || v.audio_path), {
+        message: "Message vide",
+      })
+      .parse(d),
   )
   .handler(async ({ data }) => {
     const { resolveViewer, assertVideoAccess, notifyAdmins } = await import("./video-workspace.server");
@@ -465,10 +492,19 @@ export const postVideoComment = createServerFn({ method: "POST" })
       author_id: viewer.id,
       author_name: viewer.name,
       content: data.content,
+      image_url: data.image_path ? `storage://site-videos/${data.image_path}` : null,
+      audio_url: data.audio_path ? `storage://site-videos/${data.audio_path}` : null,
+      audio_duration: data.audio_duration ?? null,
       read_by_editor: viewer.kind === "editor",
       read_by_admin: viewer.kind === "admin",
     });
     if (error) throw new Error(error.message);
+
+    await supabaseAdmin
+      .from("typing_indicators")
+      .delete()
+      .eq("project_video_id", data.video_id)
+      .eq("author_id", viewer.id);
 
     const label = `#${String(video.video_number).padStart(2, "0")}`;
     if (viewer.kind === "editor") {
@@ -598,4 +634,88 @@ export const signWorkspaceUrls = createServerFn({ method: "POST" })
       }),
     );
     return out;
+  });
+/** Signed upload URL for a chat attachment (image or voice note). */
+export const createChatUploadUrl = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        video_id: z.string().uuid(),
+        file_name: z.string().trim().min(1).max(200),
+        kind: z.enum(["image", "audio"]),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    const { project } = await assertVideoAccess(data.video_id, viewer);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const safe = data.file_name.replace(/[^a-zA-Z0-9._-]/g, "_").slice(-120);
+    const path = `chat/${project.id}/${data.video_id}/${data.kind}/${Date.now()}-${safe}`;
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("site-videos")
+      .createSignedUploadUrl(path);
+    if (error || !signed) throw new Error(error?.message ?? "Upload impossible");
+    return { path, token: signed.token };
+  });
+
+/** Upsert / clear the "is typing" or "is recording" state of the current viewer. */
+export const setTypingIndicator = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        video_id: z.string().uuid(),
+        state: z.enum(["typing", "recording", "off"]),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    await assertVideoAccess(data.video_id, viewer);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    if (data.state === "off") {
+      await supabaseAdmin
+        .from("typing_indicators")
+        .delete()
+        .eq("project_video_id", data.video_id)
+        .eq("author_id", viewer.id);
+      return { ok: true as const };
+    }
+    await supabaseAdmin.from("typing_indicators").upsert(
+      {
+        project_video_id: data.video_id,
+        author_type: viewer.kind,
+        author_id: viewer.id,
+        author_name: viewer.name,
+        is_recording_audio: data.state === "recording",
+        updated_at: new Date().toISOString(),
+      },
+      { onConflict: "project_video_id,author_type,author_id" },
+    );
+    return { ok: true as const };
+  });
+
+/** The other party's live typing / recording state (stale after 4 seconds). */
+export const getTypingIndicator = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) => z.object({ video_id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    await assertVideoAccess(data.video_id, viewer);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: rows } = await supabaseAdmin
+      .from("typing_indicators")
+      .select("author_name, author_id, is_recording_audio, updated_at")
+      .eq("project_video_id", data.video_id);
+    const cutoff = Date.now() - 4000;
+    const active = (rows ?? [])
+      .filter((r) => r.author_id !== viewer.id && new Date(r.updated_at).getTime() > cutoff)
+      .sort((a, b) => Number(b.is_recording_audio) - Number(a.is_recording_audio))[0];
+    if (!active) return null;
+    return {
+      name: active.author_name || "Quelqu'un",
+      recording: active.is_recording_audio,
+    };
   });

@@ -25,6 +25,7 @@ import {
   ChevronDown,
   Copy,
 } from "lucide-react";
+import { ImageIcon, Mic, Pause, Square } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getProjectWorkspace,
@@ -40,6 +41,9 @@ import {
   deleteVideoComment,
   signWorkspaceUrls,
   setVideoScript,
+  createChatUploadUrl,
+  setTypingIndicator,
+  getTypingIndicator,
 } from "@/lib/video-workspace.functions";
 import {
   videoStatusBadgeClass,
@@ -601,6 +605,9 @@ function VideoDetail({
   const removeComment = useServerFn(deleteVideoComment);
   const signUrls = useServerFn(signWorkspaceUrls);
   const saveScript = useServerFn(setVideoScript);
+  const makeChatUpload = useServerFn(createChatUploadUrl);
+  const pingTyping = useServerFn(setTypingIndicator);
+  const fetchTyping = useServerFn(getTypingIndicator);
 
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -620,12 +627,82 @@ function VideoDetail({
   const [chatOpen, setChatOpen] = useState(true);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
+  const [recording, setRecording] = useState(false);
+  const [recSeconds, setRecSeconds] = useState(0);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioLocalUrl, setAudioLocalUrl] = useState<string | null>(null);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const recChunksRef = useRef<BlobPart[]>([]);
+  const recTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const recCancelledRef = useRef(false);
+  const recSecondsRef = useRef(0);
+
+  // Reset attachments / typing state when the viewer switches video or leaves.
+  useEffect(() => {
+    return () => {
+      if (typingOffRef.current) clearTimeout(typingOffRef.current);
+      if (recTimerRef.current) clearInterval(recTimerRef.current);
+      recCancelledRef.current = true;
+      if (recorderRef.current && recorderRef.current.state !== "inactive") recorderRef.current.stop();
+      void pingTyping({ data: { video_id: videoId, state: "off" as const } }).catch(() => {});
+      setImageFile(null);
+      setImagePreview(null);
+      setAudioBlob(null);
+      setAudioLocalUrl(null);
+      setRecording(false);
+      setRecSeconds(0);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [videoId]);
+  const typingSentAtRef = useRef(0);
+  const typingOffRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const q = useQuery({
     queryKey: ["workspace", "video", videoId],
     queryFn: () => fetchVideo({ data: { video_id: videoId } }),
     refetchInterval: 15_000,
   });
+
+  // Live "is typing / is recording" state of the other party.
+  const typingQ = useQuery({
+    queryKey: ["workspace", "typing", videoId],
+    queryFn: () => fetchTyping({ data: { video_id: videoId } }),
+    refetchInterval: 2000,
+    staleTime: 0,
+  });
+
+  const sendTyping = useCallback(
+    (state: "typing" | "recording" | "off") => {
+      void pingTyping({ data: { video_id: videoId, state } }).catch(() => {});
+    },
+    [pingTyping, videoId],
+  );
+
+  const notifyTyping = useCallback(
+    (value: string) => {
+      if (typingOffRef.current) clearTimeout(typingOffRef.current);
+      if (!value.trim()) {
+        typingSentAtRef.current = 0;
+        sendTyping("off");
+        return;
+      }
+      const now = Date.now();
+      if (now - typingSentAtRef.current > 1800) {
+        typingSentAtRef.current = now;
+        sendTyping("typing");
+      }
+      typingOffRef.current = setTimeout(() => {
+        typingSentAtRef.current = 0;
+        sendTyping("off");
+      }, 4000);
+    },
+    [sendTyping],
+  );
 
   const refresh = useCallback(() => {
     qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
@@ -856,11 +933,31 @@ function VideoDetail({
   }
 
   async function handleComment() {
-    if (!message.trim() || busy) return;
+    if ((!message.trim() && !imageFile && !audioBlob) || busy) return;
     setBusy(true);
     try {
-      await sendComment({ data: { video_id: videoId, content: message.trim() } });
+      let image_path: string | null = null;
+      let audio_path: string | null = null;
+      if (imageFile) image_path = await uploadChatFile(imageFile, "image", imageFile.name);
+      if (audioBlob) {
+        const ext = (audioBlob.type.includes("mp4") ? "mp4" : "webm") as string;
+        audio_path = await uploadChatFile(audioBlob, "audio", `vocal.${ext}`);
+      }
+      await sendComment({
+        data: {
+          video_id: videoId,
+          content: message.trim(),
+          image_path,
+          audio_path,
+          audio_duration: audioBlob ? Math.max(1, Math.round(audioDuration)) : null,
+        },
+      });
       setMessage("");
+      clearImage();
+      clearAudio();
+      if (typingOffRef.current) clearTimeout(typingOffRef.current);
+      typingSentAtRef.current = 0;
+      sendTyping("off");
       refresh();
       setChatOpen(true);
       setTimeout(() => {
@@ -872,6 +969,106 @@ function VideoDetail({
     } finally {
       setBusy(false);
     }
+  }
+
+  async function uploadChatFile(blob: Blob, kind: "image" | "audio", fileName: string) {
+    const { path, token } = await makeChatUpload({
+      data: { video_id: videoId, file_name: fileName, kind },
+    });
+    const { error } = await supabase.storage.from("site-videos").uploadToSignedUrl(path, token, blob);
+    if (error) throw new Error(error.message);
+    return path;
+  }
+
+  const IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+  function pickImage(file: File | null | undefined) {
+    if (!file) return;
+    if (!IMAGE_TYPES.includes(file.type)) {
+      toast.error("Format non supporté (jpg, png, gif, webp)");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image trop lourde, max 5 Mo");
+      return;
+    }
+    setImageFile(file);
+    setImagePreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  }
+
+  function clearImage() {
+    setImagePreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    setImageFile(null);
+    if (imageInputRef.current) imageInputRef.current.value = "";
+  }
+
+  function clearAudio() {
+    setAudioLocalUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    setAudioBlob(null);
+    setAudioDuration(0);
+  }
+
+  async function startRecording() {
+    if (recording) return;
+    clearAudio();
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      toast.error("Autorisez l'accès au microphone dans les paramètres de votre navigateur.");
+      return;
+    }
+    const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+    const rec = new MediaRecorder(stream, { mimeType: mime });
+    recChunksRef.current = [];
+    recCancelledRef.current = false;
+    rec.ondataavailable = (e) => e.data.size && recChunksRef.current.push(e.data);
+    rec.onstop = () => {
+      stream.getTracks().forEach((t) => t.stop());
+      if (recTimerRef.current) clearInterval(recTimerRef.current);
+      sendTyping("off");
+      setRecording(false);
+      const seconds = recSecondsRef.current;
+      setRecSeconds(0);
+      if (recCancelledRef.current) return;
+      const blob = new Blob(recChunksRef.current, { type: mime });
+      if (!blob.size) return;
+      setAudioBlob(blob);
+      setAudioDuration(Math.max(1, seconds));
+      setAudioLocalUrl(URL.createObjectURL(blob));
+    };
+    recorderRef.current = rec;
+    rec.start();
+    setRecording(true);
+    setRecSeconds(0);
+    recSecondsRef.current = 0;
+    sendTyping("recording");
+    recTimerRef.current = setInterval(() => {
+      recSecondsRef.current += 1;
+      setRecSeconds(recSecondsRef.current);
+      if (recSecondsRef.current % 2 === 0) sendTyping("recording");
+      if (recSecondsRef.current >= 120) stopRecording();
+    }, 1000);
+  }
+
+  function stopRecording() {
+    const rec = recorderRef.current;
+    if (rec && rec.state !== "inactive") rec.stop();
+  }
+
+  function cancelRecording() {
+    recCancelledRef.current = true;
+    stopRecording();
+    clearAudio();
   }
 
   async function handleReaction(commentId: string, emoji: string) {
@@ -1260,7 +1457,18 @@ function VideoDetail({
                           </span>
                           <span className="text-[11px] text-neutral-500">{fmtDateTimeFR(c.created_at)}</span>
                         </div>
-                        <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
+                        {c.content && (
+                          <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
+                        )}
+                        {c.image_url && (
+                          <img
+                            src={c.image_url}
+                            alt="Pièce jointe"
+                            onClick={() => setLightbox(c.image_url!)}
+                            className="mt-1 max-h-48 w-auto max-w-[200px] cursor-zoom-in rounded-lg border border-white/10 object-cover"
+                          />
+                        )}
+                        {c.audio_url && <VoiceBubble src={c.audio_url} duration={c.audio_duration} />}
                         {mine && (
                           <div className="mt-0.5 flex items-center justify-end gap-1">
                             {c.read_at ? (
@@ -1343,10 +1551,143 @@ function VideoDetail({
             </div>
             </div>
           </div>
+          {lightbox && <ImageLightbox src={lightbox} onClose={() => setLightbox(null)} />}
+          <div className="h-5 px-1">
+            <AnimatePresence>
+              {typingQ.data && (
+                <motion.div
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 4 }}
+                  className="flex items-center gap-1.5 text-[11px] text-neutral-400"
+                >
+                  {typingQ.data.recording ? (
+                    <>
+                      <Mic className="h-3.5 w-3.5 animate-pulse text-red-400" />
+                      <span>{typingQ.data.name} est en train d'enregistrer un vocal 🎙</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>{typingQ.data.name} est en train d'écrire</span>
+                      <span className="flex gap-0.5">
+                        {[0, 1, 2].map((i) => (
+                          <span
+                            key={i}
+                            style={{ animationDelay: `${i * 150}ms` }}
+                            className="h-1 w-1 animate-pulse rounded-full bg-neutral-400"
+                          />
+                        ))}
+                      </span>
+                    </>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+
+          {(imagePreview || audioLocalUrl || recording) && (
+            <div className="mb-2 flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-2">
+              {imagePreview && (
+                <div className="relative">
+                  <img src={imagePreview} alt="Aperçu" className="h-16 w-16 rounded-md object-cover" />
+                  <button
+                    onClick={clearImage}
+                    className="absolute -right-2 -top-2 rounded-full bg-neutral-800 p-1 text-neutral-300 transition hover:text-white"
+                  >
+                    <X className="h-3 w-3" />
+                  </button>
+                </div>
+              )}
+              {recording && (
+                <div className="flex items-center gap-2 text-sm text-red-400">
+                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
+                  Enregistrement… {fmtSec(recSeconds)} / 2:00
+                  <button
+                    onClick={stopRecording}
+                    className="rounded-full bg-white/10 p-1 text-white transition hover:bg-white/20"
+                    title="Arrêter"
+                  >
+                    <Square className="h-3.5 w-3.5" />
+                  </button>
+                  <button
+                    onClick={cancelRecording}
+                    className="rounded-full bg-white/10 p-1 text-white transition hover:bg-white/20"
+                    title="Annuler"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              )}
+              {audioLocalUrl && !recording && (
+                <div className="flex min-w-[16rem] flex-1 items-center gap-2">
+                  <div className="flex-1">
+                    <VoiceBubble src={audioLocalUrl} duration={audioDuration} />
+                  </div>
+                  <button
+                    onClick={clearAudio}
+                    className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-neutral-300 transition hover:bg-white/10"
+                  >
+                    <X className="h-3 w-3" /> Annuler
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="flex gap-2">
+            <input
+              ref={imageInputRef}
+              type="file"
+              accept="image/jpeg,image/png,image/gif,image/webp"
+              className="hidden"
+              onChange={(e) => pickImage(e.target.files?.[0])}
+            />
+            <div className="flex flex-col justify-end gap-1">
+              <button
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+                title="Envoyer une image"
+                className="rounded-lg border border-white/10 p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
+              >
+                <ImageIcon className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex flex-col justify-end gap-1">
+              <button
+                type="button"
+                onClick={() => (recording ? stopRecording() : startRecording())}
+                title={recording ? "Arrêter l'enregistrement" : "Enregistrer un vocal"}
+                className={`rounded-lg border p-2 transition ${
+                  recording
+                    ? "animate-pulse border-red-500/40 bg-red-600 text-white"
+                    : "border-white/10 text-neutral-300 hover:bg-white/10 hover:text-white"
+                }`}
+              >
+                <Mic className="h-4 w-4" />
+              </button>
+            </div>
             <textarea
               value={message}
-              onChange={(e) => setMessage(e.target.value)}
+              onChange={(e) => {
+                setMessage(e.target.value);
+                notifyTyping(e.target.value);
+              }}
+              onPaste={(e) => {
+                const item = Array.from(e.clipboardData.items).find((i) => i.type.startsWith("image/"));
+                const file = item?.getAsFile();
+                if (file) {
+                  e.preventDefault();
+                  pickImage(file);
+                }
+              }}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => {
+                const file = e.dataTransfer.files?.[0];
+                if (file?.type.startsWith("image/")) {
+                  e.preventDefault();
+                  pickImage(file);
+                }
+              }}
               onKeyDown={(e) => {
                 if (e.key === "Enter" && !e.shiftKey) {
                   e.preventDefault();
@@ -1362,7 +1703,8 @@ function VideoDetail({
               disabled={busy}
               className="inline-flex items-center gap-1.5 self-end rounded-lg bg-red-600 px-3 py-2 text-sm text-white transition hover:bg-red-500 disabled:opacity-60"
             >
-              <MessageSquare className="h-4 w-4" /> Envoyer
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}{" "}
+              Envoyer
             </button>
           </div>
         </section>
@@ -1413,5 +1755,107 @@ export function ResubmitRevisionButton({ onClick, busy }: { onClick: () => void;
     >
       <Check className="h-4 w-4" /> Renvoyer en révision
     </button>
+  );
+}
+/* ------------------------------ Chat médias ------------------------------ */
+
+export function fmtSec(total: number) {
+  const s = Math.max(0, Math.floor(total || 0));
+  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+}
+
+function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return (
+    <div
+      className="fixed inset-0 z-[400] flex items-center justify-center bg-black/90 p-6"
+      onClick={onClose}
+    >
+      <button
+        onClick={onClose}
+        className="absolute right-5 top-5 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
+      >
+        <X className="h-5 w-5" />
+      </button>
+      <img
+        src={src}
+        alt="Pièce jointe"
+        onClick={(e) => e.stopPropagation()}
+        className="max-h-full max-w-full rounded-lg object-contain"
+      />
+    </div>
+  );
+}
+
+const WAVE_BARS = Array.from({ length: 32 }, (_, i) => 30 + ((i * 37) % 70));
+
+function VoiceBubble({ src, duration }: { src: string; duration: number | null }) {
+  const audioRef = useRef<HTMLAudioElement>(null);
+  const [playing, setPlaying] = useState(false);
+  const [time, setTime] = useState(0);
+  const [rate, setRate] = useState(1);
+  const total = duration || 0;
+  const pct = total ? Math.min(100, (time / total) * 100) : 0;
+
+  function toggle() {
+    const a = audioRef.current;
+    if (!a) return;
+    if (a.paused) {
+      a.playbackRate = rate;
+      void a.play();
+    } else a.pause();
+  }
+
+  function cycleRate() {
+    const next = rate === 1 ? 1.5 : rate === 1.5 ? 2 : 1;
+    setRate(next);
+    if (audioRef.current) audioRef.current.playbackRate = next;
+  }
+
+  return (
+    <div className="mt-1 flex items-center gap-2 rounded-lg bg-black/20 px-2 py-1.5">
+      <audio
+        ref={audioRef}
+        src={src}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+        onEnded={() => {
+          setPlaying(false);
+          setTime(0);
+        }}
+        onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
+        className="hidden"
+      />
+      <button
+        onClick={toggle}
+        className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+      >
+        {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
+      </button>
+      <div className="flex h-7 flex-1 items-center gap-[2px]">
+        {WAVE_BARS.map((h, i) => (
+          <span
+            key={i}
+            style={{ height: `${h}%` }}
+            className={`w-[3px] rounded-full ${
+              (i / WAVE_BARS.length) * 100 <= pct ? "bg-red-400" : "bg-white/25"
+            }`}
+          />
+        ))}
+      </div>
+      <span className="shrink-0 text-[11px] tabular-nums text-neutral-400">
+        {fmtSec(time)} / {fmtSec(total)}
+      </span>
+      <button
+        onClick={cycleRate}
+        className="shrink-0 rounded-full border border-white/10 px-1.5 py-0.5 text-[10px] text-neutral-300 transition hover:bg-white/10"
+      >
+        x{rate}
+      </button>
+    </div>
   );
 }
