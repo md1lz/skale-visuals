@@ -25,7 +25,7 @@ import {
   ChevronDown,
   Copy,
 } from "lucide-react";
-import { ImageIcon, Mic, Pause, Trash2, ArrowUp } from "lucide-react";
+import { ImageIcon, Mic, Pause, ArrowUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import {
   getProjectWorkspace,
