@@ -914,11 +914,31 @@ function VideoDetail({
   }
 
   async function handleComment() {
-    if (!message.trim() || busy) return;
+    if ((!message.trim() && !imageFile && !audioBlob) || busy) return;
     setBusy(true);
     try {
-      await sendComment({ data: { video_id: videoId, content: message.trim() } });
+      let image_path: string | null = null;
+      let audio_path: string | null = null;
+      if (imageFile) image_path = await uploadChatFile(imageFile, "image", imageFile.name);
+      if (audioBlob) {
+        const ext = (audioBlob.type.includes("mp4") ? "mp4" : "webm") as string;
+        audio_path = await uploadChatFile(audioBlob, "audio", `vocal.${ext}`);
+      }
+      await sendComment({
+        data: {
+          video_id: videoId,
+          content: message.trim(),
+          image_path,
+          audio_path,
+          audio_duration: audioBlob ? Math.max(1, Math.round(audioDuration)) : null,
+        },
+      });
       setMessage("");
+      clearImage();
+      clearAudio();
+      if (typingOffRef.current) clearTimeout(typingOffRef.current);
+      typingSentAtRef.current = 0;
+      sendTyping("off");
       refresh();
       setChatOpen(true);
       setTimeout(() => {
@@ -930,6 +950,106 @@ function VideoDetail({
     } finally {
       setBusy(false);
     }
+  }
+
+  async function uploadChatFile(blob: Blob, kind: "image" | "audio", fileName: string) {
+    const { path, token } = await makeChatUpload({
+      data: { video_id: videoId, file_name: fileName, kind },
+    });
+    const { error } = await supabase.storage.from("site-videos").uploadToSignedUrl(path, token, blob);
+    if (error) throw new Error(error.message);
+    return path;
+  }
+
+  const IMAGE_TYPES = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+
+  function pickImage(file: File | null | undefined) {
+    if (!file) return;
+    if (!IMAGE_TYPES.includes(file.type)) {
+      toast.error("Format non supporté (jpg, png, gif, webp)");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error("Image trop lourde, max 5 Mo");
+      return;
+    }
+    setImageFile(file);
+    setImagePreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return URL.createObjectURL(file);
+    });
+  }
+
+  function clearImage() {
+    setImagePreview((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    setImageFile(null);
+    if (imageInputRef.current) imageInputRef.current.value = "";
+  }
+
+  function clearAudio() {
+    setAudioLocalUrl((prev) => {
+      if (prev) URL.revokeObjectURL(prev);
+      return null;
+    });
+    setAudioBlob(null);
+    setAudioDuration(0);
+  }
+
+  async function startRecording() {
+    if (recording) return;
+    clearAudio();
+    let stream: MediaStream;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    } catch {
+      toast.error("Autorisez l'accès au microphone dans les paramètres de votre navigateur.");
+      return;
+    }
+    const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
+    const rec = new MediaRecorder(stream, { mimeType: mime });
+    recChunksRef.current = [];
+    recCancelledRef.current = false;
+    rec.ondataavailable = (e) => e.data.size && recChunksRef.current.push(e.data);
+    rec.onstop = () => {
+      stream.getTracks().forEach((t) => t.stop());
+      if (recTimerRef.current) clearInterval(recTimerRef.current);
+      sendTyping("off");
+      setRecording(false);
+      const seconds = recSecondsRef.current;
+      setRecSeconds(0);
+      if (recCancelledRef.current) return;
+      const blob = new Blob(recChunksRef.current, { type: mime });
+      if (!blob.size) return;
+      setAudioBlob(blob);
+      setAudioDuration(Math.max(1, seconds));
+      setAudioLocalUrl(URL.createObjectURL(blob));
+    };
+    recorderRef.current = rec;
+    rec.start();
+    setRecording(true);
+    setRecSeconds(0);
+    recSecondsRef.current = 0;
+    sendTyping("recording");
+    recTimerRef.current = setInterval(() => {
+      recSecondsRef.current += 1;
+      setRecSeconds(recSecondsRef.current);
+      if (recSecondsRef.current % 2 === 0) sendTyping("recording");
+      if (recSecondsRef.current >= 120) stopRecording();
+    }, 1000);
+  }
+
+  function stopRecording() {
+    const rec = recorderRef.current;
+    if (rec && rec.state !== "inactive") rec.stop();
+  }
+
+  function cancelRecording() {
+    recCancelledRef.current = true;
+    stopRecording();
+    clearAudio();
   }
 
   async function handleReaction(commentId: string, emoji: string) {
