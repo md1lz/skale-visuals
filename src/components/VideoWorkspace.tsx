@@ -1439,7 +1439,18 @@ function VideoDetail({
                           </span>
                           <span className="text-[11px] text-neutral-500">{fmtDateTimeFR(c.created_at)}</span>
                         </div>
-                        <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
+                        {c.content && (
+                          <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
+                        )}
+                        {c.image_url && (
+                          <img
+                            src={c.image_url}
+                            alt="Pièce jointe"
+                            onClick={() => setLightbox(c.image_url!)}
+                            className="mt-1 max-h-48 w-auto max-w-[200px] cursor-zoom-in rounded-lg border border-white/10 object-cover"
+                          />
+                        )}
+                        {c.audio_url && <VoiceBubble src={c.audio_url} duration={c.audio_duration} />}
                         {mine && (
                           <div className="mt-0.5 flex items-center justify-end gap-1">
                             {c.read_at ? (
