@@ -1688,30 +1688,6 @@ function VideoDetail({
               className="hidden"
               onChange={(e) => pickImage(e.target.files?.[0])}
             />
-            <div className="flex flex-col justify-end gap-1">
-              <button
-                type="button"
-                onClick={() => imageInputRef.current?.click()}
-                title="Envoyer une image"
-                className="rounded-lg border border-white/10 p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
-              >
-                <ImageIcon className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="flex flex-col justify-end gap-1">
-              <button
-                type="button"
-                onClick={() => (recording ? stopRecording() : startRecording())}
-                title={recording ? "Arrêter l'enregistrement" : "Enregistrer un vocal"}
-                className={`rounded-lg border p-2 transition ${
-                  recording
-                    ? "animate-pulse border-red-500/40 bg-red-600 text-white"
-                    : "border-white/10 text-neutral-300 hover:bg-white/10 hover:text-white"
-                }`}
-              >
-                <Mic className="h-4 w-4" />
-              </button>
-            </div>
             <textarea
               value={message}
               onChange={(e) => {
@@ -1745,14 +1721,31 @@ function VideoDetail({
               className="flex-1 resize-none rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
             />
             <button
-              onClick={handleComment}
-              disabled={busy}
-              className="inline-flex items-center gap-1.5 self-end rounded-lg bg-red-600 px-3 py-2 text-sm text-white transition hover:bg-red-500 disabled:opacity-60"
+              type="button"
+              onClick={() => imageInputRef.current?.click()}
+              title="Envoyer une image"
+              className="rounded-full p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
             >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <MessageSquare className="h-4 w-4" />}{" "}
-              Envoyer
+              <ImageIcon className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => startRecording()}
+              title="Enregistrer un vocal"
+              className="rounded-full p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
+            >
+              <Mic className="h-4 w-4" />
+            </button>
+            <button
+              onClick={() => handleComment()}
+              disabled={busy}
+              title="Envoyer"
+              className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-500 disabled:opacity-60"
+            >
+              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
             </button>
           </div>
+          )}
         </section>
         )}
       </div>
