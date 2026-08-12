@@ -118,11 +118,27 @@ export const getVideoWorkspace = createServerFn({ method: "GET" })
       supabaseAdmin
         .from("video_comments")
         .select(
-          "id, author_type, author_id, author_name, content, read_by_editor, read_by_admin, read_at, created_at",
+          "id, author_type, author_id, author_name, content, image_url, audio_url, audio_duration, read_by_editor, read_by_admin, read_at, created_at",
         )
         .eq("project_video_id", data.video_id)
         .order("created_at", { ascending: true }),
     ]);
+
+    // Chat attachments are private storage objects: hand back short-lived signed URLs.
+    const signRef = async (ref: string | null) => {
+      const m = ref?.match(/^storage:\/\/site-videos\/(.+)$/);
+      if (!m) return ref ?? null;
+      const { data: s } = await supabaseAdmin.storage
+        .from("site-videos")
+        .createSignedUrl(decodeURIComponent(m[1]!), 60 * 60 * 24);
+      return s?.signedUrl ?? null;
+    };
+    await Promise.all(
+      (comments ?? []).map(async (c) => {
+        c.image_url = await signRef(c.image_url);
+        c.audio_url = await signRef(c.audio_url);
+      }),
+    );
 
     const commentIds = (comments ?? []).map((c) => c.id);
     const { data: reactions } = commentIds.length
@@ -452,7 +468,18 @@ export const toggleCommentReaction = createServerFn({ method: "POST" })
 
 export const postVideoComment = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
-    z.object({ video_id: z.string().uuid(), content: z.string().trim().min(1).max(4000) }).parse(d),
+    z
+      .object({
+        video_id: z.string().uuid(),
+        content: z.string().trim().max(4000).optional().default(""),
+        image_path: z.string().trim().max(500).nullish(),
+        audio_path: z.string().trim().max(500).nullish(),
+        audio_duration: z.number().int().min(0).max(600).nullish(),
+      })
+      .refine((v) => Boolean(v.content || v.image_path || v.audio_path), {
+        message: "Message vide",
+      })
+      .parse(d),
   )
   .handler(async ({ data }) => {
     const { resolveViewer, assertVideoAccess, notifyAdmins } = await import("./video-workspace.server");
@@ -465,10 +492,19 @@ export const postVideoComment = createServerFn({ method: "POST" })
       author_id: viewer.id,
       author_name: viewer.name,
       content: data.content,
+      image_url: data.image_path ? `storage://site-videos/${data.image_path}` : null,
+      audio_url: data.audio_path ? `storage://site-videos/${data.audio_path}` : null,
+      audio_duration: data.audio_duration ?? null,
       read_by_editor: viewer.kind === "editor",
       read_by_admin: viewer.kind === "admin",
     });
     if (error) throw new Error(error.message);
+
+    await supabaseAdmin
+      .from("typing_indicators")
+      .delete()
+      .eq("project_video_id", data.video_id)
+      .eq("author_id", viewer.id);
 
     const label = `#${String(video.video_number).padStart(2, "0")}`;
     if (viewer.kind === "editor") {
