@@ -605,6 +605,9 @@ function VideoDetail({
   const removeComment = useServerFn(deleteVideoComment);
   const signUrls = useServerFn(signWorkspaceUrls);
   const saveScript = useServerFn(setVideoScript);
+  const makeChatUpload = useServerFn(createChatUploadUrl);
+  const pingTyping = useServerFn(setTypingIndicator);
+  const fetchTyping = useServerFn(getTypingIndicator);
 
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
@@ -624,12 +627,63 @@ function VideoDetail({
   const [chatOpen, setChatOpen] = useState(true);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
+  const imageInputRef = useRef<HTMLInputElement>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [lightbox, setLightbox] = useState<string | null>(null);
+  const [recording, setRecording] = useState(false);
+  const [recSeconds, setRecSeconds] = useState(0);
+  const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [audioLocalUrl, setAudioLocalUrl] = useState<string | null>(null);
+  const [audioDuration, setAudioDuration] = useState(0);
+  const recorderRef = useRef<MediaRecorder | null>(null);
+  const recChunksRef = useRef<BlobPart[]>([]);
+  const recTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const recCancelledRef = useRef(false);
+  const typingSentAtRef = useRef(0);
+  const typingOffRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const q = useQuery({
     queryKey: ["workspace", "video", videoId],
     queryFn: () => fetchVideo({ data: { video_id: videoId } }),
     refetchInterval: 15_000,
   });
+
+  // Live "is typing / is recording" state of the other party.
+  const typingQ = useQuery({
+    queryKey: ["workspace", "typing", videoId],
+    queryFn: () => fetchTyping({ data: { video_id: videoId } }),
+    refetchInterval: 2000,
+    staleTime: 0,
+  });
+
+  const sendTyping = useCallback(
+    (state: "typing" | "recording" | "off") => {
+      void pingTyping({ data: { video_id: videoId, state } }).catch(() => {});
+    },
+    [pingTyping, videoId],
+  );
+
+  const notifyTyping = useCallback(
+    (value: string) => {
+      if (typingOffRef.current) clearTimeout(typingOffRef.current);
+      if (!value.trim()) {
+        typingSentAtRef.current = 0;
+        sendTyping("off");
+        return;
+      }
+      const now = Date.now();
+      if (now - typingSentAtRef.current > 1800) {
+        typingSentAtRef.current = now;
+        sendTyping("typing");
+      }
+      typingOffRef.current = setTimeout(() => {
+        typingSentAtRef.current = 0;
+        sendTyping("off");
+      }, 4000);
+    },
+    [sendTyping],
+  );
 
   const refresh = useCallback(() => {
     qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
