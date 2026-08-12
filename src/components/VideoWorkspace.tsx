@@ -641,6 +641,10 @@ function VideoDetail({
   const recTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const recCancelledRef = useRef(false);
   const recSecondsRef = useRef(0);
+  const sendOnStopRef = useRef(false);
+  const audioCtxRef = useRef<AudioContext | null>(null);
+  const rafRef = useRef<number | null>(null);
+  const [levels, setLevels] = useState<number[]>(() => Array.from({ length: 40 }, () => 4));
 
   // Reset attachments / typing state when the viewer switches video or leaves.
   useEffect(() => {
@@ -932,16 +936,17 @@ function VideoDetail({
     }
   }
 
-  async function handleComment() {
-    if ((!message.trim() && !imageFile && !audioBlob) || busy) return;
+  async function handleComment(voice?: { blob: Blob; seconds: number }) {
+    const blob = voice?.blob ?? audioBlob;
+    if ((!message.trim() && !imageFile && !blob) || busy) return;
     setBusy(true);
     try {
       let image_path: string | null = null;
       let audio_path: string | null = null;
       if (imageFile) image_path = await uploadChatFile(imageFile, "image", imageFile.name);
-      if (audioBlob) {
-        const ext = (audioBlob.type.includes("mp4") ? "mp4" : "webm") as string;
-        audio_path = await uploadChatFile(audioBlob, "audio", `vocal.${ext}`);
+      if (blob) {
+        const ext = (blob.type.includes("mp4") ? "mp4" : "webm") as string;
+        audio_path = await uploadChatFile(blob, "audio", `vocal.${ext}`);
       }
       await sendComment({
         data: {
@@ -949,7 +954,7 @@ function VideoDetail({
           content: message.trim(),
           image_path,
           audio_path,
-          audio_duration: audioBlob ? Math.max(1, Math.round(audioDuration)) : null,
+          audio_duration: blob ? Math.max(1, Math.round(voice?.seconds ?? audioDuration)) : null,
         },
       });
       setMessage("");
