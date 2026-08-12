@@ -1839,6 +1839,9 @@ function VoiceBubble({ src, duration }: { src: string; duration: number | null }
   const [rate, setRate] = useState(1);
   const total = duration || 0;
   const pct = total ? Math.min(100, (time / total) * 100) : 0;
+  // Freeze the source: refreshed signed URLs must not reload/interrupt playback.
+  const stableSrcRef = useRef(src);
+  const stableSrc = stableSrcRef.current;
 
   function toggle() {
     const a = audioRef.current;
@@ -1859,7 +1862,7 @@ function VoiceBubble({ src, duration }: { src: string; duration: number | null }
     <div className="mt-1 flex items-center gap-2 rounded-lg bg-black/20 px-2 py-1.5">
       <audio
         ref={audioRef}
-        src={src}
+        src={stableSrc}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
         onEnded={() => {
