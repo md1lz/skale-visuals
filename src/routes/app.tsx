@@ -473,7 +473,7 @@ function AdminHomeMobile({ onNotify }: { onNotify: (n: NotifItem) => void }) {
 
       <div className="-mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1">
         <Kpi label="Vidéos en cours" value={String(inProgress)} />
-        <Kpi label="Devis non traités" value={String(dayQ.data?.kpis?.tallySubmits ?? 0)} />
+        <Kpi label="Devis non traités" value={String(dayQ.data?.kpis?.devisSubmitted ?? 0)} />
         <Kpi label="CA du mois" value={`${new Intl.NumberFormat("fr-FR").format(monthRevenue)} €`} />
       </div>
 
