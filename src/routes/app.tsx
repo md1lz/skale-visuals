@@ -144,7 +144,7 @@ function LoginScreen({ onSuccess }: { onSuccess: () => void }) {
         className="flex flex-1 flex-col justify-center py-10"
       >
         <div className="mb-8 flex flex-col items-center text-center">
-          <img src="/icons/icon-192.png" alt="Skale Visuals" width={72} height={72} className="h-18 w-18 rounded-2xl" />
+          <span className="font-kangge text-5xl leading-none text-primary">Skale</span>
           <h1 className="mt-5 text-3xl font-semibold tracking-tight">Skale CRM</h1>
           <p className="mt-1.5 text-sm text-neutral-500">Panel de gestion Skale Visuals</p>
         </div>

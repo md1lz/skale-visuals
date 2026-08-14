@@ -5,7 +5,6 @@ import {
   ArrowRight, Play, ChevronLeft, ChevronRight, Menu, X, AlertTriangle, Mail, MessageCircle, Instagram,
   PenLine, Scissors, TrendingUp, Sparkles,
 } from "lucide-react";
-import logoAsset from "@/assets/skale-logo.png.asset.json";
 
 const ELECTRIC = "#1E90FF";
 const CONTACT_HREF = "#contact";
@@ -55,14 +54,13 @@ function FadeIn({ children, delay = 0, className = "" }: { children: ReactNode; 
 
 function Logo({ size = 36 }: { size?: number }) {
   return (
-    <img
-      src={logoAsset.url}
-      alt="Skale Immobilier"
-      width={size}
-      height={size}
-      style={{ filter: `drop-shadow(0 0 12px ${ELECTRIC}99)` }}
-      className="object-contain"
-    />
+    <span
+      className="font-kangge leading-none text-white select-none"
+      style={{ fontSize: size, textShadow: `0 0 14px ${ELECTRIC}99` }}
+      aria-label="Skale"
+    >
+      Skale
+    </span>
   );
 }
 

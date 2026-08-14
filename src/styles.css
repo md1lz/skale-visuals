@@ -118,6 +118,21 @@
   letter-spacing: 0;
 }
 
+@font-face {
+  font-family: "Kangge";
+  src: url("/__l5e/assets-v1/221e7992-708e-450e-9c98-c171951fb7b4/Kangge.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@utility font-kangge {
+  font-family: "Kangge", var(--font-sans);
+  font-weight: 400;
+  font-style: normal;
+  letter-spacing: 0.02em;
+}
+
 @utility liquid-glass {
   background: linear-gradient(180deg, rgba(255,255,255,0.10), rgba(255,255,255,0.04));
   backdrop-filter: blur(20px) saturate(160%);

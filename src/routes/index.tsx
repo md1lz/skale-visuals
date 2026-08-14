@@ -7,7 +7,6 @@ import {
   Upload, BarChart3, Send, Menu, ChevronLeft, ChevronRight,
   TrendingUp, Mic, Target, BadgeEuro,
 } from "lucide-react";
-import logoAsset from "@/assets/skale-logo.png.asset.json";
 import arrowAsset from "@/assets/arrow-curl.png.asset.json";
 import { listPublicVideos, type PublicVideo } from "@/lib/site-videos.functions";
 
@@ -370,11 +369,13 @@ const NAV_LINKS = [
 
 function Logo({ size = 36 }: { size?: number }) {
   return (
-    <img
-      src={logoAsset.url}
-      alt="Skale Visuals"
-      style={{ height: size, width: "auto", filter: "drop-shadow(0 0 12px rgba(226,75,74,0.6))" }}
-    />
+    <span
+      className="font-kangge leading-none text-white select-none"
+      style={{ fontSize: size, textShadow: "0 0 14px rgba(226,75,74,0.55)" }}
+      aria-label="Skale"
+    >
+      Skale
+    </span>
   );
 }
 
