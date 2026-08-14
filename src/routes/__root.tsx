@@ -110,6 +110,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
   }),
   shellComponent: RootShell,
   component: RootComponent,
+  loader: async () => {
+    const [maintenance, session] = await Promise.all([
+      getMaintenanceStatus(),
+      getAdminSessionFn(),
+    ]);
+    return { maintenance, session };
+  },
   notFoundComponent: NotFoundComponent,
   errorComponent: ErrorComponent,
 });
@@ -139,6 +146,7 @@ function RootComponent() {
 
 function RootInner() {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+  const loaderData = Route.useLoaderData();
   const isAdmin =
     pathname.startsWith("/admin") || pathname.startsWith("/monteur");
 
@@ -155,12 +163,14 @@ function RootInner() {
   const maintenanceQ = useQuery({
     queryKey: ["site", "maintenance"],
     queryFn: () => fetchMaintenance(),
+    initialData: loaderData?.maintenance,
     refetchInterval: 30_000,
     staleTime: 15_000,
   });
   const sessionQ = useQuery({
     queryKey: ["admin", "session"],
     queryFn: () => fetchSession(),
+    initialData: loaderData?.session,
     staleTime: 60_000,
   });
 
