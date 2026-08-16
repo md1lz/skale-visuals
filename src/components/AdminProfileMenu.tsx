@@ -5,6 +5,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import { ChevronDown, LogOut, UserPen, X, Upload, Trash2 } from "lucide-react";
 import {
+import { isStandaloneApp } from "@/lib/pwa";
   getAdminProfile,
   updateAdminProfile,
   logoutAdminFn,
@@ -82,7 +83,7 @@ export function AdminProfileMenu({ initialUsername }: { initialUsername: string 
     await logout();
     await router.invalidate();
     // Rechargement complet : empêche de revenir sur le panel via le bouton précédent
-    if (typeof window !== "undefined") window.location.replace("/");
+    if (typeof window !== "undefined") window.location.replace(isStandaloneApp() ? "/crm" : "/");
     else navigate({ to: "/" });
   }
 
