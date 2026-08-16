@@ -169,16 +169,6 @@ function RootInner() {
     }
   }, [pathname]);
 
-  useEffect(() => {
-    // Inside the installed app, never show the public site or the install page.
-    if (!isStandaloneApp()) return;
-    const inApp =
-      pathname.startsWith("/crm") ||
-      pathname.startsWith("/admin") ||
-      pathname.startsWith("/monteur");
-    if (!inApp) window.location.replace("/crm");
-  }, [pathname]);
-
   const fetchMaintenance = useServerFn(getMaintenanceStatus);
   const fetchSession = useServerFn(getAdminSessionFn);
   const maintenanceQ = useQuery({
