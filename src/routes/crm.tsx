@@ -129,11 +129,6 @@ function CrmLogin() {
         transition={{ type: "spring", stiffness: 260, damping: 22 }}
         className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl"
       >
-        <img
-          src={logoMark.url}
-          alt="Skale CRM"
-          className="mb-5 h-14 w-14 rounded-xl object-cover"
-        />
         <div className="flex items-center gap-2 mb-1">
           <span className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
           <h2 className="text-white text-lg font-semibold">Connexion</h2>
