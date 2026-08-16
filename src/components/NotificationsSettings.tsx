@@ -30,7 +30,6 @@ export function NotificationsSettings({ defaultUrl }: { defaultUrl: string }) {
   const listDevices = useServerFn(listPushDevices);
 
   const [permission, setPermission] = useState<NotificationPermission | "unsupported">("default");
-  const [title, setTitle] = useState("Skale CRM");
   const [body, setBody] = useState("Ceci est une notification test");
   const [url, setUrl] = useState(defaultUrl);
   const [busy, setBusy] = useState(false);
@@ -85,7 +84,7 @@ export function NotificationsSettings({ defaultUrl }: { defaultUrl: string }) {
               type: recipient.split(":")[0] as "admin" | "editor",
               id: recipient.slice(recipient.indexOf(":") + 1),
             };
-      await send({ data: { title: title.trim(), body: body.trim(), url: url.trim() || "/crm", target } });
+      await send({ data: { body: body.trim(), url: url.trim() || "/crm", target } });
       toast.success("Notification test envoyée.");
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Envoi impossible");
@@ -162,10 +161,6 @@ export function NotificationsSettings({ defaultUrl }: { defaultUrl: string }) {
                 </option>
               ))}
           </select>
-        </label>
-        <label className="space-y-1.5">
-          <span className="text-xs text-neutral-400">Titre</span>
-          <input className={input} value={title} onChange={(e) => setTitle(e.target.value)} maxLength={80} />
         </label>
         <label className="space-y-1.5">
           <span className="text-xs text-neutral-400">Corps</span>

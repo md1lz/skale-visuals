@@ -39,7 +39,6 @@ export const savePushSubscription = createServerFn({ method: "POST" })
   });
 
 const testSchema = z.object({
-  title: z.string().trim().min(1).max(80),
   body: z.string().trim().min(1).max(300),
   url: z.string().trim().max(500).optional().default("/crm"),
   target: z
@@ -168,7 +167,7 @@ export const sendTestPush = createServerFn({ method: "POST" })
     const { pushTo } = await import("./notifications.server");
     const res = await pushTo(
       target,
-      { title: data.title, body: data.body, url: data.url || "/crm", tag: `test-${Date.now()}` },
+      { title: "from Skale CRM", body: data.body, url: data.url || "/crm", tag: `test-${Date.now()}` },
     );
     if (!res || res.devices === 0)
       throw new Error("Aucun appareil enregistré pour ce destinataire.");
