@@ -62,10 +62,22 @@ export async function subscribeToPush(vapidPublicKey?: string | null) {
   const reg = await registerPushWorker();
   if (!reg || !vapidPublicKey) return { permission } as const;
 
+  const appKey = urlBase64ToUint8Array(vapidPublicKey);
   try {
+    // Drop any subscription created with a different (or rotated) server key,
+    // otherwise subscribe() throws InvalidStateError and push silently dies.
+    const existing = await reg.pushManager.getSubscription();
+    if (existing) {
+      const current = existing.options?.applicationServerKey
+        ? new Uint8Array(existing.options.applicationServerKey as ArrayBuffer)
+        : null;
+      const same =
+        current && current.length === appKey.length && current.every((b, i) => b === appKey[i]);
+      if (!same) await existing.unsubscribe();
+    }
     const sub = await reg.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+      applicationServerKey: appKey as BufferSource,
     });
     const json = sub.toJSON();
     return {
