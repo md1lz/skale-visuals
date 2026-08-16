@@ -20,7 +20,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMaintenanceStatus } from "@/lib/site-settings.functions";
 import { getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { MaintenancePage } from "../components/MaintenancePage";
-import { isStandaloneApp } from "@/lib/pwa";
 
 function NotFoundComponent() {
   return (
