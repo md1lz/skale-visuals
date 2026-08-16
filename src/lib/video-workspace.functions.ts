@@ -330,16 +330,25 @@ export const addVideoVersion = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
-    if (video.status === "À faire") {
-      await supabaseAdmin.from("project_videos").update({ status: "En cours" }).eq("id", data.video_id);
-      await recomputeProjectStatus(project.id);
+    // Publishing a new version automatically sends the video back to review.
+    const wasCorrection = video.status === "Corrections à faire";
+    if (video.status !== "En révision") {
+      await supabaseAdmin
+        .from("project_videos")
+        .update({ status: "En révision" })
+        .eq("id", data.video_id);
     }
+    await recomputeProjectStatus(project.id);
 
-    const label = `#${String(video.video_number).padStart(2, "0")}`;
+    const label = video.title
+      ? `#${String(video.video_number).padStart(2, "0")} — ${video.title}`
+      : `#${String(video.video_number).padStart(2, "0")}`;
     await notifyAdmins({
       type: "file",
       project_id: project.id,
-      message: `${viewer.name} a déposé la V${version} de la vidéo ${label} — ${project.title}`,
+      message: wasCorrection
+        ? `🔁 ${viewer.name} a déposé la V${version} corrigée de la vidéo ${label} — ${project.title} (en révision)`
+        : `🔍 ${viewer.name} a déposé la V${version} de la vidéo ${label} — ${project.title} (en révision)`,
     });
     await supabaseAdmin.from("admin_activity").insert({
       kind: "projet",
