@@ -387,10 +387,12 @@ function AppConnectionsSection() {
         ownerName: string;
         device: string;
         createdAt: string;
+        lastSeenAt: string;
+        online: boolean;
         lastLoginAt: string | null;
       }>,
     },
-    refetchInterval: 30_000,
+    refetchInterval: 15_000,
   });
 
   async function onForget(id: string) {
@@ -398,11 +400,17 @@ function AppConnectionsSection() {
     q.refetch();
   }
 
-  function formatDate(iso: string) {
+  function formatLastSeen(iso: string) {
     const d = new Date(iso);
-    return `${d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })} à ${String(
-      d.getHours(),
-    ).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    const now = new Date();
+    const time = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+    const isSameDay = (a: Date, b: Date) =>
+      a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+    const yesterday = new Date(now);
+    yesterday.setDate(now.getDate() - 1);
+    if (isSameDay(d, now)) return `vu aujourd'hui à ${time}`;
+    if (isSameDay(d, yesterday)) return `vu hier à ${time}`;
+    return `vu ${d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })} à ${time}`;
   }
 
   return (
@@ -441,12 +449,16 @@ function AppConnectionsSection() {
                     {d.ownerType === "admin" ? "Admin" : "Monteur"}
                   </span>
                   <span>·</span>
-                  <span>enregistré le {formatDate(d.createdAt)}</span>
-                  {d.lastLoginAt && (
-                    <>
-                      <span>·</span>
-                      <span>dernière connexion {formatDate(d.lastLoginAt)}</span>
-                    </>
+                  {d.online ? (
+                    <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
+                      <span className="relative flex h-1.5 w-1.5">
+                        <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
+                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                      </span>
+                      En ligne
+                    </span>
+                  ) : (
+                    <span>{formatLastSeen(d.lastSeenAt)}</span>
                   )}
                 </p>
               </div>
