@@ -2,8 +2,6 @@ import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Chrome, Compass, Download, Share, MoreVertical, Plus, ShieldCheck, Smartphone } from "lucide-react";
-import logoMark from "@/assets/skale-logo-mark.jpg.asset.json";
-
 export const Route = createFileRoute("/app")({
   ssr: false,
   head: () => ({

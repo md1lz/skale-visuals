@@ -6,7 +6,6 @@ import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { loginAdmin, getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
 import { registerPushWorker, isStandaloneApp } from "@/lib/pwa";
-import logoMark from "@/assets/skale-logo-mark.jpg.asset.json";
 
 export const Route = createFileRoute("/crm")({
   ssr: false,
