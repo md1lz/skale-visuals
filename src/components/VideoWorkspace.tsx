@@ -44,6 +44,7 @@ import {
   createChatUploadUrl,
   setTypingIndicator,
   getTypingIndicator,
+  setVideoTitle,
 } from "@/lib/video-workspace.functions";
 import {
   videoStatusBadgeClass,
@@ -51,6 +52,7 @@ import {
   EDITOR_VIDEO_STATUSES,
   ADMIN_VIDEO_STATUSES,
   fmtDateTimeFR,
+  videoLabel,
 } from "@/lib/project-display";
 import {
   driveEmbed,
@@ -368,8 +370,8 @@ export function ProjectVideosBoard({
               }`}
             >
               <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="text-sm font-semibold text-white">
-                  #{String(v.video_number).padStart(2, "0")}
+                <span className="min-w-0 truncate text-sm font-semibold text-white">
+                  {videoLabel(v)}
                 </span>
                 <span className="flex items-center gap-1.5">
                   {role === "admin" && v.status === "En révision" && (
