@@ -881,7 +881,7 @@ function ProjectDetailPanel({
           </span>
           <span className={`text-xs ${dl.className}`}>Deadline {dl.label}</span>
 
-          <div className="w-full md:w-auto md:ml-auto flex flex-wrap items-center gap-2 md:gap-3">
+          <div className="hidden md:ml-auto md:flex flex-wrap items-center gap-2 md:gap-3">
             <button
               onClick={onEdit}
               className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
@@ -1075,6 +1075,41 @@ function ProjectDetailPanel({
               initialVideoId={focusVideo}
             />
           )}
+
+          <div className="flex flex-col gap-2 pb-2 md:hidden [&>button]:w-full [&>button]:justify-center">
+            <button
+              onClick={onEdit}
+              className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
+            >
+              <Pencil className="h-4 w-4" /> Modifier
+            </button>
+            <button
+              onClick={doArchive}
+              disabled={busy}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-neutral-300 transition hover:bg-white/5"
+            >
+              {project.archived_at ? (
+                <>
+                  <ArchiveRestore className="h-4 w-4" />
+                  Restaurer
+                </>
+              ) : (
+                <>
+                  <Archive className="h-4 w-4" />
+                  Archiver
+                </>
+              )}
+            </button>
+            <button
+              onClick={() => {
+                setDelText("");
+                setConfirmDel(true);
+              }}
+              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
+            >
+              <Trash2 className="h-4 w-4" /> Supprimer
+            </button>
+          </div>
 
           <section className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5">
             <h4 className="mb-3 text-xs uppercase tracking-wider text-neutral-500">Historique des statuts</h4>
