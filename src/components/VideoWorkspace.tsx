@@ -708,6 +708,7 @@ function VideoDetail({
   const [savingScript, setSavingScript] = useState(false);
   const [scriptOpen, setScriptOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(true);
+  const [showOldVersions, setShowOldVersions] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -832,6 +833,7 @@ function VideoDetail({
     setChatOpen(true);
     setScriptOpen(false);
     setChatUnlocked(false);
+    setShowOldVersions(false);
   }, [videoId]);
 
   // Leaving the page (or unmounting this video) must always reset the chat to
@@ -1413,6 +1415,7 @@ function VideoDetail({
           ) : (
             <ul className="space-y-2">
               {versions.map((v, i) => {
+                if (i > 0 && !showOldVersions) return null;
                 const src = signed[v.file_url] ?? v.file_url;
                 const open = playingId === v.id;
                 return (
@@ -1508,6 +1511,21 @@ function VideoDetail({
                   </li>
                 );
               })}
+              {versions.length > 1 && (
+                <li>
+                  <button
+                    onClick={() => setShowOldVersions((o) => !o)}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] text-neutral-300 transition hover:bg-white/5 hover:text-white"
+                  >
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 transition-transform ${showOldVersions ? "rotate-180" : ""}`}
+                    />
+                    {showOldVersions
+                      ? "Masquer les anciennes versions"
+                      : `Voir les ${versions.length - 1} version${versions.length > 2 ? "s" : ""} précédente${versions.length > 2 ? "s" : ""}`}
+                  </button>
+                </li>
+              )}
             </ul>
           )}
         </section>
