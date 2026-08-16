@@ -387,7 +387,7 @@ function AppConnectionsSection() {
         ownerName: string;
         device: string;
         createdAt: string;
-        lastLoginAt?: string | null;
+        lastLoginAt: string | null;
       }>,
     },
     refetchInterval: 30_000,
