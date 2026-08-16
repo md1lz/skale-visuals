@@ -30,7 +30,14 @@ import {
 } from "@/lib/admin-editors.functions";
 import { logAdminActivity } from "@/lib/admin-activity.functions";
 
-export const Route = createFileRoute("/crm/admin/projets")({ component: AdminProjectsPage });
+export const Route = createFileRoute("/crm/admin/projets")({
+  validateSearch: (s: Record<string, unknown>) =>
+    ({
+      p: typeof s.p === "string" ? s.p : undefined,
+      v: typeof s.v === "string" ? s.v : undefined,
+    }) as { p?: string; v?: string },
+  component: AdminProjectsPage,
+});
 
 const statusBadge: Record<ProjectStatus, string> = {
   "En attente de validation client": "bg-neutral-400/15 text-neutral-200 border-neutral-400/30",
@@ -69,6 +76,7 @@ function AdminProjectsPage() {
   const [showArchived, setShowArchived] = useState(false);
   const [editing, setEditing] = useState<Project | "new" | null>(null);
   const [detail, setDetail] = useState<Project | null>(null);
+  const { p: deepProject, v: deepVideo } = Route.useSearch();
 
   const refresh = async () => {
     try {
@@ -90,6 +98,13 @@ function AdminProjectsPage() {
     refresh();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showArchived]);
+
+  // Deep link coming from a push notification: open the target project.
+  useEffect(() => {
+    if (!deepProject || !rows) return;
+    const found = rows.find((r) => r.id === deepProject);
+    if (found) setDetail((d) => d ?? found);
+  }, [deepProject, rows]);
 
   const clientById = useMemo(() => {
     const m = new Map<string, Client>();
@@ -240,6 +255,7 @@ function AdminProjectsPage() {
         {detail && !editing && (
           <ProjectDetailPanel
             project={detail}
+            focusVideo={detail.id === deepProject ? deepVideo ?? null : null}
             client={detail.client_id ? clientById.get(detail.client_id) ?? null : null}
             onClose={() => setDetail(null)}
             onEdit={() => setEditing(detail)}
@@ -757,12 +773,14 @@ function ProjectDetailPanel({
   onClose,
   onEdit,
   onChanged,
+  focusVideo,
 }: {
   project: Project;
   client: Client | null;
   onClose: () => void;
   onEdit: () => void;
   onChanged: () => void;
+  focusVideo?: string | null;
 }) {
   const [history, setHistory] = useState<ProjectStatusHistoryItem[]>([]);
   const [confirmDel, setConfirmDel] = useState(false);
@@ -1053,7 +1071,12 @@ function ProjectDetailPanel({
               <Loader2 className="h-4 w-4 animate-spin" /> Chargement du projet…
             </div>
           ) : (
-            <ProjectVideosBoard projectId={project.id} role="admin" onRefresh={refreshWorkspace} />
+            <ProjectVideosBoard
+              projectId={project.id}
+              role="admin"
+              onRefresh={refreshWorkspace}
+              initialVideoId={focusVideo}
+            />
           )}
 
           <ProjectThread projectId={project.id} />
