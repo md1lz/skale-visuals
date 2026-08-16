@@ -34,7 +34,7 @@ export async function pushTo(
   let sent = 0;
   const statuses = await Promise.all(
     subs.map(async (s) => {
-      const status = await sendWebPush(s, { title: "Skale CRM", ...payload });
+      const status = await sendWebPush(s, payload);
       if (status === 404 || status === 410) dead.push(s.id);
       if (status >= 200 && status < 300) sent++;
       return status;

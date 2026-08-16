@@ -86,6 +86,7 @@ export async function subscribeToPush(vapidPublicKey?: string | null) {
         endpoint: json.endpoint!,
         p256dh: json.keys?.p256dh ?? "",
         auth: json.keys?.auth ?? "",
+        userAgent: navigator.userAgent.slice(0, 400),
       },
     } as const;
   } catch {
