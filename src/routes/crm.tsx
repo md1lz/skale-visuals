@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { loginAdmin, getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
-import { registerPushWorker } from "@/lib/pwa";
+import { registerPushWorker, isStandaloneApp } from "@/lib/pwa";
+import logoMark from "@/assets/skale-logo-mark.jpg.asset.json";
 
 export const Route = createFileRoute("/crm")({
   ssr: false,
@@ -24,8 +25,6 @@ export const Route = createFileRoute("/crm")({
   component: CrmRoute,
 });
 
-const RED = "#E24B4A";
-
 function isDevHost() {
   const h = window.location.hostname;
   return (
@@ -37,20 +36,11 @@ function isDevHost() {
   );
 }
 
-function isStandalone() {
-  return (
-    window.matchMedia?.("(display-mode: standalone)").matches ||
-    window.matchMedia?.("(display-mode: fullscreen)").matches ||
-    window.matchMedia?.("(display-mode: minimal-ui)").matches ||
-    (window.navigator as unknown as { standalone?: boolean }).standalone === true
-  );
-}
-
 function CrmRoute() {
   const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (isStandalone() || isDevHost()) {
+    if (isStandaloneApp() || isDevHost()) {
       setAllowed(true);
       void registerPushWorker();
       return;
