@@ -10,13 +10,16 @@ import { ProjectProgress } from "@/components/ProjectProgress";
 import { statusBadgeClass, deadlineTone, fmtDateFR } from "@/lib/project-display";
 
 export const Route = createFileRoute("/crm/monteur/projets")({
-  validateSearch: (s: Record<string, unknown>) => ({ p: typeof s.p === "string" ? s.p : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    p: typeof s.p === "string" ? s.p : undefined,
+    v: typeof s.v === "string" ? s.v : undefined,
+  }) as { p?: string; v?: string },
   component: EditorProjectsPage,
 });
 
 function EditorProjectsPage() {
   const navigate = useNavigate();
-  const { p: selected } = Route.useSearch();
+  const { p: selected, v: focusVideo } = Route.useSearch();
   const fetchProjects = useServerFn(listMyProjectsOverview);
 
   const q = useQuery({
@@ -56,7 +59,7 @@ function EditorProjectsPage() {
               {(q.data ?? []).map((p) => (
                 <tr
                   key={p.id}
-                  onClick={() => navigate({ to: "/crm/monteur/projets", search: { p: p.id } })}
+                  onClick={() => navigate({ to: "/crm/monteur/projets", search: { p: p.id, v: undefined } })}
                   className="border-t border-white/5 hover:bg-white/[0.03] cursor-pointer transition"
                 >
                   <td className="px-4 py-3 text-white">{p.title}</td>
@@ -81,14 +84,26 @@ function EditorProjectsPage() {
 
       <AnimatePresence>
         {selected && (
-          <ProjectFullscreen id={selected} onClose={() => navigate({ to: "/crm/monteur/projets", search: { p: undefined } })} />
+          <ProjectFullscreen
+            id={selected}
+            focusVideo={focusVideo ?? null}
+            onClose={() => navigate({ to: "/crm/monteur/projets", search: { p: undefined, v: undefined } })}
+          />
         )}
       </AnimatePresence>
     </div>
   );
 }
 
-function ProjectFullscreen({ id, onClose }: { id: string; onClose: () => void }) {
+function ProjectFullscreen({
+  id,
+  onClose,
+  focusVideo,
+}: {
+  id: string;
+  onClose: () => void;
+  focusVideo?: string | null;
+}) {
   const qc = useQueryClient();
   const q = useWorkspace(id);
   const [briefOpen, setBriefOpen] = useState(false);
@@ -197,7 +212,7 @@ function ProjectFullscreen({ id, onClose }: { id: string; onClose: () => void })
               <Loader2 className="h-4 w-4 animate-spin" /> Chargement du projet…
             </div>
           ) : (
-            <ProjectVideosBoard projectId={id} role="editor" onRefresh={refresh} />
+            <ProjectVideosBoard projectId={id} role="editor" onRefresh={refresh} initialVideoId={focusVideo} />
           )}
         </div>
       </div>

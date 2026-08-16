@@ -293,13 +293,15 @@ export function ProjectVideosBoard({
   projectId,
   role,
   onRefresh,
+  initialVideoId,
 }: {
   projectId: string;
   role: WorkspaceRole;
   onRefresh?: () => void;
+  initialVideoId?: string | null;
 }) {
   const q = useWorkspace(projectId);
-  const [openId, setOpenId] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(initialVideoId ?? null);
   const videos = q.data?.videos ?? [];
   const aspect = q.data?.project.format === "Court" ? "aspect-[9/16]" : "aspect-video";
   const gridRef = useRef<HTMLDivElement>(null);

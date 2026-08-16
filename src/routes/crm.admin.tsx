@@ -23,6 +23,7 @@ import { getEditorSessionFn } from "@/lib/editor.functions";
 import { AdminProfileMenu } from "@/components/AdminProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
+import { PushSetup } from "@/components/PushSetup";
 
 
 export const Route = createFileRoute("/crm/admin")({
@@ -64,6 +65,7 @@ function AdminLayout() {
   return (
     <AdminPrefsProvider>
       <ThemeStyleInjector />
+      <PushSetup />
       <AdminLayoutInner />
     </AdminPrefsProvider>
   );

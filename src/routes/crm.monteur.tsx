@@ -5,6 +5,7 @@ import { getEditorSessionFn } from "@/lib/editor.functions";
 import { EditorProfileMenu } from "@/components/EditorProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
+import { PushSetup } from "@/components/PushSetup";
 
 export const Route = createFileRoute("/crm/monteur")({
   beforeLoad: async () => {
@@ -40,6 +41,7 @@ function EditorLayout() {
   return (
     <AdminPrefsProvider>
       <ThemeStyleInjector />
+      <PushSetup />
       <EditorLayoutInner />
     </AdminPrefsProvider>
   );

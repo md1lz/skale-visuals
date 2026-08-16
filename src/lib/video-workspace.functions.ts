@@ -258,13 +258,15 @@ export const setVideoStatus = createServerFn({ method: "POST" })
         });
       }
     } else if (project.editor_id) {
-      const { notifyEditor } = await import("./notifications.server");
+      const { notifyEditor, panelUrl } = await import("./notifications.server");
+      const url = panelUrl("editor", project.id, video.id);
       if (data.status === "Approuvée") {
         await notifyEditor({
           recipient_id: project.editor_id,
           type: "status",
           project_id: project.id,
           message: `✅ Vidéo ${label} approuvée — ${project.title}`,
+          push: { body: `Vidéo ${label} approuvée ✅`, url, tag: `video-${video.id}` },
         });
       } else if (data.status === "Corrections à faire") {
         await notifyEditor({
@@ -272,6 +274,11 @@ export const setVideoStatus = createServerFn({ method: "POST" })
           type: "status",
           project_id: project.id,
           message: `✏️ Corrections demandées sur la vidéo ${label} — ${project.title}`,
+          push: {
+            body: `Corrections demandées sur Vidéo ${label} 🔴`,
+            url,
+            tag: `video-${video.id}`,
+          },
         });
       }
     }
@@ -360,9 +367,15 @@ export const addVideoVersion = createServerFn({ method: "POST" })
     const label = video.title
       ? `#${String(video.video_number).padStart(2, "0")} — ${video.title}`
       : `#${String(video.video_number).padStart(2, "0")}`;
+    const { panelUrl: adminUrl } = await import("./notifications.server");
     await notifyAdmins({
       type: "file",
       project_id: project.id,
+      push: {
+        body: `${viewer.name} a publié la V${version} dans Vidéo #${String(video.video_number).padStart(2, "0")}`,
+        url: adminUrl("admin", project.id, video.id),
+        tag: `video-${video.id}`,
+      },
       message: wasCorrection
         ? `🔁 ${viewer.name} a déposé la V${version} corrigée de la vidéo ${label} — ${project.title} (en révision)`
         : `🔍 ${viewer.name} a déposé la V${version} de la vidéo ${label} — ${project.title} (en révision)`,
@@ -479,14 +492,25 @@ export const toggleCommentReaction = createServerFn({ method: "POST" })
     if (!removed) {
       const label = `#${String(video.video_number).padStart(2, "0")}`;
       const message = `${viewer.name} a réagi ${data.emoji} à un message dans Vidéo ${label} — ${project.title}`;
-      await notifyAdmins({ type: "reaction", project_id: project.id, message });
+      const { notifyEditor, panelUrl } = await import("./notifications.server");
+      const pushBody = `${viewer.name} a réagi ${data.emoji} à votre message`;
+      await notifyAdmins({
+        type: "reaction",
+        project_id: project.id,
+        message,
+        push: { body: pushBody, url: panelUrl("admin", project.id, video.id), tag: `video-${video.id}` },
+      });
       if (project.editor_id) {
-        const { notifyEditor } = await import("./notifications.server");
         await notifyEditor({
           recipient_id: project.editor_id,
           type: "reaction",
           project_id: project.id,
           message,
+          push: {
+            body: pushBody,
+            url: panelUrl("editor", project.id, video.id),
+            tag: `video-${video.id}`,
+          },
         });
       }
     }
@@ -534,19 +558,26 @@ export const postVideoComment = createServerFn({ method: "POST" })
       .eq("author_id", viewer.id);
 
     const label = `#${String(video.video_number).padStart(2, "0")}`;
+    const { notifyEditor, panelUrl } = await import("./notifications.server");
+    const pushBody = `Nouveau message de ${viewer.name}`;
     if (viewer.kind === "editor") {
       await notifyAdmins({
         type: "comment",
         project_id: project.id,
         message: `💬 ${viewer.name} a commenté la vidéo ${label} — ${project.title}`,
+        push: { body: pushBody, url: panelUrl("admin", project.id, video.id), tag: `video-${video.id}` },
       });
     } else if (project.editor_id) {
-      const { notifyEditor } = await import("./notifications.server");
       await notifyEditor({
         recipient_id: project.editor_id,
         type: "comment",
         project_id: project.id,
         message: `💬 Message admin sur la vidéo ${label} — ${project.title}`,
+        push: {
+          body: pushBody,
+          url: panelUrl("editor", project.id, video.id),
+          tag: `video-${video.id}`,
+        },
       });
     }
     return { ok: true as const };
