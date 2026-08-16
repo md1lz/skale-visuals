@@ -110,7 +110,7 @@ function InstallPage() {
         >
           Vous faites partie de l'équipe <span className="font-kangge text-[#E24B4A]">Skale</span> ?
           <br />
-          <span className="italic font-serif-instrument">Accédez à votre panel</span> en installant l'appli.
+          <span className="font-script italic">Accédez à votre panel</span> en installant l'appli.
         </motion.h1>
 
         <motion.p
