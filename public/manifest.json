@@ -1,6 +1,7 @@
 {
   "name": "Skale CRM",
-  "short_name": "Skale",
+  "short_name": "Skale CRM",
+  "id": "/crm",
   "description": "Panel Skale Visuals",
   "start_url": "/crm",
   "scope": "/",
