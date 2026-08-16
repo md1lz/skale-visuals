@@ -22,6 +22,7 @@ import { getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
 import { AdminProfileMenu } from "@/components/AdminProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
+import { BackToSiteLink } from "@/components/BackToSiteLink";
 
 
 export const Route = createFileRoute("/admin")({
@@ -98,12 +99,7 @@ function AdminLayoutInner() {
         </div>
 
         <div className="px-5 pb-3">
-          <a
-            href="https://skalevisuals.com"
-            className="text-[11px] text-neutral-500 underline underline-offset-2 hover:text-neutral-300 transition-colors"
-          >
-            ← Retourner sur l'accueil
-          </a>
+          <BackToSiteLink />
         </div>
 
         <div className="px-5 py-3 border-b border-white/10">

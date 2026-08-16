@@ -20,6 +20,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { getMaintenanceStatus } from "@/lib/site-settings.functions";
 import { getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { MaintenancePage } from "../components/MaintenancePage";
+import { isStandaloneApp } from "@/lib/pwa";
 
 function NotFoundComponent() {
   return (
@@ -166,6 +167,16 @@ function RootInner() {
     if (manifestLink && !pathname.startsWith("/app")) {
       manifestLink.remove();
     }
+  }, [pathname]);
+
+  useEffect(() => {
+    // Inside the installed app, never show the public site or the install page.
+    if (!isStandaloneApp()) return;
+    const inApp =
+      pathname.startsWith("/crm") ||
+      pathname.startsWith("/admin") ||
+      pathname.startsWith("/monteur");
+    if (!inApp) window.location.replace("/crm");
   }, [pathname]);
 
   const fetchMaintenance = useServerFn(getMaintenanceStatus);

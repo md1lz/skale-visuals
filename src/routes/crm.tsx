@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { loginAdmin, getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
-import { registerPushWorker } from "@/lib/pwa";
+import { registerPushWorker, isStandaloneApp } from "@/lib/pwa";
+import logoMark from "@/assets/skale-logo-mark.jpg.asset.json";
 
 export const Route = createFileRoute("/crm")({
   ssr: false,
@@ -24,8 +25,6 @@ export const Route = createFileRoute("/crm")({
   component: CrmRoute,
 });
 
-const RED = "#E24B4A";
-
 function isDevHost() {
   const h = window.location.hostname;
   return (
@@ -37,20 +36,11 @@ function isDevHost() {
   );
 }
 
-function isStandalone() {
-  return (
-    window.matchMedia?.("(display-mode: standalone)").matches ||
-    window.matchMedia?.("(display-mode: fullscreen)").matches ||
-    window.matchMedia?.("(display-mode: minimal-ui)").matches ||
-    (window.navigator as unknown as { standalone?: boolean }).standalone === true
-  );
-}
-
 function CrmRoute() {
   const [allowed, setAllowed] = useState<boolean | null>(null);
 
   useEffect(() => {
-    if (isStandalone() || isDevHost()) {
+    if (isStandaloneApp() || isDevHost()) {
       setAllowed(true);
       void registerPushWorker();
       return;
@@ -71,9 +61,10 @@ function CrmLogin() {
   const [checking, setChecking] = useState(true);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [show, setShow] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -99,24 +90,28 @@ function CrmLogin() {
     };
   }, [fetchAdmin, fetchEditor]);
 
-  const submit = async (e: React.FormEvent) => {
+  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (busy) return;
-    setBusy(true);
+    if (pending) return;
+    setPending(true);
     setError(null);
     try {
-      const res = await login({ data: { username, password, remember: true } });
+      const res = await login({ data: { username, password, remember } });
       if (!res.ok) {
-        setError("suspended" in res && res.suspended ? "Ce compte est suspendu." : "Identifiant ou mot de passe incorrect");
+        setError(
+          "suspended" in res && res.suspended
+            ? "Ce compte est suspendu."
+            : "Identifiants incorrects.",
+        );
         return;
       }
       window.location.replace("role" in res && res.role === "editor" ? "/monteur" : "/admin");
     } catch {
-      setError("Identifiant ou mot de passe incorrect");
+      setError("Identifiants incorrects.");
     } finally {
-      setBusy(false);
+      setPending(false);
     }
-  };
+  }
 
   if (checking) {
     return (
@@ -127,74 +122,92 @@ function CrmLogin() {
   }
 
   return (
-    <div className="flex min-h-[100dvh] flex-col bg-[#0D0D0D] px-6 text-white">
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-        className="mx-auto flex w-full max-w-sm flex-1 flex-col justify-center py-10"
+    <div className="flex min-h-[100dvh] items-center justify-center bg-[#0D0D0D] p-4">
+      <motion.form
+        onSubmit={handleSubmit}
+        initial={{ opacity: 0, y: 20, scale: 0.92 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 260, damping: 22 }}
+        className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-950 p-6 shadow-2xl"
       >
-        <div className="mb-8 flex flex-col items-center text-center">
-          <span className="font-kangge text-5xl leading-none text-[#E24B4A]">Skale</span>
-          <h1 className="mt-5 text-3xl font-semibold tracking-tight">Skale CRM</h1>
-          <p className="mt-1.5 text-sm text-neutral-500">Panel de gestion Skale Visuals</p>
+        <img
+          src={logoMark.url}
+          alt="Skale CRM"
+          className="mb-5 h-14 w-14 rounded-xl object-cover"
+        />
+        <div className="flex items-center gap-2 mb-1">
+          <span className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)]" />
+          <h2 className="text-white text-lg font-semibold">Connexion</h2>
+        </div>
+        <p className="text-xs text-neutral-400 mb-5">Accès réservé à l'équipe et aux monteurs.</p>
+
+        <label className="block text-xs text-neutral-300 mb-1">Identifiant</label>
+        <input
+          type="text"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          autoComplete="username"
+          autoCapitalize="none"
+          autoCorrect="off"
+          disabled={pending}
+          className="w-full mb-3 rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-red-500 transition-colors disabled:opacity-60"
+        />
+
+        <label className="block text-xs text-neutral-300 mb-1">Mot de passe</label>
+        <div className="relative mb-4">
+          <input
+            type={showPassword ? "text" : "password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
+            disabled={pending}
+            className="w-full rounded-lg bg-neutral-900 border border-white/10 px-3 py-2 pr-10 text-sm text-white focus:outline-none focus:border-red-500 transition-colors disabled:opacity-60"
+          />
+          <button
+            type="button"
+            tabIndex={-1}
+            onClick={() => setShowPassword((v) => !v)}
+            className="absolute right-2 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-white transition-colors"
+            aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+          >
+            {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+          </button>
         </div>
 
-        <form onSubmit={submit} className="space-y-3">
+        <label className="flex items-center gap-2 mb-4 text-xs text-neutral-300 cursor-pointer select-none">
           <input
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            autoCapitalize="none"
-            autoCorrect="off"
-            autoComplete="username"
-            placeholder="Identifiant"
-            className="w-full rounded-2xl border border-white/10 bg-[#161616] px-4 py-3.5 text-[15px] text-white outline-none placeholder:text-neutral-600 focus:border-white/25"
+            type="checkbox"
+            checked={remember}
+            onChange={(e) => setRemember(e.target.checked)}
+            disabled={pending}
+            className="h-3.5 w-3.5 accent-red-600 cursor-pointer"
           />
-          <div className="relative">
-            <input
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              type={show ? "text" : "password"}
-              autoComplete="current-password"
-              placeholder="Mot de passe"
-              className="w-full rounded-2xl border border-white/10 bg-[#161616] px-4 py-3.5 pr-12 text-[15px] text-white outline-none placeholder:text-neutral-600 focus:border-white/25"
-            />
-            <button
-              type="button"
-              onClick={() => setShow((s) => !s)}
-              aria-label={show ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 text-neutral-500"
+          Se souvenir de moi sur cet appareil
+        </label>
+
+        <AnimatePresence>
+          {error && (
+            <motion.p
+              initial={{ opacity: 0, y: -4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="text-xs text-red-400 mb-3"
             >
-              {show ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </button>
-          </div>
+              {error}
+            </motion.p>
+          )}
+        </AnimatePresence>
 
-          <button
-            type="submit"
-            disabled={busy}
-            style={{ backgroundColor: RED }}
-            className="mt-2 flex w-full items-center justify-center gap-2 rounded-2xl py-3.5 text-[15px] font-semibold text-white transition active:scale-[0.98] disabled:opacity-60"
-          >
-            {busy && <Loader2 className="h-4 w-4 animate-spin" />}
-            Se connecter
-          </button>
-
-          <AnimatePresence>
-            {error && (
-              <motion.p
-                initial={{ opacity: 0, y: -4 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                className="pt-1 text-center text-[13px] text-red-400"
-              >
-                {error}
-              </motion.p>
-            )}
-          </AnimatePresence>
-        </form>
-      </motion.div>
-
-      <p className="pb-8 text-center text-[11px] text-neutral-700">Accès sur invitation uniquement</p>
+        <motion.button
+          type="submit"
+          disabled={pending}
+          whileHover={pending ? undefined : { scale: 1.02 }}
+          whileTap={pending ? undefined : { scale: 0.97 }}
+          className="w-full rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-70 px-3 py-2 text-sm font-medium text-white transition-colors"
+        >
+          {pending ? "Vérification…" : "Se connecter"}
+        </motion.button>
+      </motion.form>
     </div>
   );
 }
