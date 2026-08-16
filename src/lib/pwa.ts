@@ -1,5 +1,16 @@
 const SW_URL = "/sw.js";
 
+/** True when the page runs inside the installed PWA (standalone display). */
+export function isStandaloneApp() {
+  if (typeof window === "undefined") return false;
+  return (
+    window.matchMedia?.("(display-mode: standalone)").matches ||
+    window.matchMedia?.("(display-mode: fullscreen)").matches ||
+    window.matchMedia?.("(display-mode: minimal-ui)").matches ||
+    (window.navigator as unknown as { standalone?: boolean }).standalone === true
+  );
+}
+
 function isBlockedContext() {
   if (typeof window === "undefined") return true;
   if (!("serviceWorker" in navigator)) return true;
