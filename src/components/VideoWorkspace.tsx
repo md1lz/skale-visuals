@@ -62,6 +62,7 @@ import {
   normalizeHref,
 } from "@/lib/video-preview";
 import { getFrameioPreview } from "@/lib/frameio.functions";
+import { ProjectChat } from "@/components/ProjectChat";
 
 export type WorkspaceRole = "editor" | "admin";
 
@@ -344,6 +345,7 @@ export function ProjectVideosBoard({
   }
 
   return (
+    <div className="space-y-5">
     <div className={`flex gap-5 ${openId ? "items-start" : ""}`}>
       <div
         style={openId && listMaxH ? { maxHeight: listMaxH } : undefined}
@@ -432,6 +434,18 @@ export function ProjectVideosBoard({
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+
+      <ProjectChat
+        projectId={projectId}
+        role={role}
+        onOpenVideo={(id) => {
+          setOpenId(id);
+          requestAnimationFrame(() =>
+            gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+          );
+        }}
+      />
     </div>
   );
 }
