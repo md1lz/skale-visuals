@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as MonteurRouteImport } from './routes/monteur'
 import { Route as ImmobilierRouteImport } from './routes/immobilier'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -36,6 +37,11 @@ const MonteurRoute = MonteurRouteImport.update({
 const ImmobilierRoute = ImmobilierRouteImport.update({
   id: '/immobilier',
   path: '/immobilier',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -123,6 +129,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRoute
+  '/crm': typeof CrmRoute
   '/immobilier': typeof ImmobilierRoute
   '/monteur': typeof MonteurRouteWithChildren
   '/admin/analytiques': typeof AdminAnalytiquesRoute
@@ -142,6 +149,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/crm': typeof CrmRoute
   '/immobilier': typeof ImmobilierRoute
   '/admin/analytiques': typeof AdminAnalytiquesRoute
   '/admin/avis': typeof AdminAvisRoute
@@ -162,6 +170,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/app': typeof AppRoute
+  '/crm': typeof CrmRoute
   '/immobilier': typeof ImmobilierRoute
   '/monteur': typeof MonteurRouteWithChildren
   '/admin/analytiques': typeof AdminAnalytiquesRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/app'
+    | '/crm'
     | '/immobilier'
     | '/monteur'
     | '/admin/analytiques'
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
+    | '/crm'
     | '/immobilier'
     | '/admin/analytiques'
     | '/admin/avis'
@@ -222,6 +233,7 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/app'
+    | '/crm'
     | '/immobilier'
     | '/monteur'
     | '/admin/analytiques'
@@ -243,6 +255,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AppRoute: typeof AppRoute
+  CrmRoute: typeof CrmRoute
   ImmobilierRoute: typeof ImmobilierRoute
   MonteurRoute: typeof MonteurRouteWithChildren
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -262,6 +275,13 @@ declare module '@tanstack/react-router' {
       path: '/immobilier'
       fullPath: '/immobilier'
       preLoaderRoute: typeof ImmobilierRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -424,6 +444,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AppRoute: AppRoute,
+  CrmRoute: CrmRoute,
   ImmobilierRoute: ImmobilierRoute,
   MonteurRoute: MonteurRouteWithChildren,
   ApiPublicTrackRoute: ApiPublicTrackRoute,

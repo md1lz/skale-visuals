@@ -2,7 +2,7 @@
   "name": "Skale CRM",
   "short_name": "Skale",
   "description": "Panel Skale Visuals",
-  "start_url": "/app",
+  "start_url": "/crm",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0D0D0D",
