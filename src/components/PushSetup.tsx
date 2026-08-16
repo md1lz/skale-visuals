@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
 import { Bell, X } from "lucide-react";
-import { getPushConfig, savePushSubscription } from "@/lib/push.functions";
+import { getPushConfig, savePushSubscription, pingAppDevice } from "@/lib/push.functions";
 import { isStandaloneApp, subscribeToPush } from "@/lib/pwa";
 
 const PROMPT_FLAG = "skale_push_prompt";
@@ -35,9 +35,31 @@ export async function enablePushOnThisDevice(
 export function PushSetup() {
   const config = useServerFn(getPushConfig);
   const save = useServerFn(savePushSubscription);
+  const ping = useServerFn(pingAppDevice);
   const [open, setOpen] = useState(false);
   const [iosHint, setIosHint] = useState(false);
   const [busy, setBusy] = useState(false);
+
+  // Presence heartbeat so the settings list can show which app devices are online.
+  useEffect(() => {
+    if (typeof window === "undefined" || !("serviceWorker" in navigator)) return;
+    let stopped = false;
+    async function beat() {
+      try {
+        const reg = await navigator.serviceWorker.getRegistration();
+        const sub = await reg?.pushManager.getSubscription();
+        if (sub && !stopped) await ping({ data: { endpoint: sub.endpoint } });
+      } catch {
+        /* noop */
+      }
+    }
+    void beat();
+    const id = window.setInterval(beat, 45_000);
+    return () => {
+      stopped = true;
+      window.clearInterval(id);
+    };
+  }, [ping]);
 
   useEffect(() => {
     if (typeof window === "undefined" || !("Notification" in window)) return;
