@@ -63,7 +63,12 @@ export async function assertVideoAccess(videoId: string, viewer: Viewer) {
   return { video, project };
 }
 
-export async function notifyAdmins(input: { type: string; project_id: string; message: string }) {
+export async function notifyAdmins(input: {
+  type: string;
+  project_id: string;
+  message: string;
+  push?: { body: string; url?: string; tag?: string };
+}) {
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   await supabaseAdmin.from("notifications").insert({
     recipient_type: "admin",
@@ -72,6 +77,10 @@ export async function notifyAdmins(input: { type: string; project_id: string; me
     project_id: input.project_id,
     message: input.message,
   });
+  if (input.push) {
+    const { pushTo } = await import("./notifications.server");
+    await pushTo({ type: "admin" }, input.push);
+  }
 }
 
 /**
