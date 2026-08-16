@@ -1803,7 +1803,7 @@ export function fmtSec(total: number) {
   return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
 }
 
-function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
+export function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
     window.addEventListener("keydown", onKey);
@@ -1832,7 +1832,7 @@ function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
 
 const WAVE_BARS = Array.from({ length: 32 }, (_, i) => 30 + ((i * 37) % 70));
 
-function VoiceBubble({ src, duration }: { src: string; duration: number | null }) {
+export function VoiceBubble({ src, duration }: { src: string; duration: number | null }) {
   const audioRef = useRef<HTMLAudioElement>(null);
   const [playing, setPlaying] = useState(false);
   const [time, setTime] = useState(0);
