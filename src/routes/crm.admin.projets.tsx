@@ -1086,7 +1086,7 @@ function ProjectDetailPanel({
             <button
               onClick={doArchive}
               disabled={busy}
-              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-neutral-300 transition hover:bg-white/5"
+              className="inline-flex items-center gap-2 rounded-lg border border-white/10 px-3 py-2 text-sm text-neutral-300 transition hover:bg-white/5"
             >
               {project.archived_at ? (
                 <>
@@ -1105,7 +1105,7 @@ function ProjectDetailPanel({
                 setDelText("");
                 setConfirmDel(true);
               }}
-              className="inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
+              className="inline-flex items-center gap-2 rounded-lg border border-red-500/25 px-3 py-2 text-sm text-red-400 transition hover:bg-red-500/10"
             >
               <Trash2 className="h-4 w-4" /> Supprimer
             </button>
