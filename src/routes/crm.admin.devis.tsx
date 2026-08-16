@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Construction } from "lucide-react";
 
-export const Route = createFileRoute("/admin/devis")({
+export const Route = createFileRoute("/crm/admin/devis")({
   component: () => (
     <div className="p-8 max-w-3xl">
       <h1 className="text-2xl font-bold">Devis Tally</h1>

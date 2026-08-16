@@ -9,7 +9,7 @@ import { logAdminActivity } from "@/lib/admin-activity.functions";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-export const Route = createFileRoute("/admin/videos")({ component: AdminVideosPage });
+export const Route = createFileRoute("/crm/admin/videos")({ component: AdminVideosPage });
 
 type Carousel = {
   key: string; label: string; description: string | null; position: number;

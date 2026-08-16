@@ -7,7 +7,7 @@ import { loginAdmin, getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
 import { registerPushWorker, isStandaloneApp } from "@/lib/pwa";
 
-export const Route = createFileRoute("/crm")({
+export const Route = createFileRoute("/crm/")({
   ssr: false,
   head: () => ({
     meta: [
@@ -72,11 +72,11 @@ function CrmLogin() {
         const [admin, editor] = await Promise.all([fetchAdmin(), fetchEditor()]);
         if (cancelled) return;
         if (admin) {
-          window.location.replace("/admin");
+          window.location.replace("/crm/admin");
           return;
         }
         if (editor) {
-          window.location.replace("/monteur");
+          window.location.replace("/crm/monteur");
           return;
         }
       } catch {
@@ -104,7 +104,7 @@ function CrmLogin() {
         );
         return;
       }
-      window.location.replace("role" in res && res.role === "editor" ? "/monteur" : "/admin");
+      window.location.replace("role" in res && res.role === "editor" ? "/crm/monteur" : "/crm/admin");
     } catch {
       setError("Identifiants incorrects.");
     } finally {

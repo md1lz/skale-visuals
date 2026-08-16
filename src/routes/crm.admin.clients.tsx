@@ -11,7 +11,7 @@ import {
   type ClientStatut,
 } from "@/lib/admin-clients.functions";
 
-export const Route = createFileRoute("/admin/clients")({ component: AdminClientsPage });
+export const Route = createFileRoute("/crm/admin/clients")({ component: AdminClientsPage });
 
 const STATUTS: ClientStatut[] = ["Prospect", "Actif", "En pause", "Terminé", "Archivé"];
 

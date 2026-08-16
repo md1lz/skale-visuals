@@ -9,7 +9,7 @@ import { ProjectVideosBoard, RushLink, useWorkspace } from "@/components/VideoWo
 import { ProjectProgress } from "@/components/ProjectProgress";
 import { statusBadgeClass, deadlineTone, fmtDateFR } from "@/lib/project-display";
 
-export const Route = createFileRoute("/monteur/projets")({
+export const Route = createFileRoute("/crm/monteur/projets")({
   validateSearch: (s: Record<string, unknown>) => ({ p: typeof s.p === "string" ? s.p : undefined }),
   component: EditorProjectsPage,
 });
@@ -56,7 +56,7 @@ function EditorProjectsPage() {
               {(q.data ?? []).map((p) => (
                 <tr
                   key={p.id}
-                  onClick={() => navigate({ to: "/monteur/projets", search: { p: p.id } })}
+                  onClick={() => navigate({ to: "/crm/monteur/projets", search: { p: p.id } })}
                   className="border-t border-white/5 hover:bg-white/[0.03] cursor-pointer transition"
                 >
                   <td className="px-4 py-3 text-white">{p.title}</td>
@@ -81,7 +81,7 @@ function EditorProjectsPage() {
 
       <AnimatePresence>
         {selected && (
-          <ProjectFullscreen id={selected} onClose={() => navigate({ to: "/monteur/projets", search: { p: undefined } })} />
+          <ProjectFullscreen id={selected} onClose={() => navigate({ to: "/crm/monteur/projets", search: { p: undefined } })} />
         )}
       </AnimatePresence>
     </div>

@@ -30,7 +30,7 @@ import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.funct
 import { getAdminProfile } from "@/lib/admin-auth.functions";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 
-export const Route = createFileRoute("/admin/")({
+export const Route = createFileRoute("/crm/admin/")({
   component: AdminHome,
 });
 

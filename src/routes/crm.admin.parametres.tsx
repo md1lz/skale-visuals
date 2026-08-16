@@ -35,7 +35,7 @@ import {
 } from "@/lib/admin-settings.functions";
 
 
-export const Route = createFileRoute("/admin/parametres")({
+export const Route = createFileRoute("/crm/admin/parametres")({
   component: ParametresPage,
 });
 
