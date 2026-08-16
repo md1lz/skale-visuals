@@ -63,6 +63,7 @@ import {
 } from "@/lib/video-preview";
 import { getFrameioPreview } from "@/lib/frameio.functions";
 import { ProjectChat } from "@/components/ProjectChat";
+import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
 
 export type WorkspaceRole = "editor" | "admin";
 

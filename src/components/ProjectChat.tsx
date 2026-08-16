@@ -28,7 +28,7 @@ import {
   setProjectTyping,
   getProjectTyping,
 } from "@/lib/project-chat.functions";
-import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/VideoWorkspace";
+import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
 import { fmtDateTimeFR, videoLabel } from "@/lib/project-display";
 
 const REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "👏", "✅"];
