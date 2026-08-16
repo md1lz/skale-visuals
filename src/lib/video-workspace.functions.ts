@@ -36,7 +36,7 @@ export const getProjectWorkspace = createServerFn({ method: "GET" })
 
     const { data: videos } = await supabaseAdmin
       .from("project_videos")
-      .select("id, video_number, status, updated_at")
+      .select("id, video_number, status, updated_at, title")
       .eq("project_id", data.project_id)
       .order("video_number", { ascending: true });
 
@@ -89,6 +89,7 @@ export const getProjectWorkspace = createServerFn({ method: "GET" })
         return {
           id: v.id,
           video_number: v.video_number,
+          title: v.title ?? null,
           status: v.status,
           updated_at: v.updated_at,
           versions_count: vv.length,
