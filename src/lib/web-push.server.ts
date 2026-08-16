@@ -83,7 +83,7 @@ async function vapidHeader(endpoint: string): Promise<{ Authorization: string } 
       }),
     ),
   );
-  const signing = enc.encode(`${header}.${payload}`);
+  const signing = enc(`${header}.${payload}`);
   const sig = new Uint8Array(
     await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, signKey, signing),
   ) as Bytes;
