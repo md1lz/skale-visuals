@@ -54,9 +54,12 @@ export const sendTestPush = createServerFn({ method: "POST" })
     if (!admin && !editor) throw new Error("Unauthorized");
 
     const { pushTo } = await import("./notifications.server");
-    await pushTo(
+    const res = await pushTo(
       { type: admin ? "admin" : "editor", id: admin ? admin.user : editor!.editorId },
       { title: data.title, body: data.body, url: data.url || "/crm", tag: `test-${Date.now()}` },
     );
-    return { ok: true as const };
+    if (!res || res.devices === 0)
+      throw new Error("Aucun appareil enregistré — active les notifications sur cet appareil.");
+    if (res.sent === 0) throw new Error("Envoi refusé par le service de notifications.");
+    return { ok: true as const, sent: res.sent };
   });
