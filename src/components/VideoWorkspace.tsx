@@ -555,6 +555,71 @@ function NewVersionForm({
 
 /* ---------------- Confirm modal ---------------- */
 
+/** Editable "Vidéo N - Titre" header (click to rename, Entrée pour valider). */
+function VideoTitleEditor({
+  videoNumber,
+  title,
+  disabled,
+  onSave,
+}: {
+  videoNumber: number;
+  title: string | null;
+  disabled?: boolean;
+  onSave: (title: string) => Promise<void>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(title ?? "");
+
+  useEffect(() => {
+    if (!editing) setValue(title ?? "");
+  }, [title, editing]);
+
+  if (editing) {
+    return (
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="shrink-0 text-base font-semibold text-white">Vidéo {videoNumber} -</span>
+        <input
+          autoFocus
+          value={value}
+          maxLength={200}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={() => {
+            setEditing(false);
+            if (value.trim() !== (title ?? "").trim()) void onSave(value.trim());
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              e.currentTarget.blur();
+            }
+            if (e.key === "Escape") {
+              setValue(title ?? "");
+              setEditing(false);
+            }
+          }}
+          placeholder="Colle ici le titre de la vidéo"
+          className="w-64 rounded-lg border border-white/15 bg-neutral-950 px-2 py-1 text-sm text-white outline-none focus:border-red-500/60"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={() => setEditing(true)}
+      title="Modifier le titre de la vidéo"
+      className="group flex min-w-0 items-center gap-1.5 text-left"
+    >
+      <h3 className="truncate text-base font-semibold text-white">
+        {videoNumber ? videoLabel({ video_number: videoNumber, title }) : "…"}
+      </h3>
+      <Pencil className="h-3.5 w-3.5 shrink-0 text-neutral-600 transition group-hover:text-neutral-300" />
+    </button>
+  );
+}
+
 function ConfirmDialog({
   message,
   onConfirm,
@@ -1178,19 +1243,6 @@ function VideoDetail({
       refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
-    }
-  }
-
-  async function handleStatusLegacy(status: string) {
-    setBusy(true);
-    try {
-      await updateStatus({ data: { video_id: videoId, status: status as (typeof VIDEO_STATUSES)[number] } });
-      toast.success(`Statut : ${status}`);
-      refresh();
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Erreur");
-    } finally {
-      setBusy(false);
     }
   }
 
