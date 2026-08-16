@@ -13,7 +13,7 @@ export const Route = createFileRoute("/crm/monteur/projets")({
   validateSearch: (s: Record<string, unknown>) => ({
     p: typeof s.p === "string" ? s.p : undefined,
     v: typeof s.v === "string" ? s.v : undefined,
-  }),
+  }) as { p?: string; v?: string },
   component: EditorProjectsPage,
 });
 
