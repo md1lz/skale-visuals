@@ -46,9 +46,23 @@ function detectEnv(): Env {
 type InstallPrompt = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
 
 function InstallPage() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [env, setEnv] = useState<Env | null>(null);
   const [deferred, setDeferred] = useState<InstallPrompt | null>(null);
   const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    // Inject the manifest only on /app so the browser install prompt never
+    // appears on the public site or other routes.
+    if (!pathname.startsWith("/app")) return;
+    const link = document.createElement("link");
+    link.rel = "manifest";
+    link.href = "/manifest.json";
+    document.head.appendChild(link);
+    return () => {
+      link.remove();
+    };
+  }, [pathname]);
 
   useEffect(() => {
     setEnv(detectEnv());
