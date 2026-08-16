@@ -1,4 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { NotificationsSettings } from "@/components/NotificationsSettings";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Palette, ImageIcon, Upload, Trash2, Check, Sun, Moon } from "lucide-react";
@@ -47,6 +48,7 @@ function EditorSettingsPage() {
       </div>
       <ThemeSection />
       <BackgroundSection />
+      <NotificationsSettings defaultUrl="/crm/monteur" />
     </div>
   );
 }
