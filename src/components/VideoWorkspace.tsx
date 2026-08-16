@@ -64,6 +64,7 @@ import {
 import { getFrameioPreview } from "@/lib/frameio.functions";
 import { ProjectChat } from "@/components/ProjectChat";
 import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export type WorkspaceRole = "editor" | "admin";
 
