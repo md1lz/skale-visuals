@@ -74,3 +74,9 @@ export function deadlineTone(deadline: string | null) {
   if (diff < 48 * 3600 * 1000) return "text-orange-300";
   return "text-neutral-300";
 }
+
+/** "Vidéo 1 - Mon titre" (falls back to "Vidéo 1" when untitled). */
+export function videoLabel(v: { video_number: number; title?: string | null }) {
+  const t = (v.title ?? "").trim();
+  return t ? `Vidéo ${v.video_number} - ${t}` : `Vidéo ${v.video_number}`;
+}

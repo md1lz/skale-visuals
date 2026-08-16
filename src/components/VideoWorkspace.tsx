@@ -44,6 +44,7 @@ import {
   createChatUploadUrl,
   setTypingIndicator,
   getTypingIndicator,
+  setVideoTitle,
 } from "@/lib/video-workspace.functions";
 import {
   videoStatusBadgeClass,
@@ -51,6 +52,7 @@ import {
   EDITOR_VIDEO_STATUSES,
   ADMIN_VIDEO_STATUSES,
   fmtDateTimeFR,
+  videoLabel,
 } from "@/lib/project-display";
 import {
   driveEmbed,
@@ -60,6 +62,8 @@ import {
   normalizeHref,
 } from "@/lib/video-preview";
 import { getFrameioPreview } from "@/lib/frameio.functions";
+import { ProjectChat } from "@/components/ProjectChat";
+import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
 
 export type WorkspaceRole = "editor" | "admin";
 
@@ -342,6 +346,7 @@ export function ProjectVideosBoard({
   }
 
   return (
+    <div className="space-y-5">
     <div className={`flex gap-5 ${openId ? "items-start" : ""}`}>
       <div
         style={openId && listMaxH ? { maxHeight: listMaxH } : undefined}
@@ -368,8 +373,8 @@ export function ProjectVideosBoard({
               }`}
             >
               <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="text-sm font-semibold text-white">
-                  #{String(v.video_number).padStart(2, "0")}
+                <span className="min-w-0 truncate text-sm font-semibold text-white">
+                  {videoLabel(v)}
                 </span>
                 <span className="flex items-center gap-1.5">
                   {role === "admin" && v.status === "En révision" && (
@@ -430,6 +435,18 @@ export function ProjectVideosBoard({
           </motion.div>
         )}
       </AnimatePresence>
+    </div>
+
+      <ProjectChat
+        projectId={projectId}
+        role={role}
+        onOpenVideo={(id) => {
+          setOpenId(id);
+          requestAnimationFrame(() =>
+            gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+          );
+        }}
+      />
     </div>
   );
 }
@@ -538,6 +555,71 @@ function NewVersionForm({
 
 /* ---------------- Confirm modal ---------------- */
 
+/** Editable "Vidéo N - Titre" header (click to rename, Entrée pour valider). */
+function VideoTitleEditor({
+  videoNumber,
+  title,
+  disabled,
+  onSave,
+}: {
+  videoNumber: number;
+  title: string | null;
+  disabled?: boolean;
+  onSave: (title: string) => Promise<void>;
+}) {
+  const [editing, setEditing] = useState(false);
+  const [value, setValue] = useState(title ?? "");
+
+  useEffect(() => {
+    if (!editing) setValue(title ?? "");
+  }, [title, editing]);
+
+  if (editing) {
+    return (
+      <div className="flex min-w-0 items-center gap-2">
+        <span className="shrink-0 text-base font-semibold text-white">Vidéo {videoNumber} -</span>
+        <input
+          autoFocus
+          value={value}
+          maxLength={200}
+          onChange={(e) => setValue(e.target.value)}
+          onBlur={() => {
+            setEditing(false);
+            if (value.trim() !== (title ?? "").trim()) void onSave(value.trim());
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              e.currentTarget.blur();
+            }
+            if (e.key === "Escape") {
+              setValue(title ?? "");
+              setEditing(false);
+            }
+          }}
+          placeholder="Colle ici le titre de la vidéo"
+          className="w-64 rounded-lg border border-white/15 bg-neutral-950 px-2 py-1 text-sm text-white outline-none focus:border-red-500/60"
+        />
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      disabled={disabled}
+      onClick={() => setEditing(true)}
+      title="Modifier le titre de la vidéo"
+      className="group flex min-w-0 items-center gap-1.5 text-left"
+    >
+      <h3 className="truncate text-base font-semibold text-white">
+        {videoNumber ? videoLabel({ video_number: videoNumber, title }) : "…"}
+      </h3>
+      <Pencil className="h-3.5 w-3.5 shrink-0 text-neutral-600 transition group-hover:text-neutral-300" />
+    </button>
+  );
+}
+
 function ConfirmDialog({
   message,
   onConfirm,
@@ -600,6 +682,7 @@ function VideoDetail({
   const dropVersion = useServerFn(deleteVideoVersion);
   const renameVersion = useServerFn(renameVideoVersion);
   const sendComment = useServerFn(postVideoComment);
+  const renameTitle = useServerFn(setVideoTitle);
   const markRead = useServerFn(markVideoCommentsRead);
   const react = useServerFn(toggleCommentReaction);
   const removeComment = useServerFn(deleteVideoComment);
@@ -625,6 +708,7 @@ function VideoDetail({
   const [savingScript, setSavingScript] = useState(false);
   const [scriptOpen, setScriptOpen] = useState(false);
   const [chatOpen, setChatOpen] = useState(true);
+  const [showOldVersions, setShowOldVersions] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -749,6 +833,7 @@ function VideoDetail({
     setChatOpen(true);
     setScriptOpen(false);
     setChatUnlocked(false);
+    setShowOldVersions(false);
   }, [videoId]);
 
   // Leaving the page (or unmounting this video) must always reset the chat to
@@ -1153,6 +1238,16 @@ function VideoDetail({
     }
   }
 
+  async function saveTitle(title: string) {
+    try {
+      await renameTitle({ data: { video_id: videoId, title } });
+      toast.success(title ? "Titre de la vidéo enregistré" : "Titre supprimé");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    }
+  }
+
   const video = q.data?.video;
   const options: string[] = role === "admin" ? [...ADMIN_VIDEO_STATUSES] : [...EDITOR_VIDEO_STATUSES];
   const versions = (q.data?.versions ?? []) as VersionRow[];
@@ -1163,9 +1258,12 @@ function VideoDetail({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
       <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3">
-        <h3 className="text-base font-semibold text-white">
-          Vidéo #{video ? String(video.video_number).padStart(2, "0") : "…"}
-        </h3>
+        <VideoTitleEditor
+          videoNumber={video?.video_number ?? 0}
+          title={(video as { title?: string | null } | undefined)?.title ?? null}
+          disabled={!video}
+          onSave={saveTitle}
+        />
         <select
           value={video?.status ?? "À faire"}
           disabled={busy || !video}
@@ -1192,9 +1290,6 @@ function VideoDetail({
               busy={busy}
             />
           </>
-        )}
-        {role === "editor" && video?.status === "Corrections à faire" && (
-          <ResubmitRevisionButton onClick={() => handleStatus("En révision")} busy={busy} />
         )}
         <button
           onClick={onClose}
@@ -1320,6 +1415,7 @@ function VideoDetail({
           ) : (
             <ul className="space-y-2">
               {versions.map((v, i) => {
+                if (i > 0 && !showOldVersions) return null;
                 const src = signed[v.file_url] ?? v.file_url;
                 const open = playingId === v.id;
                 return (
@@ -1415,6 +1511,21 @@ function VideoDetail({
                   </li>
                 );
               })}
+              {versions.length > 1 && (
+                <li>
+                  <button
+                    onClick={() => setShowOldVersions((o) => !o)}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] text-neutral-300 transition hover:bg-white/5 hover:text-white"
+                  >
+                    <ChevronDown
+                      className={`h-3.5 w-3.5 transition-transform ${showOldVersions ? "rotate-180" : ""}`}
+                    />
+                    {showOldVersions
+                      ? "Masquer les anciennes versions"
+                      : `Voir les ${versions.length - 1} version${versions.length > 2 ? "s" : ""} précédente${versions.length > 2 ? "s" : ""}`}
+                  </button>
+                </li>
+              )}
             </ul>
           )}
         </section>
@@ -1796,108 +1907,4 @@ export function ResubmitRevisionButton({ onClick, busy }: { onClick: () => void;
     </button>
   );
 }
-/* ------------------------------ Chat médias ------------------------------ */
-
-export function fmtSec(total: number) {
-  const s = Math.max(0, Math.floor(total || 0));
-  return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-}
-
-function ImageLightbox({ src, onClose }: { src: string; onClose: () => void }) {
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
-  return (
-    <div
-      className="fixed inset-0 z-[400] flex items-center justify-center bg-black/90 p-6"
-      onClick={onClose}
-    >
-      <button
-        onClick={onClose}
-        className="absolute right-5 top-5 rounded-full bg-white/10 p-2 text-white transition hover:bg-white/20"
-      >
-        <X className="h-5 w-5" />
-      </button>
-      <img
-        src={src}
-        alt="Pièce jointe"
-        onClick={(e) => e.stopPropagation()}
-        className="max-h-full max-w-full rounded-lg object-contain"
-      />
-    </div>
-  );
-}
-
-const WAVE_BARS = Array.from({ length: 32 }, (_, i) => 30 + ((i * 37) % 70));
-
-function VoiceBubble({ src, duration }: { src: string; duration: number | null }) {
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const [playing, setPlaying] = useState(false);
-  const [time, setTime] = useState(0);
-  const [rate, setRate] = useState(1);
-  const total = duration || 0;
-  const pct = total ? Math.min(100, (time / total) * 100) : 0;
-  // Freeze the source: refreshed signed URLs must not reload/interrupt playback.
-  const stableSrcRef = useRef(src);
-  const stableSrc = stableSrcRef.current;
-
-  function toggle() {
-    const a = audioRef.current;
-    if (!a) return;
-    if (a.paused) {
-      a.playbackRate = rate;
-      void a.play();
-    } else a.pause();
-  }
-
-  function cycleRate() {
-    const next = rate === 1 ? 1.5 : rate === 1.5 ? 2 : 1;
-    setRate(next);
-    if (audioRef.current) audioRef.current.playbackRate = next;
-  }
-
-  return (
-    <div className="mt-1 flex items-center gap-2 rounded-lg bg-black/20 px-2 py-1.5">
-      <audio
-        ref={audioRef}
-        src={stableSrc}
-        onPlay={() => setPlaying(true)}
-        onPause={() => setPlaying(false)}
-        onEnded={() => {
-          setPlaying(false);
-          setTime(0);
-        }}
-        onTimeUpdate={(e) => setTime(e.currentTarget.currentTime)}
-        className="hidden"
-      />
-      <button
-        onClick={toggle}
-        className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-      >
-        {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
-      </button>
-      <div className="flex h-7 flex-1 items-center gap-[2px]">
-        {WAVE_BARS.map((h, i) => (
-          <span
-            key={i}
-            style={{ height: `${h}%` }}
-            className={`w-[3px] rounded-full ${
-              (i / WAVE_BARS.length) * 100 <= pct ? "bg-red-400" : "bg-white/25"
-            }`}
-          />
-        ))}
-      </div>
-      <span className="shrink-0 text-[11px] tabular-nums text-neutral-400">
-        {fmtSec(time)} / {fmtSec(total)}
-      </span>
-      <button
-        onClick={cycleRate}
-        className="shrink-0 rounded-full border border-white/10 px-1.5 py-0.5 text-[10px] text-neutral-300 transition hover:bg-white/10"
-      >
-        x{rate}
-      </button>
-    </div>
-  );
-}
+export { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";

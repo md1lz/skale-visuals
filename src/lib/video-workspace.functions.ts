@@ -36,7 +36,7 @@ export const getProjectWorkspace = createServerFn({ method: "GET" })
 
     const { data: videos } = await supabaseAdmin
       .from("project_videos")
-      .select("id, video_number, status, updated_at")
+      .select("id, video_number, status, updated_at, title")
       .eq("project_id", data.project_id)
       .order("video_number", { ascending: true });
 
@@ -89,6 +89,7 @@ export const getProjectWorkspace = createServerFn({ method: "GET" })
         return {
           id: v.id,
           video_number: v.video_number,
+          title: v.title ?? null,
           status: v.status,
           updated_at: v.updated_at,
           versions_count: vv.length,
@@ -189,6 +190,23 @@ export const markVideoCommentsRead = createServerFn({ method: "POST" })
       .eq("project_video_id", data.video_id)
       .neq("author_type", viewer.kind);
     await supabaseAdmin.from("video_comments").update(patch).eq("project_video_id", data.video_id);
+    return { ok: true as const };
+  });
+
+export const setVideoTitle = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ video_id: z.string().uuid(), title: z.string().trim().max(200) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    await assertVideoAccess(data.video_id, viewer);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("project_videos")
+      .update({ title: data.title.trim() || null })
+      .eq("id", data.video_id);
+    if (error) throw new Error(error.message);
     return { ok: true as const };
   });
 
@@ -329,16 +347,25 @@ export const addVideoVersion = createServerFn({ method: "POST" })
     });
     if (error) throw new Error(error.message);
 
-    if (video.status === "À faire") {
-      await supabaseAdmin.from("project_videos").update({ status: "En cours" }).eq("id", data.video_id);
-      await recomputeProjectStatus(project.id);
+    // Publishing a new version automatically sends the video back to review.
+    const wasCorrection = video.status === "Corrections à faire";
+    if (video.status !== "En révision") {
+      await supabaseAdmin
+        .from("project_videos")
+        .update({ status: "En révision" })
+        .eq("id", data.video_id);
     }
+    await recomputeProjectStatus(project.id);
 
-    const label = `#${String(video.video_number).padStart(2, "0")}`;
+    const label = video.title
+      ? `#${String(video.video_number).padStart(2, "0")} — ${video.title}`
+      : `#${String(video.video_number).padStart(2, "0")}`;
     await notifyAdmins({
       type: "file",
       project_id: project.id,
-      message: `${viewer.name} a déposé la V${version} de la vidéo ${label} — ${project.title}`,
+      message: wasCorrection
+        ? `🔁 ${viewer.name} a déposé la V${version} corrigée de la vidéo ${label} — ${project.title} (en révision)`
+        : `🔍 ${viewer.name} a déposé la V${version} de la vidéo ${label} — ${project.title} (en révision)`,
     });
     await supabaseAdmin.from("admin_activity").insert({
       kind: "projet",
