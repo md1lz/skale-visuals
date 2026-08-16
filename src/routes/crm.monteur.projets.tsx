@@ -10,13 +10,16 @@ import { ProjectProgress } from "@/components/ProjectProgress";
 import { statusBadgeClass, deadlineTone, fmtDateFR } from "@/lib/project-display";
 
 export const Route = createFileRoute("/crm/monteur/projets")({
-  validateSearch: (s: Record<string, unknown>) => ({ p: typeof s.p === "string" ? s.p : undefined }),
+  validateSearch: (s: Record<string, unknown>) => ({
+    p: typeof s.p === "string" ? s.p : undefined,
+    v: typeof s.v === "string" ? s.v : undefined,
+  }),
   component: EditorProjectsPage,
 });
 
 function EditorProjectsPage() {
   const navigate = useNavigate();
-  const { p: selected } = Route.useSearch();
+  const { p: selected, v: focusVideo } = Route.useSearch();
   const fetchProjects = useServerFn(listMyProjectsOverview);
 
   const q = useQuery({
