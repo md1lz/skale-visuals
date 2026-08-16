@@ -177,7 +177,7 @@ function AdminVideosPage() {
 
   return (
     <DirtyContext.Provider value={{ setDirty }}>
-    <div className="p-8 mx-auto max-w-[1400px] w-full">
+    <div className="p-4 md:p-8 mx-auto max-w-[1400px] w-full">
       <header className="mb-8 flex items-start justify-between gap-4">
         <div className="min-w-0">
           {selected && (

@@ -74,7 +74,7 @@ function Section({
 
 function ParametresPage() {
   return (
-    <div className="px-8 pt-10 pb-12 max-w-5xl mx-auto space-y-6">
+    <div className="px-4 pt-6 pb-12 md:px-8 md:pt-10 max-w-5xl mx-auto space-y-6">
       <div>
         <h1 className="text-3xl font-semibold tracking-tight">Paramètres</h1>
         <p className="text-sm text-neutral-400 mt-1">

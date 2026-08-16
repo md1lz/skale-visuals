@@ -135,7 +135,7 @@ function AdminProjectsPage() {
   }, [rows, q, statusFilter, formatFilter, clientById]);
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="p-4 md:p-8 max-w-6xl">
       <div className="flex items-start justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold">Projets</h1>

@@ -48,7 +48,7 @@ function AdminEditorsPage() {
   const refresh = () => qc.invalidateQueries({ queryKey: ["admin", "editors"] });
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="p-4 md:p-8 max-w-6xl">
       <div className="flex items-start justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-semibold">Gestion des monteurs</h1>
@@ -74,8 +74,8 @@ function AdminEditorsPage() {
           <p className="text-sm text-neutral-400">Aucun monteur pour l'instant.</p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-white/10 overflow-hidden bg-neutral-900/40">
-          <table className="w-full text-sm">
+        <div className="rounded-2xl border border-white/10 overflow-hidden bg-neutral-900/40 overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-white/5 text-neutral-400">
               <tr>
                 <th className="text-left font-medium px-4 py-3">Nom / Identifiant</th>
