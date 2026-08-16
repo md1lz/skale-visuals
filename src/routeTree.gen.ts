@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ImmobilierRouteImport } from './routes/immobilier'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CrmIndexRouteImport } from './routes/crm.index'
@@ -34,6 +35,11 @@ const ImmobilierRoute = ImmobilierRouteImport.update({
   path: '/immobilier',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
@@ -45,19 +51,19 @@ const IndexRoute = IndexRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const CrmIndexRoute = CrmIndexRouteImport.update({
-  id: '/crm/',
-  path: '/crm/',
-  getParentRoute: () => rootRouteImport,
+  id: '/',
+  path: '/',
+  getParentRoute: () => CrmRoute,
 } as any)
 const CrmMonteurRoute = CrmMonteurRouteImport.update({
-  id: '/crm/monteur',
-  path: '/crm/monteur',
-  getParentRoute: () => rootRouteImport,
+  id: '/monteur',
+  path: '/monteur',
+  getParentRoute: () => CrmRoute,
 } as any)
 const CrmAdminRoute = CrmAdminRouteImport.update({
-  id: '/crm/admin',
-  path: '/crm/admin',
-  getParentRoute: () => rootRouteImport,
+  id: '/admin',
+  path: '/admin',
+  getParentRoute: () => CrmRoute,
 } as any)
 const CrmMonteurIndexRoute = CrmMonteurIndexRouteImport.update({
   id: '/',
@@ -128,6 +134,7 @@ const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/crm': typeof CrmRouteWithChildren
   '/immobilier': typeof ImmobilierRoute
   '/crm/admin': typeof CrmAdminRouteWithChildren
   '/crm/monteur': typeof CrmMonteurRouteWithChildren
@@ -169,6 +176,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/crm': typeof CrmRouteWithChildren
   '/immobilier': typeof ImmobilierRoute
   '/crm/admin': typeof CrmAdminRouteWithChildren
   '/crm/monteur': typeof CrmMonteurRouteWithChildren
@@ -192,6 +200,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/crm'
     | '/immobilier'
     | '/crm/admin'
     | '/crm/monteur'
@@ -232,6 +241,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/crm'
     | '/immobilier'
     | '/crm/admin'
     | '/crm/monteur'
@@ -254,10 +264,8 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
+  CrmRoute: typeof CrmRouteWithChildren
   ImmobilierRoute: typeof ImmobilierRoute
-  CrmAdminRoute: typeof CrmAdminRouteWithChildren
-  CrmMonteurRoute: typeof CrmMonteurRouteWithChildren
-  CrmIndexRoute: typeof CrmIndexRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
 }
 
@@ -268,6 +276,13 @@ declare module '@tanstack/react-router' {
       path: '/immobilier'
       fullPath: '/immobilier'
       preLoaderRoute: typeof ImmobilierRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -286,24 +301,24 @@ declare module '@tanstack/react-router' {
     }
     '/crm/': {
       id: '/crm/'
-      path: '/crm'
+      path: '/'
       fullPath: '/crm/'
       preLoaderRoute: typeof CrmIndexRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CrmRoute
     }
     '/crm/monteur': {
       id: '/crm/monteur'
-      path: '/crm/monteur'
+      path: '/monteur'
       fullPath: '/crm/monteur'
       preLoaderRoute: typeof CrmMonteurRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CrmRoute
     }
     '/crm/admin': {
       id: '/crm/admin'
-      path: '/crm/admin'
+      path: '/admin'
       fullPath: '/crm/admin'
       preLoaderRoute: typeof CrmAdminRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof CrmRoute
     }
     '/crm/monteur/': {
       id: '/crm/monteur/'
@@ -443,13 +458,25 @@ const CrmMonteurRouteWithChildren = CrmMonteurRoute._addFileChildren(
   CrmMonteurRouteChildren,
 )
 
-const rootRouteChildren: RootRouteChildren = {
-  IndexRoute: IndexRoute,
-  AppRoute: AppRoute,
-  ImmobilierRoute: ImmobilierRoute,
+interface CrmRouteChildren {
+  CrmAdminRoute: typeof CrmAdminRouteWithChildren
+  CrmMonteurRoute: typeof CrmMonteurRouteWithChildren
+  CrmIndexRoute: typeof CrmIndexRoute
+}
+
+const CrmRouteChildren: CrmRouteChildren = {
   CrmAdminRoute: CrmAdminRouteWithChildren,
   CrmMonteurRoute: CrmMonteurRouteWithChildren,
   CrmIndexRoute: CrmIndexRoute,
+}
+
+const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
+
+const rootRouteChildren: RootRouteChildren = {
+  IndexRoute: IndexRoute,
+  AppRoute: AppRoute,
+  CrmRoute: CrmRouteWithChildren,
+  ImmobilierRoute: ImmobilierRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
 }
 export const routeTree = rootRouteImport

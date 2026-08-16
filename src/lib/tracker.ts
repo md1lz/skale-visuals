@@ -44,7 +44,7 @@ function send(payload: EventPayload, useBeacon = false) {
 }
 
 function isAdminPath(path: string): boolean {
-  return path.startsWith("/crm/admin");
+  return path.startsWith("/crm");
 }
 
 function describeCta(el: HTMLElement): string | null {
