@@ -351,6 +351,16 @@ export function ProjectVideosBoard({
 
   return (
     <div className="space-y-5">
+      <ProjectChat
+        projectId={projectId}
+        role={role}
+        onOpenVideo={(id) => {
+          setOpenId(id);
+          requestAnimationFrame(() =>
+            gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
+          );
+        }}
+      />
     <div className={`flex flex-col lg:flex-row gap-5 ${openId ? "lg:items-start" : ""}`}>
       <div
         style={openId && listMaxH && !isMobileLayout ? { maxHeight: listMaxH } : undefined}
@@ -441,16 +451,6 @@ export function ProjectVideosBoard({
       </AnimatePresence>
     </div>
 
-      <ProjectChat
-        projectId={projectId}
-        role={role}
-        onOpenVideo={(id) => {
-          setOpenId(id);
-          requestAnimationFrame(() =>
-            gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
-          );
-        }}
-      />
     </div>
   );
 }
