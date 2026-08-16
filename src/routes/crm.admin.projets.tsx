@@ -30,7 +30,7 @@ import {
 } from "@/lib/admin-editors.functions";
 import { logAdminActivity } from "@/lib/admin-activity.functions";
 
-export const Route = createFileRoute("/admin/projets")({ component: AdminProjectsPage });
+export const Route = createFileRoute("/crm/admin/projets")({ component: AdminProjectsPage });
 
 const statusBadge: Record<ProjectStatus, string> = {
   "En attente de validation client": "bg-neutral-400/15 text-neutral-200 border-neutral-400/30",

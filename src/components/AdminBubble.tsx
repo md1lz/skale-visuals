@@ -22,7 +22,7 @@ export function AdminBubble() {
     try {
       const res = await autoLogin();
       if (res.ok) {
-        window.location.assign("/admin");
+        window.location.assign("/crm/admin");
         return;
       }
     } catch {
@@ -44,7 +44,7 @@ export function AdminBubble() {
         setOpen(false);
         setUsername("");
         setPassword("");
-        window.location.assign("role" in res && res.role === "editor" ? "/monteur" : "/admin");
+        window.location.assign("role" in res && res.role === "editor" ? "/crm/monteur" : "/crm/admin");
       } else {
         setError(true);
       }

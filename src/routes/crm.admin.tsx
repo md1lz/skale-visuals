@@ -25,12 +25,12 @@ import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/compone
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 
 
-export const Route = createFileRoute("/admin")({
+export const Route = createFileRoute("/crm/admin")({
   beforeLoad: async () => {
     const session = await getAdminSessionFn();
     if (!session) {
       const editor = await getEditorSessionFn();
-      if (editor) throw redirect({ to: "/monteur" });
+      if (editor) throw redirect({ to: "/crm/monteur" });
       throw redirect({ to: "/" });
     }
     return { session };
@@ -49,15 +49,15 @@ export const Route = createFileRoute("/admin")({
 });
 
 const NAV: { to: string; label: string; icon: typeof BarChart3; exact?: boolean }[] = [
-  { to: "/admin", label: "Accueil", icon: Home, exact: true },
-  { to: "/admin/analytiques", label: "Analytiques", icon: BarChart3 },
-  { to: "/admin/videos", label: "Vidéos", icon: Video },
-  { to: "/admin/clients", label: "Clients", icon: Users },
-  { to: "/admin/projets", label: "Projets", icon: FolderKanban },
-  { to: "/admin/monteurs", label: "Monteurs", icon: Scissors },
-  { to: "/admin/devis", label: "Devis Tally", icon: FileSignature },
-  { to: "/admin/avis", label: "Avis clients", icon: Star },
-  { to: "/admin/parametres", label: "Paramètres", icon: Settings },
+  { to: "/crm/admin", label: "Accueil", icon: Home, exact: true },
+  { to: "/crm/admin/analytiques", label: "Analytiques", icon: BarChart3 },
+  { to: "/crm/admin/videos", label: "Vidéos", icon: Video },
+  { to: "/crm/admin/clients", label: "Clients", icon: Users },
+  { to: "/crm/admin/projets", label: "Projets", icon: FolderKanban },
+  { to: "/crm/admin/monteurs", label: "Monteurs", icon: Scissors },
+  { to: "/crm/admin/devis", label: "Devis Tally", icon: FileSignature },
+  { to: "/crm/admin/avis", label: "Avis clients", icon: Star },
+  { to: "/crm/admin/parametres", label: "Paramètres", icon: Settings },
 ];
 
 function AdminLayout() {
@@ -113,7 +113,7 @@ function AdminLayoutInner() {
             return (
               <Link
                 key={item.to}
-                to={item.to as "/admin"}
+                to={item.to as "/crm/admin"}
                 className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
                   active
                     ? "bg-red-600/15 text-white border border-red-600/30"

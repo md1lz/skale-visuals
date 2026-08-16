@@ -6,7 +6,7 @@ import { Bell, MessageSquare, Paperclip, AlertTriangle, CheckCircle2, FolderOpen
 import { listMyNotifications, listMyProjects, getEditorSessionFn } from "@/lib/editor.functions";
 import { statusBadgeClass, deadlineTone, fmtDateFR } from "@/lib/project-display";
 
-export const Route = createFileRoute("/monteur/")({ component: EditorHome });
+export const Route = createFileRoute("/crm/monteur/")({ component: EditorHome });
 
 function Initials({ name }: { name: string }) {
   const letters = name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
@@ -109,8 +109,8 @@ function EditorHome() {
                     exit={{ opacity: 0, y: 6 }}
                     onClick={() =>
                       n.project_id
-                        ? navigate({ to: "/monteur/projets", search: { p: n.project_id } })
-                        : navigate({ to: "/monteur/projets", search: { p: undefined } })
+                        ? navigate({ to: "/crm/monteur/projets", search: { p: n.project_id } })
+                        : navigate({ to: "/crm/monteur/projets", search: { p: undefined } })
                     }
                     className="w-full text-left flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5 hover:bg-white/[0.05] transition"
                   >
@@ -152,7 +152,7 @@ function EditorHome() {
             {active.map((p) => (
               <button
                 key={p.id}
-                onClick={() => navigate({ to: "/monteur/projets", search: { p: p.id } })}
+                onClick={() => navigate({ to: "/crm/monteur/projets", search: { p: p.id } })}
                 className="w-full flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5 hover:bg-white/[0.05] transition text-left"
               >
                 <span className="flex-1 min-w-0 text-sm text-white truncate">{p.title}</span>

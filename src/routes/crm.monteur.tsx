@@ -6,13 +6,13 @@ import { EditorProfileMenu } from "@/components/EditorProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 
-export const Route = createFileRoute("/monteur")({
+export const Route = createFileRoute("/crm/monteur")({
   beforeLoad: async () => {
     const session = await getEditorSessionFn();
     if (!session) {
       const { getAdminSessionFn } = await import("@/lib/admin-auth.functions");
       const admin = await getAdminSessionFn();
-      if (admin) throw redirect({ to: "/admin" });
+      if (admin) throw redirect({ to: "/crm/admin" });
       throw redirect({ to: "/" });
     }
     return { editor: session };
@@ -31,9 +31,9 @@ export const Route = createFileRoute("/monteur")({
 });
 
 const NAV: { to: string; label: string; icon: typeof Home; exact?: boolean }[] = [
-  { to: "/monteur", label: "Accueil", icon: Home, exact: true },
-  { to: "/monteur/projets", label: "Mes projets", icon: FolderKanban },
-  { to: "/monteur/parametres", label: "Paramètres", icon: Settings },
+  { to: "/crm/monteur", label: "Accueil", icon: Home, exact: true },
+  { to: "/crm/monteur/projets", label: "Mes projets", icon: FolderKanban },
+  { to: "/crm/monteur/parametres", label: "Paramètres", icon: Settings },
 ];
 
 function EditorLayout() {
@@ -95,7 +95,7 @@ function EditorLayoutInner() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to as "/monteur"}
+                  to={item.to as "/crm/monteur"}
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
                     active
                       ? "bg-red-600/15 text-white border border-red-600/30"

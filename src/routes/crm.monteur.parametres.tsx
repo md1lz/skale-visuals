@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { Palette, ImageIcon, Upload, Trash2, Check, Sun, Moon } from "lucide-react";
 import { ADMIN_THEMES, useAdminPrefs, type AdminTheme } from "@/components/admin-prefs";
 
-export const Route = createFileRoute("/monteur/parametres")({ component: EditorSettingsPage });
+export const Route = createFileRoute("/crm/monteur/parametres")({ component: EditorSettingsPage });
 
 function Section({
   icon: Icon,
