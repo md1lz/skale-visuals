@@ -95,14 +95,6 @@ function InstallPage() {
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-[0.05] [background-image:linear-gradient(to_right,#fff_1px,transparent_1px),linear-gradient(to_bottom,#fff_1px,transparent_1px)] [background-size:64px_64px]" />
 
       <div className="relative mx-auto flex min-h-[100dvh] w-full max-w-5xl flex-col items-center justify-center px-6 py-16">
-        <motion.img
-          src={logoMark.url}
-          alt="Skale CRM"
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="mb-4 h-16 w-16 rounded-2xl object-cover shadow-lg"
-        />
         <motion.span
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
