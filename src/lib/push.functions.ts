@@ -32,9 +32,22 @@ export const savePushSubscription = createServerFn({ method: "POST" })
         p256dh: data.p256dh,
         auth: data.auth,
         user_agent: data.userAgent ?? null,
+        last_seen_at: new Date().toISOString(),
       },
       { onConflict: "endpoint" },
     );
+    return { ok: true as const };
+  });
+
+/** Heartbeat: marks the current app device as online. */
+export const pingAppDevice = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ endpoint: z.string().min(1).max(2000) }).parse(d))
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await supabaseAdmin
+      .from("push_subscriptions")
+      .update({ last_seen_at: new Date().toISOString() })
+      .eq("endpoint", data.endpoint);
     return { ok: true as const };
   });
 
@@ -83,11 +96,20 @@ export const listPushDevices = createServerFn({ method: "GET" }).handler(async (
   const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
   let query = supabaseAdmin
     .from("push_subscriptions")
-    .select("id, owner_type, owner_id, user_agent, created_at")
-    .order("created_at", { ascending: false });
+    .select("id, owner_type, owner_id, user_agent, created_at, last_seen_at")
+    .order("last_seen_at", { ascending: false });
   if (!admin) query = query.eq("owner_type", "editor").eq("owner_id", editor!.editorId);
   const { data } = await query;
-  const rows = data ?? [];
+  const all = data ?? [];
+  // One entry per real device (same owner + same device signature), keeping the
+  // most recently active registration instead of one row per re-subscription.
+  const seen = new Set<string>();
+  const rows = all.filter((r) => {
+    const key = `${r.owner_type}:${r.owner_id}:${r.user_agent ?? ""}`;
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 
   const editorIds = [...new Set(rows.filter((r) => r.owner_type === "editor").map((r) => r.owner_id))];
   const names = new Map<string, string>();
@@ -123,6 +145,8 @@ export const listPushDevices = createServerFn({ method: "GET" }).handler(async (
       ownerName: r.owner_type === "admin" ? r.owner_id : (names.get(r.owner_id) ?? "Monteur"),
       device: deviceLabel(r.user_agent),
       createdAt: r.created_at,
+      lastSeenAt: r.last_seen_at ?? r.created_at,
+      online: Date.now() - new Date(r.last_seen_at ?? r.created_at).getTime() < 90_000,
       lastLoginAt: lastLogins.get(`${r.owner_type}:${r.owner_id}`) ?? null,
     })),
   };
