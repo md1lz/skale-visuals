@@ -798,21 +798,10 @@ function VideoDetail({
     onChanged?.();
   }, [qc, videoId, projectId, onChanged]);
 
-  // Realtime: read receipts + reactions
-  useEffect(() => {
-    const channel = supabase
-      .channel(`video-${videoId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "comment_reactions" }, () => {
-        qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
-      })
-      .on("postgres_changes", { event: "UPDATE", schema: "public", table: "video_comments" }, () => {
-        qc.invalidateQueries({ queryKey: ["workspace", "video", videoId] });
-      })
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [videoId, qc]);
+  // Read receipts + reactions stay fresh through the 15s polling above.
+  // No client-side Realtime subscription: these tables are backend-only
+  // (deny-all RLS) and are read exclusively through authenticated server
+  // functions, so no anon/authenticated SELECT policy is granted.
 
   const unreadIds = useMemo(() => {
     const list = q.data?.comments ?? [];
