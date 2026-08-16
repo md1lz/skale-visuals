@@ -331,31 +331,49 @@ export type Database = {
       }
       project_comments: {
         Row: {
+          audio_duration: number | null
+          audio_url: string | null
           author_id: string | null
           author_name: string
           author_type: string
           content: string
           created_at: string
           id: string
+          image_url: string | null
           project_id: string
+          read_at: string | null
+          read_by_admin: boolean
+          read_by_editor: boolean
         }
         Insert: {
+          audio_duration?: number | null
+          audio_url?: string | null
           author_id?: string | null
           author_name?: string
           author_type: string
           content: string
           created_at?: string
           id?: string
+          image_url?: string | null
           project_id: string
+          read_at?: string | null
+          read_by_admin?: boolean
+          read_by_editor?: boolean
         }
         Update: {
+          audio_duration?: number | null
+          audio_url?: string | null
           author_id?: string | null
           author_name?: string
           author_type?: string
           content?: string
           created_at?: string
           id?: string
+          image_url?: string | null
           project_id?: string
+          read_at?: string | null
+          read_by_admin?: boolean
+          read_by_editor?: boolean
         }
         Relationships: [
           {
