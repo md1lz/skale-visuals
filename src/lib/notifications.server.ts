@@ -27,17 +27,21 @@ export async function pushTo(
   if (owner.id) query = query.eq("owner_id", owner.id);
   const { data } = await query;
   const subs = data ?? [];
-  if (!subs.length) return;
+  if (!subs.length) return { sent: 0, failed: 0, devices: 0 };
 
   const { sendWebPush } = await import("./web-push.server");
   const dead: string[] = [];
-  await Promise.all(
+  let sent = 0;
+  const statuses = await Promise.all(
     subs.map(async (s) => {
       const status = await sendWebPush(s, { title: "Skale CRM", ...payload });
       if (status === 404 || status === 410) dead.push(s.id);
+      if (status >= 200 && status < 300) sent++;
+      return status;
     }),
   );
   if (dead.length) await supabaseAdmin.from("push_subscriptions").delete().in("id", dead);
+  return { sent, failed: statuses.length - sent, devices: subs.length };
 }
 
 export async function notifyEditor(input: {
