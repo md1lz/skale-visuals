@@ -159,6 +159,15 @@ function RootInner() {
     trackPageView(pathname);
   }, [pathname]);
 
+  useEffect(() => {
+    // Safety: the PWA manifest must only be present on /app. Remove any stale
+    // manifest link that could leak onto the public site or other routes.
+    const manifestLink = document.querySelector("link[rel='manifest']");
+    if (manifestLink && !pathname.startsWith("/app")) {
+      manifestLink.remove();
+    }
+  }, [pathname]);
+
   const fetchMaintenance = useServerFn(getMaintenanceStatus);
   const fetchSession = useServerFn(getAdminSessionFn);
   const maintenanceQ = useQuery({
