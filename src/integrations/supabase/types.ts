@@ -291,6 +291,44 @@ export type Database = {
           },
         ]
       }
+      project_comment_reactions: {
+        Row: {
+          author_id: string
+          author_name: string
+          author_type: string
+          comment_id: string
+          created_at: string
+          emoji: string
+          id: string
+        }
+        Insert: {
+          author_id: string
+          author_name?: string
+          author_type: string
+          comment_id: string
+          created_at?: string
+          emoji: string
+          id?: string
+        }
+        Update: {
+          author_id?: string
+          author_name?: string
+          author_type?: string
+          comment_id?: string
+          created_at?: string
+          emoji?: string
+          id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_comment_reactions_comment_id_fkey"
+            columns: ["comment_id"]
+            isOneToOne: false
+            referencedRelation: "project_comments"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_comments: {
         Row: {
           author_id: string | null
@@ -403,6 +441,44 @@ export type Database = {
           },
         ]
       }
+      project_typing_indicators: {
+        Row: {
+          author_id: string
+          author_name: string
+          author_type: string
+          id: string
+          is_recording_audio: boolean
+          project_id: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          author_name?: string
+          author_type: string
+          id?: string
+          is_recording_audio?: boolean
+          project_id: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          author_name?: string
+          author_type?: string
+          id?: string
+          is_recording_audio?: boolean
+          project_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "project_typing_indicators_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       project_videos: {
         Row: {
           created_at: string
@@ -410,6 +486,7 @@ export type Database = {
           project_id: string
           script: string | null
           status: string
+          title: string | null
           updated_at: string
           video_number: number
         }
@@ -419,6 +496,7 @@ export type Database = {
           project_id: string
           script?: string | null
           status?: string
+          title?: string | null
           updated_at?: string
           video_number: number
         }
@@ -428,6 +506,7 @@ export type Database = {
           project_id?: string
           script?: string | null
           status?: string
+          title?: string | null
           updated_at?: string
           video_number?: number
         }
