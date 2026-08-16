@@ -58,7 +58,7 @@ function EditorHome() {
   };
 
   return (
-    <div className="px-8 pt-10 pb-12 max-w-5xl mx-auto">
+    <div className="px-4 pt-6 pb-12 md:px-8 md:pt-10 max-w-5xl mx-auto">
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}

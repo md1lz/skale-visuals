@@ -24,6 +24,7 @@ import { AdminProfileMenu } from "@/components/AdminProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { PushSetup } from "@/components/PushSetup";
+import { PanelMobileNav } from "@/components/PanelMobileNav";
 
 
 export const Route = createFileRoute("/crm/admin")({
@@ -78,8 +79,7 @@ function AdminLayoutInner() {
 
   return (
     <div
-      className={`admin-themed mode-${mode} min-h-screen flex bg-neutral-950 text-white relative`}
-      style={{ zoom: 1.25 }}
+      className={`admin-themed mode-${mode} panel-zoom min-h-screen flex bg-neutral-950 text-white relative`}
     >
       {background && (
         <div
@@ -94,7 +94,7 @@ function AdminLayoutInner() {
         />
       )}
       <div className="relative z-10 flex w-full">
-      <aside className="w-60 shrink-0 border-r border-white/10 bg-neutral-950/80 backdrop-blur flex flex-col">
+      <aside className="hidden md:flex w-60 shrink-0 border-r border-white/10 bg-neutral-950/80 backdrop-blur flex flex-col">
         <div className="px-5 py-5 flex items-center gap-2.5">
           <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
           <p className="text-sm font-semibold">Skale Admin</p>
@@ -138,6 +138,10 @@ function AdminLayoutInner() {
       </aside>
 
       <main className="flex-1 min-w-0 overflow-x-hidden">
+        <PanelMobileNav title="Skale Admin" items={NAV}>
+          {session?.user && <AdminProfileMenu initialUsername={session.user} />}
+            <BackToSiteLink />
+        </PanelMobileNav>
         <AnimatePresence mode="wait">
           <motion.div
             key={pathname}

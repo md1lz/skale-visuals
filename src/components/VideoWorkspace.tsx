@@ -331,6 +331,8 @@ export function ProjectVideosBoard({
     };
   }, [openId, videos.length, aspect]);
 
+  const isMobileLayout = typeof window !== "undefined" && window.innerWidth < 1024;
+
   if (q.isLoading) {
     return (
       <div className="flex items-center gap-2 text-sm text-neutral-400">
@@ -349,19 +351,19 @@ export function ProjectVideosBoard({
 
   return (
     <div className="space-y-5">
-    <div className={`flex gap-5 ${openId ? "items-start" : ""}`}>
+    <div className={`flex flex-col lg:flex-row gap-5 ${openId ? "lg:items-start" : ""}`}>
       <div
-        style={openId && listMaxH ? { maxHeight: listMaxH } : undefined}
+        style={openId && listMaxH && !isMobileLayout ? { maxHeight: listMaxH } : undefined}
         className={
           openId
-            ? "w-[30%] shrink-0 min-h-0 overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
+            ? "w-full lg:w-[30%] shrink-0 min-h-0 max-h-44 lg:max-h-none overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
             : "w-full"
         }
       >
         <div
           ref={gridRef}
           className={`grid gap-3 ${
-            openId ? "grid-cols-1 sm:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            openId ? "grid-cols-2 lg:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
           }`}
         >
           {videos.map((v) => (

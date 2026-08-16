@@ -135,7 +135,7 @@ function AdminProjectsPage() {
   }, [rows, q, statusFilter, formatFilter, clientById]);
 
   return (
-    <div className="p-8 max-w-6xl">
+    <div className="p-4 md:p-8 max-w-6xl">
       <div className="flex items-start justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold">Projets</h1>
@@ -856,16 +856,16 @@ function ProjectDetailPanel({
       transition={{ duration: 0.25 }}
       className="fixed inset-0 z-[200] flex flex-col bg-neutral-950"
     >
-      <div className="shrink-0 border-b border-white/10 bg-neutral-950/95 px-6 py-3 backdrop-blur">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="shrink-0 border-b border-white/10 bg-neutral-950/95 px-4 py-3 md:px-6 backdrop-blur">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4">
           <button
             onClick={onClose}
             className="inline-flex items-center gap-1.5 text-sm text-neutral-400 transition hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" /> Projets
           </button>
-          <div className="h-6 w-px bg-white/10" />
-          <h1 className="truncate text-lg font-semibold text-white">{project.title}</h1>
+          <div className="hidden md:block h-6 w-px bg-white/10" />
+          <h1 className="min-w-0 truncate text-base md:text-lg font-semibold text-white">{project.title}</h1>
           <span className={`rounded-full border px-2 py-0.5 text-[11px] ${statusBadge[project.status]}`}>
             {project.status}
           </span>
@@ -884,7 +884,7 @@ function ProjectDetailPanel({
           </span>
           <span className={`text-xs ${dl.className}`}>Deadline {dl.label}</span>
 
-          <div className="ml-auto flex flex-wrap items-center gap-3">
+          <div className="w-full md:w-auto md:ml-auto flex flex-wrap items-center gap-2 md:gap-3">
             <button
               onClick={onEdit}
               className="inline-flex items-center gap-2 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500"
@@ -924,7 +924,7 @@ function ProjectDetailPanel({
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
         <div className="mx-auto max-w-[1600px] space-y-5">
           <section className="rounded-2xl border border-white/10 bg-neutral-900/40">
             <button

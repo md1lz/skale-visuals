@@ -29,7 +29,7 @@ function EditorProjectsPage() {
   });
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-4 md:p-8 max-w-5xl">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Mes projets</h1>
         <p className="text-sm text-neutral-400 mt-1">Les projets qui te sont assignés par l'équipe Skale.</p>
@@ -44,8 +44,8 @@ function EditorProjectsPage() {
           <p className="text-sm text-neutral-400">Aucun projet ne t'a encore été assigné.</p>
         </div>
       ) : (
-        <div className="rounded-2xl border border-white/10 overflow-hidden bg-neutral-900/40">
-          <table className="w-full text-sm">
+        <div className="rounded-2xl border border-white/10 overflow-hidden bg-neutral-900/40 overflow-x-auto">
+          <table className="w-full min-w-[640px] text-sm">
             <thead className="bg-white/5 text-neutral-400">
               <tr>
                 <th className="text-left font-medium px-4 py-3">Projet</th>
@@ -126,16 +126,16 @@ function ProjectFullscreen({
       transition={{ duration: 0.25 }}
       className="fixed inset-0 z-[200] flex flex-col bg-neutral-950"
     >
-      <div className="shrink-0 border-b border-white/10 bg-neutral-950/95 px-6 py-3 backdrop-blur">
-        <div className="flex flex-wrap items-center gap-4">
+      <div className="shrink-0 border-b border-white/10 bg-neutral-950/95 px-4 py-3 md:px-6 backdrop-blur">
+        <div className="flex flex-wrap items-center gap-2 md:gap-4">
           <button
             onClick={onClose}
             className="inline-flex items-center gap-1.5 text-sm text-neutral-400 transition hover:text-white"
           >
             <ArrowLeft className="h-4 w-4" /> Mes projets
           </button>
-          <div className="h-6 w-px bg-white/10" />
-          <h1 className="truncate text-lg font-semibold text-white">{project?.title ?? "…"}</h1>
+          <div className="hidden md:block h-6 w-px bg-white/10" />
+          <h1 className="min-w-0 truncate text-base md:text-lg font-semibold text-white">{project?.title ?? "…"}</h1>
           {project && (
             <>
               <span className={`rounded-full border px-2 py-0.5 text-[11px] ${statusBadgeClass(project.status)}`}>
@@ -146,13 +146,13 @@ function ProjectFullscreen({
               </span>
             </>
           )}
-          <div className="ml-auto flex items-center gap-4">
+          <div className="w-full md:w-auto md:ml-auto flex items-center gap-4">
             <ProjectProgress approved={approved} total={videos.length} />
           </div>
         </div>
       </div>
 
-      <div className="min-h-0 flex-1 overflow-y-auto p-6">
+      <div className="min-h-0 flex-1 overflow-y-auto p-4 md:p-6">
         <div className="mx-auto max-w-[1600px] space-y-5">
           <section className="rounded-2xl border border-white/10 bg-neutral-900/40">
             <button
