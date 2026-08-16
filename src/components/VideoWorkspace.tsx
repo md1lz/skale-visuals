@@ -332,7 +332,7 @@ export function ProjectVideosBoard({
     };
   }, [openId, videos.length, aspect]);
 
-  const isMobileLayout = typeof window !== "undefined" && window.innerWidth < 1024;
+  const isMobile = useIsMobile();
 
   if (q.isLoading) {
     return (
@@ -364,7 +364,7 @@ export function ProjectVideosBoard({
       />
     <div className={`flex flex-col lg:flex-row gap-5 ${openId ? "lg:items-start" : ""}`}>
       <div
-        style={openId && listMaxH && !isMobileLayout ? { maxHeight: listMaxH } : undefined}
+        style={openId && listMaxH && !isMobile ? { maxHeight: listMaxH } : undefined}
         className={
           openId
             ? "w-full lg:w-[30%] shrink-0 min-h-0 max-h-44 lg:max-h-none overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
@@ -429,7 +429,7 @@ export function ProjectVideosBoard({
       </div>
 
       <AnimatePresence>
-        {openId && (
+        {openId && !isMobile && (
           <motion.div
             key={openId}
             initial={{ opacity: 0, x: 24 }}
@@ -452,6 +452,29 @@ export function ProjectVideosBoard({
       </AnimatePresence>
     </div>
 
+      <AnimatePresence>
+        {openId && isMobile && (
+          <motion.div
+            key={`mobile-${openId}`}
+            initial={{ opacity: 0, y: "100%" }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: "100%" }}
+            transition={{ duration: 0.28, ease: "easeOut" }}
+            className="fixed inset-0 z-[60] flex flex-col bg-neutral-950"
+          >
+            <div className="flex-1 overflow-y-auto overscroll-contain p-4 pb-20">
+              <VideoDetail
+                videoId={openId}
+                projectId={projectId}
+                role={role}
+                aspect={aspect}
+                onClose={() => setOpenId(null)}
+                onChanged={onRefresh}
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
