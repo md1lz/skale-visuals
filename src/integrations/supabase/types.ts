@@ -643,6 +643,7 @@ export type Database = {
           created_at: string
           endpoint: string
           id: string
+          last_seen_at: string
           owner_id: string
           owner_type: string
           p256dh: string
@@ -653,6 +654,7 @@ export type Database = {
           created_at?: string
           endpoint: string
           id?: string
+          last_seen_at?: string
           owner_id: string
           owner_type: string
           p256dh: string
@@ -663,6 +665,7 @@ export type Database = {
           created_at?: string
           endpoint?: string
           id?: string
+          last_seen_at?: string
           owner_id?: string
           owner_type?: string
           p256dh?: string
