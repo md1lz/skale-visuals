@@ -20,6 +20,7 @@ import {
   X,
   Sun,
   Moon,
+  Smartphone,
 } from "lucide-react";
 import {
   ADMIN_THEMES,
@@ -34,6 +35,7 @@ import {
   updateAdminCredentials,
   createAdminAccount,
 } from "@/lib/admin-settings.functions";
+import { listPushDevices, forgetPushDevice } from "@/lib/push.functions";
 
 
 export const Route = createFileRoute("/crm/admin/parametres")({
@@ -85,6 +87,7 @@ function ParametresPage() {
       <ThemeSection />
       <BackgroundSection />
       <ConnectionsSection />
+      <AppConnectionsSection />
       <NotificationsSettings defaultUrl="/crm/admin" />
       <AccountsSection />
     </div>
@@ -264,7 +267,7 @@ function ConnectionsSection() {
   return (
     <Section
       icon={Wifi}
-      title="Connexions"
+      title="Connexions site web"
       description='Appareils autorisés via "Se souvenir de moi".'
     >
       {q.data.length === 0 ? (
@@ -368,6 +371,100 @@ function ConnectionsSection() {
 
 
 /* ---------- ACCOUNTS ---------- */
+function AppConnectionsSection() {
+  const fetchDevices = useServerFn(listPushDevices);
+  const forget = useServerFn(forgetPushDevice);
+  const q = useQuery({
+    queryKey: ["admin", "app-devices"],
+    queryFn: () => fetchDevices(),
+    initialData: {
+      isAdmin: true,
+      self: { type: "admin" as const, id: "", name: "" },
+      devices: [] as Array<{
+        id: string;
+        ownerType: "admin" | "editor";
+        ownerId: string;
+        ownerName: string;
+        device: string;
+        createdAt: string;
+        lastLoginAt: string | null;
+      }>,
+    },
+    refetchInterval: 30_000,
+  });
+
+  async function onForget(id: string) {
+    await forget({ data: { id } });
+    q.refetch();
+  }
+
+  function formatDate(iso: string) {
+    const d = new Date(iso);
+    return `${d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })} à ${String(
+      d.getHours(),
+    ).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
+  }
+
+  return (
+    <Section
+      icon={Smartphone}
+      title="Connexions app"
+      description="Appareils connectés à l'application (admins et monteurs)."
+    >
+      {q.data.devices.length === 0 ? (
+        <div className="text-sm text-neutral-400 bg-neutral-800/50 rounded-xl px-4 py-3 text-center">
+          Aucun appareil connecté à l'app.
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {q.data.devices.map((d) => (
+            <div
+              key={d.id}
+              className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5"
+            >
+              <span className="grid place-items-center h-8 w-8 rounded-lg bg-red-500/15 text-red-400 shrink-0">
+                <Smartphone className="h-4 w-4" />
+              </span>
+              <div className="flex-1 min-w-0">
+                <p className="text-sm text-white truncate">
+                  <span className="font-medium">{d.ownerName}</span>{" "}
+                  <span className="text-neutral-500 text-xs">· {d.device}</span>
+                </p>
+                <p className="text-[11px] text-neutral-500 flex items-center gap-1.5">
+                  <span
+                    className={`rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider ${
+                      d.ownerType === "admin"
+                        ? "bg-red-500/15 text-red-300"
+                        : "bg-sky-500/15 text-sky-300"
+                    }`}
+                  >
+                    {d.ownerType === "admin" ? "Admin" : "Monteur"}
+                  </span>
+                  <span>·</span>
+                  <span>enregistré le {formatDate(d.createdAt)}</span>
+                  {d.lastLoginAt && (
+                    <>
+                      <span>·</span>
+                      <span>dernière connexion {formatDate(d.lastLoginAt)}</span>
+                    </>
+                  )}
+                </p>
+              </div>
+              <button
+                onClick={() => onForget(d.id)}
+                className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition"
+                title="Retirer cet appareil"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
+        </div>
+      )}
+    </Section>
+  );
+}
+
 function AccountsSection() {
   const fetchList = useServerFn(listAdmins);
   const q = useQuery({

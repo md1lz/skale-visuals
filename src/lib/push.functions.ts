@@ -92,12 +92,24 @@ export const listPushDevices = createServerFn({ method: "GET" }).handler(async (
 
   const editorIds = [...new Set(rows.filter((r) => r.owner_type === "editor").map((r) => r.owner_id))];
   const names = new Map<string, string>();
+  const lastLogins = new Map<string, string | null>();
   if (editorIds.length) {
     const { data: eds } = await supabaseAdmin
       .from("editor_accounts")
-      .select("id, username, display_name")
+      .select("id, username, display_name, last_login_at")
       .in("id", editorIds);
-    for (const e of eds ?? []) names.set(e.id, e.display_name || e.username);
+    for (const e of eds ?? []) {
+      names.set(e.id, e.display_name || e.username);
+      lastLogins.set(`editor:${e.id}`, e.last_login_at);
+    }
+  }
+  const adminIds = [...new Set(rows.filter((r) => r.owner_type === "admin").map((r) => r.owner_id))];
+  if (adminIds.length) {
+    const { data: ads } = await supabaseAdmin
+      .from("admins")
+      .select("username, last_login_at")
+      .in("username", adminIds);
+    for (const a of ads ?? []) lastLogins.set(`admin:${a.username}`, a.last_login_at);
   }
 
   return {
@@ -112,9 +124,29 @@ export const listPushDevices = createServerFn({ method: "GET" }).handler(async (
       ownerName: r.owner_type === "admin" ? r.owner_id : (names.get(r.owner_id) ?? "Monteur"),
       device: deviceLabel(r.user_agent),
       createdAt: r.created_at,
+      lastLoginAt: lastLogins.get(`${r.owner_type}:${r.owner_id}`) ?? null,
     })),
   };
 });
+
+/** Removes a registered app device (admin only, or the editor's own device). */
+export const forgetPushDevice = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ id: z.string().min(1) }).parse(d))
+  .handler(async ({ data }) => {
+    const { getAdminSessionFn } = await import("./admin-auth.functions");
+    const { readEditorSession } = await import("./auth-sessions.server");
+
+    const admin = await getAdminSessionFn();
+    const editor = admin ? null : await readEditorSession();
+    if (!admin && !editor) throw new Error("Unauthorized");
+
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    let q = supabaseAdmin.from("push_subscriptions").delete().eq("id", data.id);
+    if (!admin) q = q.eq("owner_type", "editor").eq("owner_id", editor!.editorId);
+    const { error } = await q;
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
 
 /** Sends a test push notification to the chosen recipient (self by default). */
 export const sendTestPush = createServerFn({ method: "POST" })
