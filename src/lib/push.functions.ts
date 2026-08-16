@@ -35,3 +35,28 @@ export const savePushSubscription = createServerFn({ method: "POST" })
     );
     return { ok: true as const };
   });
+
+const testSchema = z.object({
+  title: z.string().trim().min(1).max(80),
+  body: z.string().trim().min(1).max(300),
+  url: z.string().trim().max(500).optional().default("/crm"),
+});
+
+/** Sends a push notification to every device of the currently signed-in user. */
+export const sendTestPush = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => testSchema.parse(d))
+  .handler(async ({ data }) => {
+    const { getAdminSessionFn } = await import("./admin-auth.functions");
+    const { readEditorSession } = await import("./auth-sessions.server");
+
+    const admin = await getAdminSessionFn();
+    const editor = admin ? null : await readEditorSession();
+    if (!admin && !editor) throw new Error("Unauthorized");
+
+    const { pushTo } = await import("./notifications.server");
+    await pushTo(
+      { type: admin ? "admin" : "editor", id: admin ? admin.user : editor!.editorId },
+      { title: data.title, body: data.body, url: data.url || "/crm", tag: `test-${Date.now()}` },
+    );
+    return { ok: true as const };
+  });
