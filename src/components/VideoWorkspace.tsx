@@ -1180,9 +1180,12 @@ function VideoDetail({
     <div className="flex flex-col gap-4">
       <div className="flex flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
       <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3">
-        <h3 className="text-base font-semibold text-white">
-          Vidéo #{video ? String(video.video_number).padStart(2, "0") : "…"}
-        </h3>
+        <VideoTitleEditor
+          videoNumber={video?.video_number ?? 0}
+          title={(video as { title?: string | null } | undefined)?.title ?? null}
+          disabled={!video}
+          onSave={saveTitle}
+        />
         <select
           value={video?.status ?? "À faire"}
           disabled={busy || !video}
@@ -1209,9 +1212,6 @@ function VideoDetail({
               busy={busy}
             />
           </>
-        )}
-        {role === "editor" && video?.status === "Corrections à faire" && (
-          <ResubmitRevisionButton onClick={() => handleStatus("En révision")} busy={busy} />
         )}
         <button
           onClick={onClose}
