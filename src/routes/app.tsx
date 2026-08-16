@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Chrome, Compass, Download, Share, MoreVertical, Plus, ShieldCheck, Smartphone } from "lucide-react";
@@ -16,7 +16,6 @@ export const Route = createFileRoute("/app")({
       { name: "robots", content: "noindex" },
       { name: "theme-color", content: "#0D0D0D" },
     ],
-    links: [{ rel: "manifest", href: "/manifest.json" }],
   }),
   component: InstallPage,
 });
@@ -47,9 +46,23 @@ function detectEnv(): Env {
 type InstallPrompt = Event & { prompt: () => Promise<void>; userChoice: Promise<{ outcome: string }> };
 
 function InstallPage() {
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
   const [env, setEnv] = useState<Env | null>(null);
   const [deferred, setDeferred] = useState<InstallPrompt | null>(null);
   const [installed, setInstalled] = useState(false);
+
+  useEffect(() => {
+    // Inject the manifest only on /app so the browser install prompt never
+    // appears on the public site or other routes.
+    if (!pathname.startsWith("/app")) return;
+    const link = document.createElement("link");
+    link.rel = "manifest";
+    link.href = "/manifest.json";
+    document.head.appendChild(link);
+    return () => {
+      link.remove();
+    };
+  }, [pathname]);
 
   useEffect(() => {
     setEnv(detectEnv());
