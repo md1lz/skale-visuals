@@ -617,6 +617,7 @@ function VideoDetail({
   const dropVersion = useServerFn(deleteVideoVersion);
   const renameVersion = useServerFn(renameVideoVersion);
   const sendComment = useServerFn(postVideoComment);
+  const renameTitle = useServerFn(setVideoTitle);
   const markRead = useServerFn(markVideoCommentsRead);
   const react = useServerFn(toggleCommentReaction);
   const removeComment = useServerFn(deleteVideoComment);
@@ -1158,6 +1159,29 @@ function VideoDetail({
   }
 
   async function handleStatus(status: string) {
+    setBusy(true);
+    try {
+      await updateStatus({ data: { video_id: videoId, status: status as (typeof VIDEO_STATUSES)[number] } });
+      toast.success(`Statut : ${status}`);
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveTitle(title: string) {
+    try {
+      await renameTitle({ data: { video_id: videoId, title } });
+      toast.success(title ? "Titre de la vidéo enregistré" : "Titre supprimé");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    }
+  }
+
+  async function handleStatusLegacy(status: string) {
     setBusy(true);
     try {
       await updateStatus({ data: { video_id: videoId, status: status as (typeof VIDEO_STATUSES)[number] } });
