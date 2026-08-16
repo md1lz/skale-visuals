@@ -220,3 +220,8 @@
 .admin-themed.mode-light .chat-fade-top {
   background-image: linear-gradient(to bottom, #FFFFFF 0%, rgba(255,255,255,0.85) 40%, rgba(255,255,255,0) 100%);
 }
+
+.panel-zoom { zoom: 1; }
+@media (min-width: 768px) {
+  .panel-zoom { zoom: 1.25; }
+}
