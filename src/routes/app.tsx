@@ -102,7 +102,7 @@ function InstallPage() {
           transition={{ duration: 0.5 }}
           className="font-kangge text-5xl leading-none text-[#E24B4A]"
         >
-          Skale
+          Skale CRM
         </motion.span>
 
         <motion.div
@@ -119,11 +119,11 @@ function InstallPage() {
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.12 }}
-          className="mt-6 max-w-3xl text-center text-4xl leading-[1.05] font-semibold tracking-tight sm:text-5xl md:text-6xl"
+          className="mt-6 max-w-3xl text-center text-2xl leading-[1.1] font-semibold tracking-tight sm:text-3xl md:text-4xl"
         >
           Vous faites partie de l'équipe <span className="font-kangge text-[#E24B4A]">Skale</span> ?
           <br />
-          <span className="font-script italic">Accédez à votre panel</span> en installant l'appli.
+          Accédez à votre panel en installant l'appli.
         </motion.h1>
 
         <motion.p
