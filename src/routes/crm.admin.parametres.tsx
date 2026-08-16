@@ -20,6 +20,7 @@ import {
   X,
   Sun,
   Moon,
+  Smartphone,
 } from "lucide-react";
 import {
   ADMIN_THEMES,
@@ -34,6 +35,7 @@ import {
   updateAdminCredentials,
   createAdminAccount,
 } from "@/lib/admin-settings.functions";
+import { listPushDevices, forgetPushDevice } from "@/lib/push.functions";
 
 
 export const Route = createFileRoute("/crm/admin/parametres")({
@@ -85,6 +87,7 @@ function ParametresPage() {
       <ThemeSection />
       <BackgroundSection />
       <ConnectionsSection />
+      <AppConnectionsSection />
       <NotificationsSettings defaultUrl="/crm/admin" />
       <AccountsSection />
     </div>
@@ -264,7 +267,7 @@ function ConnectionsSection() {
   return (
     <Section
       icon={Wifi}
-      title="Connexions"
+      title="Connexions site web"
       description='Appareils autorisés via "Se souvenir de moi".'
     >
       {q.data.length === 0 ? (
