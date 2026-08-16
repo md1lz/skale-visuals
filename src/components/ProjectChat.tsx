@@ -146,17 +146,9 @@ export function ProjectChat({
     [comments, role],
   );
 
-  useEffect(() => {
-    const channel = supabase
-      .channel(`project-chat-${projectId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "project_comments" }, () => {
-        qc.invalidateQueries({ queryKey: ["project-chat", projectId] });
-      })
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [projectId, qc]);
+  // Project chat refreshes through the 15s polling above. No client-side
+  // Realtime subscription: project_comments is backend-only (deny-all RLS)
+  // and is read exclusively through authenticated server functions.
 
   useEffect(() => {
     if (unreadIds.size === 0) return;
