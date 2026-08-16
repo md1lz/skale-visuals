@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useRouterState } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Chrome, Compass, Download, Share, MoreVertical, Plus, ShieldCheck, Smartphone } from "lucide-react";
@@ -16,7 +16,6 @@ export const Route = createFileRoute("/app")({
       { name: "robots", content: "noindex" },
       { name: "theme-color", content: "#0D0D0D" },
     ],
-    links: [{ rel: "manifest", href: "/manifest.json" }],
   }),
   component: InstallPage,
 });
