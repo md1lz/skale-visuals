@@ -193,6 +193,23 @@ export const markVideoCommentsRead = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+export const setVideoTitle = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ video_id: z.string().uuid(), title: z.string().trim().max(200) }).parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    await assertVideoAccess(data.video_id, viewer);
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("project_videos")
+      .update({ title: data.title.trim() || null })
+      .eq("id", data.video_id);
+    if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
 export const setVideoStatus = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
