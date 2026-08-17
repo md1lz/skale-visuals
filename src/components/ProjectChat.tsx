@@ -407,28 +407,32 @@ export function ProjectChat({
     }
   }
 
-  return (
-    <section className="rounded-2xl border border-white/10 bg-neutral-900/50">
-      <button
-        onClick={() => setOpen((o) => !o)}
-        className="flex w-full items-center gap-2 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
-      >
-        <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-0" : "-rotate-90"}`} />
-        <MessagesSquare className="h-4 w-4 text-red-400" />
-        Chat général du projet
-        <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
-          {comments.length} message{comments.length > 1 ? "s" : ""}
-        </span>
-        {unreadIds.size > 0 && (
-          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
-            {unreadIds.size}
-          </span>
-        )}
-      </button>
+  const fullscreen = isMobile && open;
 
-      {open && (
-        <div className="border-t border-white/10 px-5 py-4">
-          <div className="relative mb-3 h-[22rem]">
+  const titleBits = (
+    <>
+      <MessagesSquare className="h-4 w-4 shrink-0 text-red-400" />
+      <span className="truncate">Chat général du projet</span>
+      <span className="shrink-0 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
+        {comments.length} message{comments.length > 1 ? "s" : ""}
+      </span>
+      {unreadIds.size > 0 && (
+        <span className="grid h-5 min-w-5 shrink-0 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
+          {unreadIds.size}
+        </span>
+      )}
+    </>
+  );
+
+  const chatBody = (
+        <div
+          className={
+            fullscreen
+              ? "flex min-h-0 flex-1 flex-col px-4 pb-4 pt-3"
+              : "border-t border-white/10 px-5 py-4"
+          }
+        >
+          <div className={`relative mb-3 ${fullscreen ? "min-h-0 flex-1" : "h-[22rem]"}`}>
             <div className="chat-fade-top pointer-events-none absolute inset-x-0 top-0 z-20 h-16 rounded-t-xl" />
             <button
               type="button"
@@ -748,7 +752,65 @@ export function ProjectChat({
             </div>
           )}
         </div>
-      )}
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        <button
+          onClick={() => setOpen(true)}
+          className="flex min-h-[56px] w-full items-center gap-2 rounded-2xl border border-white/10 bg-neutral-900/50 px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300"
+        >
+          {titleBits}
+        </button>
+
+        <AnimatePresence>
+          {open && (
+            <motion.div
+              key="project-chat-sheet"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 34 }}
+              drag="y"
+              dragConstraints={{ top: 0, bottom: 0 }}
+              dragElastic={{ top: 0, bottom: 0.5 }}
+              onDragEnd={(_, info) => {
+                if (info.offset.y > 120 || info.velocity.y > 700) setOpen(false);
+              }}
+              className="fixed inset-0 z-[80] flex flex-col bg-neutral-950"
+            >
+              <div className="shrink-0 border-b border-white/10 px-4 pb-3 pt-2">
+                <div className="mx-auto mb-2 h-1 w-10 rounded-full bg-white/20" />
+                <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-neutral-300">
+                  {titleBits}
+                  <button
+                    onClick={() => setOpen(false)}
+                    aria-label="Réduire le chat"
+                    className="ml-auto grid h-11 w-11 shrink-0 place-items-center rounded-full text-neutral-300 active:bg-white/10"
+                  >
+                    <ChevronDown className="h-5 w-5" />
+                  </button>
+                </div>
+              </div>
+              {chatBody}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </>
+    );
+  }
+
+  return (
+    <section className="rounded-2xl border border-white/10 bg-neutral-900/50">
+      <button
+        onClick={() => setOpen((o) => !o)}
+        className="flex w-full items-center gap-2 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
+      >
+        <ChevronDown className={`h-4 w-4 transition-transform ${open ? "rotate-0" : "-rotate-90"}`} />
+        {titleBits}
+      </button>
+      {open && chatBody}
     </section>
   );
 }
