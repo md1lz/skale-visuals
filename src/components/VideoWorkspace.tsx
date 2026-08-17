@@ -23,7 +23,6 @@ import {
   AlertTriangle,
   Pencil,
   ChevronDown,
-  Copy,
 } from "lucide-react";
 import { ImageIcon, Mic, Pause, ArrowUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -1517,7 +1516,7 @@ function VideoDetail({
                               {v.description}
                             </p>
                           )}
-                          <div className="mt-1">
+                          <div className="mt-1 w-full min-w-0">
                             <RushLink href={src} label={normalizeHref(v.file_url)} />
                           </div>
                           {extraLinks(v).length > 0 && (
