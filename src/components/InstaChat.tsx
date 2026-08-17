@@ -155,11 +155,13 @@ function GestureBubble({
       onPointerDown={(e) => {
         if (e.pointerType === "mouse" && e.button !== 0) return;
         e.stopPropagation();
+        console.log("GB down");
         start.current = { x: e.clientX, y: e.clientY };
         moved.current = false;
         longFired.current = false;
         clear();
         timer.current = setTimeout(() => {
+          console.log("GB long");
           longFired.current = true;
           move(0);
           onLongPress();
