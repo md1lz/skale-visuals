@@ -138,6 +138,7 @@ export function InstaChat({
   onDelete,
   onTyping,
   placeholder = "Message…",
+  variant = "overlay",
 }: {
   open: boolean;
   onClose: () => void;
@@ -156,6 +157,7 @@ export function InstaChat({
   onDelete?: (commentId: string) => Promise<void> | void;
   onTyping?: (state: "typing" | "recording" | "off") => void;
   placeholder?: string;
+  variant?: "overlay" | "inline";
 }) {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -169,6 +171,8 @@ export function InstaChat({
   const [recording, setRecording] = useState(false);
   const [recSeconds, setRecSeconds] = useState(0);
   const [recCancelHint, setRecCancelHint] = useState(false);
+  const [locked, setLocked] = useState(false);
+  const [trashing, setTrashing] = useState(false);
   const [levels, setLevels] = useState<number[]>(() => Array.from({ length: 34 }, () => 4));
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -185,6 +189,9 @@ export function InstaChat({
   const typingSentAt = useRef(0);
   const typingOff = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recStartX = useRef(0);
+  const recStartY = useRef(0);
+  const pressStartRef = useRef(0);
+  const lockedRef = useRef(false);
   const holdReleasedRef = useRef(false);
 
   const byId = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
@@ -313,10 +320,25 @@ export function InstaChat({
   }
 
   /* ------------------------------- recording ----------------------------- */
-  async function startRecording(clientX: number) {
+  function lockRecording() {
+    lockedRef.current = true;
+    setLocked(true);
+    setRecCancelHint(false);
+  }
+
+  function cancelWithAnim() {
+    setTrashing(true);
+    stopRecording(true);
+    setTimeout(() => setTrashing(false), 600);
+  }
+
+  async function startRecording(clientX: number, clientY = 0) {
     if (recording) return;
     holdReleasedRef.current = false;
+    lockedRef.current = false;
+    setLocked(false);
     recStartX.current = clientX;
+    recStartY.current = clientY;
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -363,6 +385,8 @@ export function InstaChat({
       setLevels(Array.from({ length: 34 }, () => 4));
       setRecording(false);
       setRecCancelHint(false);
+      lockedRef.current = false;
+      setLocked(false);
       onTyping?.("off");
       const seconds = recSecondsRef.current;
       setRecSeconds(0);
@@ -374,8 +398,8 @@ export function InstaChat({
     recorderRef.current = rec;
     rec.start();
     if (holdReleasedRef.current) {
-      // The user released the mic button before permission resolved.
-      setTimeout(() => stopRecording(true), 0);
+      // Le doigt a été relâché avant l'autorisation : on bascule en mode verrouillé.
+      lockRecording();
     }
     setRecording(true);
     setRecSeconds(0);
