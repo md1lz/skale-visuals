@@ -367,85 +367,69 @@ export function ProjectVideosBoard({
           );
         }}
       />
-      <div className={`flex flex-col lg:flex-row gap-5 ${openId ? "lg:items-start" : ""}`}>
-        <div
-          style={openId && listMaxH && !isMobile ? { maxHeight: listMaxH } : undefined}
-          className={
-            openId
-              ? "w-full lg:w-[30%] shrink-0 min-h-0 max-h-44 lg:max-h-none overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
-              : "w-full"
-          }
-        >
-          <div
-            ref={gridRef}
-            className={`grid gap-3 ${
-              openId
-                ? "grid-cols-2 lg:grid-cols-2"
-                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+      <div
+        ref={gridRef}
+        className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+      >
+        {videos.map((v) => (
+          <button
+            key={v.id}
+            onClick={() => setOpenId(v.id)}
+            className={`group rounded-xl border p-3 text-left transition ${
+              openId === v.id
+                ? "border-red-500/60 bg-red-500/[0.07]"
+                : "border-white/10 bg-neutral-900/50 hover:border-white/25 hover:bg-neutral-900"
             }`}
           >
-            {videos.map((v) => (
-              <button
-                key={v.id}
-                onClick={() => setOpenId(v.id)}
-                className={`group rounded-xl border p-3 text-left transition ${
-                  openId === v.id
-                    ? "border-red-500/60 bg-red-500/[0.07]"
-                    : "border-white/10 bg-neutral-900/50 hover:border-white/25 hover:bg-neutral-900"
-                }`}
-              >
-                <div className="mb-2 flex items-center justify-between gap-2">
-                  <span className="min-w-0 truncate text-sm font-semibold text-white">
-                    {videoLabel(v)}
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="min-w-0 truncate text-sm font-semibold text-white">
+                {videoLabel(v)}
+              </span>
+              <span className="flex items-center gap-1.5">
+                {role === "admin" && v.status === "En révision" && (
+                  <span title="Nouvelle version à réviser" className="relative flex h-2.5 w-2.5">
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
+                    <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sky-500" />
                   </span>
-                  <span className="flex items-center gap-1.5">
-                    {role === "admin" && v.status === "En révision" && (
-                      <span
-                        title="Nouvelle version à réviser"
-                        className="relative flex h-2.5 w-2.5"
-                      >
-                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
-                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sky-500" />
-                      </span>
-                    )}
-                    {v.unread_comments > 0 && (
-                      <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
-                        {v.unread_comments}
-                      </span>
-                    )}
+                )}
+                {v.unread_comments > 0 && (
+                  <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
+                    {v.unread_comments}
                   </span>
-                </div>
-                <div className="mb-2">
-                  <VersionThumb
-                    url={v.last_version?.file_url ?? null}
-                    aspect={aspect}
-                    label={v.last_version?.title || v.last_version?.file_name || null}
-                  />
-                </div>
-                <span
-                  className={`inline-flex rounded-full border px-2 py-0.5 text-[11px] ${videoStatusBadgeClass(v.status)}`}
-                >
-                  {v.status}
-                </span>
-                <p className="mt-1.5 text-[11px] text-neutral-500">
-                  {v.versions_count} version{v.versions_count > 1 ? "s" : ""}
-                </p>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <AnimatePresence>
-          {openId && !isMobile && (
-            <motion.div
-              key={openId}
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: 24 }}
-              transition={{ duration: 0.22 }}
-              ref={detailRef}
-              className="min-w-0 flex-1"
+                )}
+              </span>
+            </div>
+            <div className="mb-2">
+              <VersionThumb
+                url={v.last_version?.file_url ?? null}
+                aspect={aspect}
+                label={v.last_version?.title || v.last_version?.file_name || null}
+              />
+            </div>
+            <span
+              className={`inline-flex rounded-full border px-2 py-0.5 text-[11px] ${videoStatusBadgeClass(v.status)}`}
             >
+              {v.status}
+            </span>
+            <p className="mt-1.5 text-[11px] text-neutral-500">
+              {v.versions_count} version{v.versions_count > 1 ? "s" : ""}
+            </p>
+          </button>
+        ))}
+      </div>
+
+      <AnimatePresence>
+        {openId && !isMobile && (
+          <motion.div
+            key={openId}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 20 }}
+            transition={{ duration: 0.22 }}
+            ref={detailRef}
+            className="fixed inset-0 z-[60] overflow-y-auto overscroll-contain bg-neutral-950/98 backdrop-blur"
+          >
+            <div className="mx-auto w-full max-w-5xl p-6">
               <VideoDetail
                 videoId={openId}
                 projectId={projectId}
@@ -454,10 +438,10 @@ export function ProjectVideosBoard({
                 onClose={() => setOpenId(null)}
                 onChanged={onRefresh}
               />
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {openId && isMobile && (
