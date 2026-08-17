@@ -17,6 +17,7 @@ import {
   Star,
   Settings,
   Scissors,
+  Target,
 } from "lucide-react";
 import { getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
@@ -54,6 +55,7 @@ const NAV: { to: string; label: string; icon: typeof BarChart3; exact?: boolean 
   { to: "/crm/admin", label: "Accueil", icon: Home, exact: true },
   { to: "/crm/admin/analytiques", label: "Analytiques", icon: BarChart3 },
   { to: "/crm/admin/videos", label: "Vidéos", icon: Video },
+  { to: "/crm/admin/prospection", label: "Prospection", icon: Target },
   { to: "/crm/admin/clients", label: "Clients", icon: Users },
   { to: "/crm/admin/projets", label: "Projets", icon: FolderKanban },
   { to: "/crm/admin/monteurs", label: "Monteurs", icon: Scissors },
