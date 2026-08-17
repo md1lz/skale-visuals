@@ -63,6 +63,8 @@ import {
 } from "@/lib/video-preview";
 import { getFrameioPreview } from "@/lib/frameio.functions";
 import { ProjectChat } from "@/components/ProjectChat";
+import { InstaChat, type InstaMessage, type InstaSendPayload } from "@/components/InstaChat";
+import { ChevronRight, MessagesSquare } from "lucide-react";
 import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
 import { useIsMobile } from "@/hooks/use-mobile";
 
