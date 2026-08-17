@@ -63,7 +63,7 @@ export function MaintenanceCard() {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35 }}
-      className="mt-10 rounded-2xl border-2 border-dashed border-white/15 bg-neutral-900/40 p-6"
+      className="mt-10 rounded-2xl border-2 border-dashed border-white/15 bg-neutral-900/40 p-4 md:p-6"
     >
       <div className="flex items-start justify-between gap-4 mb-5 flex-wrap">
         <div className="flex items-center gap-3">
@@ -80,8 +80,8 @@ export function MaintenanceCard() {
         <StatusBadge enabled={enabled} />
       </div>
 
-      <div className="flex items-center justify-between gap-4 rounded-xl border border-white/10 bg-neutral-950/40 px-4 py-3 mb-5">
-        <div>
+      <div className="flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-neutral-950/40 px-4 py-3 mb-5">
+        <div className="min-w-0">
           <p className="text-sm text-white font-medium">Activer le mode maintenance</p>
           <p className="text-xs text-neutral-500 mt-0.5">
             Les visiteurs verront une page dédiée au lieu du site.
@@ -101,16 +101,16 @@ export function MaintenanceCard() {
         placeholder={DEFAULT_MESSAGE}
         className="w-full rounded-xl bg-neutral-950/60 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-red-500/60 transition-colors resize-none"
       />
-      <div className="flex items-center justify-between mt-3">
+      <div className="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-[11px] text-neutral-500">
           {message.length}/500 — laisser vide pour le message par défaut
         </p>
-        <div className="flex items-center gap-2">
+        <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:items-center">
         <a
           href="/?maintenance=preview"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 rounded-lg border border-white/15 hover:bg-white/5 px-3 py-2 text-sm text-neutral-200 transition-colors"
+          className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg border border-white/15 hover:bg-white/5 px-3 py-2 text-sm text-neutral-200 transition-colors sm:w-auto"
         >
           <Eye className="h-4 w-4" />
           Prévisualiser
@@ -119,7 +119,7 @@ export function MaintenanceCard() {
           onClick={handleSave}
           disabled={saving || !dirty}
           whileTap={saving || !dirty ? undefined : { scale: 0.97 }}
-          className="inline-flex items-center gap-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 text-sm font-medium text-white transition-colors"
+          className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-500 disabled:opacity-40 disabled:cursor-not-allowed px-4 py-2 text-sm font-medium text-white transition-colors sm:w-auto"
         >
           <Save className="h-4 w-4" />
           {saving ? "Enregistrement…" : "Enregistrer"}
