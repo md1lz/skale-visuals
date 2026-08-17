@@ -128,10 +128,10 @@ export function RushLink({ href, label }: { href: string; label?: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1.5 break-all text-sm text-red-300 transition hover:text-red-200"
+      className="inline-flex w-full min-w-0 max-w-full items-center gap-1.5 text-sm text-red-300 transition hover:text-red-200"
     >
       <Icon className="h-3.5 w-3.5 shrink-0" />
-      <span className="truncate">{label || href}</span>
+      <span className="min-w-0 flex-1 truncate">{label || href}</span>
       <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
     </a>
   );
