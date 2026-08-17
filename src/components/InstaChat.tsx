@@ -120,6 +120,95 @@ export type InstaSendPayload = {
   replyTo: string | null;
 };
 
+/** Bulle avec gestes : swipe droite = répondre, appui long = réactions. */
+function GestureBubble({
+  onReply,
+  onLongPress,
+  onTap,
+  className,
+  children,
+}: {
+  onReply: () => void;
+  onLongPress: () => void;
+  onTap: () => void;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const [dx, setDx] = useState(0);
+  const dxRef = useRef(0);
+  const start = useRef<{ x: number; y: number } | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const moved = useRef(false);
+  const longFired = useRef(false);
+
+  const clear = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+  };
+  const move = (v: number) => {
+    dxRef.current = v;
+    setDx(v);
+  };
+
+  return (
+    <div
+      onPointerDown={(e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        e.stopPropagation();
+        start.current = { x: e.clientX, y: e.clientY };
+        moved.current = false;
+        longFired.current = false;
+        clear();
+        timer.current = setTimeout(() => {
+          longFired.current = true;
+          move(0);
+          onLongPress();
+        }, 500);
+      }}
+      onPointerMove={(e) => {
+        const s = start.current;
+        if (!s) return;
+        const x = e.clientX - s.x;
+        const y = e.clientY - s.y;
+        if (Math.abs(x) > 8 || Math.abs(y) > 8) {
+          moved.current = true;
+          clear();
+        }
+        if (!longFired.current && x > 0 && Math.abs(x) > Math.abs(y)) {
+          e.stopPropagation();
+          move(Math.min(80, x * 0.6));
+        }
+      }}
+      onPointerUp={(e) => {
+        e.stopPropagation();
+        clear();
+        const d = dxRef.current;
+        move(0);
+        start.current = null;
+        if (d > 40) onReply();
+        else if (!moved.current && !longFired.current) onTap();
+      }}
+      onPointerCancel={() => {
+        clear();
+        move(0);
+        start.current = null;
+      }}
+      onContextMenu={(e) => e.preventDefault()}
+      style={{
+        transform: `translateX(${dx}px)`,
+        transition: dx ? "none" : "transform .18s ease-out",
+        touchAction: "pan-y",
+        WebkitUserSelect: "none",
+        userSelect: "none",
+        WebkitTouchCallout: "none",
+      }}
+      className={className}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function InstaChat({
   open,
   onClose,
@@ -176,6 +265,7 @@ export function InstaChat({
   const [levels, setLevels] = useState<number[]>(() => Array.from({ length: 34 }, () => 4));
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -185,7 +275,8 @@ export function InstaChat({
   const recSecondsRef = useRef(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const rafRef = useRef<number | null>(null);
-  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdModeRef = useRef(false);
   const typingSentAt = useRef(0);
   const typingOff = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recStartX = useRef(0);
@@ -199,6 +290,7 @@ export function InstaChat({
   const scrollToEnd = useCallback((smooth = false) => {
     const el = scrollRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
+    endRef.current?.scrollIntoView({ block: "end", behavior: smooth ? "smooth" : "auto" });
   }, []);
 
   const [visibleCount, setVisibleCount] = useState(40);
@@ -214,9 +306,26 @@ export function InstaChat({
       scrollToEnd();
       requestAnimationFrame(() => scrollToEnd());
     });
-    const t = setTimeout(() => scrollToEnd(), 220);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(() => scrollToEnd(), 220);
+    const t2 = setTimeout(() => scrollToEnd(), 600);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [open, variant, messages.length, scrollToEnd]);
+
+  // Le geste "retour" (swipe bord gauche / bouton back) ferme le chat, sans naviguer.
+  useEffect(() => {
+    if (variant !== "overlay" || !open) return;
+    window.history.pushState({ instachat: true }, "");
+    const onPop = () => onClose();
+    window.addEventListener("popstate", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      if ((window.history.state as { instachat?: boolean } | null)?.instachat)
+        window.history.back();
+    };
+  }, [open, variant, onClose]);
 
   useEffect(() => {
     if (!open) return;
@@ -345,22 +454,30 @@ export function InstaChat({
     setTimeout(() => setTrashing(false), 600);
   }
 
-  async function startRecording(clientX: number, clientY = 0) {
+  async function startRecording(mode: "hold" | "lock", clientX = 0, clientY = 0) {
     if (recording) return;
     holdReleasedRef.current = false;
-    lockedRef.current = false;
-    setLocked(false);
+    lockedRef.current = mode === "lock";
+    setLocked(mode === "lock");
     recStartX.current = clientX;
     recStartY.current = clientY;
     let stream: MediaStream;
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+      toast.error("Enregistrement audio non supporté sur ce navigateur.");
+      return;
+    }
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
       toast.error("Autorisez l'accès au microphone.");
       return;
     }
-    const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-    const rec = new MediaRecorder(stream, { mimeType: mime });
+    const mime = MediaRecorder.isTypeSupported("audio/webm")
+      ? "audio/webm"
+      : MediaRecorder.isTypeSupported("audio/mp4")
+        ? "audio/mp4"
+        : "";
+    const rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
     recChunksRef.current = [];
     recCancelledRef.current = false;
     try {
@@ -410,7 +527,7 @@ export function InstaChat({
     };
     recorderRef.current = rec;
     rec.start();
-    if (holdReleasedRef.current) {
+    if (mode === "hold" && holdReleasedRef.current) {
       // Le doigt a été relâché avant l'autorisation : on bascule en mode verrouillé.
       lockRecording();
     }
@@ -523,25 +640,10 @@ export function InstaChat({
                         ) : (
                           <div className="h-7 w-7 shrink-0" />
                         ))}
-                      <motion.div
-                        drag="x"
-                        dragConstraints={{ left: 0, right: 70 }}
-                        dragElastic={0.25}
-                        dragSnapToOrigin
-                        onDragEnd={(_, info) => {
-                          if (info.offset.x > 55) setReplyTo(m.id);
-                        }}
-                        onPointerDown={() => {
-                          pressTimer.current = setTimeout(() => setPickerFor(m.id), 420);
-                        }}
-                        onPointerUp={() => pressTimer.current && clearTimeout(pressTimer.current)}
-                        onPointerLeave={() =>
-                          pressTimer.current && clearTimeout(pressTimer.current)
-                        }
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setStampFor((s) => (s === m.id ? null : m.id));
-                        }}
+                      <GestureBubble
+                        onReply={() => setReplyTo(m.id)}
+                        onLongPress={() => setPickerFor(m.id)}
+                        onTap={() => setStampFor((s) => (s === m.id ? null : m.id))}
                         className={`relative max-w-[78%] cursor-pointer select-none rounded-3xl px-3.5 py-2 text-sm ${
                           mine ? "bg-red-600 text-white" : "bg-neutral-800 text-neutral-100"
                         } ${first && !mine ? "rounded-bl-3xl" : ""} ${last ? "" : "mb-0.5"}`}
@@ -655,7 +757,7 @@ export function InstaChat({
                             </motion.div>
                           )}
                         </AnimatePresence>
-                      </motion.div>
+                      </GestureBubble>
                     </div>
                     <AnimatePresence>
                       {stampFor === m.id && (
@@ -710,6 +812,7 @@ export function InstaChat({
                   )}
                 </div>
               )}
+              <div ref={endRef} className="h-px w-full" />
             </div>
           </div>
 
@@ -841,7 +944,7 @@ export function InstaChat({
                     hidden
                     onChange={(e) => pickImage(e.target.files?.[0])}
                   />
-                  <div className="flex flex-1 items-end rounded-3xl bg-neutral-900 px-4 py-2">
+                  <div className="flex flex-1 items-end gap-1 rounded-3xl bg-neutral-900 py-1.5 pl-4 pr-1.5">
                     <textarea
                       ref={textRef}
                       value={text}
@@ -862,67 +965,83 @@ export function InstaChat({
                         }
                       }}
                       placeholder={placeholder}
-                      className="max-h-28 w-full resize-none bg-transparent text-sm text-neutral-100 outline-none placeholder:text-neutral-600"
+                      className="max-h-28 w-full resize-none self-center bg-transparent py-1.5 text-sm text-neutral-100 outline-none placeholder:text-neutral-600"
                     />
+                    {text.trim() || imageFile ? (
+                      <button
+                        onClick={() => void submit()}
+                        disabled={busy}
+                        className="grid h-9 w-9 shrink-0 place-items-center self-end rounded-full bg-red-600 text-white transition hover:bg-red-500 disabled:opacity-50"
+                        aria-label="Envoyer"
+                      >
+                        {busy ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <ArrowUp className="h-5 w-5" />
+                        )}
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => imageInputRef.current?.click()}
+                          className="grid h-9 w-9 shrink-0 place-items-center self-end rounded-full text-neutral-300 transition hover:bg-white/10"
+                          aria-label="Envoyer une image"
+                        >
+                          <ImageIcon className="h-5 w-5" />
+                        </button>
+                        <button
+                          type="button"
+                          onPointerDown={(e) => {
+                            if (e.pointerType === "mouse" && e.button !== 0) return;
+                            e.currentTarget.setPointerCapture(e.pointerId);
+                            pressStartRef.current = Date.now();
+                            holdModeRef.current = false;
+                            recStartX.current = e.clientX;
+                            recStartY.current = e.clientY;
+                            if (holdTimer.current) clearTimeout(holdTimer.current);
+                            const x = e.clientX;
+                            const y = e.clientY;
+                            holdTimer.current = setTimeout(() => {
+                              holdModeRef.current = true;
+                              void startRecording("hold", x, y);
+                            }, 350);
+                          }}
+                          onPointerMove={(e) => {
+                            if (!holdModeRef.current || !recording || lockedRef.current) return;
+                            if (e.clientY - recStartY.current < -60) {
+                              lockRecording();
+                              return;
+                            }
+                            setRecCancelHint(e.clientX - recStartX.current < -70);
+                          }}
+                          onPointerUp={(e) => {
+                            if (holdTimer.current) clearTimeout(holdTimer.current);
+                            holdReleasedRef.current = true;
+                            if (!holdModeRef.current) {
+                              // clic simple → enregistrement verrouillé
+                              void startRecording("lock");
+                              return;
+                            }
+                            if (lockedRef.current) return;
+                            if (recorderRef.current?.state !== "recording") return;
+                            if (e.clientX - recStartX.current < -70) cancelWithAnim();
+                            else stopRecording(false);
+                          }}
+                          onPointerCancel={() => {
+                            if (holdTimer.current) clearTimeout(holdTimer.current);
+                            holdReleasedRef.current = true;
+                            if (lockedRef.current) return;
+                            if (recorderRef.current?.state === "recording") lockRecording();
+                          }}
+                          className="grid h-9 w-9 shrink-0 touch-none select-none place-items-center self-end rounded-full text-neutral-300 transition hover:bg-white/10"
+                          aria-label="Message vocal"
+                        >
+                          <Mic className="h-5 w-5" />
+                        </button>
+                      </>
+                    )}
                   </div>
-                  {text.trim() || imageFile ? (
-                    <button
-                      onClick={() => void submit()}
-                      disabled={busy}
-                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-600 text-white transition hover:bg-red-500 disabled:opacity-50"
-                    >
-                      {busy ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <ArrowUp className="h-5 w-5" />
-                      )}
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        onPointerDown={(e) => {
-                          e.preventDefault();
-                          e.currentTarget.setPointerCapture(e.pointerId);
-                          pressStartRef.current = Date.now();
-                          void startRecording(e.clientX, e.clientY);
-                        }}
-                        onPointerMove={(e) => {
-                          if (!recording || lockedRef.current) return;
-                          const dy = e.clientY - recStartY.current;
-                          if (dy < -60) {
-                            lockRecording();
-                            return;
-                          }
-                          setRecCancelHint(e.clientX - recStartX.current < -70);
-                        }}
-                        onPointerUp={(e) => {
-                          holdReleasedRef.current = true;
-                          if (lockedRef.current) return;
-                          if (recorderRef.current?.state !== "recording") return;
-                          const held = Date.now() - pressStartRef.current;
-                          if (held < 350) lockRecording();
-                          else if (e.clientX - recStartX.current < -70) cancelWithAnim();
-                          else stopRecording(false);
-                        }}
-                        onPointerCancel={() => {
-                          holdReleasedRef.current = true;
-                          if (lockedRef.current) return;
-                          if (recorderRef.current?.state === "recording") lockRecording();
-                        }}
-                        className="grid h-10 w-10 shrink-0 touch-none select-none place-items-center rounded-full bg-neutral-900 text-neutral-300 transition hover:bg-neutral-800"
-                        aria-label="Message vocal"
-                      >
-                        <Mic className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => imageInputRef.current?.click()}
-                        className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-neutral-300 transition hover:bg-white/10"
-                        aria-label="Envoyer une image"
-                      >
-                        <ImageIcon className="h-5 w-5" />
-                      </button>
-                    </>
-                  )}
                 </div>
               )}
             </div>
@@ -957,6 +1076,7 @@ export function InstaChat({
           }}
           onPointerDownCapture={(e) => e.stopPropagation()}
           onTouchStartCapture={(e) => e.stopPropagation()}
+          onTouchMoveCapture={(e) => e.stopPropagation()}
           style={{ height: "100dvh" }}
           className="fixed inset-0 z-[300] flex w-screen flex-col overflow-hidden bg-neutral-950"
         >
