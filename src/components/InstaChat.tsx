@@ -9,6 +9,8 @@ import {
   Film,
   ImageIcon,
   Loader2,
+  Lock,
+  LockKeyhole,
   Mic,
   Reply,
   Trash2,
