@@ -13,7 +13,7 @@ export const getProjectChat = createServerFn({ method: "GET" })
       supabaseAdmin
         .from("project_comments")
         .select(
-          "id, author_type, author_id, author_name, content, image_url, audio_url, audio_duration, read_by_editor, read_by_admin, read_at, created_at",
+          "id, author_type, author_id, author_name, content, image_url, audio_url, audio_duration, read_by_editor, read_by_admin, read_at, reply_to, created_at",
         )
         .eq("project_id", data.project_id)
         .order("created_at", { ascending: true }),
@@ -65,6 +65,7 @@ export const postProjectComment = createServerFn({ method: "POST" })
         image_path: z.string().trim().max(500).nullish(),
         audio_path: z.string().trim().max(500).nullish(),
         audio_duration: z.number().int().min(0).max(600).nullish(),
+        reply_to: z.string().uuid().nullish(),
       })
       .refine((v) => Boolean(v.content || v.image_path || v.audio_path), { message: "Message vide" })
       .parse(d),
@@ -85,6 +86,7 @@ export const postProjectComment = createServerFn({ method: "POST" })
       image_url: data.image_path ? `storage://site-videos/${data.image_path}` : null,
       audio_url: data.audio_path ? `storage://site-videos/${data.audio_path}` : null,
       audio_duration: data.audio_duration ?? null,
+      reply_to: data.reply_to ?? null,
       read_by_editor: viewer.kind === "editor",
       read_by_admin: viewer.kind === "admin",
     });
