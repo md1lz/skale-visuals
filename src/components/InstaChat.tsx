@@ -907,7 +907,37 @@ export function InstaChat({
               )}
 
               {recording ? (
-                <div className="flex items-center gap-3 rounded-full bg-neutral-900 px-4 py-2.5">
+                <div className="relative flex items-center gap-3 rounded-full bg-neutral-900 px-4 py-2.5">
+                  <AnimatePresence>
+                    {!locked && !trashing && (
+                      <motion.div
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 10, scale: 0.8 }}
+                        className="pointer-events-none absolute -top-16 right-3 flex flex-col items-center gap-1 rounded-full border border-white/10 bg-neutral-900/95 px-2 py-2 shadow-xl"
+                      >
+                        <Lock className="h-4 w-4 text-neutral-300" />
+                        <motion.span
+                          animate={{ y: [0, -4, 0], opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 1.2, repeat: Infinity }}
+                          className="text-[10px] leading-none text-neutral-400"
+                        >
+                          ↑
+                        </motion.span>
+                      </motion.div>
+                    )}
+                    {locked && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.6, y: 8 }}
+                        animate={{ opacity: 1, scale: 1, y: 0 }}
+                        exit={{ opacity: 0, scale: 0.6 }}
+                        className="pointer-events-none absolute -top-11 right-3 flex items-center gap-1.5 rounded-full border border-white/10 bg-neutral-900/95 px-2.5 py-1.5 text-[11px] text-neutral-200 shadow-xl"
+                      >
+                        <LockKeyhole className="h-3.5 w-3.5 text-red-400" />
+                        Verrouillé
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                   {locked ? (
                     <motion.button
                       onClick={cancelWithAnim}
