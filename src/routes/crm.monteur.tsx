@@ -116,7 +116,15 @@ function EditorLayoutInner() {
         </aside>
 
         <main className="flex-1 min-w-0 overflow-x-hidden">
-        <PanelMobileNav title="Skale Edition" items={NAV}>
+        <PanelMobileNav
+          title="Skale Edition"
+          items={NAV}
+          profile={{
+            name: editor.displayName || editor.username,
+            role: "Monteur",
+            avatarUrl: editor.avatarUrl ?? null,
+          }}
+        >
           <EditorProfileMenu
               initial={{
                 username: editor.username,
@@ -124,7 +132,6 @@ function EditorLayoutInner() {
                 avatarUrl: editor.avatarUrl,
               }}
             />
-            <BackToSiteLink />
         </PanelMobileNav>
           <AnimatePresence mode="wait">
             <motion.div

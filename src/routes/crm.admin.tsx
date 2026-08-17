@@ -19,7 +19,9 @@ import {
   Scissors,
   Target,
 } from "lucide-react";
-import { getAdminSessionFn } from "@/lib/admin-auth.functions";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getAdminSessionFn, getAdminProfile } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
 import { AdminProfileMenu } from "@/components/AdminProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
@@ -51,10 +53,16 @@ export const Route = createFileRoute("/crm/admin")({
   ),
 });
 
-const NAV: { to: string; label: string; icon: typeof BarChart3; exact?: boolean }[] = [
+const NAV: {
+  to: string;
+  label: string;
+  icon: typeof BarChart3;
+  exact?: boolean;
+  desktopOnly?: boolean;
+}[] = [
   { to: "/crm/admin", label: "Accueil", icon: Home, exact: true },
   { to: "/crm/admin/analytiques", label: "Analytiques", icon: BarChart3 },
-  { to: "/crm/admin/videos", label: "Vidéos", icon: Video },
+  { to: "/crm/admin/videos", label: "Vidéos", icon: Video, desktopOnly: true },
   { to: "/crm/admin/prospection", label: "Prospection", icon: Target },
   { to: "/crm/admin/clients", label: "Clients", icon: Users },
   { to: "/crm/admin/projets", label: "Projets", icon: FolderKanban },
@@ -78,6 +86,9 @@ function AdminLayoutInner() {
   const session = Route.useRouteContext().session;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { background, mode } = useAdminPrefs();
+  const fetchProfile = useServerFn(getAdminProfile);
+  const profileQ = useQuery({ queryKey: ["admin", "profile"], queryFn: () => fetchProfile() });
+  const profile = profileQ.data;
 
   return (
     <div
@@ -140,9 +151,16 @@ function AdminLayoutInner() {
       </aside>
 
       <main className="flex-1 min-w-0 overflow-x-hidden">
-        <PanelMobileNav title="Skale Admin" items={NAV}>
+        <PanelMobileNav
+          title="Skale Admin"
+          items={NAV}
+          profile={{
+            name: profile?.firstName?.trim() || profile?.username || session?.user || "Admin",
+            role: "Administrateur",
+            avatarUrl: profile?.avatarUrl ?? null,
+          }}
+        >
           {session?.user && <AdminProfileMenu initialUsername={session.user} />}
-            <BackToSiteLink />
         </PanelMobileNav>
         <AnimatePresence mode="wait">
           <motion.div
