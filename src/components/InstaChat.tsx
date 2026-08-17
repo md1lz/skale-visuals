@@ -612,25 +612,10 @@ export function InstaChat({
                         ) : (
                           <div className="h-7 w-7 shrink-0" />
                         ))}
-                      <motion.div
-                        drag="x"
-                        dragConstraints={{ left: 0, right: 70 }}
-                        dragElastic={0.25}
-                        dragSnapToOrigin
-                        onDragEnd={(_, info) => {
-                          if (info.offset.x > 55) setReplyTo(m.id);
-                        }}
-                        onPointerDown={() => {
-                          pressTimer.current = setTimeout(() => setPickerFor(m.id), 420);
-                        }}
-                        onPointerUp={() => pressTimer.current && clearTimeout(pressTimer.current)}
-                        onPointerLeave={() =>
-                          pressTimer.current && clearTimeout(pressTimer.current)
-                        }
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setStampFor((s) => (s === m.id ? null : m.id));
-                        }}
+                      <GestureBubble
+                        onReply={() => setReplyTo(m.id)}
+                        onLongPress={() => setPickerFor(m.id)}
+                        onTap={() => setStampFor((s) => (s === m.id ? null : m.id))}
                         className={`relative max-w-[78%] cursor-pointer select-none rounded-3xl px-3.5 py-2 text-sm ${
                           mine ? "bg-red-600 text-white" : "bg-neutral-800 text-neutral-100"
                         } ${first && !mine ? "rounded-bl-3xl" : ""} ${last ? "" : "mb-0.5"}`}
@@ -744,7 +729,7 @@ export function InstaChat({
                             </motion.div>
                           )}
                         </AnimatePresence>
-                      </motion.div>
+                      </GestureBubble>
                     </div>
                     <AnimatePresence>
                       {stampFor === m.id && (
