@@ -133,10 +133,10 @@ export function RushLink({ href, label }: { href: string; label?: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex w-full min-w-0 max-w-full items-center gap-1.5 text-sm text-red-300 transition hover:text-red-200"
+      className="flex w-full min-w-0 max-w-full items-center gap-1.5 text-sm text-red-300 transition hover:text-red-200"
     >
       <Icon className="h-3.5 w-3.5 shrink-0" />
-      <span className="min-w-0 flex-1 truncate">{label || href}</span>
+      <span className="block min-w-0 flex-1 truncate">{label || href}</span>
       <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
     </a>
   );
@@ -1364,17 +1364,6 @@ function VideoDetail({
                   <span className="sm:hidden">{script ? "rempli" : "vide"}</span>
                 </span>
               </button>
-              {script && (
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(script);
-                    toast.success("Script copié");
-                  }}
-                  className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-neutral-300 transition hover:bg-white/5 hover:text-white"
-                >
-                  <Copy className="h-3.5 w-3.5" /> Copier
-                </button>
-              )}
             </div>
             <AnimatePresence initial={false}>
               {scriptOpen && (
