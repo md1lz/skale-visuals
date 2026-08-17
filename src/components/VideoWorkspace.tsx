@@ -128,10 +128,10 @@ export function RushLink({ href, label }: { href: string; label?: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex items-center gap-1.5 break-all text-sm text-red-300 transition hover:text-red-200"
+      className="inline-flex w-full min-w-0 max-w-full items-center gap-1.5 text-sm text-red-300 transition hover:text-red-200"
     >
       <Icon className="h-3.5 w-3.5 shrink-0" />
-      <span className="truncate">{label || href}</span>
+      <span className="min-w-0 flex-1 truncate">{label || href}</span>
       <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
     </a>
   );
@@ -1274,7 +1274,7 @@ function VideoDetail({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
-      <div className="flex items-center gap-3 border-b border-white/10 px-5 py-3">
+      <div className="sticky top-0 z-20 flex flex-wrap items-center gap-2 border-b border-white/10 bg-neutral-900/95 px-4 py-3 backdrop-blur sm:gap-3 sm:px-5">
         <VideoTitleEditor
           videoNumber={video?.video_number ?? 0}
           title={(video as { title?: string | null } | undefined)?.title ?? null}
@@ -1310,7 +1310,7 @@ function VideoDetail({
         )}
         <button
           onClick={onClose}
-          className="ml-auto inline-flex items-center gap-1 text-sm text-neutral-400 transition hover:text-white"
+          className="order-first ml-auto inline-flex items-center gap-1 text-sm text-neutral-400 transition hover:text-white sm:order-none"
         >
           Fermer <X className="h-4 w-4" />
         </button>
@@ -1894,7 +1894,7 @@ export function ValidateRevisionButton({ onClick, busy }: { onClick: () => void;
     <button
       onClick={onClick}
       disabled={busy}
-      className="inline-flex items-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60"
+      className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-500 disabled:opacity-60 sm:w-auto"
     >
       <Check className="h-4 w-4" /> Valider la révision
     </button>
@@ -1906,7 +1906,7 @@ export function RequestCorrectionsButton({ onClick, busy }: { onClick: () => voi
     <button
       onClick={onClick}
       disabled={busy}
-      className="inline-flex items-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-500 disabled:opacity-60"
+      className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-orange-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-orange-500 disabled:opacity-60 sm:w-auto"
     >
       <Pencil className="h-4 w-4" /> Demander des corrections
     </button>

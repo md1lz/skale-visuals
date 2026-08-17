@@ -97,10 +97,13 @@ type Ctx = {
   background: string | null;
   setBackground: (b: string | null) => void;
   mode: PanelMode;
-  setMode: (m: PanelMode) => void;
+  setMode: (m: ModePref) => void;
+  /** User preference, which may be "system". `mode` is the resolved value. */
+  modePref: ModePref;
 };
 
 export type PanelMode = "dark" | "light";
+export type ModePref = PanelMode | "system";
 
 const AdminPrefsCtx = createContext<Ctx | null>(null);
 
@@ -111,7 +114,8 @@ const MODE_KEY = "skale.admin.mode";
 export function AdminPrefsProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<AdminTheme>("red");
   const [background, setBackgroundState] = useState<string | null>(null);
-  const [mode, setModeState] = useState<PanelMode>("dark");
+  const [modePref, setModePref] = useState<ModePref>("system");
+  const [systemMode, setSystemMode] = useState<PanelMode>("dark");
 
   useEffect(() => {
     try {
@@ -119,10 +123,22 @@ export function AdminPrefsProvider({ children }: { children: ReactNode }) {
       if (t) setThemeState(t);
       const b = localStorage.getItem(BG_KEY);
       if (b) setBackgroundState(b);
-      const m = localStorage.getItem(MODE_KEY) as PanelMode | null;
-      if (m === "light" || m === "dark") setModeState(m);
+      const m = localStorage.getItem(MODE_KEY) as ModePref | null;
+      if (m === "light" || m === "dark" || m === "system") setModePref(m);
     } catch {}
   }, []);
+
+  // Follow the device colour scheme when the preference is "system".
+  useEffect(() => {
+    if (typeof window === "undefined" || !window.matchMedia) return;
+    const mql = window.matchMedia("(prefers-color-scheme: light)");
+    const apply = () => setSystemMode(mql.matches ? "light" : "dark");
+    apply();
+    mql.addEventListener("change", apply);
+    return () => mql.removeEventListener("change", apply);
+  }, []);
+
+  const mode: PanelMode = modePref === "system" ? systemMode : modePref;
 
   const setTheme = (t: AdminTheme) => {
     setThemeState(t);
@@ -135,14 +151,14 @@ export function AdminPrefsProvider({ children }: { children: ReactNode }) {
       else localStorage.removeItem(BG_KEY);
     } catch {}
   };
-  const setMode = (m: PanelMode) => {
-    setModeState(m);
+  const setMode = (m: ModePref) => {
+    setModePref(m);
     try { localStorage.setItem(MODE_KEY, m); } catch {}
   };
 
   const value = useMemo(
-    () => ({ theme, setTheme, background, setBackground, mode, setMode }),
-    [theme, background, mode],
+    () => ({ theme, setTheme, background, setBackground, mode, setMode, modePref }),
+    [theme, background, mode, modePref],
   );
 
   return <AdminPrefsCtx.Provider value={value}>{children}</AdminPrefsCtx.Provider>;

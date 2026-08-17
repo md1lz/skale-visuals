@@ -35,6 +35,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { useIsMobile } from "@/hooks/use-mobile";
 import { getSiteAnalytics } from "@/lib/admin-analytics.functions";
 
 type Range = "today" | "7d" | "30d" | "custom";
@@ -61,6 +62,8 @@ function AnalyticsPage() {
   });
   const [customTo, setCustomTo] = useState<Date | undefined>(new Date());
   const [calendarOpen, setCalendarOpen] = useState(false);
+  const isMobile = useIsMobile();
+  const toInputDate = (d?: Date) => (d ? format(d, "yyyy-MM-dd") : "");
 
   const fetchAnalytics = useServerFn(getSiteAnalytics);
   const queryArgs =
@@ -81,7 +84,7 @@ function AnalyticsPage() {
   const tickInterval = seriesLen > 20 ? Math.ceil(seriesLen / 10) - 1 : seriesLen > 10 ? 1 : 0;
 
   return (
-    <div className="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto">
+    <div className="p-4 lg:p-8 space-y-6 max-w-[1400px] mx-auto overflow-x-hidden">
       <header className="flex items-start justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-2xl font-bold">Analytiques</h1>
@@ -94,16 +97,16 @@ function AnalyticsPage() {
             )}
           </p>
         </div>
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="inline-flex rounded-xl border border-white/10 bg-neutral-900/50 p-1">
+        <div className="flex w-full items-center gap-2 flex-wrap md:w-auto">
+          <div className="grid w-full grid-cols-2 gap-1 rounded-xl border border-white/10 bg-neutral-900/50 p-1 sm:inline-flex sm:w-auto">
             {RANGES.map((r) => (
               <button
                 key={r.value}
                 onClick={() => {
                   setRange(r.value);
-                  if (r.value === "custom") setCalendarOpen(true);
+                  if (r.value === "custom" && !isMobile) setCalendarOpen(true);
                 }}
-                className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
+                className={`min-h-[44px] px-3 py-1.5 text-xs rounded-lg transition-colors sm:min-h-0 ${
                   range === r.value
                     ? "bg-red-600 text-white"
                     : "text-neutral-400 hover:text-white"
@@ -113,7 +116,40 @@ function AnalyticsPage() {
               </button>
             ))}
           </div>
-          {range === "custom" && (
+          {range === "custom" && isMobile && (
+            /* Native device date pickers on phones (iOS/Android system UI). */
+            <div className="grid w-full grid-cols-2 gap-2">
+              <label className="min-w-0">
+                <span className="mb-1 block text-[11px] uppercase tracking-wider text-neutral-500">
+                  Du
+                </span>
+                <input
+                  type="date"
+                  value={toInputDate(customFrom)}
+                  max={toInputDate(customTo)}
+                  onChange={(e) =>
+                    setCustomFrom(e.target.value ? new Date(e.target.value + "T00:00:00") : undefined)
+                  }
+                  className="w-full min-h-[44px] rounded-xl border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500/50"
+                />
+              </label>
+              <label className="min-w-0">
+                <span className="mb-1 block text-[11px] uppercase tracking-wider text-neutral-500">
+                  Au
+                </span>
+                <input
+                  type="date"
+                  value={toInputDate(customTo)}
+                  min={toInputDate(customFrom)}
+                  onChange={(e) =>
+                    setCustomTo(e.target.value ? new Date(e.target.value + "T23:59:59") : undefined)
+                  }
+                  className="w-full min-h-[44px] rounded-xl border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500/50"
+                />
+              </label>
+            </div>
+          )}
+          {range === "custom" && !isMobile && (
             <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
               <PopoverTrigger asChild>
                 <Button

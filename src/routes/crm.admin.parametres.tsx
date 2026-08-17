@@ -19,6 +19,7 @@ import {
   Pencil,
   X,
   Sun,
+  MonitorSmartphone,
   Moon,
   Smartphone,
 } from "lucide-react";
@@ -96,25 +97,33 @@ function ParametresPage() {
 
 /* ---------- THEME ---------- */
 function ThemeSection() {
-  const { theme, setTheme, mode, setMode } = useAdminPrefs();
+  const { theme, setTheme, modePref, setMode } = useAdminPrefs();
   return (
     <Section icon={Palette} title="Changer de thème" description="La couleur d'accent du panneau admin, mémorisée sur cet appareil.">
-      <div className="mb-4 inline-flex rounded-xl border border-white/10 p-1">
+      <div className="mb-4 grid w-full grid-cols-3 gap-1 rounded-xl border border-white/10 p-1 sm:inline-flex sm:w-auto">
         <button
-          onClick={() => setMode("dark")}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition ${
-            mode === "dark" ? "bg-white/10 text-white" : "text-neutral-400 hover:text-white"
+          onClick={() => setMode("system")}
+          className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition ${
+            modePref === "system" ? "bg-white/10 text-white" : "text-neutral-400 hover:text-white"
           }`}
         >
-          <Moon className="h-3.5 w-3.5" /> Mode sombre
+          <MonitorSmartphone className="h-3.5 w-3.5" /> Système
+        </button>
+        <button
+          onClick={() => setMode("dark")}
+          className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition ${
+            modePref === "dark" ? "bg-white/10 text-white" : "text-neutral-400 hover:text-white"
+          }`}
+        >
+          <Moon className="h-3.5 w-3.5" /> Sombre
         </button>
         <button
           onClick={() => setMode("light")}
-          className={`inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition ${
-            mode === "light" ? "bg-white/10 text-white" : "text-neutral-400 hover:text-white"
+          className={`inline-flex min-h-[44px] items-center justify-center gap-1.5 rounded-lg px-3 py-1.5 text-xs transition ${
+            modePref === "light" ? "bg-white/10 text-white" : "text-neutral-400 hover:text-white"
           }`}
         >
-          <Sun className="h-3.5 w-3.5" /> Mode clair
+          <Sun className="h-3.5 w-3.5" /> Clair
         </button>
       </div>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">

@@ -105,25 +105,25 @@ function AdminHome() {
 
 
   return (
-    <div className="px-4 pt-6 pb-8 md:px-8 md:pt-10 max-w-6xl mx-auto">
+    <div className="w-full max-w-6xl mx-auto overflow-x-hidden px-4 pt-6 pb-10 md:px-8 md:pt-10">
       {/* Greeting */}
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35 }}
-        className="flex items-center gap-5 mb-10"
+        className="mb-8 flex items-center gap-4 md:mb-10 md:gap-5"
       >
-        <span className="grid place-items-center h-16 w-16 rounded-full bg-gradient-to-br from-red-600 to-red-800 ring-1 ring-white/15 overflow-hidden shrink-0">
+        <span className="grid place-items-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-gradient-to-br from-red-600 to-red-800 ring-1 ring-white/15 overflow-hidden shrink-0">
           {p?.avatarUrl ? (
             <img src={p.avatarUrl} alt="" className="h-full w-full object-cover" />
           ) : (
             <Initials name={greetingName} />
           )}
         </span>
-        <div className="min-w-0">
-          <h1 className="text-3xl md:text-4xl font-semibold tracking-tight">
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl md:text-4xl font-semibold tracking-tight break-words">
             Bonjour,{" "}
-            <span className="font-script text-red-500 text-3xl md:text-4xl leading-none align-middle">
+            <span className="font-script text-red-500 text-2xl md:text-4xl leading-none align-middle">
               {greetingName}
             </span>
           </h1>
@@ -139,9 +139,9 @@ function AdminHome() {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5 mb-3"
+        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-4 md:p-5 mb-3"
       >
-        <div className="flex items-baseline justify-between mb-4">
+        <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
           <div>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500">
               Connexions au site — Dernières 24h
@@ -152,7 +152,7 @@ function AdminHome() {
             </p>
           </div>
         </div>
-        <div className="h-72">
+        <div className="h-56 md:h-72">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={dayQ.data?.timeseries ?? []} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
               <defs>
@@ -198,7 +198,7 @@ function AdminHome() {
       </motion.div>
 
       {/* Side KPIs */}
-      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-10">
+      <div className="grid grid-cols-2 lg:grid-cols-5 gap-3 mb-8 md:mb-10">
         {sideKpis.map((c, i) => {
           const Icon = c.icon;
           return (
@@ -228,7 +228,7 @@ function AdminHome() {
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-5"
+        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-4 md:p-5"
       >
         <div className="flex items-center gap-2 mb-4">
           <Clock className="h-4 w-4 text-red-400" />
@@ -257,9 +257,9 @@ function AdminHome() {
                     key={f.id}
                     to="/crm/admin/prospection"
                     search={{ p: f.id }}
-                    className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 hover:bg-white/[0.05] transition"
+                    className="flex min-h-[44px] flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 hover:bg-white/[0.05] transition"
                   >
-                    <span className="text-sm text-white truncate">{f.name}</span>
+                    <span className="min-w-0 flex-1 truncate text-sm text-white">{f.name}</span>
                     <span className="text-[11px] text-neutral-400 shrink-0">{f.platform}</span>
                     <span className="ml-auto text-xs shrink-0 text-orange-300">
                       {days === 0 ? "Aujourd'hui" : `En retard de ${days} j`}
