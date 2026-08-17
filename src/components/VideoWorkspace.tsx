@@ -1550,333 +1550,53 @@ function VideoDetail({
       </div>
       </div>
 
-      <div className="rounded-2xl border border-white/10 bg-neutral-900/50">
-        <button
-          onClick={() => setChatOpen((o) => !o)}
-          className="flex w-full items-center gap-2 px-5 py-3 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
-        >
-          <ChevronDown className={`h-4 w-4 transition-transform ${chatOpen ? "rotate-0" : "-rotate-90"}`} />
-          Chat de la vidéo
-          <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
-            {(q.data?.comments ?? []).length} message{(q.data?.comments ?? []).length > 1 ? "s" : ""}
+      <button
+        type="button"
+        onClick={() => setChatOpen(true)}
+        className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-neutral-900/60 px-4 py-3.5 text-left transition hover:border-white/25 hover:bg-neutral-900"
+      >
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-red-500 to-orange-400 text-white">
+          <MessagesSquare className="h-5 w-5" />
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-sm font-semibold text-white">Chat de la vidéo</p>
+          <p className="truncate text-[12px] text-neutral-500">
+            {chatMessages.length === 0
+              ? "Aucun message"
+              : `${chatMessages[chatMessages.length - 1]?.author_name} : ${
+                  chatMessages[chatMessages.length - 1]?.content ||
+                  (chatMessages[chatMessages.length - 1]?.image_url ? "Photo" : "Message vocal")
+                }`}
+          </p>
+        </div>
+        {unreadIds.size > 0 && (
+          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
+            {unreadIds.size}
           </span>
-          {unreadIds.size > 0 && (
-            <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
-              {unreadIds.size}
-            </span>
-          )}
-        </button>
-        {chatOpen && (
-        <section className="border-t border-white/10 px-5 py-4">
-          <div className="relative mb-3 h-[22rem]">
-            <div className="chat-fade-top pointer-events-none absolute inset-x-0 top-0 z-20 h-16 rounded-t-xl" />
-            <button
-              type="button"
-              onClick={toggleChatLock}
-              className="absolute right-1.5 top-1.5 z-30 rounded-full border border-white/10 bg-neutral-900/80 px-2.5 py-1 text-[11px] text-neutral-300 backdrop-blur transition hover:bg-white/10 hover:text-white"
-            >
-              {chatUnlocked ? "Verrouiller" : "↑ Voir les anciens messages"}
-            </button>
-            <div
-              ref={chatScrollRef}
-              className={`flex h-full flex-col gap-3 pr-1.5 ${
-                chatScrollable
-                  ? "overflow-y-auto overscroll-contain [scrollbar-width:thin]"
-                  : "justify-end overflow-hidden"
-              }`}
-            >
-            <div className="mt-auto space-y-3">
-            {(q.data?.comments ?? []).length === 0 ? (
-              <p className="text-sm text-neutral-500">Aucun commentaire sur cette vidéo.</p>
-            ) : (
-              <>
-                {(q.data?.comments ?? []).length > visibleCount && (
-                  <div className="flex justify-center pb-1">
-                    {loadingOlder ? (
-                      <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-neutral-400">
-                        <Loader2 className="h-3.5 w-3.5 animate-spin" /> Chargement des anciens messages…
-                      </span>
-                    ) : (
-                      <button
-                        onClick={loadOlder}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1.5 text-[11px] text-neutral-300 transition hover:bg-white/10 hover:text-white"
-                      >
-                        Charger les anciens messages
-                      </button>
-                    )}
-                  </div>
-                )}
-                {(q.data?.comments ?? []).slice(-visibleCount).map((c) => {
-                const mine = me
-                  ? c.author_type === me.kind && (c.author_id ? c.author_id === me.id : true)
-                  : c.author_type === role;
-                const mineReaction = reactions.find(
-                  (r) => r.comment_id === c.id && me && r.author_name === me.name,
-                );
-                const grouped = new Map<string, number>();
-                reactions
-                  .filter((r) => r.comment_id === c.id)
-                  .forEach((r) => grouped.set(r.emoji, (grouped.get(r.emoji) ?? 0) + 1));
-                return (
-                  <div key={c.id} className={`flex ${mine ? "justify-end" : "justify-start"}`}>
-                    <div className="group relative max-w-[85%]">
-                      <div
-                        className={`rounded-xl px-3 py-2 ${
-                          mine
-                            ? "border border-red-500/20 bg-red-500/10"
-                            : "border border-white/10 bg-white/[0.04]"
-                        } ${unreadIds.has(c.id) ? "border-l-2 border-l-red-500" : ""}`}
-                      >
-                        <div className="mb-0.5 flex items-center gap-2">
-                          <span className="text-xs font-medium text-white">
-                            {mine ? "Moi" : c.author_name}
-                          </span>
-                          <span className="text-[11px] text-neutral-500">{fmtDateTimeFR(c.created_at)}</span>
-                        </div>
-                        {c.content && (
-                          <p className="whitespace-pre-wrap text-sm text-neutral-200">{c.content}</p>
-                        )}
-                        {c.image_url && (
-                          <img
-                            src={c.image_url}
-                            alt="Pièce jointe"
-                            onClick={() => setLightbox(c.image_url!)}
-                            className="mt-1 max-h-48 w-auto max-w-[200px] cursor-zoom-in rounded-lg border border-white/10 object-cover"
-                          />
-                        )}
-                        {c.audio_url && <VoiceBubble src={c.audio_url} duration={c.audio_duration} />}
-                        {mine && (
-                          <div className="mt-0.5 flex items-center justify-end gap-1">
-                            {c.read_at ? (
-                              <>
-                                <span className="text-[10px] text-emerald-400">Lu</span>
-                                <CheckCheck className="h-3.5 w-3.5 text-emerald-400" />
-                              </>
-                            ) : (
-                              <>
-                                <span className="text-[10px] text-neutral-500">Envoyé</span>
-                                <Check className="h-3.5 w-3.5 text-neutral-500" />
-                              </>
-                            )}
-                          </div>
-                        )}
-                      </div>
-
-                      {grouped.size > 0 && (
-                        <div className={`mt-1 flex flex-wrap gap-1 ${mine ? "justify-end" : ""}`}>
-                          {[...grouped.entries()].map(([emoji, count]) => (
-                            <button
-                              key={emoji}
-                              onClick={() => handleReaction(c.id, emoji)}
-                              className={`inline-flex items-center gap-1 rounded-full border px-1.5 py-0.5 text-[11px] transition ${
-                                mineReaction?.emoji === emoji
-                                  ? "border-red-500/40 bg-red-500/15 text-white"
-                                  : "border-white/10 bg-white/5 text-neutral-300 hover:bg-white/10"
-                              }`}
-                            >
-                              <span>{emoji}</span>
-                              {count > 1 && <span>{count}</span>}
-                            </button>
-                          ))}
-                        </div>
-                      )}
-
-                      <button
-                        onClick={() => setPickerFor(pickerFor === c.id ? null : c.id)}
-                        className={`absolute top-1 ${
-                          mine ? "-left-7" : "-right-7"
-                        } rounded-full p-1 text-neutral-500 opacity-0 transition group-hover:opacity-100 hover:text-white`}
-                      >
-                        <SmilePlus className="h-4 w-4" />
-                      </button>
-
-                      {role === "admin" && (
-                        <button
-                          onClick={() => handleDeleteComment(c.id)}
-                          title="Supprimer ce message"
-                          className={`absolute top-8 ${
-                            mine ? "-left-7" : "-right-7"
-                          } rounded-full p-1 text-neutral-500 opacity-0 transition group-hover:opacity-100 hover:text-red-400`}
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </button>
-                      )}
-
-                      {pickerFor === c.id && (
-                        <>
-                          <div className="fixed inset-0 z-[290]" onClick={() => setPickerFor(null)} />
-                          <div className="absolute bottom-full z-[300] mb-1 flex gap-1 rounded-full border border-white/10 bg-neutral-900 px-2 py-1 shadow-xl">
-                            {REACTION_EMOJIS.map((e) => (
-                              <button
-                                key={e}
-                                onClick={() => handleReaction(c.id, e)}
-                                className="rounded-full px-1 text-base transition hover:scale-125"
-                              >
-                                {e}
-                              </button>
-                            ))}
-                          </div>
-                        </>
-                      )}
-                    </div>
-                  </div>
-                );
-                })}
-              </>
-            )}
-            </div>
-            </div>
-          </div>
-          {lightbox && <ImageLightbox src={lightbox} onClose={() => setLightbox(null)} />}
-          <div className="h-5 px-1">
-            <AnimatePresence>
-              {typingQ.data && (
-                <motion.div
-                  initial={{ opacity: 0, y: 4 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 4 }}
-                  className="flex items-center gap-1.5 text-[11px] text-neutral-400"
-                >
-                  {typingQ.data.recording ? (
-                    <>
-                      <Mic className="h-3.5 w-3.5 animate-pulse text-red-400" />
-                      <span>{typingQ.data.name} est en train d'enregistrer un vocal 🎙</span>
-                    </>
-                  ) : (
-                    <>
-                      <span>{typingQ.data.name} est en train d'écrire</span>
-                      <span className="flex gap-0.5">
-                        {[0, 1, 2].map((i) => (
-                          <span
-                            key={i}
-                            style={{ animationDelay: `${i * 150}ms` }}
-                            className="h-1 w-1 animate-pulse rounded-full bg-neutral-400"
-                          />
-                        ))}
-                      </span>
-                    </>
-                  )}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </div>
-
-          {imagePreview && !recording && (
-            <div className="mb-2 flex flex-wrap items-center gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-2">
-                <div className="relative">
-                  <img src={imagePreview} alt="Aperçu" className="h-16 w-16 rounded-md object-cover" />
-                  <button
-                    onClick={clearImage}
-                    className="absolute -right-2 -top-2 rounded-full bg-neutral-800 p-1 text-neutral-300 transition hover:text-white"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-            </div>
-          )}
-
-          {recording ? (
-            <div className="flex items-center gap-3 rounded-lg border border-red-500/30 bg-neutral-950 px-3 py-2">
-              <span className="flex items-center gap-1.5 text-sm tabular-nums text-red-400">
-                <span className="h-2 w-2 animate-pulse rounded-full bg-red-500" />
-                {fmtSec(recSeconds)}
-              </span>
-              <div className="flex h-8 flex-1 items-center justify-center gap-[2px] overflow-hidden">
-                {levels.map((h, i) => (
-                  <span
-                    key={i}
-                    style={{ height: `${h}px` }}
-                    className="w-[3px] rounded-full bg-red-400/80 transition-[height] duration-75"
-                  />
-                ))}
-              </div>
-              <button
-                type="button"
-                onClick={cancelRecording}
-                title="Annuler l'enregistrement"
-                className="rounded-full p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-              <button
-                type="button"
-                onClick={stopAndSendRecording}
-                title="Envoyer le vocal"
-                className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-500"
-              >
-                <ArrowUp className="h-4 w-4" />
-              </button>
-            </div>
-          ) : (
-          <div className="flex items-end gap-2">
-            <input
-              ref={imageInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/gif,image/webp"
-              className="hidden"
-              onChange={(e) => pickImage(e.target.files?.[0])}
-            />
-            <textarea
-              value={message}
-              onChange={(e) => {
-                setMessage(e.target.value);
-                notifyTyping(e.target.value);
-              }}
-              onPaste={(e) => {
-                const item = Array.from(e.clipboardData.items).find((i) => i.type.startsWith("image/"));
-                const file = item?.getAsFile();
-                if (file) {
-                  e.preventDefault();
-                  pickImage(file);
-                }
-              }}
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => {
-                const file = e.dataTransfer.files?.[0];
-                if (file?.type.startsWith("image/")) {
-                  e.preventDefault();
-                  pickImage(file);
-                }
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
-                  e.preventDefault();
-                  handleComment();
-                }
-              }}
-              rows={2}
-              placeholder="Écrire un message…  (Entrée pour envoyer, Maj+Entrée pour un saut de ligne)"
-              className="flex-1 resize-none rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
-            />
-            <button
-              type="button"
-              onClick={() => imageInputRef.current?.click()}
-              title="Envoyer une image"
-              className="rounded-full p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
-            >
-              <ImageIcon className="h-4 w-4" />
-            </button>
-            <button
-              type="button"
-              onClick={() => startRecording()}
-              title="Enregistrer un vocal"
-              className="rounded-full p-2 text-neutral-300 transition hover:bg-white/10 hover:text-white"
-            >
-              <Mic className="h-4 w-4" />
-            </button>
-            <button
-              onClick={() => handleComment()}
-              disabled={busy}
-              title="Envoyer"
-              className="rounded-full bg-blue-600 p-2 text-white transition hover:bg-blue-500 disabled:opacity-60"
-            >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-4 w-4" />}
-            </button>
-          </div>
-          )}
-        </section>
         )}
-      </div>
+        <ChevronRight className="h-4 w-4 shrink-0 text-neutral-600" />
+      </button>
+
+      <InstaChat
+        open={chatOpen}
+        onClose={() => setChatOpen(false)}
+        title={`Vidéo #${String(video?.video_number ?? 0).padStart(2, "0")}${
+          (video as { title?: string | null } | undefined)?.title
+            ? ` — ${(video as { title?: string | null }).title}`
+            : ""
+        }`}
+        subtitle="Conversation de la vidéo"
+        messages={chatMessages}
+        reactions={reactions}
+        viewerId={me?.id ?? null}
+        viewerKind={role}
+        canDelete={role === "admin"}
+        typing={typingQ.data ?? null}
+        onSend={handleSend}
+        onReact={handleReaction}
+        onDelete={handleDeleteComment}
+        onTyping={(state) => sendTyping(state)}
+      />
 
       {pendingDelete && (
         <ConfirmDialog

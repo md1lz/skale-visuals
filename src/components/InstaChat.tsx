@@ -39,7 +39,7 @@ export type InstaReaction = {
   id: string;
   comment_id: string;
   author_name: string;
-  author_id: string | null;
+  author_id?: string | null;
   emoji: string;
 };
 
