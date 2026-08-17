@@ -637,6 +637,112 @@ export type Database = {
           },
         ]
       }
+      prospect_interactions: {
+        Row: {
+          created_at: string
+          date: string
+          id: string
+          note: string | null
+          prospect_id: string
+          type: string
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          id?: string
+          note?: string | null
+          prospect_id: string
+          type: string
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          id?: string
+          note?: string | null
+          prospect_id?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prospect_interactions_prospect_id_fkey"
+            columns: ["prospect_id"]
+            isOneToOne: false
+            referencedRelation: "prospects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      prospects: {
+        Row: {
+          archived_at: string | null
+          client_id: string | null
+          converted_to_client: boolean
+          created_at: string
+          email: string | null
+          first_contact_date: string | null
+          id: string
+          interested: string
+          last_contact_date: string | null
+          name: string
+          next_followup_date: string | null
+          niche: string | null
+          notes: string | null
+          platform: string
+          profile_url: string | null
+          status: string
+          subscriber_count: number | null
+          updated_at: string
+        }
+        Insert: {
+          archived_at?: string | null
+          client_id?: string | null
+          converted_to_client?: boolean
+          created_at?: string
+          email?: string | null
+          first_contact_date?: string | null
+          id?: string
+          interested?: string
+          last_contact_date?: string | null
+          name: string
+          next_followup_date?: string | null
+          niche?: string | null
+          notes?: string | null
+          platform?: string
+          profile_url?: string | null
+          status?: string
+          subscriber_count?: number | null
+          updated_at?: string
+        }
+        Update: {
+          archived_at?: string | null
+          client_id?: string | null
+          converted_to_client?: boolean
+          created_at?: string
+          email?: string | null
+          first_contact_date?: string | null
+          id?: string
+          interested?: string
+          last_contact_date?: string | null
+          name?: string
+          next_followup_date?: string | null
+          niche?: string | null
+          notes?: string | null
+          platform?: string
+          profile_url?: string | null
+          status?: string
+          subscriber_count?: number | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "prospects_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       push_subscriptions: {
         Row: {
           auth: string
