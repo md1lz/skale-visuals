@@ -194,6 +194,7 @@ function GestureBubble({
         start.current = null;
       }}
       onContextMenu={(e) => e.preventDefault()}
+      onClick={(e) => e.stopPropagation()}
       style={{
         transform: `translateX(${dx}px)`,
         transition: dx ? "none" : "transform .18s ease-out",
@@ -315,17 +316,19 @@ export function InstaChat({
   }, [open, variant, messages.length, scrollToEnd]);
 
   // Le geste "retour" (swipe bord gauche / bouton back) ferme le chat, sans naviguer.
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
   useEffect(() => {
     if (variant !== "overlay" || !open) return;
     window.history.pushState({ instachat: true }, "");
-    const onPop = () => onClose();
+    const onPop = () => closeRef.current();
     window.addEventListener("popstate", onPop);
     return () => {
       window.removeEventListener("popstate", onPop);
       if ((window.history.state as { instachat?: boolean } | null)?.instachat)
         window.history.back();
     };
-  }, [open, variant, onClose]);
+  }, [open, variant]);
 
   useEffect(() => {
     if (!open) return;
@@ -1074,9 +1077,9 @@ export function InstaChat({
           onDragEnd={(_, info) => {
             if (info.offset.x > 110 || info.velocity.x > 700) onClose();
           }}
-          onPointerDownCapture={(e) => e.stopPropagation()}
-          onTouchStartCapture={(e) => e.stopPropagation()}
-          onTouchMoveCapture={(e) => e.stopPropagation()}
+          onPointerDown={(e) => e.stopPropagation()}
+          onTouchStart={(e) => e.stopPropagation()}
+          onTouchMove={(e) => e.stopPropagation()}
           style={{ height: "100dvh" }}
           className="fixed inset-0 z-[300] flex w-screen flex-col overflow-hidden bg-neutral-950"
         >
