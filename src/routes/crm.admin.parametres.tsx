@@ -19,6 +19,7 @@ import {
   Pencil,
   X,
   Sun,
+  MonitorSmartphone,
   Moon,
   Smartphone,
 } from "lucide-react";
