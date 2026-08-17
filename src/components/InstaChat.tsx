@@ -317,7 +317,7 @@ export function InstaChat({
     };
   }, [open, variant, messages.length, scrollToEnd]);
 
-  // Le geste "retour" (swipe bord gauche / bouton back) ferme le chat, sans naviguer.
+  // Le bouton retour natif ferme le chat sans quitter l'app.
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
   useEffect(() => {
