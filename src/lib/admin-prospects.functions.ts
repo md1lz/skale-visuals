@@ -228,7 +228,9 @@ export const addInteraction = createServerFn({ method: "POST" })
       .single();
     if (error) throw new Error(error.message);
 
-    const update: Record<string, unknown> = { last_contact_date: data.date };
+    const update: { last_contact_date: string; next_followup_date?: string | null } = {
+      last_contact_date: data.date,
+    };
     if (data.next_followup_date !== undefined) update.next_followup_date = data.next_followup_date;
     await supabaseAdmin.from("prospects").update(update).eq("id", data.prospect_id);
 

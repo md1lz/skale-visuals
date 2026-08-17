@@ -189,7 +189,7 @@ function AdminProspectionPage() {
   const closePanel = () => {
     setSelectedId(null);
     setCreating(false);
-    if (initialId) navigate({ to: "/crm/admin/prospection", search: {} });
+    if (initialId) navigate({ to: "/crm/admin/prospection", search: { p: undefined } });
   };
 
   const kpiCards = [
