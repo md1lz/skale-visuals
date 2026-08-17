@@ -804,6 +804,7 @@ export function InstaChat({
                   )}
                 </div>
               )}
+              <div ref={endRef} className="h-px w-full" />
             </div>
           </div>
 
