@@ -7,6 +7,7 @@ import { getPushConfig, savePushSubscription, pingAppDevice } from "@/lib/push.f
 import { isStandaloneApp, subscribeToPush } from "@/lib/pwa";
 
 const PROMPT_FLAG = "skale_push_prompt";
+const MIC_FLAG = "skale_mic_prompt";
 
 export function isIOS() {
   if (typeof navigator === "undefined") return false;
@@ -29,6 +30,18 @@ export async function enablePushOnThisDevice(
     await save({ data: result.subscription });
   }
   return result.permission;
+}
+
+/** Asks for the microphone permission (used together with notifications). */
+export async function requestMicPermission() {
+  if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) return;
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    stream.getTracks().forEach((t) => t.stop());
+    localStorage.setItem(MIC_FLAG, "done");
+  } catch {
+    localStorage.setItem(MIC_FLAG, "denied");
+  }
 }
 
 /** In-app prompt shown once, then triggers the native permission request. */
@@ -64,17 +77,18 @@ export function PushSetup() {
   useEffect(() => {
     if (typeof window === "undefined" || !("Notification" in window)) return;
     const stored = localStorage.getItem(PROMPT_FLAG);
+    const micStored = localStorage.getItem(MIC_FLAG);
 
     if (Notification.permission === "granted") {
       // Keep the subscription fresh silently.
       void enablePushOnThisDevice(config, save).catch(() => {});
-      return;
+      if (micStored) return;
     }
-    if (Notification.permission === "denied") {
+    if (Notification.permission === "denied" && micStored) {
       localStorage.setItem(PROMPT_FLAG, "denied");
       return;
     }
-    if (stored === "denied" || stored === "done") return;
+    if ((stored === "denied" || stored === "done") && micStored) return;
     const t = window.setTimeout(() => setOpen(true), 1200);
     return () => window.clearTimeout(t);
   }, [config, save]);
@@ -88,8 +102,10 @@ export function PushSetup() {
     try {
       const permission = await enablePushOnThisDevice(config, save);
       localStorage.setItem(PROMPT_FLAG, permission === "denied" ? "denied" : "done");
+      // Chaîne la seconde demande native juste après celle des notifications.
+      await requestMicPermission();
     } catch {
-      /* silent */
+      await requestMicPermission().catch(() => {});
     } finally {
       setBusy(false);
       setOpen(false);
@@ -133,9 +149,10 @@ export function PushSetup() {
             >
               <Bell className="h-6 w-6" />
             </motion.span>
-            <h2 className="mt-4 text-base font-semibold text-white">Activez les notifications</h2>
+            <h2 className="mt-4 text-base font-semibold text-white">Autorisations requises</h2>
             <p className="mt-2 text-sm text-neutral-400">
-              Activez les notifications pour être alerté en temps réel des messages et mises à jour.
+              Pour utiliser l&apos;application au mieux, nous avons besoin de vos autorisations pour
+              les notifications et le microphone.
             </p>
             {iosHint && (
               <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
@@ -149,7 +166,7 @@ export function PushSetup() {
                 disabled={busy}
                 className="rounded-xl bg-red-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-400 disabled:opacity-60 transition"
               >
-                {busy ? "Activation…" : "Activer"}
+                {busy ? "Activation…" : "Autoriser"}
               </button>
               <button onClick={later} className="rounded-xl px-4 py-2 text-sm text-neutral-400 hover:text-white transition">
                 Plus tard
