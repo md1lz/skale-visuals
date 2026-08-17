@@ -1131,16 +1131,6 @@ export function InstaChat({
           animate={{ x: 0 }}
           exit={{ x: "100%" }}
           transition={{ type: "tween", duration: 0.26, ease: [0.32, 0.72, 0, 1] }}
-          drag="x"
-          dragDirectionLock
-          dragConstraints={{ left: 0, right: 0 }}
-          dragElastic={{ left: 0, right: 0.6 }}
-          onDragEnd={(_, info) => {
-            if (info.offset.x > 110 || info.velocity.x > 700) onClose();
-          }}
-          onPointerDown={(e) => e.stopPropagation()}
-          onTouchStart={(e) => e.stopPropagation()}
-          onTouchMove={(e) => e.stopPropagation()}
           style={{ height: "100dvh" }}
           className="fixed inset-0 z-[300] flex w-screen flex-col overflow-hidden bg-neutral-950"
         >
