@@ -120,6 +120,95 @@ export type InstaSendPayload = {
   replyTo: string | null;
 };
 
+/** Bulle avec gestes : swipe droite = répondre, appui long = réactions. */
+function GestureBubble({
+  onReply,
+  onLongPress,
+  onTap,
+  className,
+  children,
+}: {
+  onReply: () => void;
+  onLongPress: () => void;
+  onTap: () => void;
+  className?: string;
+  children: React.ReactNode;
+}) {
+  const [dx, setDx] = useState(0);
+  const dxRef = useRef(0);
+  const start = useRef<{ x: number; y: number } | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const moved = useRef(false);
+  const longFired = useRef(false);
+
+  const clear = () => {
+    if (timer.current) clearTimeout(timer.current);
+    timer.current = null;
+  };
+  const move = (v: number) => {
+    dxRef.current = v;
+    setDx(v);
+  };
+
+  return (
+    <div
+      onPointerDown={(e) => {
+        if (e.pointerType === "mouse" && e.button !== 0) return;
+        e.stopPropagation();
+        start.current = { x: e.clientX, y: e.clientY };
+        moved.current = false;
+        longFired.current = false;
+        clear();
+        timer.current = setTimeout(() => {
+          longFired.current = true;
+          move(0);
+          onLongPress();
+        }, 500);
+      }}
+      onPointerMove={(e) => {
+        const s = start.current;
+        if (!s) return;
+        const x = e.clientX - s.x;
+        const y = e.clientY - s.y;
+        if (Math.abs(x) > 8 || Math.abs(y) > 8) {
+          moved.current = true;
+          clear();
+        }
+        if (!longFired.current && x > 0 && Math.abs(x) > Math.abs(y)) {
+          e.stopPropagation();
+          move(Math.min(80, x * 0.6));
+        }
+      }}
+      onPointerUp={(e) => {
+        e.stopPropagation();
+        clear();
+        const d = dxRef.current;
+        move(0);
+        start.current = null;
+        if (d > 40) onReply();
+        else if (!moved.current && !longFired.current) onTap();
+      }}
+      onPointerCancel={() => {
+        clear();
+        move(0);
+        start.current = null;
+      }}
+      onContextMenu={(e) => e.preventDefault()}
+      style={{
+        transform: `translateX(${dx}px)`,
+        transition: dx ? "none" : "transform .18s ease-out",
+        touchAction: "pan-y",
+        WebkitUserSelect: "none",
+        userSelect: "none",
+        WebkitTouchCallout: "none",
+      }}
+      className={className}
+    >
+      {children}
+    </div>
+  );
+}
+
 export function InstaChat({
   open,
   onClose,
