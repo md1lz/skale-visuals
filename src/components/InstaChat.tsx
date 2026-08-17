@@ -334,7 +334,7 @@ export function InstaChat({
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
-        if (pickerFor) { console.log("ESCCLOSE"); setPickerFor(null); }
+        if (pickerFor) setPickerFor(null);
         else onClose();
       }
     };
@@ -605,7 +605,7 @@ export function InstaChat({
           {/* messages */}
           <div
             ref={scrollRef}
-            onClick={(ev) => { console.log("CONTCLICK", (ev.target as HTMLElement).className); setPickerFor(null); }}
+            onClick={() => setPickerFor(null)}
             className="flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-5"
           >
             <div className="mx-auto flex max-w-2xl flex-col gap-0.5">
