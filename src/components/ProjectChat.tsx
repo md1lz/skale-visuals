@@ -90,6 +90,11 @@ export function ProjectChat({
 
   const [open, setOpen] = useState(true);
   const isMobile = useIsMobile();
+
+  // On phones the chat is a full-screen sheet, closed by default.
+  useEffect(() => {
+    if (isMobile) setOpen(false);
+  }, [isMobile]);
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [pickerFor, setPickerFor] = useState<string | null>(null);
