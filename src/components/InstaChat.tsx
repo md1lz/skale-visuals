@@ -433,9 +433,9 @@ export function InstaChat({
 
   /* -------------------------------- render ------------------------------- */
   const grouped = useMemo(() => {
-    return messages.map((m, i) => {
-      const prev = messages[i - 1];
-      const next = messages[i + 1];
+    return shown.map((m, i) => {
+      const prev = shown[i - 1];
+      const next = shown[i + 1];
       const mine = viewerId ? m.author_id === viewerId : m.author_type === viewerKind;
       const sameAsPrev =
         prev && prev.author_id === m.author_id && dayKey(prev.created_at) === dayKey(m.created_at);
@@ -444,7 +444,7 @@ export function InstaChat({
       const newDay = !prev || dayKey(prev.created_at) !== dayKey(m.created_at);
       return { m, mine, first: !sameAsPrev, last: !sameAsNext, newDay };
     });
-  }, [messages, viewerId, viewerKind]);
+  }, [shown, viewerId, viewerKind]);
 
   const lastMine = useMemo(
     () =>
@@ -489,6 +489,14 @@ export function InstaChat({
             className="flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-5"
           >
             <div className="mx-auto flex max-w-2xl flex-col gap-0.5">
+              {messages.length > shown.length && (
+                <button
+                  onClick={() => setVisibleCount((c) => c + 40)}
+                  className="mx-auto mb-2 rounded-full border border-white/10 px-3 py-1.5 text-[11px] text-neutral-400 transition hover:bg-white/5 hover:text-white"
+                >
+                  Voir les anciens messages
+                </button>
+              )}
               {grouped.length === 0 && (
                 <p className="py-16 text-center text-sm text-neutral-600">
                   Aucun message pour l'instant.
