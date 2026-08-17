@@ -2,12 +2,14 @@ import { useEffect, useState } from "react";
 import { createPortal } from "react-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import { useServerFn } from "@tanstack/react-start";
-import { Bell, X } from "lucide-react";
+import { Bell, Mic, X } from "lucide-react";
 import { getPushConfig, savePushSubscription, pingAppDevice } from "@/lib/push.functions";
 import { isStandaloneApp, subscribeToPush } from "@/lib/pwa";
 
 const PROMPT_FLAG = "skale_push_prompt";
 const MIC_FLAG = "skale_mic_prompt";
+
+type Step = "notifications" | "microphone" | null;
 
 export function isIOS() {
   if (typeof navigator === "undefined") return false;
@@ -32,7 +34,7 @@ export async function enablePushOnThisDevice(
   return result.permission;
 }
 
-/** Asks for the microphone permission (used together with notifications). */
+/** Asks for the microphone permission. */
 export async function requestMicPermission() {
   if (typeof navigator === "undefined" || !navigator.mediaDevices?.getUserMedia) return;
   try {
@@ -44,12 +46,12 @@ export async function requestMicPermission() {
   }
 }
 
-/** In-app prompt shown once, then triggers the native permission request. */
+/** Two-step in-app permission prompt: notifications first, then microphone. */
 export function PushSetup() {
   const config = useServerFn(getPushConfig);
   const save = useServerFn(savePushSubscription);
   const ping = useServerFn(pingAppDevice);
-  const [open, setOpen] = useState(false);
+  const [step, setStep] = useState<Step>(null);
   const [iosHint, setIosHint] = useState(false);
   const [busy, setBusy] = useState(false);
 
@@ -79,21 +81,31 @@ export function PushSetup() {
     const stored = localStorage.getItem(PROMPT_FLAG);
     const micStored = localStorage.getItem(MIC_FLAG);
 
+    const notificationsAnswered =
+      Notification.permission === "granted" ||
+      Notification.permission === "denied" ||
+      stored === "done" ||
+      stored === "denied" ||
+      stored === "later";
+
+    const micAnswered =
+      micStored === "done" || micStored === "denied" || micStored === "later";
+
+    if (notificationsAnswered && micAnswered) return;
+
     if (Notification.permission === "granted") {
       // Keep the subscription fresh silently.
       void enablePushOnThisDevice(config, save).catch(() => {});
-      if (micStored) return;
     }
-    if (Notification.permission === "denied" && micStored) {
-      localStorage.setItem(PROMPT_FLAG, "denied");
-      return;
-    }
-    if ((stored === "denied" || stored === "done") && micStored) return;
-    const t = window.setTimeout(() => setOpen(true), 1200);
+
+    const t = window.setTimeout(
+      () => setStep(notificationsAnswered ? "microphone" : "notifications"),
+      1200,
+    );
     return () => window.clearTimeout(t);
   }, [config, save]);
 
-  async function activate() {
+  async function activateNotifications() {
     if (isIOS() && !isStandaloneApp()) {
       setIosHint(true);
       return;
@@ -102,77 +114,143 @@ export function PushSetup() {
     try {
       const permission = await enablePushOnThisDevice(config, save);
       localStorage.setItem(PROMPT_FLAG, permission === "denied" ? "denied" : "done");
-      // Chaîne la seconde demande native juste après celle des notifications.
-      await requestMicPermission();
     } catch {
-      await requestMicPermission().catch(() => {});
+      localStorage.setItem(PROMPT_FLAG, "denied");
     } finally {
       setBusy(false);
-      setOpen(false);
+      setIosHint(false);
+      setStep("microphone");
     }
   }
 
-  function later() {
+  function laterNotifications() {
     localStorage.setItem(PROMPT_FLAG, "later");
-    setOpen(false);
+    setStep("microphone");
+  }
+
+  async function activateMicrophone() {
+    setBusy(true);
+    try {
+      await requestMicPermission();
+    } finally {
+      setBusy(false);
+      setStep(null);
+    }
+  }
+
+  function laterMicrophone() {
+    localStorage.setItem(MIC_FLAG, "later");
+    setStep(null);
   }
 
   if (typeof document === "undefined") return null;
 
   return createPortal(
     <AnimatePresence>
-      {open && (
+      {step && (
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           className="fixed inset-0 z-[120] grid place-items-center bg-black/70 backdrop-blur-sm px-4"
         >
-          <motion.div
-            initial={{ opacity: 0, scale: 0.94, y: 12 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.96, y: 8 }}
-            transition={{ type: "spring", stiffness: 320, damping: 26 }}
-            className="relative w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-950 p-6 text-center shadow-2xl"
-          >
-            <button
-              onClick={later}
-              className="absolute right-3 top-3 text-neutral-500 hover:text-white transition"
-              aria-label="Fermer"
-            >
-              <X className="h-4 w-4" />
-            </button>
-            <motion.span
-              animate={{ rotate: [0, -12, 12, -8, 8, 0] }}
-              transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 2 }}
-              className="mx-auto grid place-items-center h-14 w-14 rounded-2xl bg-red-500/15 text-red-400"
-            >
-              <Bell className="h-6 w-6" />
-            </motion.span>
-            <h2 className="mt-4 text-base font-semibold text-white">Autorisations requises</h2>
-            <p className="mt-2 text-sm text-neutral-400">
-              Pour utiliser l&apos;application au mieux, nous avons besoin de vos autorisations pour
-              les notifications et le microphone.
-            </p>
-            {iosHint && (
-              <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
-                Pour recevoir des notifications sur iPhone, installez d&apos;abord l&apos;app via
-                skalevisuals.com/app
-              </p>
-            )}
-            <div className="mt-5 flex flex-col gap-2">
-              <button
-                onClick={activate}
-                disabled={busy}
-                className="rounded-xl bg-red-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-400 disabled:opacity-60 transition"
+          <AnimatePresence mode="wait">
+            {step === "notifications" && (
+              <motion.div
+                key="notifications"
+                initial={{ opacity: 0, scale: 0.94, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: -8 }}
+                transition={{ type: "spring", stiffness: 320, damping: 26 }}
+                className="relative w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-950 p-6 text-center shadow-2xl"
               >
-                {busy ? "Activation…" : "Autoriser"}
-              </button>
-              <button onClick={later} className="rounded-xl px-4 py-2 text-sm text-neutral-400 hover:text-white transition">
-                Plus tard
-              </button>
-            </div>
-          </motion.div>
+                <button
+                  onClick={laterNotifications}
+                  className="absolute right-3 top-3 text-neutral-500 hover:text-white transition"
+                  aria-label="Fermer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                <motion.span
+                  animate={{ rotate: [0, -12, 12, -8, 8, 0] }}
+                  transition={{ duration: 1.4, repeat: Infinity, repeatDelay: 2 }}
+                  className="mx-auto grid place-items-center h-14 w-14 rounded-2xl bg-red-500/15 text-red-400"
+                >
+                  <Bell className="h-6 w-6" />
+                </motion.span>
+                <h2 className="mt-4 text-base font-semibold text-white">Notifications</h2>
+                <p className="mt-2 text-sm text-neutral-400">
+                  Activez les notifications pour être alerté en temps réel des messages et mises à jour.
+                </p>
+                {iosHint && (
+                  <p className="mt-3 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
+                    Pour recevoir des notifications sur iPhone, installez d&apos;abord l&apos;app via
+                    skalevisuals.com/app
+                  </p>
+                )}
+                <div className="mt-5 flex flex-col gap-2">
+                  <button
+                    onClick={activateNotifications}
+                    disabled={busy}
+                    className="rounded-xl bg-red-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-400 disabled:opacity-60 transition"
+                  >
+                    {busy ? "Activation…" : "Activer"}
+                  </button>
+                  <button
+                    onClick={laterNotifications}
+                    className="rounded-xl px-4 py-2 text-sm text-neutral-400 hover:text-white transition"
+                  >
+                    Plus tard
+                  </button>
+                </div>
+              </motion.div>
+            )}
+
+            {step === "microphone" && (
+              <motion.div
+                key="microphone"
+                initial={{ opacity: 0, scale: 0.94, y: 12 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.96, y: -8 }}
+                transition={{ type: "spring", stiffness: 320, damping: 26 }}
+                className="relative w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-950 p-6 text-center shadow-2xl"
+              >
+                <button
+                  onClick={laterMicrophone}
+                  className="absolute right-3 top-3 text-neutral-500 hover:text-white transition"
+                  aria-label="Fermer"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+                <motion.span
+                  animate={{ scale: [1, 1.08, 1] }}
+                  transition={{ duration: 1.6, repeat: Infinity, repeatDelay: 1.5 }}
+                  className="mx-auto grid place-items-center h-14 w-14 rounded-2xl bg-red-500/15 text-red-400"
+                >
+                  <Mic className="h-6 w-6" />
+                </motion.span>
+                <h2 className="mt-4 text-base font-semibold text-white">Microphone</h2>
+                <p className="mt-2 text-sm text-neutral-400">
+                  Autorisez l&apos;accès au microphone pour envoyer des messages vocaux.
+                </p>
+                <div className="mt-5 flex flex-col gap-2">
+                  <button
+                    onClick={activateMicrophone}
+                    disabled={busy}
+                    className="rounded-xl bg-red-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-red-400 disabled:opacity-60 transition"
+                  >
+                    {busy ? "Activation…" : "Activer"}
+                  </button>
+                  <button
+                    onClick={laterMicrophone}
+                    className="rounded-xl px-4 py-2 text-sm text-neutral-400 hover:text-white transition"
+                  >
+                    Plus tard
+                  </button>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       )}
     </AnimatePresence>,
