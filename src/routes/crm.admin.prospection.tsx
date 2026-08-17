@@ -200,9 +200,9 @@ function AdminProspectionPage() {
   ];
 
   return (
-    <div className="p-4 md:p-8 max-w-[1400px]">
-      <div className="flex items-start justify-between gap-4 mb-6">
-        <div>
+    <div className="w-full max-w-[1400px] overflow-x-hidden p-4 md:p-8">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl md:text-3xl font-semibold tracking-tight">Prospection</h1>
           <p className="text-sm text-neutral-400 mt-1">Pipeline de prospects et suivi des relances.</p>
         </div>
@@ -211,7 +211,7 @@ function AdminProspectionPage() {
             setSelectedId(null);
             setCreating(true);
           }}
-          className="inline-flex items-center gap-2 rounded-lg bg-red-600 hover:bg-red-500 px-3.5 py-2 text-sm font-medium text-white transition"
+          className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-lg bg-red-600 hover:bg-red-500 px-3.5 py-2 text-sm font-medium text-white transition sm:w-auto"
         >
           <Plus className="h-4 w-4" /> Nouveau prospect
         </button>
@@ -234,8 +234,8 @@ function AdminProspectionPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex flex-wrap items-center gap-2 mb-4">
-        <div className="relative flex-1 min-w-[200px]">
+      <div className="mb-4 grid grid-cols-2 gap-2 sm:flex sm:flex-wrap sm:items-center">
+        <div className="relative col-span-2 min-w-0 sm:flex-1 sm:min-w-[200px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-neutral-500" />
           <input
             value={q}
@@ -244,25 +244,25 @@ function AdminProspectionPage() {
             className={`${inputCls} pl-9`}
           />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as never)} className={`${inputCls} w-auto`}>
+        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as never)} className={`${inputCls} min-h-[44px] sm:w-auto`}>
           <option value="all">Tous statuts</option>
           {PROSPECT_STATUSES.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
-        <select value={platformFilter} onChange={(e) => setPlatformFilter(e.target.value)} className={`${inputCls} w-auto`}>
+        <select value={platformFilter} onChange={(e) => setPlatformFilter(e.target.value)} className={`${inputCls} min-h-[44px] sm:w-auto`}>
           <option value="all">Toutes plateformes</option>
           {PLATFORMS.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
-        <select value={nicheFilter} onChange={(e) => setNicheFilter(e.target.value)} className={`${inputCls} w-auto`}>
+        <select value={nicheFilter} onChange={(e) => setNicheFilter(e.target.value)} className={`${inputCls} min-h-[44px] sm:w-auto`}>
           <option value="all">Toutes niches</option>
           {NICHES.map((s) => (
             <option key={s} value={s}>{s}</option>
           ))}
         </select>
-        <select value={interestFilter} onChange={(e) => setInterestFilter(e.target.value)} className={`${inputCls} w-auto`}>
+        <select value={interestFilter} onChange={(e) => setInterestFilter(e.target.value)} className={`${inputCls} min-h-[44px] sm:w-auto`}>
           <option value="all">Intéressé : tous</option>
           {INTERESTS.map((s) => (
             <option key={s} value={s}>{s}</option>
@@ -271,8 +271,57 @@ function AdminProspectionPage() {
       </div>
 
       <div className="flex gap-4 items-start">
-        {/* Table */}
-        <div className="flex-1 min-w-0 rounded-2xl border border-white/10 bg-neutral-900/40 overflow-hidden">
+        {/* Mobile cards */}
+        <div className="w-full min-w-0 space-y-3 lg:hidden">
+          {loading ? (
+            <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-8 text-center text-neutral-500">
+              <Loader2 className="mx-auto h-5 w-5 animate-spin" />
+            </div>
+          ) : !filtered.length ? (
+            <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-8 text-center text-sm text-neutral-500">
+              Aucun prospect
+            </div>
+          ) : (
+            filtered.map((r) => (
+              <button
+                key={r.id}
+                onClick={() => {
+                  setCreating(false);
+                  setSelectedId(r.id);
+                }}
+                className="w-full rounded-2xl border border-white/10 bg-neutral-900/50 p-4 text-left transition active:bg-white/[0.05]"
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <p className="min-w-0 flex-1 break-words text-base font-semibold text-white">
+                    {r.name}
+                  </p>
+                  <span
+                    className={`shrink-0 rounded-full border px-2 py-0.5 text-[11px] ${statusBadge[r.status]}`}
+                  >
+                    {r.status}
+                  </span>
+                </div>
+                <div className="mt-2.5 flex flex-wrap items-center gap-2">
+                  <PlatformBadge platform={r.platform} />
+                  {r.niche && (
+                    <span className="rounded-full border border-white/10 bg-white/5 px-2 py-0.5 text-[11px] text-neutral-300">
+                      {r.niche}
+                    </span>
+                  )}
+                </div>
+                <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs">
+                  <span className={followupTone(r.next_followup_date)}>
+                    Relance : {fmtDate(r.next_followup_date)}
+                  </span>
+                  <span className="text-neutral-500">Intéressé : {r.interested}</span>
+                </div>
+              </button>
+            ))
+          )}
+        </div>
+
+        {/* Table (desktop) */}
+        <div className="hidden lg:block flex-1 min-w-0 rounded-2xl border border-white/10 bg-neutral-900/40 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
