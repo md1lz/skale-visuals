@@ -939,7 +939,7 @@ export function InstaChat({
                       </motion.div>
                     )}
                   </AnimatePresence>
-                  {locked ? (
+                  {locked && !trashing ? (
                     <motion.button
                       onClick={cancelWithAnim}
                       animate={trashing ? { rotate: [0, -18, 14, 0], scale: [1, 1.2, 1] } : {}}
@@ -952,14 +952,16 @@ export function InstaChat({
                   ) : (
                     <motion.span
                       animate={
-                        recCancelHint ? { rotate: [0, -18, 14, 0], scale: 1.15 } : { scale: 1 }
+                        recCancelHint || trashing
+                          ? { rotate: [0, -18, 14, 0], scale: 1.15 }
+                          : { scale: 1 }
                       }
                       transition={{ duration: 0.5 }}
                       className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${
-                        recCancelHint ? "bg-red-500/20 text-red-400" : "text-red-500"
+                        recCancelHint || trashing ? "bg-red-500/20 text-red-400" : "text-red-500"
                       }`}
                     >
-                      {recCancelHint ? (
+                      {recCancelHint || trashing ? (
                         <Trash2 className="h-4 w-4" />
                       ) : (
                         <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
