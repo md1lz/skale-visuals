@@ -735,7 +735,7 @@ function VideoDetail({
   const [scriptDirty, setScriptDirty] = useState(false);
   const [savingScript, setSavingScript] = useState(false);
   const [scriptOpen, setScriptOpen] = useState(false);
-  const [chatOpen, setChatOpen] = useState(true);
+  const [chatOpen, setChatOpen] = useState(false);
   const [showOldVersions, setShowOldVersions] = useState(false);
   const chatScrollRef = useRef<HTMLDivElement>(null);
   const fileRef = useRef<HTMLInputElement>(null);
@@ -847,7 +847,7 @@ function VideoDetail({
   useEffect(() => {
     setVisibleCount(10);
     setLoadingOlder(false);
-    setChatOpen(true);
+    setChatOpen(false);
     setScriptOpen(false);
     setChatUnlocked(false);
     setShowOldVersions(false);
@@ -859,7 +859,7 @@ function VideoDetail({
     return () => {
       setVisibleCount(10);
       setLoadingOlder(false);
-      setChatOpen(true);
+      setChatOpen(false);
       setScriptOpen(false);
       setChatUnlocked(false);
     };
@@ -1066,7 +1066,7 @@ function VideoDetail({
       typingSentAtRef.current = 0;
       sendTyping("off");
       refresh();
-      setChatOpen(true);
+      setChatOpen(false);
       setTimeout(() => {
         const el = chatScrollRef.current;
         if (el) el.scrollTo({ top: el.scrollHeight, behavior: "smooth" });
@@ -1265,6 +1265,29 @@ function VideoDetail({
     }
   }
 
+  const chatMessages = (q.data?.comments ?? []) as unknown as InstaMessage[];
+
+  async function handleSend(p: InstaSendPayload) {
+    let image_path: string | null = null;
+    let audio_path: string | null = null;
+    if (p.imageFile) image_path = await uploadChatFile(p.imageFile, "image", p.imageFile.name);
+    if (p.voice) {
+      const ext = p.voice.blob.type.includes("mp4") ? "mp4" : "webm";
+      audio_path = await uploadChatFile(p.voice.blob, "audio", `vocal.${ext}`);
+    }
+    await sendComment({
+      data: {
+        video_id: videoId,
+        content: p.content,
+        image_path,
+        audio_path,
+        audio_duration: p.voice ? Math.max(1, Math.round(p.voice.seconds)) : null,
+        reply_to: p.replyTo,
+      },
+    });
+    refresh();
+  }
+
   const video = q.data?.video;
   const options: string[] = role === "admin" ? [...ADMIN_VIDEO_STATUSES] : [...EDITOR_VIDEO_STATUSES];
   const versions = (q.data?.versions ?? []) as VersionRow[];
@@ -1274,7 +1297,7 @@ function VideoDetail({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
-      <div className="sticky top-0 z-20 flex flex-wrap items-center gap-2 border-b border-white/10 bg-neutral-900/95 px-4 py-3 backdrop-blur sm:gap-3 sm:px-5">
+      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 bg-neutral-900/95 px-4 py-3 sm:gap-3 sm:px-5">
         <VideoTitleEditor
           videoNumber={video?.video_number ?? 0}
           title={(video as { title?: string | null } | undefined)?.title ?? null}
@@ -1326,7 +1349,10 @@ function VideoDetail({
               <ChevronDown className={`h-4 w-4 transition-transform ${scriptOpen ? "rotate-0" : "-rotate-90"}`} />
               Script (transcription)
               <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
-                {script ? `${script.length} caractères — appuyer pour afficher` : "vide"}
+                <span className="hidden sm:inline">
+                  {script ? `${script.length} caractères — appuyer pour afficher` : "vide"}
+                </span>
+                <span className="sm:hidden">{script ? "rempli" : "vide"}</span>
               </span>
             </button>
             {script && (
