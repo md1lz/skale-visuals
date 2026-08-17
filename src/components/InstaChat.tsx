@@ -1076,6 +1076,7 @@ export function InstaChat({
           }}
           onPointerDownCapture={(e) => e.stopPropagation()}
           onTouchStartCapture={(e) => e.stopPropagation()}
+          onTouchMoveCapture={(e) => e.stopPropagation()}
           style={{ height: "100dvh" }}
           className="fixed inset-0 z-[300] flex w-screen flex-col overflow-hidden bg-neutral-950"
         >
