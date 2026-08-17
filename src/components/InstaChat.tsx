@@ -183,6 +183,7 @@ export function InstaChat({
   const typingSentAt = useRef(0);
   const typingOff = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recStartX = useRef(0);
+  const holdReleasedRef = useRef(false);
 
   const byId = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
 
@@ -310,6 +311,7 @@ export function InstaChat({
   /* ------------------------------- recording ----------------------------- */
   async function startRecording(clientX: number) {
     if (recording) return;
+    holdReleasedRef.current = false;
     recStartX.current = clientX;
     let stream: MediaStream;
     try {
@@ -367,6 +369,10 @@ export function InstaChat({
     };
     recorderRef.current = rec;
     rec.start();
+    if (holdReleasedRef.current) {
+      // The user released the mic button before permission resolved.
+      setTimeout(() => stopRecording(true), 0);
+    }
     setRecording(true);
     setRecSeconds(0);
     recSecondsRef.current = 0;
@@ -759,10 +765,14 @@ export function InstaChat({
                         setRecCancelHint(e.clientX - recStartX.current < -70);
                       }}
                       onPointerUp={(e) => {
-                        if (!recording) return;
-                        stopRecording(e.clientX - recStartX.current < -70);
+                        holdReleasedRef.current = true;
+                        if (recorderRef.current?.state === "recording")
+                          stopRecording(e.clientX - recStartX.current < -70);
                       }}
-                      onPointerCancel={() => recording && stopRecording(true)}
+                      onPointerCancel={() => {
+                        holdReleasedRef.current = true;
+                        if (recorderRef.current?.state === "recording") stopRecording(true);
+                      }}
                       className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-neutral-900 text-neutral-300 transition hover:bg-neutral-800"
                     >
                       <Mic className="h-5 w-5" />
