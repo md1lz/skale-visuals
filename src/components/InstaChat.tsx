@@ -424,24 +424,18 @@ export function InstaChat({
 
   const replyPreview = replyTo ? byId.get(replyTo) : null;
 
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ type: "tween", duration: 0.26, ease: [0.32, 0.72, 0, 1] }}
-          className="fixed inset-0 z-[300] flex flex-col bg-neutral-950"
-        >
+  const inner = (
+    <>
           {/* header */}
           <div className="flex shrink-0 items-center gap-3 border-b border-white/5 px-3 py-3 sm:px-5">
-            <button
-              onClick={onClose}
-              className="grid h-9 w-9 place-items-center rounded-full text-neutral-200 transition hover:bg-white/10"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
+            {variant === "overlay" && (
+              <button
+                onClick={onClose}
+                className="grid h-9 w-9 place-items-center rounded-full text-neutral-200 transition hover:bg-white/10"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+            )}
             <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-red-500 to-orange-400 text-[12px] font-semibold text-white">
               {initials(title)}
             </div>
