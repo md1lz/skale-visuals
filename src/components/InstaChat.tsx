@@ -1058,16 +1058,11 @@ export function InstaChat({
                               void startRecording("lock");
                               return;
                             }
-                            if (lockedRef.current) return;
-                            if (recorderRef.current?.state !== "recording") return;
-                            if (e.clientX - recStartX.current < -70) cancelWithAnim();
-                            else stopRecording(false);
+                            // en mode maintien, les listeners fenêtre gèrent la suite
                           }}
                           onPointerCancel={() => {
                             if (holdTimer.current) clearTimeout(holdTimer.current);
                             holdReleasedRef.current = true;
-                            if (lockedRef.current) return;
-                            if (recorderRef.current?.state === "recording") lockRecording();
                           }}
                           className="grid h-9 w-9 shrink-0 touch-none select-none place-items-center self-end rounded-full text-neutral-300 transition hover:bg-white/10"
                           aria-label="Message vocal"
