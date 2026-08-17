@@ -236,6 +236,40 @@ function AdminHome() {
             Activité récente
           </h2>
         </div>
+        {!!(followupsQ.data ?? []).length && (
+          <div className="mb-4 rounded-xl border border-orange-500/25 bg-orange-500/[0.06] p-3">
+            <div className="flex items-center gap-2 mb-2">
+              <Target className="h-3.5 w-3.5 text-orange-400" />
+              <p className="text-[11px] uppercase tracking-wider text-orange-300 font-medium">
+                Relances à faire
+              </p>
+            </div>
+            <div className="space-y-1.5">
+              {(followupsQ.data ?? []).map((f) => {
+                const days = Math.max(
+                  0,
+                  Math.floor(
+                    (Date.now() - new Date(f.next_followup_date + "T00:00:00").getTime()) / 86400000,
+                  ),
+                );
+                return (
+                  <Link
+                    key={f.id}
+                    to="/crm/admin/prospection"
+                    search={{ p: f.id }}
+                    className="flex items-center gap-3 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 hover:bg-white/[0.05] transition"
+                  >
+                    <span className="text-sm text-white truncate">{f.name}</span>
+                    <span className="text-[11px] text-neutral-400 shrink-0">{f.platform}</span>
+                    <span className="ml-auto text-xs shrink-0 text-orange-300">
+                      {days === 0 ? "Aujourd'hui" : `En retard de ${days} j`}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        )}
         <div className="space-y-2">
           {!(activityQ.data ?? []).length ? (
             <div className="text-sm text-neutral-400 bg-neutral-800/50 rounded-xl px-4 py-3 text-center">
