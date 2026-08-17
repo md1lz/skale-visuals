@@ -201,9 +201,22 @@ export function InstaChat({
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
   }, []);
 
+  const [visibleCount, setVisibleCount] = useState(40);
+  const shown = useMemo(
+    () => (messages.length > visibleCount ? messages.slice(-visibleCount) : messages),
+    [messages, visibleCount],
+  );
+
   useEffect(() => {
-    if (open) requestAnimationFrame(() => scrollToEnd());
-  }, [open, messages.length, scrollToEnd]);
+    if (variant !== "inline" && !open) return;
+    // Toujours atterrir sur le message le plus récent à l'ouverture.
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      requestAnimationFrame(() => scrollToEnd());
+    });
+    const t = setTimeout(() => scrollToEnd(), 220);
+    return () => clearTimeout(t);
+  }, [open, variant, messages.length, scrollToEnd]);
 
   useEffect(() => {
     if (!open) return;
