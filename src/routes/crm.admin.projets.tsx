@@ -192,7 +192,7 @@ function AdminProjectsPage() {
       </div>
 
       <div className="rounded-2xl border border-white/10 bg-neutral-900/40 overflow-hidden">
-        <div className="grid grid-cols-[1.6fr_1.3fr_0.7fr_1fr_1.2fr_1fr_1fr_1fr] gap-3 px-4 py-3 text-xs uppercase tracking-wider text-neutral-500 border-b border-white/10">
+        <div className="hidden lg:grid grid-cols-[1.6fr_1.3fr_0.7fr_1fr_1.2fr_1fr_1fr_1fr] gap-3 px-4 py-3 text-xs uppercase tracking-wider text-neutral-500 border-b border-white/10">
           <span>Titre</span>
           <span>Client</span>
           <span>Format</span>
@@ -213,7 +213,38 @@ function AdminProjectsPage() {
               : "Aucun résultat."}
           </div>
         ) : (
-          <ul>
+          <>
+          {/* Mobile: one card per project */}
+          <ul className="space-y-3 p-3 lg:hidden">
+            {filtered.map((p) => {
+              const client = p.client_id ? clientById.get(p.client_id) : null;
+              const dl = deadlineStyle(p);
+              return (
+                <li key={p.id}>
+                  <button
+                    onClick={() => setDetail(p)}
+                    className="w-full rounded-2xl border border-white/10 bg-neutral-950/50 p-4 text-left transition active:bg-white/[0.05]"
+                  >
+                    <p className="text-base font-semibold text-white break-words">{p.title}</p>
+                    <p className="mt-0.5 text-sm text-neutral-400 break-words">
+                      {client?.nom_complet ?? "—"}
+                    </p>
+                    <div className="mt-3 flex flex-wrap items-center gap-2">
+                      <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${statusBadge[p.status]}`}>
+                        {p.status}
+                      </span>
+                      <span className={`inline-flex items-center rounded-full border px-2 py-0.5 text-xs ${formatBadge[p.format]}`}>
+                        {p.format}
+                      </span>
+                      <span className={`ml-auto text-xs ${dl.className}`}>{dl.label}</span>
+                    </div>
+                  </button>
+                </li>
+              );
+            })}
+          </ul>
+
+          <ul className="hidden lg:block">
             {filtered.map((p) => {
               const client = p.client_id ? clientById.get(p.client_id) : null;
               const dl = deadlineStyle(p);
@@ -245,6 +276,7 @@ function AdminProjectsPage() {
               );
             })}
           </ul>
+          </>
         )}
       </div>
 
