@@ -269,3 +269,98 @@ export const getProjectTyping = createServerFn({ method: "GET" })
     if (!active) return null;
     return { name: active.author_name || "Quelqu'un", recording: active.is_recording_audio };
   });
+/** Latest unread chat message for the current viewer, for the in-app banner. */
+export const getLatestUnreadMessage = createServerFn({ method: "GET" }).handler(async () => {
+  const { resolveViewer } = await import("./video-workspace.server");
+  const viewer = await resolveViewer();
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const readCol = viewer.kind === "editor" ? "read_by_editor" : "read_by_admin";
+  const otherKind = viewer.kind === "editor" ? "admin" : "editor";
+
+  const [{ data: projectMsgs }, { data: videoMsgs }] = await Promise.all([
+    supabaseAdmin
+      .from("project_comments")
+      .select("id, project_id, author_name, author_type, content, image_url, audio_url, created_at")
+      .eq("author_type", otherKind)
+      .eq(readCol, false)
+      .order("created_at", { ascending: false })
+      .limit(1),
+    supabaseAdmin
+      .from("video_comments")
+      .select(
+        "id, project_video_id, author_name, author_type, content, image_url, audio_url, created_at",
+      )
+      .eq("author_type", otherKind)
+      .eq(readCol, false)
+      .order("created_at", { ascending: false })
+      .limit(1),
+  ]);
+
+  const candidates: Array<{
+    id: string;
+    author_name: string;
+    content: string | null;
+    image_url: string | null;
+    audio_url: string | null;
+    created_at: string;
+    project_id: string | null;
+    video_id: string | null;
+  }> = [];
+  const pm = projectMsgs?.[0];
+  if (pm)
+    candidates.push({
+      id: pm.id,
+      author_name: pm.author_name,
+      content: pm.content,
+      image_url: pm.image_url,
+      audio_url: pm.audio_url,
+      created_at: pm.created_at,
+      project_id: pm.project_id,
+      video_id: null,
+    });
+  const vm = videoMsgs?.[0];
+  if (vm) {
+    const { data: pv } = await supabaseAdmin
+      .from("project_videos")
+      .select("id, project_id")
+      .eq("id", vm.project_video_id)
+      .maybeSingle();
+    candidates.push({
+      id: vm.id,
+      author_name: vm.author_name,
+      content: vm.content,
+      image_url: vm.image_url,
+      audio_url: vm.audio_url,
+      created_at: vm.created_at,
+      project_id: pv?.project_id ?? null,
+      video_id: vm.project_video_id,
+    });
+  }
+  if (candidates.length === 0) return null;
+
+  const latest = candidates.sort(
+    (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime(),
+  )[0]!;
+  if (!latest.project_id) return null;
+
+  // Only surface a truly fresh message (last 2 minutes) as a banner.
+  if (Date.now() - new Date(latest.created_at).getTime() > 120_000) return null;
+
+  const { data: project } = await supabaseAdmin
+    .from("projects")
+    .select("title")
+    .eq("id", latest.project_id)
+    .maybeSingle();
+
+  return {
+    id: latest.id,
+    author_name: latest.author_name,
+    preview:
+      (latest.content || "").replace(/#\[([^\]\n]+)\]\(vid:[0-9a-fA-F-]{36}\)/g, "#$1") ||
+      (latest.image_url ? "Photo" : "Message vocal"),
+    project_id: latest.project_id,
+    project_title: project?.title ?? "Projet",
+    video_id: latest.video_id,
+    role: viewer.kind,
+  };
+});
