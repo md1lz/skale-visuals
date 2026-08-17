@@ -944,7 +944,7 @@ export function InstaChat({
                     hidden
                     onChange={(e) => pickImage(e.target.files?.[0])}
                   />
-                  <div className="flex flex-1 items-end rounded-3xl bg-neutral-900 px-4 py-2">
+                  <div className="flex flex-1 items-end gap-1 rounded-3xl bg-neutral-900 py-1.5 pl-4 pr-1.5">
                     <textarea
                       ref={textRef}
                       value={text}
@@ -965,67 +965,83 @@ export function InstaChat({
                         }
                       }}
                       placeholder={placeholder}
-                      className="max-h-28 w-full resize-none bg-transparent text-sm text-neutral-100 outline-none placeholder:text-neutral-600"
+                      className="max-h-28 w-full resize-none self-center bg-transparent py-1.5 text-sm text-neutral-100 outline-none placeholder:text-neutral-600"
                     />
+                    {text.trim() || imageFile ? (
+                      <button
+                        onClick={() => void submit()}
+                        disabled={busy}
+                        className="grid h-9 w-9 shrink-0 place-items-center self-end rounded-full bg-red-600 text-white transition hover:bg-red-500 disabled:opacity-50"
+                        aria-label="Envoyer"
+                      >
+                        {busy ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <ArrowUp className="h-5 w-5" />
+                        )}
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => imageInputRef.current?.click()}
+                          className="grid h-9 w-9 shrink-0 place-items-center self-end rounded-full text-neutral-300 transition hover:bg-white/10"
+                          aria-label="Envoyer une image"
+                        >
+                          <ImageIcon className="h-5 w-5" />
+                        </button>
+                        <button
+                          type="button"
+                          onPointerDown={(e) => {
+                            if (e.pointerType === "mouse" && e.button !== 0) return;
+                            e.currentTarget.setPointerCapture(e.pointerId);
+                            pressStartRef.current = Date.now();
+                            holdModeRef.current = false;
+                            recStartX.current = e.clientX;
+                            recStartY.current = e.clientY;
+                            if (holdTimer.current) clearTimeout(holdTimer.current);
+                            const x = e.clientX;
+                            const y = e.clientY;
+                            holdTimer.current = setTimeout(() => {
+                              holdModeRef.current = true;
+                              void startRecording("hold", x, y);
+                            }, 350);
+                          }}
+                          onPointerMove={(e) => {
+                            if (!holdModeRef.current || !recording || lockedRef.current) return;
+                            if (e.clientY - recStartY.current < -60) {
+                              lockRecording();
+                              return;
+                            }
+                            setRecCancelHint(e.clientX - recStartX.current < -70);
+                          }}
+                          onPointerUp={(e) => {
+                            if (holdTimer.current) clearTimeout(holdTimer.current);
+                            holdReleasedRef.current = true;
+                            if (!holdModeRef.current) {
+                              // clic simple → enregistrement verrouillé
+                              void startRecording("lock");
+                              return;
+                            }
+                            if (lockedRef.current) return;
+                            if (recorderRef.current?.state !== "recording") return;
+                            if (e.clientX - recStartX.current < -70) cancelWithAnim();
+                            else stopRecording(false);
+                          }}
+                          onPointerCancel={() => {
+                            if (holdTimer.current) clearTimeout(holdTimer.current);
+                            holdReleasedRef.current = true;
+                            if (lockedRef.current) return;
+                            if (recorderRef.current?.state === "recording") lockRecording();
+                          }}
+                          className="grid h-9 w-9 shrink-0 touch-none select-none place-items-center self-end rounded-full text-neutral-300 transition hover:bg-white/10"
+                          aria-label="Message vocal"
+                        >
+                          <Mic className="h-5 w-5" />
+                        </button>
+                      </>
+                    )}
                   </div>
-                  {text.trim() || imageFile ? (
-                    <button
-                      onClick={() => void submit()}
-                      disabled={busy}
-                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-600 text-white transition hover:bg-red-500 disabled:opacity-50"
-                    >
-                      {busy ? (
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        <ArrowUp className="h-5 w-5" />
-                      )}
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        onPointerDown={(e) => {
-                          e.preventDefault();
-                          e.currentTarget.setPointerCapture(e.pointerId);
-                          pressStartRef.current = Date.now();
-                          void startRecording(e.clientX, e.clientY);
-                        }}
-                        onPointerMove={(e) => {
-                          if (!recording || lockedRef.current) return;
-                          const dy = e.clientY - recStartY.current;
-                          if (dy < -60) {
-                            lockRecording();
-                            return;
-                          }
-                          setRecCancelHint(e.clientX - recStartX.current < -70);
-                        }}
-                        onPointerUp={(e) => {
-                          holdReleasedRef.current = true;
-                          if (lockedRef.current) return;
-                          if (recorderRef.current?.state !== "recording") return;
-                          const held = Date.now() - pressStartRef.current;
-                          if (held < 350) lockRecording();
-                          else if (e.clientX - recStartX.current < -70) cancelWithAnim();
-                          else stopRecording(false);
-                        }}
-                        onPointerCancel={() => {
-                          holdReleasedRef.current = true;
-                          if (lockedRef.current) return;
-                          if (recorderRef.current?.state === "recording") lockRecording();
-                        }}
-                        className="grid h-10 w-10 shrink-0 touch-none select-none place-items-center rounded-full bg-neutral-900 text-neutral-300 transition hover:bg-neutral-800"
-                        aria-label="Message vocal"
-                      >
-                        <Mic className="h-5 w-5" />
-                      </button>
-                      <button
-                        onClick={() => imageInputRef.current?.click()}
-                        className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-neutral-300 transition hover:bg-white/10"
-                        aria-label="Envoyer une image"
-                      >
-                        <ImageIcon className="h-5 w-5" />
-                      </button>
-                    </>
-                  )}
                 </div>
               )}
             </div>
