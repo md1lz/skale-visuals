@@ -1,4 +1,4 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
@@ -25,9 +25,11 @@ import {
   Plus,
   Pencil,
   Trash2,
+  Target,
 } from "lucide-react";
 import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.functions";
 import { getAdminProfile } from "@/lib/admin-auth.functions";
+import { listFollowupsDue } from "@/lib/admin-prospects.functions";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 
 export const Route = createFileRoute("/crm/admin/")({
@@ -48,6 +50,14 @@ function AdminHome() {
   const fetchAnalytics = useServerFn(getSiteAnalytics);
   const fetchProfile = useServerFn(getAdminProfile);
   const fetchActivity = useServerFn(getRecentActivity);
+  const fetchFollowups = useServerFn(listFollowupsDue);
+
+  const followupsQ = useQuery({
+    queryKey: ["admin", "prospect-followups"],
+    queryFn: () => fetchFollowups(),
+    initialData: [] as Awaited<ReturnType<typeof fetchFollowups>>,
+    refetchInterval: 60_000,
+  });
 
   const profileQ = useQuery({
     queryKey: ["admin", "profile"],
