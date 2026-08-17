@@ -138,6 +138,7 @@ export function InstaChat({
   onDelete,
   onTyping,
   placeholder = "Message…",
+  variant = "overlay",
 }: {
   open: boolean;
   onClose: () => void;
@@ -156,6 +157,7 @@ export function InstaChat({
   onDelete?: (commentId: string) => Promise<void> | void;
   onTyping?: (state: "typing" | "recording" | "off") => void;
   placeholder?: string;
+  variant?: "overlay" | "inline";
 }) {
   const [text, setText] = useState("");
   const [busy, setBusy] = useState(false);
@@ -169,6 +171,8 @@ export function InstaChat({
   const [recording, setRecording] = useState(false);
   const [recSeconds, setRecSeconds] = useState(0);
   const [recCancelHint, setRecCancelHint] = useState(false);
+  const [locked, setLocked] = useState(false);
+  const [trashing, setTrashing] = useState(false);
   const [levels, setLevels] = useState<number[]>(() => Array.from({ length: 34 }, () => 4));
 
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -185,6 +189,9 @@ export function InstaChat({
   const typingSentAt = useRef(0);
   const typingOff = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recStartX = useRef(0);
+  const recStartY = useRef(0);
+  const pressStartRef = useRef(0);
+  const lockedRef = useRef(false);
   const holdReleasedRef = useRef(false);
 
   const byId = useMemo(() => new Map(messages.map((m) => [m.id, m])), [messages]);
@@ -194,9 +201,22 @@ export function InstaChat({
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
   }, []);
 
+  const [visibleCount, setVisibleCount] = useState(40);
+  const shown = useMemo(
+    () => (messages.length > visibleCount ? messages.slice(-visibleCount) : messages),
+    [messages, visibleCount],
+  );
+
   useEffect(() => {
-    if (open) requestAnimationFrame(() => scrollToEnd());
-  }, [open, messages.length, scrollToEnd]);
+    if (variant !== "inline" && !open) return;
+    // Toujours atterrir sur le message le plus récent à l'ouverture.
+    requestAnimationFrame(() => {
+      scrollToEnd();
+      requestAnimationFrame(() => scrollToEnd());
+    });
+    const t = setTimeout(() => scrollToEnd(), 220);
+    return () => clearTimeout(t);
+  }, [open, variant, messages.length, scrollToEnd]);
 
   useEffect(() => {
     if (!open) return;
@@ -313,10 +333,25 @@ export function InstaChat({
   }
 
   /* ------------------------------- recording ----------------------------- */
-  async function startRecording(clientX: number) {
+  function lockRecording() {
+    lockedRef.current = true;
+    setLocked(true);
+    setRecCancelHint(false);
+  }
+
+  function cancelWithAnim() {
+    setTrashing(true);
+    stopRecording(true);
+    setTimeout(() => setTrashing(false), 600);
+  }
+
+  async function startRecording(clientX: number, clientY = 0) {
     if (recording) return;
     holdReleasedRef.current = false;
+    lockedRef.current = false;
+    setLocked(false);
     recStartX.current = clientX;
+    recStartY.current = clientY;
     let stream: MediaStream;
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -363,6 +398,8 @@ export function InstaChat({
       setLevels(Array.from({ length: 34 }, () => 4));
       setRecording(false);
       setRecCancelHint(false);
+      lockedRef.current = false;
+      setLocked(false);
       onTyping?.("off");
       const seconds = recSecondsRef.current;
       setRecSeconds(0);
@@ -374,8 +411,8 @@ export function InstaChat({
     recorderRef.current = rec;
     rec.start();
     if (holdReleasedRef.current) {
-      // The user released the mic button before permission resolved.
-      setTimeout(() => stopRecording(true), 0);
+      // Le doigt a été relâché avant l'autorisation : on bascule en mode verrouillé.
+      lockRecording();
     }
     setRecording(true);
     setRecSeconds(0);
@@ -396,9 +433,9 @@ export function InstaChat({
 
   /* -------------------------------- render ------------------------------- */
   const grouped = useMemo(() => {
-    return messages.map((m, i) => {
-      const prev = messages[i - 1];
-      const next = messages[i + 1];
+    return shown.map((m, i) => {
+      const prev = shown[i - 1];
+      const next = shown[i + 1];
       const mine = viewerId ? m.author_id === viewerId : m.author_type === viewerKind;
       const sameAsPrev =
         prev && prev.author_id === m.author_id && dayKey(prev.created_at) === dayKey(m.created_at);
@@ -407,7 +444,7 @@ export function InstaChat({
       const newDay = !prev || dayKey(prev.created_at) !== dayKey(m.created_at);
       return { m, mine, first: !sameAsPrev, last: !sameAsNext, newDay };
     });
-  }, [messages, viewerId, viewerKind]);
+  }, [shown, viewerId, viewerKind]);
 
   const lastMine = useMemo(
     () =>
@@ -424,24 +461,18 @@ export function InstaChat({
 
   const replyPreview = replyTo ? byId.get(replyTo) : null;
 
-  return (
-    <AnimatePresence>
-      {open && (
-        <motion.div
-          initial={{ x: "100%" }}
-          animate={{ x: 0 }}
-          exit={{ x: "100%" }}
-          transition={{ type: "tween", duration: 0.26, ease: [0.32, 0.72, 0, 1] }}
-          className="fixed inset-0 z-[300] flex flex-col bg-neutral-950"
-        >
+  const inner = (
+    <>
           {/* header */}
           <div className="flex shrink-0 items-center gap-3 border-b border-white/5 px-3 py-3 sm:px-5">
-            <button
-              onClick={onClose}
-              className="grid h-9 w-9 place-items-center rounded-full text-neutral-200 transition hover:bg-white/10"
-            >
-              <ArrowLeft className="h-5 w-5" />
-            </button>
+            {variant === "overlay" && (
+              <button
+                onClick={onClose}
+                className="grid h-9 w-9 place-items-center rounded-full text-neutral-200 transition hover:bg-white/10"
+              >
+                <ArrowLeft className="h-5 w-5" />
+              </button>
+            )}
             <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-red-500 to-orange-400 text-[12px] font-semibold text-white">
               {initials(title)}
             </div>
@@ -458,6 +489,14 @@ export function InstaChat({
             className="flex-1 overflow-y-auto overscroll-contain px-3 py-4 sm:px-5"
           >
             <div className="mx-auto flex max-w-2xl flex-col gap-0.5">
+              {messages.length > shown.length && (
+                <button
+                  onClick={() => setVisibleCount((c) => c + 40)}
+                  className="mx-auto mb-2 rounded-full border border-white/10 px-3 py-1.5 text-[11px] text-neutral-400 transition hover:bg-white/5 hover:text-white"
+                >
+                  Voir les anciens messages
+                </button>
+              )}
               {grouped.length === 0 && (
                 <p className="py-16 text-center text-sm text-neutral-600">
                   Aucun message pour l'instant.
@@ -729,22 +768,69 @@ export function InstaChat({
 
               {recording ? (
                 <div className="flex items-center gap-3 rounded-full bg-neutral-900 px-4 py-2.5">
-                  <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
-                  <span className="text-xs tabular-nums text-neutral-300">
-                    {fmtSec(recSeconds)}
+                  {locked ? (
+                    <motion.button
+                      onClick={cancelWithAnim}
+                      animate={trashing ? { rotate: [0, -18, 14, 0], scale: [1, 1.2, 1] } : {}}
+                      transition={{ duration: 0.5 }}
+                      className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-white/5 text-red-400 transition hover:bg-red-500/15"
+                      aria-label="Annuler le vocal"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </motion.button>
+                  ) : (
+                    <motion.span
+                      animate={
+                        recCancelHint ? { rotate: [0, -18, 14, 0], scale: 1.15 } : { scale: 1 }
+                      }
+                      transition={{ duration: 0.5 }}
+                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-full ${
+                        recCancelHint ? "bg-red-500/20 text-red-400" : "text-red-500"
+                      }`}
+                    >
+                      {recCancelHint ? (
+                        <Trash2 className="h-4 w-4" />
+                      ) : (
+                        <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
+                      )}
+                    </motion.span>
+                  )}
+                  <motion.div
+                    animate={
+                      trashing
+                        ? { x: -60, y: 18, scale: 0.2, opacity: 0 }
+                        : { x: recCancelHint ? -14 : 0, opacity: 1, scale: 1 }
+                    }
+                    transition={{ duration: trashing ? 0.45 : 0.15 }}
+                    className="flex min-w-0 flex-1 items-center gap-2"
+                  >
+                    <div className="flex h-6 flex-1 items-center gap-[2px] overflow-hidden">
+                      {levels.map((h, i) => (
+                        <span
+                          key={i}
+                          style={{ height: h }}
+                          className="w-[3px] rounded-full bg-red-400/80"
+                        />
+                      ))}
+                    </div>
+                    <span className="shrink-0 text-xs tabular-nums text-neutral-300">
+                      {fmtSec(recSeconds)}
+                    </span>
+                  </motion.div>
+                  <span className="hidden shrink-0 text-[11px] text-neutral-500 sm:block">
+                    {locked
+                      ? "Vocal verrouillé"
+                      : recCancelHint
+                        ? "Relâchez pour annuler"
+                        : "← annuler · ↑ verrouiller"}
                   </span>
-                  <div className="flex h-6 flex-1 items-center gap-[2px] overflow-hidden">
-                    {levels.map((h, i) => (
-                      <span
-                        key={i}
-                        style={{ height: h }}
-                        className="w-[3px] rounded-full bg-red-400/80"
-                      />
-                    ))}
-                  </div>
-                  <span className="text-[11px] text-neutral-500">
-                    {recCancelHint ? "Relâchez pour annuler" : "Glissez à gauche pour annuler"}
-                  </span>
+                  <button
+                    onClick={() => stopRecording(false)}
+                    className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-red-600 text-white transition hover:bg-red-500"
+                    aria-label="Envoyer le vocal"
+                  >
+                    <ArrowUp className="h-5 w-5" />
+                  </button>
                 </div>
               ) : (
                 <div className="flex items-end gap-2">
@@ -755,12 +841,6 @@ export function InstaChat({
                     hidden
                     onChange={(e) => pickImage(e.target.files?.[0])}
                   />
-                  <button
-                    onClick={() => imageInputRef.current?.click()}
-                    className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-neutral-300 transition hover:bg-white/10"
-                  >
-                    <ImageIcon className="h-5 w-5" />
-                  </button>
                   <div className="flex flex-1 items-end rounded-3xl bg-neutral-900 px-4 py-2">
                     <textarea
                       ref={textRef}
@@ -798,25 +878,50 @@ export function InstaChat({
                       )}
                     </button>
                   ) : (
-                    <button
-                      onPointerDown={(e) => void startRecording(e.clientX)}
-                      onPointerMove={(e) => {
-                        if (!recording) return;
-                        setRecCancelHint(e.clientX - recStartX.current < -70);
-                      }}
-                      onPointerUp={(e) => {
-                        holdReleasedRef.current = true;
-                        if (recorderRef.current?.state === "recording")
-                          stopRecording(e.clientX - recStartX.current < -70);
-                      }}
-                      onPointerCancel={() => {
-                        holdReleasedRef.current = true;
-                        if (recorderRef.current?.state === "recording") stopRecording(true);
-                      }}
-                      className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-neutral-900 text-neutral-300 transition hover:bg-neutral-800"
-                    >
-                      <Mic className="h-5 w-5" />
-                    </button>
+                    <>
+                      <button
+                        onPointerDown={(e) => {
+                          e.preventDefault();
+                          e.currentTarget.setPointerCapture(e.pointerId);
+                          pressStartRef.current = Date.now();
+                          void startRecording(e.clientX, e.clientY);
+                        }}
+                        onPointerMove={(e) => {
+                          if (!recording || lockedRef.current) return;
+                          const dy = e.clientY - recStartY.current;
+                          if (dy < -60) {
+                            lockRecording();
+                            return;
+                          }
+                          setRecCancelHint(e.clientX - recStartX.current < -70);
+                        }}
+                        onPointerUp={(e) => {
+                          holdReleasedRef.current = true;
+                          if (lockedRef.current) return;
+                          if (recorderRef.current?.state !== "recording") return;
+                          const held = Date.now() - pressStartRef.current;
+                          if (held < 350) lockRecording();
+                          else if (e.clientX - recStartX.current < -70) cancelWithAnim();
+                          else stopRecording(false);
+                        }}
+                        onPointerCancel={() => {
+                          holdReleasedRef.current = true;
+                          if (lockedRef.current) return;
+                          if (recorderRef.current?.state === "recording") lockRecording();
+                        }}
+                        className="grid h-10 w-10 shrink-0 touch-none select-none place-items-center rounded-full bg-neutral-900 text-neutral-300 transition hover:bg-neutral-800"
+                        aria-label="Message vocal"
+                      >
+                        <Mic className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => imageInputRef.current?.click()}
+                        className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-neutral-300 transition hover:bg-white/10"
+                        aria-label="Envoyer une image"
+                      >
+                        <ImageIcon className="h-5 w-5" />
+                      </button>
+                    </>
                   )}
                 </div>
               )}
@@ -824,6 +929,38 @@ export function InstaChat({
           </div>
 
           {lightbox && <ImageLightbox src={lightbox} onClose={() => setLightbox(null)} />}
+    </>
+  );
+
+  if (variant === "inline") {
+    return (
+      <div className="flex h-[68vh] max-h-[620px] min-h-[380px] flex-col overflow-hidden rounded-2xl border border-white/10 bg-neutral-950">
+        {inner}
+      </div>
+    );
+  }
+
+  return (
+    <AnimatePresence>
+      {open && (
+        <motion.div
+          initial={{ x: "100%" }}
+          animate={{ x: 0 }}
+          exit={{ x: "100%" }}
+          transition={{ type: "tween", duration: 0.26, ease: [0.32, 0.72, 0, 1] }}
+          drag="x"
+          dragDirectionLock
+          dragConstraints={{ left: 0, right: 0 }}
+          dragElastic={{ left: 0, right: 0.6 }}
+          onDragEnd={(_, info) => {
+            if (info.offset.x > 110 || info.velocity.x > 700) onClose();
+          }}
+          onPointerDownCapture={(e) => e.stopPropagation()}
+          onTouchStartCapture={(e) => e.stopPropagation()}
+          style={{ height: "100dvh" }}
+          className="fixed inset-0 z-[300] flex w-screen flex-col overflow-hidden bg-neutral-950"
+        >
+          {inner}
         </motion.div>
       )}
     </AnimatePresence>

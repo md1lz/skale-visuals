@@ -23,7 +23,6 @@ import {
   AlertTriangle,
   Pencil,
   ChevronDown,
-  Copy,
 } from "lucide-react";
 import { ImageIcon, Mic, Pause, ArrowUp } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -133,10 +132,10 @@ export function RushLink({ href, label }: { href: string; label?: string }) {
       href={url}
       target="_blank"
       rel="noopener noreferrer"
-      className="inline-flex w-full min-w-0 max-w-full items-center gap-1.5 text-sm text-red-300 transition hover:text-red-200"
+      className="flex w-full min-w-0 max-w-full items-center gap-1.5 text-sm text-red-300 transition hover:text-red-200"
     >
       <Icon className="h-3.5 w-3.5 shrink-0" />
-      <span className="min-w-0 flex-1 truncate">{label || href}</span>
+      <span className="block min-w-0 flex-1 truncate">{label || href}</span>
       <ExternalLink className="h-3 w-3 shrink-0 opacity-60" />
     </a>
   );
@@ -1364,17 +1363,6 @@ function VideoDetail({
                   <span className="sm:hidden">{script ? "rempli" : "vide"}</span>
                 </span>
               </button>
-              {script && (
-                <button
-                  onClick={() => {
-                    navigator.clipboard.writeText(script);
-                    toast.success("Script copié");
-                  }}
-                  className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-neutral-300 transition hover:bg-white/5 hover:text-white"
-                >
-                  <Copy className="h-3.5 w-3.5" /> Copier
-                </button>
-              )}
             </div>
             <AnimatePresence initial={false}>
               {scriptOpen && (
@@ -1528,7 +1516,7 @@ function VideoDetail({
                               {v.description}
                             </p>
                           )}
-                          <div className="mt-1">
+                          <div className="mt-1 w-full min-w-0">
                             <RushLink href={src} label={normalizeHref(v.file_url)} />
                           </div>
                           {extraLinks(v).length > 0 && (
@@ -1598,35 +1586,9 @@ function VideoDetail({
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setChatOpen(true)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-neutral-900/60 px-4 py-3.5 text-left transition hover:border-white/25 hover:bg-neutral-900"
-      >
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-red-500 to-orange-400 text-white">
-          <MessagesSquare className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-white">Chat de la vidéo</p>
-          <p className="truncate text-[12px] text-neutral-500">
-            {chatMessages.length === 0
-              ? "Aucun message"
-              : `${chatMessages[chatMessages.length - 1]?.author_name} : ${
-                  chatMessages[chatMessages.length - 1]?.content ||
-                  (chatMessages[chatMessages.length - 1]?.image_url ? "Photo" : "Message vocal")
-                }`}
-          </p>
-        </div>
-        {unreadIds.size > 0 && (
-          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
-            {unreadIds.size}
-          </span>
-        )}
-        <ChevronRight className="h-4 w-4 shrink-0 text-neutral-600" />
-      </button>
-
       <InstaChat
-        open={chatOpen}
+        variant="inline"
+        open
         onClose={() => setChatOpen(false)}
         title={`Vidéo #${String(video?.video_number ?? 0).padStart(2, "0")}${
           (video as { title?: string | null } | undefined)?.title

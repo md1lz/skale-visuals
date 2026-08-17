@@ -82,11 +82,11 @@ export function EditorProfileMenu({ initial }: { initial: Profile }) {
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ opacity: 0, x: -8, scale: 0.97 }}
-              animate={{ opacity: 1, x: 0, scale: 1 }}
-              exit={{ opacity: 0, x: -8, scale: 0.97 }}
+              initial={{ opacity: 0, y: -6, scale: 0.97 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -6, scale: 0.97 }}
               transition={{ duration: 0.15 }}
-              className="absolute top-0 left-full ml-2 w-56 rounded-lg border border-white/10 bg-neutral-900 shadow-xl overflow-hidden z-50"
+              className="absolute left-0 top-full mt-2 w-full min-w-[12rem] rounded-lg border border-white/10 bg-neutral-900 shadow-xl overflow-hidden z-50"
             >
               <button
                 onClick={() => {
