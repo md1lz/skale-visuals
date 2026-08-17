@@ -194,6 +194,7 @@ function GestureBubble({
         start.current = null;
       }}
       onContextMenu={(e) => e.preventDefault()}
+      onClick={(e) => e.stopPropagation()}
       style={{
         transform: `translateX(${dx}px)`,
         transition: dx ? "none" : "transform .18s ease-out",
