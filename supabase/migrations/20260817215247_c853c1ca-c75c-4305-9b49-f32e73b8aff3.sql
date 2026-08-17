@@ -1,0 +1,2 @@
+alter table public.video_comments add column if not exists reply_to uuid references public.video_comments(id) on delete set null;
+alter table public.project_comments add column if not exists reply_to uuid references public.project_comments(id) on delete set null;

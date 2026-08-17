@@ -344,6 +344,7 @@ export type Database = {
           read_at: string | null
           read_by_admin: boolean
           read_by_editor: boolean
+          reply_to: string | null
         }
         Insert: {
           audio_duration?: number | null
@@ -359,6 +360,7 @@ export type Database = {
           read_at?: string | null
           read_by_admin?: boolean
           read_by_editor?: boolean
+          reply_to?: string | null
         }
         Update: {
           audio_duration?: number | null
@@ -374,6 +376,7 @@ export type Database = {
           read_at?: string | null
           read_by_admin?: boolean
           read_by_editor?: boolean
+          reply_to?: string | null
         }
         Relationships: [
           {
@@ -381,6 +384,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "project_comments_reply_to_fkey"
+            columns: ["reply_to"]
+            isOneToOne: false
+            referencedRelation: "project_comments"
             referencedColumns: ["id"]
           },
         ]
@@ -1002,6 +1012,7 @@ export type Database = {
           read_at: string | null
           read_by_admin: boolean
           read_by_editor: boolean
+          reply_to: string | null
         }
         Insert: {
           audio_duration?: number | null
@@ -1017,6 +1028,7 @@ export type Database = {
           read_at?: string | null
           read_by_admin?: boolean
           read_by_editor?: boolean
+          reply_to?: string | null
         }
         Update: {
           audio_duration?: number | null
@@ -1032,6 +1044,7 @@ export type Database = {
           read_at?: string | null
           read_by_admin?: boolean
           read_by_editor?: boolean
+          reply_to?: string | null
         }
         Relationships: [
           {
@@ -1039,6 +1052,13 @@ export type Database = {
             columns: ["project_video_id"]
             isOneToOne: false
             referencedRelation: "project_videos"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "video_comments_reply_to_fkey"
+            columns: ["reply_to"]
+            isOneToOne: false
+            referencedRelation: "video_comments"
             referencedColumns: ["id"]
           },
         ]
