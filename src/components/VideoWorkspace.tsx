@@ -1586,35 +1586,9 @@ function VideoDetail({
         </div>
       </div>
 
-      <button
-        type="button"
-        onClick={() => setChatOpen(true)}
-        className="flex w-full items-center gap-3 rounded-2xl border border-white/10 bg-neutral-900/60 px-4 py-3.5 text-left transition hover:border-white/25 hover:bg-neutral-900"
-      >
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-gradient-to-br from-red-500 to-orange-400 text-white">
-          <MessagesSquare className="h-5 w-5" />
-        </div>
-        <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-semibold text-white">Chat de la vidéo</p>
-          <p className="truncate text-[12px] text-neutral-500">
-            {chatMessages.length === 0
-              ? "Aucun message"
-              : `${chatMessages[chatMessages.length - 1]?.author_name} : ${
-                  chatMessages[chatMessages.length - 1]?.content ||
-                  (chatMessages[chatMessages.length - 1]?.image_url ? "Photo" : "Message vocal")
-                }`}
-          </p>
-        </div>
-        {unreadIds.size > 0 && (
-          <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
-            {unreadIds.size}
-          </span>
-        )}
-        <ChevronRight className="h-4 w-4 shrink-0 text-neutral-600" />
-      </button>
-
       <InstaChat
-        open={chatOpen}
+        variant="inline"
+        open
         onClose={() => setChatOpen(false)}
         title={`Vidéo #${String(video?.video_number ?? 0).padStart(2, "0")}${
           (video as { title?: string | null } | undefined)?.title
