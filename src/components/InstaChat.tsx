@@ -454,22 +454,30 @@ export function InstaChat({
     setTimeout(() => setTrashing(false), 600);
   }
 
-  async function startRecording(clientX: number, clientY = 0) {
+  async function startRecording(mode: "hold" | "lock", clientX = 0, clientY = 0) {
     if (recording) return;
     holdReleasedRef.current = false;
-    lockedRef.current = false;
-    setLocked(false);
+    lockedRef.current = mode === "lock";
+    setLocked(mode === "lock");
     recStartX.current = clientX;
     recStartY.current = clientY;
     let stream: MediaStream;
+    if (!navigator.mediaDevices?.getUserMedia || typeof MediaRecorder === "undefined") {
+      toast.error("Enregistrement audio non supporté sur ce navigateur.");
+      return;
+    }
     try {
       stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     } catch {
       toast.error("Autorisez l'accès au microphone.");
       return;
     }
-    const mime = MediaRecorder.isTypeSupported("audio/webm") ? "audio/webm" : "audio/mp4";
-    const rec = new MediaRecorder(stream, { mimeType: mime });
+    const mime = MediaRecorder.isTypeSupported("audio/webm")
+      ? "audio/webm"
+      : MediaRecorder.isTypeSupported("audio/mp4")
+        ? "audio/mp4"
+        : "";
+    const rec = mime ? new MediaRecorder(stream, { mimeType: mime }) : new MediaRecorder(stream);
     recChunksRef.current = [];
     recCancelledRef.current = false;
     try {
@@ -519,7 +527,7 @@ export function InstaChat({
     };
     recorderRef.current = rec;
     rec.start();
-    if (holdReleasedRef.current) {
+    if (mode === "hold" && holdReleasedRef.current) {
       // Le doigt a été relâché avant l'autorisation : on bascule en mode verrouillé.
       lockRecording();
     }
