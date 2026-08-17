@@ -265,6 +265,7 @@ export function InstaChat({
   const [levels, setLevels] = useState<number[]>(() => Array.from({ length: 34 }, () => 4));
 
   const scrollRef = useRef<HTMLDivElement>(null);
+  const endRef = useRef<HTMLDivElement>(null);
   const textRef = useRef<HTMLTextAreaElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
   const recorderRef = useRef<MediaRecorder | null>(null);
@@ -274,7 +275,8 @@ export function InstaChat({
   const recSecondsRef = useRef(0);
   const audioCtxRef = useRef<AudioContext | null>(null);
   const rafRef = useRef<number | null>(null);
-  const pressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const holdModeRef = useRef(false);
   const typingSentAt = useRef(0);
   const typingOff = useRef<ReturnType<typeof setTimeout> | null>(null);
   const recStartX = useRef(0);
@@ -288,6 +290,7 @@ export function InstaChat({
   const scrollToEnd = useCallback((smooth = false) => {
     const el = scrollRef.current;
     if (el) el.scrollTo({ top: el.scrollHeight, behavior: smooth ? "smooth" : "auto" });
+    endRef.current?.scrollIntoView({ block: "end", behavior: smooth ? "smooth" : "auto" });
   }, []);
 
   const [visibleCount, setVisibleCount] = useState(40);
@@ -303,9 +306,26 @@ export function InstaChat({
       scrollToEnd();
       requestAnimationFrame(() => scrollToEnd());
     });
-    const t = setTimeout(() => scrollToEnd(), 220);
-    return () => clearTimeout(t);
+    const t1 = setTimeout(() => scrollToEnd(), 220);
+    const t2 = setTimeout(() => scrollToEnd(), 600);
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
   }, [open, variant, messages.length, scrollToEnd]);
+
+  // Le geste "retour" (swipe bord gauche / bouton back) ferme le chat, sans naviguer.
+  useEffect(() => {
+    if (variant !== "overlay" || !open) return;
+    window.history.pushState({ instachat: true }, "");
+    const onPop = () => onClose();
+    window.addEventListener("popstate", onPop);
+    return () => {
+      window.removeEventListener("popstate", onPop);
+      if ((window.history.state as { instachat?: boolean } | null)?.instachat)
+        window.history.back();
+    };
+  }, [open, variant, onClose]);
 
   useEffect(() => {
     if (!open) return;
