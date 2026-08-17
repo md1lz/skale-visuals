@@ -534,6 +534,38 @@ export function InstaChat({
       // Le doigt a été relâché avant l'autorisation : on bascule en mode verrouillé.
       lockRecording();
     }
+    if (mode === "hold" && !holdReleasedRef.current) {
+      // Le bouton micro est démonté pendant l'enregistrement : on suit le doigt
+      // au niveau de la fenêtre pour garder maintien / annulation / verrouillage.
+      const detach = () => {
+        window.removeEventListener("pointermove", onMove);
+        window.removeEventListener("pointerup", onUp);
+        window.removeEventListener("pointercancel", onUp);
+      };
+      const onMove = (ev: PointerEvent) => {
+        if (lockedRef.current) {
+          detach();
+          return;
+        }
+        if (ev.clientY - recStartY.current < -60) {
+          lockRecording();
+          detach();
+          return;
+        }
+        setRecCancelHint(ev.clientX - recStartX.current < -70);
+      };
+      const onUp = (ev: PointerEvent) => {
+        detach();
+        holdReleasedRef.current = true;
+        if (lockedRef.current) return;
+        if (recorderRef.current?.state !== "recording") return;
+        if (ev.clientX - recStartX.current < -70) cancelWithAnim();
+        else stopRecording(false);
+      };
+      window.addEventListener("pointermove", onMove);
+      window.addEventListener("pointerup", onUp);
+      window.addEventListener("pointercancel", onUp);
+    }
     setRecording(true);
     setRecSeconds(0);
     recSecondsRef.current = 0;
@@ -1026,16 +1058,11 @@ export function InstaChat({
                               void startRecording("lock");
                               return;
                             }
-                            if (lockedRef.current) return;
-                            if (recorderRef.current?.state !== "recording") return;
-                            if (e.clientX - recStartX.current < -70) cancelWithAnim();
-                            else stopRecording(false);
+                            // en mode maintien, les listeners fenêtre gèrent la suite
                           }}
                           onPointerCancel={() => {
                             if (holdTimer.current) clearTimeout(holdTimer.current);
                             holdReleasedRef.current = true;
-                            if (lockedRef.current) return;
-                            if (recorderRef.current?.state === "recording") lockRecording();
                           }}
                           className="grid h-9 w-9 shrink-0 touch-none select-none place-items-center self-end rounded-full text-neutral-300 transition hover:bg-white/10"
                           aria-label="Message vocal"
