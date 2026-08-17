@@ -97,7 +97,7 @@ type Ctx = {
   background: string | null;
   setBackground: (b: string | null) => void;
   mode: PanelMode;
-  setMode: (m: PanelMode) => void;
+  setMode: (m: ModePref) => void;
   /** User preference, which may be "system". `mode` is the resolved value. */
   modePref: ModePref;
 };
