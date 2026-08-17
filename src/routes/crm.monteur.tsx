@@ -6,6 +6,7 @@ import { EditorProfileMenu } from "@/components/EditorProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { PushSetup } from "@/components/PushSetup";
+import { MessagePing } from "@/components/MessagePing";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
 
 export const Route = createFileRoute("/crm/monteur")({
@@ -43,6 +44,7 @@ function EditorLayout() {
     <AdminPrefsProvider>
       <ThemeStyleInjector />
       <PushSetup />
+      <MessagePing role="editor" />
       <EditorLayoutInner />
     </AdminPrefsProvider>
   );
