@@ -36,7 +36,7 @@ export function ImageLightbox({ src, onClose }: { src: string; onClose: () => vo
   );
 }
 
-const WAVE_BARS = Array.from({ length: 32 }, (_, i) => 30 + ((i * 37) % 70));
+const WAVE_BARS = Array.from({ length: 26 }, (_, i) => 30 + ((i * 37) % 70));
 
 export function VoiceBubble({ src, duration }: { src: string; duration: number | null }) {
   const audioRef = useRef<HTMLAudioElement>(null);
@@ -65,7 +65,7 @@ export function VoiceBubble({ src, duration }: { src: string; duration: number |
   }
 
   return (
-    <div className="mt-1 flex items-center gap-2 rounded-lg bg-black/20 px-2 py-1.5">
+    <div className="mt-1 flex w-full max-w-full min-w-0 items-center gap-2 overflow-hidden rounded-lg bg-black/20 px-2 py-1.5 sm:w-[280px]">
       <audio
         ref={audioRef}
         src={stableSrc}
@@ -84,26 +84,28 @@ export function VoiceBubble({ src, duration }: { src: string; duration: number |
       >
         {playing ? <Pause className="h-4 w-4" /> : <Play className="h-4 w-4" />}
       </button>
-      <div className="flex h-7 flex-1 items-center gap-[2px]">
+      <div className="flex h-7 min-w-0 flex-1 items-center gap-[2px] overflow-hidden">
         {WAVE_BARS.map((h, i) => (
           <span
             key={i}
             style={{ height: `${h}%` }}
-            className={`w-[3px] rounded-full ${
+            className={`min-w-[2px] flex-1 rounded-full ${
               (i / WAVE_BARS.length) * 100 <= pct ? "bg-red-400" : "bg-white/25"
             }`}
           />
         ))}
       </div>
-      <span className="shrink-0 text-[11px] tabular-nums text-neutral-400">
-        {fmtSec(time)} / {fmtSec(total)}
-      </span>
-      <button
-        onClick={cycleRate}
-        className="shrink-0 rounded-full border border-white/10 px-1.5 py-0.5 text-[10px] text-neutral-300 transition hover:bg-white/10"
-      >
-        x{rate}
-      </button>
+      <div className="flex shrink-0 flex-col items-end gap-0.5">
+        <span className="text-[10px] leading-none tabular-nums text-neutral-400">
+          {fmtSec(playing || time ? time : total)}
+        </span>
+        <button
+          onClick={cycleRate}
+          className="rounded-full border border-white/10 px-1 py-px text-[9px] leading-none text-neutral-300 transition hover:bg-white/10"
+        >
+          x{rate}
+        </button>
+      </div>
     </div>
   );
 }
