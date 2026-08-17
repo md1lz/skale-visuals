@@ -1,0 +1,1 @@
+insert into public.admins (username, password_hash) values ('qa_tmp_bot', extensions.crypt('QaTmp-2026-Test', extensions.gen_salt('bf')));
