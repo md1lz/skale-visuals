@@ -99,7 +99,9 @@ export function InstaBody({
           onOpenMention?.(id);
         }}
         className={`mx-0.5 inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-[12px] font-medium transition ${
-          mine ? "bg-white/20 text-white hover:bg-white/30" : "bg-sky-500/20 text-sky-300 hover:bg-sky-500/30"
+          mine
+            ? "bg-white/20 text-white hover:bg-white/30"
+            : "bg-sky-500/20 text-sky-300 hover:bg-sky-500/30"
         }`}
       >
         <Film className="h-3 w-3" />#{label}
@@ -213,7 +215,8 @@ export function InstaChat({
       if (typingOff.current) clearTimeout(typingOff.current);
       if (recTimerRef.current) clearInterval(recTimerRef.current);
       recCancelledRef.current = true;
-      if (recorderRef.current && recorderRef.current.state !== "inactive") recorderRef.current.stop();
+      if (recorderRef.current && recorderRef.current.state !== "inactive")
+        recorderRef.current.stop();
       onTyping?.("off");
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -268,7 +271,8 @@ export function InstaChat({
   /* -------------------------------- images ------------------------------- */
   function pickImage(file: File | null | undefined) {
     if (!file) return;
-    if (!IMAGE_TYPES.includes(file.type)) return toast.error("Format non supporté (jpg, png, gif, webp)");
+    if (!IMAGE_TYPES.includes(file.type))
+      return toast.error("Format non supporté (jpg, png, gif, webp)");
     if (file.size > 5 * 1024 * 1024) return toast.error("Image trop lourde, max 5 Mo");
     setImageFile(file);
     setImagePreview((prev) => {
@@ -396,19 +400,26 @@ export function InstaChat({
       const prev = messages[i - 1];
       const next = messages[i + 1];
       const mine = viewerId ? m.author_id === viewerId : m.author_type === viewerKind;
-      const sameAsPrev = prev && prev.author_id === m.author_id && dayKey(prev.created_at) === dayKey(m.created_at);
-      const sameAsNext = next && next.author_id === m.author_id && dayKey(next.created_at) === dayKey(m.created_at);
+      const sameAsPrev =
+        prev && prev.author_id === m.author_id && dayKey(prev.created_at) === dayKey(m.created_at);
+      const sameAsNext =
+        next && next.author_id === m.author_id && dayKey(next.created_at) === dayKey(m.created_at);
       const newDay = !prev || dayKey(prev.created_at) !== dayKey(m.created_at);
       return { m, mine, first: !sameAsPrev, last: !sameAsNext, newDay };
     });
   }, [messages, viewerId, viewerKind]);
 
   const lastMine = useMemo(
-    () => [...messages].reverse().find((m) => (viewerId ? m.author_id === viewerId : m.author_type === viewerKind)),
+    () =>
+      [...messages]
+        .reverse()
+        .find((m) => (viewerId ? m.author_id === viewerId : m.author_type === viewerKind)),
     [messages, viewerId, viewerKind],
   );
   const lastMineRead = Boolean(
-    lastMine && (lastMine.read_at || (viewerKind === "admin" ? lastMine.read_by_editor : lastMine.read_by_admin)),
+    lastMine &&
+    (lastMine.read_at ||
+      (viewerKind === "admin" ? lastMine.read_by_editor : lastMine.read_by_admin)),
   );
 
   const replyPreview = replyTo ? byId.get(replyTo) : null;
@@ -462,7 +473,9 @@ export function InstaChat({
                         {dayLabel(m.created_at)}
                       </p>
                     )}
-                    <div className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"} ${first ? "mt-2" : ""}`}>
+                    <div
+                      className={`flex items-end gap-2 ${mine ? "justify-end" : "justify-start"} ${first ? "mt-2" : ""}`}
+                    >
                       {!mine &&
                         (last ? (
                           <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-neutral-800 text-[10px] font-semibold text-neutral-300">
@@ -483,7 +496,9 @@ export function InstaChat({
                           pressTimer.current = setTimeout(() => setPickerFor(m.id), 420);
                         }}
                         onPointerUp={() => pressTimer.current && clearTimeout(pressTimer.current)}
-                        onPointerLeave={() => pressTimer.current && clearTimeout(pressTimer.current)}
+                        onPointerLeave={() =>
+                          pressTimer.current && clearTimeout(pressTimer.current)
+                        }
                         onClick={(e) => {
                           e.stopPropagation();
                           setStampFor((s) => (s === m.id ? null : m.id));
@@ -493,12 +508,16 @@ export function InstaChat({
                         } ${first && !mine ? "rounded-bl-3xl" : ""} ${last ? "" : "mb-0.5"}`}
                       >
                         {!mine && first && (
-                          <p className="mb-0.5 text-[11px] font-semibold text-neutral-400">{m.author_name}</p>
+                          <p className="mb-0.5 text-[11px] font-semibold text-neutral-400">
+                            {m.author_name}
+                          </p>
                         )}
                         {parent && (
                           <div
                             className={`mb-1.5 rounded-xl border-l-2 px-2 py-1 text-[11px] ${
-                              mine ? "border-white/50 bg-white/10 text-white/80" : "border-neutral-600 bg-black/25 text-neutral-400"
+                              mine
+                                ? "border-white/50 bg-white/10 text-white/80"
+                                : "border-neutral-600 bg-black/25 text-neutral-400"
                             }`}
                           >
                             <span className="font-semibold">{parent.author_name}</span>
@@ -519,9 +538,15 @@ export function InstaChat({
                             className="mb-1 max-h-64 w-full rounded-2xl object-cover"
                           />
                         )}
-                        {m.audio_url && <VoiceBubble src={m.audio_url} duration={m.audio_duration} />}
+                        {m.audio_url && (
+                          <VoiceBubble src={m.audio_url} duration={m.audio_duration} />
+                        )}
                         {m.content && (
-                          <InstaBody content={m.content} mine={mine} onOpenMention={onOpenMention} />
+                          <InstaBody
+                            content={m.content}
+                            mine={mine}
+                            onOpenMention={onOpenMention}
+                          />
                         )}
 
                         {rx.length > 0 && (
@@ -629,7 +654,8 @@ export function InstaChat({
                   </div>
                   {typing.recording ? (
                     <span className="flex items-center gap-1 rounded-full bg-neutral-800 px-3 py-1.5">
-                      <Mic className="h-3.5 w-3.5 animate-pulse text-red-400" /> enregistre un vocal…
+                      <Mic className="h-3.5 w-3.5 animate-pulse text-red-400" /> enregistre un
+                      vocal…
                     </span>
                   ) : (
                     <span className="flex items-center gap-1 rounded-full bg-neutral-800 px-3 py-2">
@@ -664,10 +690,14 @@ export function InstaChat({
                         Réponse à {replyPreview.author_name}
                       </p>
                       <p className="truncate">
-                        {replyPreview.content || (replyPreview.image_url ? "Photo" : "Message vocal")}
+                        {replyPreview.content ||
+                          (replyPreview.image_url ? "Photo" : "Message vocal")}
                       </p>
                     </div>
-                    <button onClick={() => setReplyTo(null)} className="text-neutral-500 hover:text-white">
+                    <button
+                      onClick={() => setReplyTo(null)}
+                      className="text-neutral-500 hover:text-white"
+                    >
                       <X className="h-4 w-4" />
                     </button>
                   </motion.div>
@@ -700,10 +730,16 @@ export function InstaChat({
               {recording ? (
                 <div className="flex items-center gap-3 rounded-full bg-neutral-900 px-4 py-2.5">
                   <span className="h-2.5 w-2.5 animate-pulse rounded-full bg-red-500" />
-                  <span className="text-xs tabular-nums text-neutral-300">{fmtSec(recSeconds)}</span>
+                  <span className="text-xs tabular-nums text-neutral-300">
+                    {fmtSec(recSeconds)}
+                  </span>
                   <div className="flex h-6 flex-1 items-center gap-[2px] overflow-hidden">
                     {levels.map((h, i) => (
-                      <span key={i} style={{ height: h }} className="w-[3px] rounded-full bg-red-400/80" />
+                      <span
+                        key={i}
+                        style={{ height: h }}
+                        className="w-[3px] rounded-full bg-red-400/80"
+                      />
                     ))}
                   </div>
                   <span className="text-[11px] text-neutral-500">
@@ -755,7 +791,11 @@ export function InstaChat({
                       disabled={busy}
                       className="grid h-10 w-10 shrink-0 place-items-center rounded-full bg-red-600 text-white transition hover:bg-red-500 disabled:opacity-50"
                     >
-                      {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowUp className="h-5 w-5" />}
+                      {busy ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        <ArrowUp className="h-5 w-5" />
+                      )}
                     </button>
                   ) : (
                     <button

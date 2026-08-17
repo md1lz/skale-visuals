@@ -73,7 +73,9 @@ export function ProjectChat({
   useEffect(() => {
     if (!open || unreadIds.length === 0) return;
     const t = setTimeout(() => {
-      markRead({ data: { project_id: projectId } }).then(refresh).catch(() => {});
+      markRead({ data: { project_id: projectId } })
+        .then(refresh)
+        .catch(() => {});
     }, 1000);
     return () => clearTimeout(t);
   }, [open, unreadIds.length, projectId, markRead, refresh]);
@@ -82,7 +84,9 @@ export function ProjectChat({
     const { path, token } = await makeUpload({
       data: { project_id: projectId, file_name: fileName, kind },
     });
-    const { error } = await supabase.storage.from("site-videos").uploadToSignedUrl(path, token, blob);
+    const { error } = await supabase.storage
+      .from("site-videos")
+      .uploadToSignedUrl(path, token, blob);
     if (error) throw new Error(error.message);
     return path;
   }

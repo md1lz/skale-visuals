@@ -107,7 +107,10 @@ function extraLinks(v: { additional_links: unknown }): ExtraLink[] {
   const raw = v.additional_links;
   if (!Array.isArray(raw)) return [];
   return raw
-    .filter((x): x is ExtraLink => !!x && typeof x === "object" && typeof (x as ExtraLink).url === "string")
+    .filter(
+      (x): x is ExtraLink =>
+        !!x && typeof x === "object" && typeof (x as ExtraLink).url === "string",
+    )
     .map((x) => ({ title: String(x.title ?? ""), url: String(x.url) }));
 }
 
@@ -167,7 +170,9 @@ function VersionThumb({
 
   if (thumb && !failed) {
     return (
-      <div className={`${aspect} overflow-hidden rounded-lg border border-white/5 bg-neutral-950/70`}>
+      <div
+        className={`${aspect} overflow-hidden rounded-lg border border-white/5 bg-neutral-950/70`}
+      >
         <img
           src={thumb}
           alt={label || "Aperçu de la version"}
@@ -204,7 +209,9 @@ function InlinePlayer({ url, aspect }: { url: string; aspect: string }) {
   const wrapper = (children: React.ReactNode, hint: React.ReactNode) => (
     <div className="mt-3">
       <div className="mx-auto w-1/2 max-w-full">
-        <div className={`${aspect} w-full overflow-hidden rounded-xl border border-white/10 bg-black`}>
+        <div
+          className={`${aspect} w-full overflow-hidden rounded-xl border border-white/10 bg-black`}
+        >
           {children}
         </div>
       </div>
@@ -233,7 +240,7 @@ function InlinePlayer({ url, aspect }: { url: string; aspect: string }) {
         >
           Ouvrir dans Frame.io →
         </a>
-      </p>
+      </p>,
     );
   }
 
@@ -248,8 +255,8 @@ function InlinePlayer({ url, aspect }: { url: string; aspect: string }) {
       />,
       <p className="mt-2 flex flex-wrap items-center justify-center gap-1.5 text-[11px] text-neutral-500">
         <AlertTriangle className="h-3.5 w-3.5 text-orange-400" />
-        La vidéo ne se charge pas ? Vérifiez que le partage Drive est réglé sur « Tout le monde avec le
-        lien ».
+        La vidéo ne se charge pas ? Vérifiez que le partage Drive est réglé sur « Tout le monde avec
+        le lien ».
         <a
           href={normalizeHref(url)}
           target="_blank"
@@ -258,26 +265,22 @@ function InlinePlayer({ url, aspect }: { url: string; aspect: string }) {
         >
           Ouvrir dans Drive →
         </a>
-      </p>
+      </p>,
     );
   }
 
   if (kind === "mp4") {
     return wrapper(
-      <video
-        ref={videoRef}
-        src={url}
-        controls
-        preload="metadata"
-        className="h-full w-full"
-      />,
-      null
+      <video ref={videoRef} src={url} controls preload="metadata" className="h-full w-full" />,
+      null,
     );
   }
 
   return (
     <div className="mt-3 rounded-xl border border-white/10 bg-neutral-950/60 px-4 py-4 text-center">
-      <p className="text-sm text-neutral-400">Ce type de lien ne peut pas être lu directement ici.</p>
+      <p className="text-sm text-neutral-400">
+        Ce type de lien ne peut pas être lu directement ici.
+      </p>
       <a
         href={normalizeHref(url)}
         target="_blank"
@@ -364,95 +367,97 @@ export function ProjectVideosBoard({
           );
         }}
       />
-    <div className={`flex flex-col lg:flex-row gap-5 ${openId ? "lg:items-start" : ""}`}>
-      <div
-        style={openId && listMaxH && !isMobile ? { maxHeight: listMaxH } : undefined}
-        className={
-          openId
-            ? "w-full lg:w-[30%] shrink-0 min-h-0 max-h-44 lg:max-h-none overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
-            : "w-full"
-        }
-      >
+      <div className={`flex flex-col lg:flex-row gap-5 ${openId ? "lg:items-start" : ""}`}>
         <div
-          ref={gridRef}
-          className={`grid gap-3 ${
-            openId ? "grid-cols-2 lg:grid-cols-2" : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-          }`}
+          style={openId && listMaxH && !isMobile ? { maxHeight: listMaxH } : undefined}
+          className={
+            openId
+              ? "w-full lg:w-[30%] shrink-0 min-h-0 max-h-44 lg:max-h-none overflow-y-auto overscroll-contain pr-1.5 [scrollbar-width:thin]"
+              : "w-full"
+          }
         >
-          {videos.map((v) => (
-            <button
-              key={v.id}
-              onClick={() => setOpenId(v.id)}
-              className={`group rounded-xl border p-3 text-left transition ${
-                openId === v.id
-                  ? "border-red-500/60 bg-red-500/[0.07]"
-                  : "border-white/10 bg-neutral-900/50 hover:border-white/25 hover:bg-neutral-900"
-              }`}
-            >
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <span className="min-w-0 truncate text-sm font-semibold text-white">
-                  {videoLabel(v)}
-                </span>
-                <span className="flex items-center gap-1.5">
-                  {role === "admin" && v.status === "En révision" && (
-                    <span
-                      title="Nouvelle version à réviser"
-                      className="relative flex h-2.5 w-2.5"
-                    >
-                      <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
-                      <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sky-500" />
-                    </span>
-                  )}
-                  {v.unread_comments > 0 && (
-                    <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
-                      {v.unread_comments}
-                    </span>
-                  )}
-                </span>
-              </div>
-              <div className="mb-2">
-                <VersionThumb
-                  url={v.last_version?.file_url ?? null}
-                  aspect={aspect}
-                  label={v.last_version?.title || v.last_version?.file_name || null}
-                />
-              </div>
-              <span
-                className={`inline-flex rounded-full border px-2 py-0.5 text-[11px] ${videoStatusBadgeClass(v.status)}`}
-              >
-                {v.status}
-              </span>
-              <p className="mt-1.5 text-[11px] text-neutral-500">
-                {v.versions_count} version{v.versions_count > 1 ? "s" : ""}
-              </p>
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <AnimatePresence>
-        {openId && !isMobile && (
-          <motion.div
-            key={openId}
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 24 }}
-            transition={{ duration: 0.22 }}
-            ref={detailRef}
-            className="min-w-0 flex-1"
+          <div
+            ref={gridRef}
+            className={`grid gap-3 ${
+              openId
+                ? "grid-cols-2 lg:grid-cols-2"
+                : "grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
+            }`}
           >
-            <VideoDetail
-              videoId={openId}
-              projectId={projectId}
-              role={role}
-              aspect={aspect}
-              onClose={() => setOpenId(null)}
-              onChanged={onRefresh}
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
+            {videos.map((v) => (
+              <button
+                key={v.id}
+                onClick={() => setOpenId(v.id)}
+                className={`group rounded-xl border p-3 text-left transition ${
+                  openId === v.id
+                    ? "border-red-500/60 bg-red-500/[0.07]"
+                    : "border-white/10 bg-neutral-900/50 hover:border-white/25 hover:bg-neutral-900"
+                }`}
+              >
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <span className="min-w-0 truncate text-sm font-semibold text-white">
+                    {videoLabel(v)}
+                  </span>
+                  <span className="flex items-center gap-1.5">
+                    {role === "admin" && v.status === "En révision" && (
+                      <span
+                        title="Nouvelle version à réviser"
+                        className="relative flex h-2.5 w-2.5"
+                      >
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-sky-400 opacity-75" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-sky-500" />
+                      </span>
+                    )}
+                    {v.unread_comments > 0 && (
+                      <span className="grid h-5 min-w-5 place-items-center rounded-full bg-red-600 px-1.5 text-[11px] font-medium text-white">
+                        {v.unread_comments}
+                      </span>
+                    )}
+                  </span>
+                </div>
+                <div className="mb-2">
+                  <VersionThumb
+                    url={v.last_version?.file_url ?? null}
+                    aspect={aspect}
+                    label={v.last_version?.title || v.last_version?.file_name || null}
+                  />
+                </div>
+                <span
+                  className={`inline-flex rounded-full border px-2 py-0.5 text-[11px] ${videoStatusBadgeClass(v.status)}`}
+                >
+                  {v.status}
+                </span>
+                <p className="mt-1.5 text-[11px] text-neutral-500">
+                  {v.versions_count} version{v.versions_count > 1 ? "s" : ""}
+                </p>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {openId && !isMobile && (
+            <motion.div
+              key={openId}
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 24 }}
+              transition={{ duration: 0.22 }}
+              ref={detailRef}
+              className="min-w-0 flex-1"
+            >
+              <VideoDetail
+                videoId={openId}
+                projectId={projectId}
+                role={role}
+                aspect={aspect}
+                onClose={() => setOpenId(null)}
+                onChanged={onRefresh}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
       <AnimatePresence>
         {openId && isMobile && (
@@ -507,7 +512,9 @@ function NewVersionForm({
       title: title.trim(),
       url: url.trim(),
       description: description.trim(),
-      additional: additional.filter((a) => a.url.trim()).map((a) => ({ title: a.title.trim(), url: a.url.trim() })),
+      additional: additional
+        .filter((a) => a.url.trim())
+        .map((a) => ({ title: a.title.trim(), url: a.url.trim() })),
     });
     setTitle("");
     setUrl("");
@@ -537,7 +544,9 @@ function NewVersionForm({
           <input
             value={a.title}
             onChange={(e) =>
-              setAdditional((list) => list.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)))
+              setAdditional((list) =>
+                list.map((x, j) => (j === i ? { ...x, title: e.target.value } : x)),
+              )
             }
             placeholder="Titre court"
             className={`${input} w-1/3`}
@@ -545,7 +554,9 @@ function NewVersionForm({
           <input
             value={a.url}
             onChange={(e) =>
-              setAdditional((list) => list.map((x, j) => (j === i ? { ...x, url: e.target.value } : x)))
+              setAdditional((list) =>
+                list.map((x, j) => (j === i ? { ...x, url: e.target.value } : x)),
+              )
             }
             placeholder="Lien supplémentaire"
             className={input}
@@ -576,8 +587,8 @@ function NewVersionForm({
         disabled={busy}
         className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-red-500 disabled:opacity-60"
       >
-        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Envoyer cette
-        version
+        {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />} Envoyer
+        cette version
       </button>
     </div>
   );
@@ -660,7 +671,10 @@ function ConfirmDialog({
   onCancel: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-[400] grid place-items-center bg-black/70 p-4" onClick={onCancel}>
+    <div
+      className="fixed inset-0 z-[400] grid place-items-center bg-black/70 p-4"
+      onClick={onCancel}
+    >
       <motion.div
         initial={{ opacity: 0, scale: 0.95 }}
         animate={{ opacity: 1, scale: 1 }}
@@ -766,7 +780,8 @@ function VideoDetail({
       if (typingOffRef.current) clearTimeout(typingOffRef.current);
       if (recTimerRef.current) clearInterval(recTimerRef.current);
       recCancelledRef.current = true;
-      if (recorderRef.current && recorderRef.current.state !== "inactive") recorderRef.current.stop();
+      if (recorderRef.current && recorderRef.current.state !== "inactive")
+        recorderRef.current.stop();
       void pingTyping({ data: { video_id: videoId, state: "off" as const } }).catch(() => {});
       setImageFile(null);
       setImagePreview(null);
@@ -907,7 +922,7 @@ function VideoDetail({
   useEffect(() => {
     const v = q.data?.video as { script?: string | null } | undefined;
     if (!v) return;
-    setScript((prev) => (scriptDirty ? prev : v.script ?? ""));
+    setScript((prev) => (scriptDirty ? prev : (v.script ?? "")));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q.data?.video, videoId]);
 
@@ -967,8 +982,12 @@ function VideoDetail({
     if (busy) return;
     setBusy(true);
     try {
-      const { path, token } = await makeUploadUrl({ data: { video_id: videoId, file_name: file.name } });
-      const { error } = await supabase.storage.from("site-videos").uploadToSignedUrl(path, token, file);
+      const { path, token } = await makeUploadUrl({
+        data: { video_id: videoId, file_name: file.name },
+      });
+      const { error } = await supabase.storage
+        .from("site-videos")
+        .uploadToSignedUrl(path, token, file);
       if (error) throw new Error(error.message);
       await pushVersion({
         data: {
@@ -1084,7 +1103,9 @@ function VideoDetail({
     const { path, token } = await makeChatUpload({
       data: { video_id: videoId, file_name: fileName, kind },
     });
-    const { error } = await supabase.storage.from("site-videos").uploadToSignedUrl(path, token, blob);
+    const { error } = await supabase.storage
+      .from("site-videos")
+      .uploadToSignedUrl(path, token, blob);
     if (error) throw new Error(error.message);
     return path;
   }
@@ -1247,7 +1268,9 @@ function VideoDetail({
   async function handleStatus(status: string) {
     setBusy(true);
     try {
-      await updateStatus({ data: { video_id: videoId, status: status as (typeof VIDEO_STATUSES)[number] } });
+      await updateStatus({
+        data: { video_id: videoId, status: status as (typeof VIDEO_STATUSES)[number] },
+      });
       toast.success(`Statut : ${status}`);
       refresh();
     } catch (e) {
@@ -1291,7 +1314,8 @@ function VideoDetail({
   }
 
   const video = q.data?.video;
-  const options: string[] = role === "admin" ? [...ADMIN_VIDEO_STATUSES] : [...EDITOR_VIDEO_STATUSES];
+  const options: string[] =
+    role === "admin" ? [...ADMIN_VIDEO_STATUSES] : [...EDITOR_VIDEO_STATUSES];
   const versions = (q.data?.versions ?? []) as VersionRow[];
   const reactions = q.data?.reactions ?? [];
   const me = q.data?.viewer;
@@ -1299,283 +1323,295 @@ function VideoDetail({
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col rounded-2xl border border-white/10 bg-neutral-900/50">
-      <div className="flex flex-wrap items-center gap-2 border-b border-white/10 bg-neutral-900/95 px-4 py-3 sm:gap-3 sm:px-5">
-        <VideoTitleEditor
-          videoNumber={video?.video_number ?? 0}
-          title={(video as { title?: string | null } | undefined)?.title ?? null}
-          disabled={!video}
-          onSave={saveTitle}
-        />
-        <select
-          value={video?.status ?? "À faire"}
-          disabled={busy || !video}
-          onChange={(e) => handleStatus(e.target.value)}
-          className="rounded-lg border border-white/10 bg-neutral-950 px-2.5 py-1.5 text-xs text-white focus:border-red-500 focus:outline-none disabled:opacity-60"
-        >
-          {options.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-          {video && !options.includes(video.status) && (
-            <option value={video.status}>{video.status}</option>
-          )}
-        </select>
-        {role === "admin" && video?.status === "En révision" && (
-          <>
-            <ValidateRevisionButton
-              onClick={() => handleStatus("Approuvée")}
-              busy={busy}
-            />
-            <RequestCorrectionsButton
-              onClick={() => handleStatus("Corrections à faire")}
-              busy={busy}
-            />
-          </>
-        )}
-        <button
-          onClick={onClose}
-          className="order-first ml-auto inline-flex items-center gap-1 text-sm text-neutral-400 transition hover:text-white sm:order-none"
-        >
-          Fermer <X className="h-4 w-4" />
-        </button>
-      </div>
-
-      <div className="space-y-5 p-5">
-        <section className="rounded-xl border border-white/5 bg-neutral-950/40">
-          <div className="flex items-center gap-2 px-3 py-2">
-            <button
-              onClick={() => setScriptOpen((o) => !o)}
-              className="flex flex-1 items-center gap-2 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
-            >
-              <ChevronDown className={`h-4 w-4 transition-transform ${scriptOpen ? "rotate-0" : "-rotate-90"}`} />
-              Script (transcription)
-              <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
-                <span className="hidden sm:inline">
-                  {script ? `${script.length} caractères — appuyer pour afficher` : "vide"}
-                </span>
-                <span className="sm:hidden">{script ? "rempli" : "vide"}</span>
-              </span>
-            </button>
-            {script && (
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(script);
-                  toast.success("Script copié");
-                }}
-                className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-neutral-300 transition hover:bg-white/5 hover:text-white"
-              >
-                <Copy className="h-3.5 w-3.5" /> Copier
-              </button>
+        <div className="flex flex-wrap items-center gap-2 border-b border-white/10 bg-neutral-900/95 px-4 py-3 sm:gap-3 sm:px-5">
+          <VideoTitleEditor
+            videoNumber={video?.video_number ?? 0}
+            title={(video as { title?: string | null } | undefined)?.title ?? null}
+            disabled={!video}
+            onSave={saveTitle}
+          />
+          <select
+            value={video?.status ?? "À faire"}
+            disabled={busy || !video}
+            onChange={(e) => handleStatus(e.target.value)}
+            className="rounded-lg border border-white/10 bg-neutral-950 px-2.5 py-1.5 text-xs text-white focus:border-red-500 focus:outline-none disabled:opacity-60"
+          >
+            {options.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+            {video && !options.includes(video.status) && (
+              <option value={video.status}>{video.status}</option>
             )}
-          </div>
-          <AnimatePresence initial={false}>
-            {scriptOpen && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{ height: "auto", opacity: 1 }}
-                exit={{ height: 0, opacity: 0 }}
-                className="overflow-hidden"
-              >
-                <div className="px-3 pb-3">
-                  {role === "editor" ? (
-                    <div className="space-y-2">
-                      <textarea
-                        value={script}
-                        onChange={(e) => {
-                          setScript(e.target.value);
-                          setScriptDirty(true);
-                        }}
-                        rows={10}
-                        placeholder="Écris ici la transcription des dialogues de cette vidéo…"
-                        className="w-full resize-y rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
-                      />
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={submitScript}
-                          disabled={savingScript || !scriptDirty}
-                          className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-500 disabled:opacity-50"
-                        >
-                          {savingScript ? (
-                            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                          ) : (
-                            <Check className="h-3.5 w-3.5" />
-                          )}
-                          Enregistrer le script
-                        </button>
-                        {scriptDirty && (
-                          <span className="text-[11px] text-orange-300">Modifications non enregistrées</span>
-                        )}
-                      </div>
-                    </div>
-                  ) : script ? (
-                    <p className="max-h-72 overflow-y-auto whitespace-pre-wrap rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2.5 text-sm text-neutral-200">
-                      {script}
-                    </p>
-                  ) : (
-                    <p className="text-sm text-neutral-500">Aucun script fourni par le monteur.</p>
-                  )}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        </section>
-
-        <section>
-          <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">Versions</h4>
-
-          {role === "editor" && (
+          </select>
+          {role === "admin" && video?.status === "En révision" && (
             <>
-              <NewVersionForm busy={busy} onSubmit={submitVersion} />
-              <div
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={(e) => {
-                  e.preventDefault();
-                  const f = e.dataTransfer.files?.[0];
-                  if (f) handleFile(f);
-                }}
-                onClick={() => fileRef.current?.click()}
-                className="mb-3 cursor-pointer rounded-lg border border-dashed border-white/15 px-4 py-4 text-center transition hover:border-red-500/50"
-              >
-                <Upload className="mx-auto mb-1.5 h-4 w-4 text-neutral-500" />
-                <p className="text-[11px] text-neutral-400">
-                  {busy ? "Envoi en cours…" : "Ou glisse directement un fichier ici"}
-                </p>
-                <input
-                  ref={fileRef}
-                  type="file"
-                  className="hidden"
-                  onChange={(e) => {
-                    const f = e.target.files?.[0];
-                    if (f) handleFile(f);
-                    e.target.value = "";
-                  }}
-                />
-              </div>
+              <ValidateRevisionButton onClick={() => handleStatus("Approuvée")} busy={busy} />
+              <RequestCorrectionsButton
+                onClick={() => handleStatus("Corrections à faire")}
+                busy={busy}
+              />
             </>
           )}
+          <button
+            onClick={onClose}
+            className="order-first ml-auto inline-flex items-center gap-1 text-sm text-neutral-400 transition hover:text-white sm:order-none"
+          >
+            Fermer <X className="h-4 w-4" />
+          </button>
+        </div>
 
-          {versions.length === 0 ? (
-            <p className="text-sm text-neutral-500">Aucune version déposée.</p>
-          ) : (
-            <ul className="space-y-2">
-              {versions.map((v, i) => {
-                if (i > 0 && !showOldVersions) return null;
-                const src = signed[v.file_url] ?? v.file_url;
-                const open = playingId === v.id;
-                return (
-                  <li
-                    key={v.id}
-                    className="group rounded-xl border border-white/5 bg-neutral-950/60 px-3 py-2.5"
-                  >
-                    <div className="flex items-start gap-3">
-                      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-red-500/15 text-xs font-semibold text-red-300">
-                        V{v.version_number}
-                      </span>
-                      <div className="min-w-0 flex-1">
-                        {editingVersion === v.id ? (
-                          <input
-                            autoFocus
-                            value={editingTitle}
-                            onChange={(e) => setEditingTitle(e.target.value)}
-                            onBlur={() => void saveVersionTitle(v.id)}
-                            onKeyDown={(e) => {
-                              if (e.key === "Enter") {
-                                e.preventDefault();
-                                void saveVersionTitle(v.id);
-                              }
-                              if (e.key === "Escape") setEditingVersion(null);
-                            }}
-                            maxLength={200}
-                            className="w-full rounded-lg border border-white/15 bg-neutral-900 px-2 py-1 text-sm text-white outline-none focus:border-red-500/50"
-                          />
-                        ) : (
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingVersion(v.id);
-                              setEditingTitle(v.title || v.file_name || `Version ${v.version_number}`);
-                            }}
-                            title="Renommer cette version"
-                            className="flex max-w-full items-center gap-1.5 text-left"
-                          >
-                            <span className="truncate text-sm font-medium text-white">
-                              {v.title || v.file_name || `Version ${v.version_number}`}
-                            </span>
-                            <Pencil className="h-3 w-3 shrink-0 text-neutral-600 opacity-0 transition group-hover:opacity-100" />
-                          </button>
-                        )}
-                        <p className="text-[11px] text-neutral-500">{fmtDateTimeFR(v.created_at)}</p>
-                        {v.description && (
-                          <p className="mt-1 whitespace-pre-wrap text-xs text-neutral-300">{v.description}</p>
-                        )}
-                        <div className="mt-1">
-                          <RushLink href={src} label={normalizeHref(v.file_url)} />
-                        </div>
-                        {extraLinks(v).length > 0 && (
-                          <ul className="mt-1 space-y-0.5">
-                            {extraLinks(v).map((l, j) => (
-                              <li key={j}>
-                                {l.title && (
-                                  <p className="text-xs font-medium text-neutral-200">{l.title}</p>
-                                )}
-                                <RushLink href={l.url} label={normalizeHref(l.url)} />
-                              </li>
-                            ))}
-                          </ul>
-                        )}
-                      </div>
-                      {i === 0 && (
-                        <span className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[11px] text-emerald-300">
-                          Actuelle
-                        </span>
-                      )}
-                      <button
-                        onClick={() => setPendingDelete(v.id)}
-                        title="Supprimer cette version"
-                        className="shrink-0 rounded-lg p-1.5 text-neutral-600 opacity-0 transition group-hover:opacity-100 hover:text-red-400"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </button>
-                    </div>
-                    <button
-                      onClick={() => setPlayingId(open ? null : v.id)}
-                      className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] text-neutral-200 transition hover:bg-white/5"
-                    >
-                      {open ? (
-                        <>
-                          <EyeOff className="h-3.5 w-3.5" /> Masquer la vidéo
-                        </>
-                      ) : (
-                        <>
-                          <Play className="h-3.5 w-3.5" /> Voir la vidéo
-                        </>
-                      )}
-                    </button>
-                    {open && <InlinePlayer url={src} aspect={aspect} />}
-                  </li>
-                );
-              })}
-              {versions.length > 1 && (
-                <li>
-                  <button
-                    onClick={() => setShowOldVersions((o) => !o)}
-                    className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] text-neutral-300 transition hover:bg-white/5 hover:text-white"
-                  >
-                    <ChevronDown
-                      className={`h-3.5 w-3.5 transition-transform ${showOldVersions ? "rotate-180" : ""}`}
-                    />
-                    {showOldVersions
-                      ? "Masquer les anciennes versions"
-                      : `Voir les ${versions.length - 1} version${versions.length > 2 ? "s" : ""} précédente${versions.length > 2 ? "s" : ""}`}
-                  </button>
-                </li>
+        <div className="space-y-5 p-5">
+          <section className="rounded-xl border border-white/5 bg-neutral-950/40">
+            <div className="flex items-center gap-2 px-3 py-2">
+              <button
+                onClick={() => setScriptOpen((o) => !o)}
+                className="flex flex-1 items-center gap-2 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
+              >
+                <ChevronDown
+                  className={`h-4 w-4 transition-transform ${scriptOpen ? "rotate-0" : "-rotate-90"}`}
+                />
+                Script (transcription)
+                <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
+                  <span className="hidden sm:inline">
+                    {script ? `${script.length} caractères — appuyer pour afficher` : "vide"}
+                  </span>
+                  <span className="sm:hidden">{script ? "rempli" : "vide"}</span>
+                </span>
+              </button>
+              {script && (
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(script);
+                    toast.success("Script copié");
+                  }}
+                  className="inline-flex items-center gap-1 rounded-lg border border-white/10 px-2 py-1 text-[11px] text-neutral-300 transition hover:bg-white/5 hover:text-white"
+                >
+                  <Copy className="h-3.5 w-3.5" /> Copier
+                </button>
               )}
-            </ul>
-          )}
-        </section>
+            </div>
+            <AnimatePresence initial={false}>
+              {scriptOpen && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: "auto", opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  className="overflow-hidden"
+                >
+                  <div className="px-3 pb-3">
+                    {role === "editor" ? (
+                      <div className="space-y-2">
+                        <textarea
+                          value={script}
+                          onChange={(e) => {
+                            setScript(e.target.value);
+                            setScriptDirty(true);
+                          }}
+                          rows={10}
+                          placeholder="Écris ici la transcription des dialogues de cette vidéo…"
+                          className="w-full resize-y rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
+                        />
+                        <div className="flex items-center gap-2">
+                          <button
+                            onClick={submitScript}
+                            disabled={savingScript || !scriptDirty}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-500 disabled:opacity-50"
+                          >
+                            {savingScript ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Check className="h-3.5 w-3.5" />
+                            )}
+                            Enregistrer le script
+                          </button>
+                          {scriptDirty && (
+                            <span className="text-[11px] text-orange-300">
+                              Modifications non enregistrées
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    ) : script ? (
+                      <p className="max-h-72 overflow-y-auto whitespace-pre-wrap rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2.5 text-sm text-neutral-200">
+                        {script}
+                      </p>
+                    ) : (
+                      <p className="text-sm text-neutral-500">
+                        Aucun script fourni par le monteur.
+                      </p>
+                    )}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </section>
 
-      </div>
+          <section>
+            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wider text-neutral-400">
+              Versions
+            </h4>
+
+            {role === "editor" && (
+              <>
+                <NewVersionForm busy={busy} onSubmit={submitVersion} />
+                <div
+                  onDragOver={(e) => e.preventDefault()}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    const f = e.dataTransfer.files?.[0];
+                    if (f) handleFile(f);
+                  }}
+                  onClick={() => fileRef.current?.click()}
+                  className="mb-3 cursor-pointer rounded-lg border border-dashed border-white/15 px-4 py-4 text-center transition hover:border-red-500/50"
+                >
+                  <Upload className="mx-auto mb-1.5 h-4 w-4 text-neutral-500" />
+                  <p className="text-[11px] text-neutral-400">
+                    {busy ? "Envoi en cours…" : "Ou glisse directement un fichier ici"}
+                  </p>
+                  <input
+                    ref={fileRef}
+                    type="file"
+                    className="hidden"
+                    onChange={(e) => {
+                      const f = e.target.files?.[0];
+                      if (f) handleFile(f);
+                      e.target.value = "";
+                    }}
+                  />
+                </div>
+              </>
+            )}
+
+            {versions.length === 0 ? (
+              <p className="text-sm text-neutral-500">Aucune version déposée.</p>
+            ) : (
+              <ul className="space-y-2">
+                {versions.map((v, i) => {
+                  if (i > 0 && !showOldVersions) return null;
+                  const src = signed[v.file_url] ?? v.file_url;
+                  const open = playingId === v.id;
+                  return (
+                    <li
+                      key={v.id}
+                      className="group rounded-xl border border-white/5 bg-neutral-950/60 px-3 py-2.5"
+                    >
+                      <div className="flex items-start gap-3">
+                        <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-red-500/15 text-xs font-semibold text-red-300">
+                          V{v.version_number}
+                        </span>
+                        <div className="min-w-0 flex-1">
+                          {editingVersion === v.id ? (
+                            <input
+                              autoFocus
+                              value={editingTitle}
+                              onChange={(e) => setEditingTitle(e.target.value)}
+                              onBlur={() => void saveVersionTitle(v.id)}
+                              onKeyDown={(e) => {
+                                if (e.key === "Enter") {
+                                  e.preventDefault();
+                                  void saveVersionTitle(v.id);
+                                }
+                                if (e.key === "Escape") setEditingVersion(null);
+                              }}
+                              maxLength={200}
+                              className="w-full rounded-lg border border-white/15 bg-neutral-900 px-2 py-1 text-sm text-white outline-none focus:border-red-500/50"
+                            />
+                          ) : (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setEditingVersion(v.id);
+                                setEditingTitle(
+                                  v.title || v.file_name || `Version ${v.version_number}`,
+                                );
+                              }}
+                              title="Renommer cette version"
+                              className="flex max-w-full items-center gap-1.5 text-left"
+                            >
+                              <span className="truncate text-sm font-medium text-white">
+                                {v.title || v.file_name || `Version ${v.version_number}`}
+                              </span>
+                              <Pencil className="h-3 w-3 shrink-0 text-neutral-600 opacity-0 transition group-hover:opacity-100" />
+                            </button>
+                          )}
+                          <p className="text-[11px] text-neutral-500">
+                            {fmtDateTimeFR(v.created_at)}
+                          </p>
+                          {v.description && (
+                            <p className="mt-1 whitespace-pre-wrap text-xs text-neutral-300">
+                              {v.description}
+                            </p>
+                          )}
+                          <div className="mt-1">
+                            <RushLink href={src} label={normalizeHref(v.file_url)} />
+                          </div>
+                          {extraLinks(v).length > 0 && (
+                            <ul className="mt-1 space-y-0.5">
+                              {extraLinks(v).map((l, j) => (
+                                <li key={j}>
+                                  {l.title && (
+                                    <p className="text-xs font-medium text-neutral-200">
+                                      {l.title}
+                                    </p>
+                                  )}
+                                  <RushLink href={l.url} label={normalizeHref(l.url)} />
+                                </li>
+                              ))}
+                            </ul>
+                          )}
+                        </div>
+                        {i === 0 && (
+                          <span className="shrink-0 rounded-full border border-emerald-500/30 bg-emerald-500/15 px-2 py-0.5 text-[11px] text-emerald-300">
+                            Actuelle
+                          </span>
+                        )}
+                        <button
+                          onClick={() => setPendingDelete(v.id)}
+                          title="Supprimer cette version"
+                          className="shrink-0 rounded-lg p-1.5 text-neutral-600 opacity-0 transition group-hover:opacity-100 hover:text-red-400"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => setPlayingId(open ? null : v.id)}
+                        className="mt-2 inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] text-neutral-200 transition hover:bg-white/5"
+                      >
+                        {open ? (
+                          <>
+                            <EyeOff className="h-3.5 w-3.5" /> Masquer la vidéo
+                          </>
+                        ) : (
+                          <>
+                            <Play className="h-3.5 w-3.5" /> Voir la vidéo
+                          </>
+                        )}
+                      </button>
+                      {open && <InlinePlayer url={src} aspect={aspect} />}
+                    </li>
+                  );
+                })}
+                {versions.length > 1 && (
+                  <li>
+                    <button
+                      onClick={() => setShowOldVersions((o) => !o)}
+                      className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 px-2.5 py-1.5 text-[11px] text-neutral-300 transition hover:bg-white/5 hover:text-white"
+                    >
+                      <ChevronDown
+                        className={`h-3.5 w-3.5 transition-transform ${showOldVersions ? "rotate-180" : ""}`}
+                      />
+                      {showOldVersions
+                        ? "Masquer les anciennes versions"
+                        : `Voir les ${versions.length - 1} version${versions.length > 2 ? "s" : ""} précédente${versions.length > 2 ? "s" : ""}`}
+                    </button>
+                  </li>
+                )}
+              </ul>
+            )}
+          </section>
+        </div>
       </div>
 
       <button
@@ -1649,7 +1685,13 @@ export function ValidateRevisionButton({ onClick, busy }: { onClick: () => void;
   );
 }
 
-export function RequestCorrectionsButton({ onClick, busy }: { onClick: () => void; busy?: boolean }) {
+export function RequestCorrectionsButton({
+  onClick,
+  busy,
+}: {
+  onClick: () => void;
+  busy?: boolean;
+}) {
   return (
     <button
       onClick={onClick}
