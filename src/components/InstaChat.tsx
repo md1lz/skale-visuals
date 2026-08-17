@@ -454,7 +454,6 @@ export function InstaChat({
   }
 
   function cancelWithAnim() {
-    console.log("[qa] cancelWithAnim");
     setTrashing(true);
     stopRecording(true);
     setTimeout(() => setTrashing(false), 600);
