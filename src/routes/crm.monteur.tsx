@@ -6,6 +6,7 @@ import { EditorProfileMenu } from "@/components/EditorProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { PushSetup } from "@/components/PushSetup";
+import { MessagePing } from "@/components/MessagePing";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
 
 export const Route = createFileRoute("/crm/monteur")({
@@ -43,6 +44,7 @@ function EditorLayout() {
     <AdminPrefsProvider>
       <ThemeStyleInjector />
       <PushSetup />
+      <MessagePing role="editor" />
       <EditorLayoutInner />
     </AdminPrefsProvider>
   );
@@ -107,7 +109,10 @@ function EditorLayoutInner() {
                   <Icon className="h-4 w-4" />
                   <span>{item.label}</span>
                   {active && (
-                    <motion.span layoutId="editor-nav-dot" className="ml-auto h-1.5 w-1.5 rounded-full bg-red-500" />
+                    <motion.span
+                      layoutId="editor-nav-dot"
+                      className="ml-auto h-1.5 w-1.5 rounded-full bg-red-500"
+                    />
                   )}
                 </Link>
               );
@@ -116,23 +121,23 @@ function EditorLayoutInner() {
         </aside>
 
         <main className="flex-1 min-w-0 overflow-x-hidden">
-        <PanelMobileNav
-          title="Skale Edition"
-          items={NAV}
-          profile={{
-            name: editor.displayName || editor.username,
-            role: "Monteur",
-            avatarUrl: editor.avatarUrl ?? null,
-          }}
-        >
-          <EditorProfileMenu
+          <PanelMobileNav
+            title="Skale Edition"
+            items={NAV}
+            profile={{
+              name: editor.displayName || editor.username,
+              role: "Monteur",
+              avatarUrl: editor.avatarUrl ?? null,
+            }}
+          >
+            <EditorProfileMenu
               initial={{
                 username: editor.username,
                 displayName: editor.displayName,
                 avatarUrl: editor.avatarUrl,
               }}
             />
-        </PanelMobileNav>
+          </PanelMobileNav>
           <AnimatePresence mode="wait">
             <motion.div
               key={pathname}
