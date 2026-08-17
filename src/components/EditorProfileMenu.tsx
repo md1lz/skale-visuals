@@ -82,7 +82,7 @@ export function EditorProfileMenu({ initial }: { initial: Profile }) {
         <AnimatePresence>
           {open && (
             <motion.div
-              initial={{ opacity: 0, x: -8, scale: 0.97 }}
+              initial={{ opacity: 0, y: -6, scale: 0.97 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: -8, scale: 0.97 }}
               transition={{ duration: 0.15 }}
