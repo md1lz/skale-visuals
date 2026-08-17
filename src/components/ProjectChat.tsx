@@ -30,6 +30,7 @@ import {
 } from "@/lib/project-chat.functions";
 import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
 import { fmtDateTimeFR, videoLabel } from "@/lib/project-display";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const REACTION_EMOJIS = ["👍", "❤️", "😂", "😮", "👏", "✅"];
 const MENTION_RE = /#\[([^\]\n]+)\]\(vid:([0-9a-fA-F-]{36})\)/g;
@@ -88,6 +89,7 @@ export function ProjectChat({
   const fetchTyping = useServerFn(getProjectTyping);
 
   const [open, setOpen] = useState(true);
+  const isMobile = useIsMobile();
   const [message, setMessage] = useState("");
   const [busy, setBusy] = useState(false);
   const [pickerFor, setPickerFor] = useState<string | null>(null);
