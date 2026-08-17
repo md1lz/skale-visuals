@@ -67,13 +67,14 @@ export const postProjectComment = createServerFn({ method: "POST" })
         audio_duration: z.number().int().min(0).max(600).nullish(),
         reply_to: z.string().uuid().nullish(),
       })
-      .refine((v) => Boolean(v.content || v.image_path || v.audio_path), { message: "Message vide" })
+      .refine((v) => Boolean(v.content || v.image_path || v.audio_path), {
+        message: "Message vide",
+      })
       .parse(d),
   )
   .handler(async ({ data }) => {
-    const { resolveViewer, assertProjectAccess, notifyAdmins } = await import(
-      "./video-workspace.server"
-    );
+    const { resolveViewer, assertProjectAccess, notifyAdmins } =
+      await import("./video-workspace.server");
     const viewer = await resolveViewer();
     const project = await assertProjectAccess(data.project_id, viewer);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
@@ -185,7 +186,10 @@ export const deleteProjectComment = createServerFn({ method: "POST" })
     const viewer = await resolveViewer();
     if (viewer.kind !== "admin") throw new Error("Réservé aux admins");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    await supabaseAdmin.from("project_comment_reactions").delete().eq("comment_id", data.comment_id);
+    await supabaseAdmin
+      .from("project_comment_reactions")
+      .delete()
+      .eq("comment_id", data.comment_id);
     const { error } = await supabaseAdmin
       .from("project_comments")
       .delete()
