@@ -161,19 +161,79 @@ export const getVideoWorkspace = createServerFn({ method: "GET" })
 
 export const setVideoScript = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
-    z.object({ video_id: z.string().uuid(), script: z.string().max(50000) }).parse(d),
+    z
+      .object({
+        video_id: z.string().uuid(),
+        script: z.string().max(50000),
+        action: z.enum(["save", "submit", "validate"]).optional().default("save"),
+      })
+      .parse(d),
   )
   .handler(async ({ data }) => {
-    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const { resolveViewer, assertVideoAccess, notifyAdmins } = await import(
+      "./video-workspace.server"
+    );
     const viewer = await resolveViewer();
-    await assertVideoAccess(data.video_id, viewer);
+    const { video, project } = await assertVideoAccess(data.video_id, viewer);
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+
+    if (data.action === "validate" && viewer.kind !== "admin") {
+      throw new Error("Validation réservée à l'administration");
+    }
+    if (data.action === "submit" && viewer.kind !== "editor") {
+      throw new Error("Envoi réservé au monteur");
+    }
+
+    const current = (video as { script_status?: string }).script_status ?? "draft";
+    const nextStatus =
+      data.action === "submit"
+        ? "pending"
+        : data.action === "validate"
+          ? "validated"
+          : viewer.kind === "editor"
+            ? current === "validated"
+              ? "draft"
+              : current
+            : current;
+
     const { error } = await supabaseAdmin
       .from("project_videos")
-      .update({ script: data.script.trim() || null })
+      .update({
+        script: data.script.trim() || null,
+        script_status: nextStatus,
+        script_updated_at: new Date().toISOString(),
+      })
       .eq("id", data.video_id);
     if (error) throw new Error(error.message);
-    return { ok: true as const };
+
+    const label = `#${String(video.video_number).padStart(2, "0")}`;
+    const { panelUrl } = await import("./notifications.server");
+    if (data.action === "submit") {
+      await notifyAdmins({
+        type: "script",
+        project_id: project.id,
+        message: `📝 ${viewer.name} a envoyé le script de la vidéo ${label} de « ${project.title} » pour validation`,
+        push: {
+          body: `Script de la vidéo ${label} à valider`,
+          url: panelUrl("admin", project.id, video.id),
+          tag: `script-${video.id}`,
+        },
+      });
+    } else if (data.action === "validate" && project.editor_id) {
+      const { notifyEditor } = await import("./notifications.server");
+      await notifyEditor({
+        recipient_id: project.editor_id,
+        type: "script",
+        project_id: project.id,
+        message: `✅ Script validé pour la vidéo ${label} — ${project.title}`,
+        push: {
+          body: `Script de la vidéo ${label} validé ✅`,
+          url: panelUrl("editor", project.id, video.id),
+          tag: `script-${video.id}`,
+        },
+      });
+    }
+    return { ok: true as const, script_status: nextStatus };
   });
 
 export const markVideoCommentsRead = createServerFn({ method: "POST" })
