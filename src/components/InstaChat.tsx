@@ -317,20 +317,7 @@ export function InstaChat({
     };
   }, [open, variant, messages.length, scrollToEnd]);
 
-  // Le bouton retour natif ferme le chat sans quitter l'app.
-  const closeRef = useRef(onClose);
-  closeRef.current = onClose;
-  useEffect(() => {
-    if (variant !== "overlay" || !open) return;
-    window.history.pushState({ instachat: true }, "");
-    const onPop = () => closeRef.current();
-    window.addEventListener("popstate", onPop);
-    return () => {
-      window.removeEventListener("popstate", onPop);
-      if ((window.history.state as { instachat?: boolean } | null)?.instachat)
-        window.history.back();
-    };
-  }, [open, variant]);
+  // Fermeture uniquement via le bouton retour de l'en-tête (aucun geste de slide).
 
   useEffect(() => {
     if (!open) return;
