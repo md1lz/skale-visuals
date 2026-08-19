@@ -917,9 +917,39 @@ function VideoDetail({
     if (savingScript) return;
     setSavingScript(true);
     try {
-      await saveScript({ data: { video_id: videoId, script } });
+      await saveScript({ data: { video_id: videoId, script, action: "save" } });
       setScriptDirty(false);
       toast.success("Script enregistré");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSavingScript(false);
+    }
+  }
+
+  async function sendScriptForReview() {
+    if (savingScript) return;
+    setSavingScript(true);
+    try {
+      await saveScript({ data: { video_id: videoId, script, action: "submit" } });
+      setScriptDirty(false);
+      toast.success("Script envoyé pour validation");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSavingScript(false);
+    }
+  }
+
+  async function validateScript() {
+    if (savingScript) return;
+    setSavingScript(true);
+    try {
+      await saveScript({ data: { video_id: videoId, script, action: "validate" } });
+      setScriptDirty(false);
+      toast.success("Script validé et envoyé au monteur");
       refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
