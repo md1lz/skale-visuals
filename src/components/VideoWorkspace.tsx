@@ -917,9 +917,39 @@ function VideoDetail({
     if (savingScript) return;
     setSavingScript(true);
     try {
-      await saveScript({ data: { video_id: videoId, script } });
+      await saveScript({ data: { video_id: videoId, script, action: "save" } });
       setScriptDirty(false);
       toast.success("Script enregistré");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSavingScript(false);
+    }
+  }
+
+  async function sendScriptForReview() {
+    if (savingScript) return;
+    setSavingScript(true);
+    try {
+      await saveScript({ data: { video_id: videoId, script, action: "submit" } });
+      setScriptDirty(false);
+      toast.success("Script envoyé pour validation");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSavingScript(false);
+    }
+  }
+
+  async function validateScript() {
+    if (savingScript) return;
+    setSavingScript(true);
+    try {
+      await saveScript({ data: { video_id: videoId, script, action: "validate" } });
+      setScriptDirty(false);
+      toast.success("Script validé et envoyé au monteur");
       refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
@@ -1356,11 +1386,10 @@ function VideoDetail({
                   className={`h-4 w-4 transition-transform ${scriptOpen ? "rotate-0" : "-rotate-90"}`}
                 />
                 Script (transcription)
-                <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
-                  <span className="hidden sm:inline">
-                    {script ? `${script.length} caractères — appuyer pour afficher` : "vide"}
-                  </span>
-                  <span className="sm:hidden">{script ? "rempli" : "vide"}</span>
+                <span
+                  className={`ml-1 rounded-full border px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal ${SCRIPT_STATUS_BADGE[scriptStatus]}`}
+                >
+                  {SCRIPT_STATUS_LABEL[scriptStatus]}
                 </span>
               </button>
             </div>
@@ -1385,30 +1414,82 @@ function VideoDetail({
                           placeholder="Écris ici la transcription des dialogues de cette vidéo…"
                           className="w-full resize-y rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
                         />
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <button
                             onClick={submitScript}
                             disabled={savingScript || !scriptDirty}
-                            className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-500 disabled:opacity-50"
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-neutral-200 transition hover:bg-white/10 disabled:opacity-50"
                           >
                             {savingScript ? (
                               <Loader2 className="h-3.5 w-3.5 animate-spin" />
                             ) : (
                               <Check className="h-3.5 w-3.5" />
                             )}
-                            Enregistrer le script
+                            Enregistrer le brouillon
+                          </button>
+                          <button
+                            onClick={sendScriptForReview}
+                            disabled={savingScript || !script.trim()}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-500 disabled:opacity-50"
+                          >
+                            <Send className="h-3.5 w-3.5" />
+                            Envoyer pour validation
                           </button>
                           {scriptDirty && (
                             <span className="text-[11px] text-orange-300">
                               Modifications non enregistrées
                             </span>
                           )}
+                          {!scriptDirty && scriptStatus === "pending" && (
+                            <span className="text-[11px] text-orange-300">
+                              En attente de validation des admins
+                            </span>
+                          )}
+                          {!scriptDirty && scriptStatus === "validated" && (
+                            <span className="text-[11px] text-emerald-300">
+                              Script validé par l'admin
+                            </span>
+                          )}
                         </div>
                       </div>
-                    ) : script ? (
-                      <p className="max-h-72 overflow-y-auto whitespace-pre-wrap rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2.5 text-sm text-neutral-200">
-                        {script}
-                      </p>
+                    ) : script || scriptStatus !== "draft" ? (
+                      <div className="space-y-2">
+                        <textarea
+                          value={script}
+                          onChange={(e) => {
+                            setScript(e.target.value);
+                            setScriptDirty(true);
+                          }}
+                          rows={10}
+                          placeholder="Script du monteur — corrige-le ici avant validation…"
+                          className="w-full resize-y rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
+                        />
+                        <div className="flex flex-wrap items-center gap-2">
+                          <button
+                            onClick={submitScript}
+                            disabled={savingScript || !scriptDirty}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-medium text-neutral-200 transition hover:bg-white/10 disabled:opacity-50"
+                          >
+                            {savingScript ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Check className="h-3.5 w-3.5" />
+                            )}
+                            Enregistrer les modifications
+                          </button>
+                          <button
+                            onClick={validateScript}
+                            disabled={savingScript || !script.trim()}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-emerald-500 disabled:opacity-50"
+                          >
+                            <Check className="h-3.5 w-3.5" />
+                            Valider et renvoyer au monteur
+                          </button>
+                          {scriptStatus === "validated" && !scriptDirty && (
+                            <span className="text-[11px] text-emerald-300">Script validé</span>
+                          )}
+                        </div>
+                      </div>
                     ) : (
                       <p className="text-sm text-neutral-500">
                         Aucun script fourni par le monteur.
