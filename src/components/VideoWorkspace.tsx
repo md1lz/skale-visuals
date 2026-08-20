@@ -1350,17 +1350,16 @@ function VideoDetail({
             <div className="flex items-center gap-2 px-3 py-2">
               <button
                 onClick={() => setScriptOpen((o) => !o)}
-                className="flex flex-1 items-center gap-2 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
+                className="flex flex-1 flex-wrap items-center gap-2 text-left text-xs font-semibold uppercase tracking-wider text-neutral-300 transition hover:text-white"
               >
                 <ChevronDown
                   className={`h-4 w-4 transition-transform ${scriptOpen ? "rotate-0" : "-rotate-90"}`}
                 />
-                Script (transcription)
-                <span className="ml-1 rounded-full bg-white/5 px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal text-neutral-400">
-                  <span className="hidden sm:inline">
-                    {script ? `${script.length} caractères — appuyer pour afficher` : "vide"}
-                  </span>
-                  <span className="sm:hidden">{script ? "rempli" : "vide"}</span>
+                Script
+                <span
+                  className={`ml-1 rounded-full border px-2 py-0.5 text-[10px] font-normal normal-case tracking-normal ${scriptBadge.className}`}
+                >
+                  {scriptBadge.label}
                 </span>
               </button>
             </div>
@@ -1372,9 +1371,51 @@ function VideoDetail({
                   exit={{ height: 0, opacity: 0 }}
                   className="overflow-hidden"
                 >
-                  <div className="px-3 pb-3">
+                  <div className="space-y-2 px-3 pb-3">
                     {role === "editor" ? (
-                      <div className="space-y-2">
+                      scriptStatus === "none" ? (
+                        <>
+                          <textarea
+                            value={script}
+                            onChange={(e) => {
+                              setScript(e.target.value);
+                              setScriptDirty(true);
+                            }}
+                            rows={10}
+                            placeholder="Écris ici le script de cette vidéo…"
+                            className="w-full resize-y rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
+                          />
+                          <button
+                            onClick={submitScript}
+                            disabled={savingScript || !script.trim()}
+                            className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-500 disabled:opacity-50"
+                          >
+                            {savingScript ? (
+                              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                            ) : (
+                              <Check className="h-3.5 w-3.5" />
+                            )}
+                            Envoyer le script
+                          </button>
+                        </>
+                      ) : (
+                        <>
+                          <p className="max-h-72 overflow-y-auto whitespace-pre-wrap rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2.5 text-sm text-neutral-200">
+                            {script || "—"}
+                          </p>
+                          <p className="text-[11px] text-neutral-500">
+                            {scriptStatus === "pending"
+                              ? "Script envoyé aux admins — en attente de validation."
+                              : scriptStatus === "modified"
+                                ? "L'admin a modifié ton script, voici la version corrigée."
+                                : "Script approuvé par l'admin."}
+                          </p>
+                        </>
+                      )
+                    ) : scriptStatus === "none" && !script ? (
+                      <p className="text-sm text-neutral-500">Aucun script envoyé par le monteur.</p>
+                    ) : (
+                      <>
                         <textarea
                           value={script}
                           onChange={(e) => {
@@ -1382,12 +1423,11 @@ function VideoDetail({
                             setScriptDirty(true);
                           }}
                           rows={10}
-                          placeholder="Écris ici la transcription des dialogues de cette vidéo…"
-                          className="w-full resize-y rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
+                          className="w-full resize-y rounded-lg border border-white/10 bg-neutral-950 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
                         />
-                        <div className="flex items-center gap-2">
+                        <div className="flex flex-wrap items-center gap-2">
                           <button
-                            onClick={submitScript}
+                            onClick={() => validateScript(true)}
                             disabled={savingScript || !scriptDirty}
                             className="inline-flex items-center gap-1.5 rounded-lg bg-red-600 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-red-500 disabled:opacity-50"
                           >
@@ -1396,23 +1436,17 @@ function VideoDetail({
                             ) : (
                               <Check className="h-3.5 w-3.5" />
                             )}
-                            Enregistrer le script
+                            Modifier et valider
                           </button>
-                          {scriptDirty && (
-                            <span className="text-[11px] text-orange-300">
-                              Modifications non enregistrées
-                            </span>
-                          )}
+                          <button
+                            onClick={() => validateScript(false)}
+                            disabled={savingScript}
+                            className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 px-3 py-1.5 text-xs font-medium text-neutral-200 transition hover:bg-white/5 disabled:opacity-50"
+                          >
+                            Valider sans modification
+                          </button>
                         </div>
-                      </div>
-                    ) : script ? (
-                      <p className="max-h-72 overflow-y-auto whitespace-pre-wrap rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2.5 text-sm text-neutral-200">
-                        {script}
-                      </p>
-                    ) : (
-                      <p className="text-sm text-neutral-500">
-                        Aucun script fourni par le monteur.
-                      </p>
+                      </>
                     )}
                   </div>
                 </motion.div>
