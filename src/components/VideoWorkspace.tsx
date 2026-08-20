@@ -39,7 +39,8 @@ import {
   toggleCommentReaction,
   deleteVideoComment,
   signWorkspaceUrls,
-  setVideoScript,
+  submitVideoScript,
+  validateVideoScript,
   createChatUploadUrl,
   setTypingIndicator,
   getTypingIndicator,
@@ -61,7 +62,6 @@ import {
   normalizeHref,
 } from "@/lib/video-preview";
 import { getFrameioPreview } from "@/lib/frameio.functions";
-import { ProjectChat } from "@/components/ProjectChat";
 import { InstaChat, type InstaMessage, type InstaSendPayload } from "@/components/InstaChat";
 import { ChevronRight, MessagesSquare } from "lucide-react";
 import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
@@ -356,16 +356,6 @@ export function ProjectVideosBoard({
 
   return (
     <div className="space-y-5">
-      <ProjectChat
-        projectId={projectId}
-        role={role}
-        onOpenVideo={(id) => {
-          setOpenId(id);
-          requestAnimationFrame(() =>
-            gridRef.current?.scrollIntoView({ behavior: "smooth", block: "start" }),
-          );
-        }}
-      />
       <div
         ref={gridRef}
         className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
@@ -714,7 +704,8 @@ function VideoDetail({
   const react = useServerFn(toggleCommentReaction);
   const removeComment = useServerFn(deleteVideoComment);
   const signUrls = useServerFn(signWorkspaceUrls);
-  const saveScript = useServerFn(setVideoScript);
+  const sendScript = useServerFn(submitVideoScript);
+  const approveScript = useServerFn(validateVideoScript);
   const makeChatUpload = useServerFn(createChatUploadUrl);
   const pingTyping = useServerFn(setTypingIndicator);
   const fetchTyping = useServerFn(getTypingIndicator);
