@@ -159,21 +159,88 @@ export const getVideoWorkspace = createServerFn({ method: "GET" })
     };
   });
 
-export const setVideoScript = createServerFn({ method: "POST" })
+/** Editor submits (or re-submits) the script of a video for admin validation. */
+export const submitVideoScript = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z.object({ video_id: z.string().uuid(), script: z.string().max(50000) }).parse(d),
   )
   .handler(async ({ data }) => {
-    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const { resolveViewer, assertVideoAccess, notifyAdmins } = await import(
+      "./video-workspace.server"
+    );
     const viewer = await resolveViewer();
-    await assertVideoAccess(data.video_id, viewer);
+    if (viewer.kind !== "editor") throw new Error("Réservé au monteur");
+    const { video, project } = await assertVideoAccess(data.video_id, viewer);
+    const content = data.script.trim();
+    if (!content) throw new Error("Le script est vide");
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { error } = await supabaseAdmin
       .from("project_videos")
-      .update({ script: data.script.trim() || null })
+      .update({
+        script: content,
+        script_status: "pending",
+        script_updated_at: new Date().toISOString(),
+      })
       .eq("id", data.video_id);
     if (error) throw new Error(error.message);
+
+    const { panelUrl } = await import("./notifications.server");
+    const label = `Vidéo #${video.video_number} — ${project.title}`;
+    await notifyAdmins({
+      type: "script_submitted",
+      project_id: project.id,
+      message: `${viewer.name} a envoyé le script de ${label}`,
+      push: {
+        body: `${viewer.name} a envoyé le script de ${label}`,
+        url: panelUrl("admin", project.id, video.id),
+        tag: `script-${video.id}`,
+      },
+    });
     return { ok: true as const };
+  });
+
+/** Admin validates the script, optionally with edits. */
+export const validateVideoScript = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({ video_id: z.string().uuid(), script: z.string().max(50000).optional() })
+      .parse(d),
+  )
+  .handler(async ({ data }) => {
+    const { resolveViewer, assertVideoAccess } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    if (viewer.kind !== "admin") throw new Error("Réservé aux admins");
+    const { video, project } = await assertVideoAccess(data.video_id, viewer);
+    const current = (video.script ?? "").trim();
+    const next = (data.script ?? current).trim();
+    if (!next) throw new Error("Le script est vide");
+    const modified = next !== current;
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { error } = await supabaseAdmin
+      .from("project_videos")
+      .update({
+        script: next,
+        script_status: modified ? "modified" : "validated",
+        script_updated_at: new Date().toISOString(),
+      })
+      .eq("id", data.video_id);
+    if (error) throw new Error(error.message);
+
+    if (project.editor_id) {
+      const { notifyEditor, panelUrl } = await import("./notifications.server");
+      const label = `Vidéo #${video.video_number} — ${project.title}`;
+      const message = modified
+        ? `${viewer.name} a modifié le script de ${label}`
+        : `${viewer.name} a validé le script de ${label}`;
+      await notifyEditor({
+        recipient_id: project.editor_id,
+        type: modified ? "script_modified" : "script_validated",
+        project_id: project.id,
+        message,
+        push: { body: message, url: panelUrl("editor", project.id, video.id), tag: `script-${video.id}` },
+      });
+    }
+    return { ok: true as const, modified };
   });
 
 export const markVideoCommentsRead = createServerFn({ method: "POST" })
