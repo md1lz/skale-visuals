@@ -902,10 +902,27 @@ function VideoDetail({
   }
 
   // Load the video-level script (not per version) when the video changes.
+  const videoRow = q.data?.video as
+    | { script?: string | null; script_status?: string | null }
+    | undefined;
+  const scriptStatus = (videoRow?.script_status ?? "none") as
+    | "none"
+    | "pending"
+    | "modified"
+    | "validated";
+
+  const scriptBadge =
+    scriptStatus === "pending"
+      ? { label: "En attente de validation", className: "border-orange-400/30 bg-orange-400/10 text-orange-200" }
+      : scriptStatus === "modified"
+        ? { label: role === "editor" ? "Modifié par l'admin" : "Modifié et validé", className: "border-sky-400/30 bg-sky-400/10 text-sky-200" }
+        : scriptStatus === "validated"
+          ? { label: "Validé ✅", className: "border-emerald-400/30 bg-emerald-400/10 text-emerald-200" }
+          : { label: "Aucun script", className: "border-white/10 bg-white/5 text-neutral-400" };
+
   useEffect(() => {
-    const v = q.data?.video as { script?: string | null } | undefined;
-    if (!v) return;
-    setScript((prev) => (scriptDirty ? prev : (v.script ?? "")));
+    if (!videoRow) return;
+    setScript((prev) => (scriptDirty ? prev : (videoRow.script ?? "")));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [q.data?.video, videoId]);
 
@@ -917,9 +934,26 @@ function VideoDetail({
     if (savingScript) return;
     setSavingScript(true);
     try {
-      await saveScript({ data: { video_id: videoId, script } });
+      await sendScript({ data: { video_id: videoId, script } });
       setScriptDirty(false);
-      toast.success("Script enregistré");
+      toast.success("Script envoyé aux admins");
+      refresh();
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSavingScript(false);
+    }
+  }
+
+  async function validateScript(withEdits: boolean) {
+    if (savingScript) return;
+    setSavingScript(true);
+    try {
+      const res = await approveScript({
+        data: withEdits ? { video_id: videoId, script } : { video_id: videoId },
+      });
+      setScriptDirty(false);
+      toast.success(res.modified ? "Script modifié et validé" : "Script validé");
       refresh();
     } catch (e) {
       toast.error(e instanceof Error ? e.message : "Erreur");
