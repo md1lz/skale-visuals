@@ -894,7 +894,7 @@ function VideoDetail({
 
   // Load the video-level script (not per version) when the video changes.
   const videoRow = q.data?.video as
-    | { script?: string | null; script_status?: string | null }
+    | { script?: string | null; script_previous?: string | null; script_status?: string | null }
     | undefined;
   const scriptStatus = (videoRow?.script_status ?? "none") as
     | "none"
