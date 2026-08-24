@@ -178,6 +178,7 @@ export const submitVideoScript = createServerFn({ method: "POST" })
       .from("project_videos")
       .update({
         script: content,
+        script_previous: null,
         script_status: "pending",
         script_updated_at: new Date().toISOString(),
       })
