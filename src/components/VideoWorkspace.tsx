@@ -66,6 +66,7 @@ import { InstaChat, type InstaMessage, type InstaSendPayload } from "@/component
 import { ChevronRight, MessagesSquare } from "lucide-react";
 import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { diffWords } from "@/lib/script-diff";
 
 export type WorkspaceRole = "editor" | "admin";
 
@@ -894,7 +895,7 @@ function VideoDetail({
 
   // Load the video-level script (not per version) when the video changes.
   const videoRow = q.data?.video as
-    | { script?: string | null; script_status?: string | null }
+    | { script?: string | null; script_previous?: string | null; script_status?: string | null }
     | undefined;
   const scriptStatus = (videoRow?.script_status ?? "none") as
     | "none"
@@ -1426,13 +1427,26 @@ function VideoDetail({
                       ) : (
                         <>
                           <p className="max-h-72 overflow-y-auto whitespace-pre-wrap rounded-lg border border-white/5 bg-neutral-950/60 px-3 py-2.5 text-sm text-neutral-200">
-                            {script || "—"}
+                            {scriptStatus === "modified" && videoRow?.script_previous
+                              ? diffWords(videoRow.script_previous, script).map((part, i) =>
+                                  part.added ? (
+                                    <mark
+                                      key={i}
+                                      className="rounded bg-emerald-500/20 px-0.5 text-emerald-300"
+                                    >
+                                      {part.text}
+                                    </mark>
+                                  ) : (
+                                    <span key={i}>{part.text}</span>
+                                  ),
+                                )
+                              : script || "—"}
                           </p>
                           <p className="text-[11px] text-neutral-500">
                             {scriptStatus === "pending"
                               ? "Script envoyé aux admins — en attente de validation."
                               : scriptStatus === "modified"
-                                ? "L'admin a modifié ton script, voici la version corrigée."
+                                ? "L'admin a modifié ton script — les passages en vert sont ses corrections."
                                 : "Script approuvé par l'admin."}
                           </p>
                         </>

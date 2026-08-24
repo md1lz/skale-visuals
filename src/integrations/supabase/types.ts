@@ -513,6 +513,7 @@ export type Database = {
           id: string
           project_id: string
           script: string | null
+          script_previous: string | null
           script_status: string
           script_updated_at: string | null
           status: string
@@ -525,6 +526,7 @@ export type Database = {
           id?: string
           project_id: string
           script?: string | null
+          script_previous?: string | null
           script_status?: string
           script_updated_at?: string | null
           status?: string
@@ -537,6 +539,7 @@ export type Database = {
           id?: string
           project_id?: string
           script?: string | null
+          script_previous?: string | null
           script_status?: string
           script_updated_at?: string | null
           status?: string

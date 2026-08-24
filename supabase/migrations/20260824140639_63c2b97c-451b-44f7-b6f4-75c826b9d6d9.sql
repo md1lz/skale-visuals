@@ -1,0 +1,1 @@
+ALTER TABLE public.project_videos ADD COLUMN IF NOT EXISTS script_previous text;

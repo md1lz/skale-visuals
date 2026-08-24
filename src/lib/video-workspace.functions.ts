@@ -178,6 +178,7 @@ export const submitVideoScript = createServerFn({ method: "POST" })
       .from("project_videos")
       .update({
         script: content,
+        script_previous: null,
         script_status: "pending",
         script_updated_at: new Date().toISOString(),
       })
@@ -220,6 +221,7 @@ export const validateVideoScript = createServerFn({ method: "POST" })
       .from("project_videos")
       .update({
         script: next,
+        script_previous: modified ? current : null,
         script_status: modified ? "modified" : "validated",
         script_updated_at: new Date().toISOString(),
       })
