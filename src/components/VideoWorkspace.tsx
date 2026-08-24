@@ -66,6 +66,7 @@ import { InstaChat, type InstaMessage, type InstaSendPayload } from "@/component
 import { ChevronRight, MessagesSquare } from "lucide-react";
 import { fmtSec, ImageLightbox, VoiceBubble } from "@/components/chat-media";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { diffWords } from "@/lib/script-diff";
 
 export type WorkspaceRole = "editor" | "admin";
 
