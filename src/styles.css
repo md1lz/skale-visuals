@@ -234,17 +234,6 @@
   min-height: 100vh;
   position: relative;
 }
-.site-root::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  background:
-    radial-gradient(ellipse 55% 45% at 100% 0%, rgba(226, 75, 74, 0.30), transparent 65%),
-    radial-gradient(ellipse 45% 55% at 0% 35%, rgba(255, 255, 255, 0.055), transparent 70%);
-}
-html.site-light .site-root::before { opacity: 0; }
 
 :root {
   --site-bg: #080810;

@@ -204,24 +204,24 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
           </h1>
         </FadeIn>
         <FadeIn delay={0.12}>
-          <p className="mx-auto mt-6 max-w-2xl text-balance text-sm text-muted-foreground sm:text-base">
+          <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
             Déléguez votre montage vidéo à une équipe qui livre vite et bien — pendant que vous vous concentrez sur
             ce qui fait vraiment grossir votre activité.
           </p>
         </FadeIn>
 
         <FadeIn delay={0.24}>
-          <div className="mt-12 flex flex-col items-stretch justify-center gap-5 sm:flex-row">
+          <div className="mt-12 flex flex-col items-stretch justify-center gap-4 sm:flex-row">
             {[
               { value: settings.videosCount, label: "vidéos montées" },
               { value: settings.clientsCount, label: "clients accompagnés" },
             ].map((s) => (
               <div
                 key={s.label}
-                className="site-surface site-box-glow flex-1 rounded-3xl px-10 py-10 sm:min-w-[260px]"
+                className="site-surface site-box-glow rounded-2xl px-7 py-6 sm:min-w-[190px]"
               >
                 <div className="relative z-10">
-                  <div className="text-5xl font-medium text-foreground sm:text-6xl">
+                  <div className="text-3xl font-medium text-foreground sm:text-4xl">
                     <span>+</span>
                     <StepCounter to={s.value} />
                   </div>
@@ -250,7 +250,7 @@ const FORMATS = [
 
 function FormatsTicker() {
   return (
-    <section className="ticker-fade relative overflow-hidden py-8">
+    <section className="ticker-fade relative mx-auto max-w-2xl overflow-hidden py-8">
       <div className="flex w-max gap-3 ticker-track">
         {[...FORMATS, ...FORMATS, ...FORMATS].map((f, i) => (
           <span
@@ -328,7 +328,7 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
       </FadeIn>
 
       <FadeIn delay={0.1}>
-        <div className="site-window site-corner-glow mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl">
+        <div className="site-window site-corner-glow mx-auto mt-8 max-w-[1120px] overflow-hidden rounded-2xl">
           {/* macOS title bar */}
           <div className="relative z-10 flex items-center border-b border-foreground/10 px-4 py-3">
             <div className="flex gap-2">
@@ -337,7 +337,7 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
               <span className="h-3 w-3 rounded-full bg-[#28c840]" />
             </div>
             <p className="pointer-events-none absolute inset-x-0 text-center text-xs text-muted-foreground">
-              Nos réalisations
+              Skale Visuals
             </p>
           </div>
 
@@ -462,8 +462,11 @@ function CallCta() {
 
 function SiteFooter() {
   return (
-    <footer className="relative z-10 border-t border-foreground/[0.06]">
-      <div className="mx-auto w-full max-w-6xl px-4 py-12">
+    <footer className="relative z-10">
+      <div className="mx-auto w-full max-w-4xl px-4">
+        <div className="h-px w-full bg-foreground/[0.06]" />
+      </div>
+      <div className="mx-auto w-full max-w-4xl px-4 py-12">
         <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="font-kangge text-3xl text-foreground">
@@ -500,6 +503,7 @@ function SiteFooter() {
           </div>
 
           <nav className="sm:text-right">
+            <p className="mb-3 text-[11px] uppercase tracking-widest text-muted-foreground">Navigation</p>
             <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:justify-end">
               {NAV_LINKS.map((l) => (
                 <li key={l.label}>
