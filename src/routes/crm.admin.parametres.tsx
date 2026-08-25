@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import {
   Palette,
   ImageIcon,
-  Wifi,
   Users,
   Trash2,
   Upload,
@@ -16,12 +15,9 @@ import {
   Check,
   Eye,
   EyeOff,
-  Pencil,
-  X,
   Sun,
   MonitorSmartphone,
   Moon,
-  Smartphone,
 } from "lucide-react";
 import {
   ADMIN_THEMES,
