@@ -271,7 +271,7 @@ function Trust({ settings }: { settings: HomeContent["settings"] }) {
   return (
     <section className="py-10">
       <FadeIn>
-        <p className="text-center text-[11px] uppercase tracking-[0.25em] text-muted-foreground">
+        <p className="text-center text-2xl font-medium text-foreground sm:text-3xl">
           Ils nous font confiance
         </p>
         <div className="mt-6 flex flex-wrap items-start justify-center gap-5 sm:gap-8">
@@ -286,15 +286,16 @@ function Trust({ settings }: { settings: HomeContent["settings"] }) {
                   </span>
                 )}
               </div>
-              <p className="mt-2 truncate text-xs text-muted-foreground">{c.name}</p>
+              <p className="mt-2 truncate text-sm font-medium text-muted-foreground">{c.name}</p>
             </div>
           ))}
           <div className="w-16 sm:w-20">
-            <div className="site-surface mx-auto grid h-16 w-16 place-items-center rounded-full sm:h-20 sm:w-20">
-              <span className="text-base font-semibold text-foreground sm:text-lg">{settings.plusLabel}</span>
+            <div className="site-pill site-corner-glow mx-auto grid h-16 w-16 place-items-center rounded-full sm:h-20 sm:w-20">
+              <span className="relative z-[1] text-base font-semibold text-foreground sm:text-lg">{settings.plusLabel}</span>
             </div>
           </div>
         </div>
+
       </FadeIn>
     </section>
   );
