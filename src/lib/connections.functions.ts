@@ -8,6 +8,7 @@ export type RememberedConnection = {
   label: string | null;
   source: "web" | "app";
   ownerType: "admin" | "editor";
+  ownerName: string;
   createdAt: string;
   lastSeenAt: string;
   online: boolean;
@@ -52,6 +53,18 @@ export const listConnections = createServerFn({ method: "POST" })
     const list = rows ?? [];
     if (list.length === 0) return [];
 
+    const editorIds = Array.from(
+      new Set(list.filter((r) => r.owner_type === "editor" && r.owner_id).map((r) => r.owner_id as string)),
+    );
+    const names = new Map<string, string>();
+    if (editorIds.length > 0) {
+      const { data: editors } = await supabaseAdmin
+        .from("editor_accounts")
+        .select("id, display_name")
+        .in("id", editorIds);
+      for (const e of editors ?? []) names.set(e.id, e.display_name);
+    }
+
     const since = new Date(Date.now() - 90_000).toISOString();
     const { data: presence } = await supabaseAdmin
       .from("site_presence")
@@ -67,6 +80,8 @@ export const listConnections = createServerFn({ method: "POST" })
       label: r.label,
       source: (r.source === "app" ? "app" : "web") as "web" | "app",
       ownerType: (r.owner_type === "editor" ? "editor" : "admin") as "admin" | "editor",
+      ownerName:
+        r.owner_type === "editor" ? names.get(r.owner_id ?? "") ?? r.username : r.username,
       createdAt: r.created_at,
       lastSeenAt: r.last_seen_at,
       online: online.has(r.ip),
