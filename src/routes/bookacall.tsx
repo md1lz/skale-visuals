@@ -184,10 +184,18 @@ function BookACall() {
           </motion.div>
 
           {/* Calendly-style side watermark */}
-          <span className="pointer-events-none absolute left-full top-1/2 hidden origin-left translate-x-3 -translate-y-1/2 rotate-90 whitespace-nowrap text-[11px] tracking-wide text-muted-foreground lg:block">
-            Alimenté par <span className="font-kangge text-foreground">skale</span>
-            <span className="text-primary">.</span>
-          </span>
+          <div className="pointer-events-none absolute inset-y-0 left-full hidden items-center pl-3 lg:flex">
+            <motion.span
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="whitespace-nowrap text-[11px] tracking-wide text-muted-foreground [writing-mode:vertical-rl]"
+            >
+              Alimenté par <span className="font-kangge text-foreground">skale</span>
+              <span className="text-primary">.</span>
+            </motion.span>
+          </div>
+
         </div>
         <p className="mt-5 text-center text-[11px] text-muted-foreground lg:hidden">
           Alimenté par <span className="font-kangge text-foreground">skale</span>
