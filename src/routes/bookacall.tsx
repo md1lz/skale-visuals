@@ -118,7 +118,13 @@ function BookACall() {
 
       <main className={`relative z-10 mx-auto mt-8 w-full pb-16 transition-[max-width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${date ? "max-w-5xl" : "max-w-3xl"}`}>
         <div className="relative">
-          <motion.div layout transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="site-pill site-corner-glow overflow-hidden rounded-3xl">
+          <motion.div
+            layout
+            initial={{ opacity: 0, y: 18, scale: 0.985 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            transition={{ layout: { type: "spring", stiffness: 240, damping: 30 }, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            className="site-pill site-corner-glow overflow-hidden rounded-3xl"
+          >
             <div className="grid gap-0 md:grid-cols-[280px_1fr]">
               {/* left column */}
               <aside className="border-b border-foreground/10 p-6 md:border-b-0 md:border-r">
@@ -184,10 +190,18 @@ function BookACall() {
           </motion.div>
 
           {/* Calendly-style side watermark */}
-          <span className="pointer-events-none absolute left-full top-1/2 hidden origin-left translate-x-3 -translate-y-1/2 rotate-90 whitespace-nowrap text-[11px] tracking-wide text-muted-foreground lg:block">
-            Alimenté par <span className="font-kangge text-foreground">skale</span>
-            <span className="text-primary">.</span>
-          </span>
+          <div className="pointer-events-none absolute inset-y-0 left-full hidden items-center pl-3 lg:flex">
+            <motion.span
+              initial={{ opacity: 0, x: -6 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: 0.35, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+              className="whitespace-nowrap text-[11px] tracking-wide text-muted-foreground [writing-mode:vertical-rl]"
+            >
+              Alimenté par <span className="font-kangge text-foreground">skale</span>
+              <span className="text-primary">.</span>
+            </motion.span>
+          </div>
+
         </div>
         <p className="mt-5 text-center text-[11px] text-muted-foreground lg:hidden">
           Alimenté par <span className="font-kangge text-foreground">skale</span>
@@ -271,13 +285,22 @@ function CalendarPane({
             <span key={i}>{d}</span>
           ))}
         </div>
-        <div className="mt-2 grid grid-cols-7 gap-1">
+        <motion.div
+          key={`${cursor.y}-${cursor.m}`}
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-2 grid grid-cols-7 gap-1"
+        >
           {cells.map((d, i) =>
             d === null ? (
               <span key={`e${i}`} />
             ) : (
-              <button
+              <motion.button
                 key={d}
+                whileHover={isAvailable(d) ? { scale: 1.08 } : undefined}
+                whileTap={isAvailable(d) ? { scale: 0.94 } : undefined}
+                transition={{ type: "spring", stiffness: 420, damping: 26 }}
                 type="button"
                 disabled={!isAvailable(d)}
                 onClick={() => onPickDate(d)}
@@ -290,10 +313,10 @@ function CalendarPane({
                 }`}
               >
                 {Number(d.slice(-2))}
-              </button>
+              </motion.button>
             ),
           )}
-        </div>
+        </motion.div>
         <p className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground">
           <Globe className="h-3.5 w-3.5" /> Heure d'Europe Centrale (Paris)
         </p>
@@ -314,10 +337,19 @@ function CalendarPane({
               {slotsFor(date).length === 0 && (
                 <p className="text-xs text-muted-foreground">Aucun créneau disponible.</p>
               )}
-              {slotsFor(date).map((t) => (
-                <div key={t} className="flex gap-2">
+              {slotsFor(date).map((t, i) => (
+                <motion.div
+                  key={t}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: Math.min(i * 0.03, 0.24), duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                  className="flex gap-2"
+                >
                   <motion.button
                     layout
+                    whileHover={{ scale: 1.015 }}
+                    whileTap={{ scale: 0.985 }}
+                    transition={{ type: "spring", stiffness: 380, damping: 28 }}
                     type="button"
                     onClick={() => onPickTime(t)}
                     className={`flex-1 cursor-pointer rounded-xl border py-2.5 text-sm transition ${
@@ -344,7 +376,7 @@ function CalendarPane({
                       </motion.button>
                     )}
                   </AnimatePresence>
-                </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>
