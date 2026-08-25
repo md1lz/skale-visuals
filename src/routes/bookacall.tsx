@@ -367,7 +367,7 @@ function CalendarPane({
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                        transition={{ layout: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                         type="button"
                         onClick={onNext}
                         className="w-32 shrink-0 cursor-pointer rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground"
@@ -524,7 +524,7 @@ function BookingForm({
         </button>
         <AnimatePresence>
           {location === "phone" && (
-            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}>
               <input
                 required
                 type="tel"
