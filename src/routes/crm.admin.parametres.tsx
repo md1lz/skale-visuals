@@ -7,7 +7,6 @@ import { motion } from "framer-motion";
 import {
   Palette,
   ImageIcon,
-  Wifi,
   Users,
   Trash2,
   Upload,
@@ -16,12 +15,9 @@ import {
   Check,
   Eye,
   EyeOff,
-  Pencil,
-  X,
   Sun,
   MonitorSmartphone,
   Moon,
-  Smartphone,
 } from "lucide-react";
 import {
   ADMIN_THEMES,
@@ -29,14 +25,11 @@ import {
   type AdminTheme,
 } from "@/components/admin-prefs";
 import {
-  listRememberedIps,
-  forgetRememberedIp,
-  renameRememberedIp,
   listAdmins,
   updateAdminCredentials,
   createAdminAccount,
 } from "@/lib/admin-settings.functions";
-import { listPushDevices, forgetPushDevice } from "@/lib/push.functions";
+import { RememberedConnections } from "@/components/RememberedConnections";
 
 
 export const Route = createFileRoute("/crm/admin/parametres")({
@@ -87,8 +80,8 @@ function ParametresPage() {
 
       <ThemeSection />
       <BackgroundSection />
-      <ConnectionsSection />
-      <AppConnectionsSection />
+      <RememberedConnections source="web" />
+      <RememberedConnections source="app" />
       <NotificationsSettings defaultUrl="/crm/admin" />
       <AccountsSection />
     </div>
@@ -228,264 +221,7 @@ function BackgroundSection() {
   );
 }
 
-/* ---------- CONNECTIONS ---------- */
-function ConnectionsSection() {
-  const fetchList = useServerFn(listRememberedIps);
-  const forget = useServerFn(forgetRememberedIp);
-  const rename = useServerFn(renameRememberedIp);
-  const q = useQuery({
-    queryKey: ["admin", "remembered-ips"],
-    queryFn: () => fetchList(),
-    initialData: [] as Array<{ ip: string; username: string; label: string | null; created_at: string; last_seen_at: string; online: boolean }>,
-    refetchInterval: 15_000,
-  });
-
-  const [editingIp, setEditingIp] = useState<string | null>(null);
-  const [draft, setDraft] = useState("");
-
-  async function onForget(ip: string) {
-    await forget({ data: { ip } });
-    q.refetch();
-  }
-
-  async function onSaveRename(ip: string) {
-    await rename({ data: { ip, label: draft.trim() || null } });
-    setEditingIp(null);
-    setDraft("");
-    q.refetch();
-  }
-
-  function formatLastSeen(iso: string) {
-    const d = new Date(iso);
-    const now = new Date();
-    const time = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-
-    const isSameDay = (a: Date, b: Date) =>
-      a.getFullYear() === b.getFullYear() &&
-      a.getMonth() === b.getMonth() &&
-      a.getDate() === b.getDate();
-
-    const yesterday = new Date(now);
-    yesterday.setDate(now.getDate() - 1);
-
-    if (isSameDay(d, now)) return `vu aujourd'hui à ${time}`;
-    if (isSameDay(d, yesterday)) return `vu hier à ${time}`;
-    return `vu ${d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })} à ${time}`;
-  }
-
-  return (
-    <Section
-      icon={Wifi}
-      title="Connexions site web"
-      description='Appareils autorisés via "Se souvenir de moi".'
-    >
-      {q.data.length === 0 ? (
-        <div className="text-sm text-neutral-400 bg-neutral-800/50 rounded-xl px-4 py-3 text-center">
-          Aucun appareil mémorisé.
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {q.data.map((row) => {
-            const isEditing = editingIp === row.ip;
-            return (
-              <div
-                key={row.ip}
-                className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5"
-              >
-                <span className="grid place-items-center h-8 w-8 rounded-lg bg-red-500/15 text-red-400 shrink-0">
-                  <Wifi className="h-4 w-4" />
-                </span>
-                <div className="flex-1 min-w-0">
-                  {isEditing ? (
-                    <input
-                      autoFocus
-                      value={draft}
-                      onChange={(e) => setDraft(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") onSaveRename(row.ip);
-                        if (e.key === "Escape") { setEditingIp(null); setDraft(""); }
-                      }}
-                      placeholder="Nom de l'appareil"
-                      className="w-full bg-neutral-900/80 border border-white/10 rounded-md px-2 py-1 text-sm text-white outline-none focus:border-red-400/60"
-                    />
-                  ) : (
-                    <p className="text-sm text-white truncate">
-                      {row.label ? (
-                        <>
-                          <span className="font-medium">{row.label}</span>{" "}
-                          <span className="font-mono text-neutral-500 text-xs">· {row.ip}</span>
-                        </>
-                      ) : (
-                        <span className="font-mono">{row.ip}</span>
-                      )}
-                    </p>
-                  )}
-                  <p className="text-[11px] text-neutral-500 flex items-center gap-1.5">
-                    <span>@{row.username}</span>
-                    <span>·</span>
-                    {row.online ? (
-                      <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
-                        <span className="relative flex h-1.5 w-1.5">
-                          <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                          <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                        </span>
-                        En ligne
-                      </span>
-                    ) : (
-                      <span>{formatLastSeen(row.last_seen_at)}</span>
-                    )}
-                  </p>
-                </div>
-                {isEditing ? (
-                  <>
-                    <button
-                      onClick={() => onSaveRename(row.ip)}
-                      className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-emerald-400 hover:bg-emerald-500/10 transition"
-                      title="Enregistrer"
-                    >
-                      <Check className="h-4 w-4" />
-                    </button>
-                    <button
-                      onClick={() => { setEditingIp(null); setDraft(""); }}
-                      className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
-                      title="Annuler"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => { setEditingIp(row.ip); setDraft(row.label ?? ""); }}
-                    className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition"
-                    title="Renommer"
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </button>
-                )}
-                <button
-                  onClick={() => onForget(row.ip)}
-                  className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition"
-                  title="Oublier cet appareil"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </button>
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </Section>
-  );
-}
-
-
 /* ---------- ACCOUNTS ---------- */
-function AppConnectionsSection() {
-  const fetchDevices = useServerFn(listPushDevices);
-  const forget = useServerFn(forgetPushDevice);
-  const q = useQuery({
-    queryKey: ["admin", "app-devices"],
-    queryFn: () => fetchDevices(),
-    initialData: {
-      isAdmin: true,
-      self: { type: "admin" as const, id: "", name: "" },
-      devices: [] as Array<{
-        id: string;
-        ownerType: "admin" | "editor";
-        ownerId: string;
-        ownerName: string;
-        device: string;
-        createdAt: string;
-        lastSeenAt: string;
-        online: boolean;
-        lastLoginAt: string | null;
-      }>,
-    },
-    refetchInterval: 15_000,
-  });
-
-  async function onForget(id: string) {
-    await forget({ data: { id } });
-    q.refetch();
-  }
-
-  function formatLastSeen(iso: string) {
-    const d = new Date(iso);
-    const now = new Date();
-    const time = `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`;
-    const isSameDay = (a: Date, b: Date) =>
-      a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
-    const yesterday = new Date(now);
-    yesterday.setDate(now.getDate() - 1);
-    if (isSameDay(d, now)) return `vu aujourd'hui à ${time}`;
-    if (isSameDay(d, yesterday)) return `vu hier à ${time}`;
-    return `vu ${d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })} à ${time}`;
-  }
-
-  return (
-    <Section
-      icon={Smartphone}
-      title="Connexions app"
-      description="Appareils connectés à l'application (admins et monteurs)."
-    >
-      {q.data.devices.length === 0 ? (
-        <div className="text-sm text-neutral-400 bg-neutral-800/50 rounded-xl px-4 py-3 text-center">
-          Aucun appareil connecté à l'app.
-        </div>
-      ) : (
-        <div className="space-y-2">
-          {q.data.devices.map((d) => (
-            <div
-              key={d.id}
-              className="flex items-center gap-3 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-2.5"
-            >
-              <span className="grid place-items-center h-8 w-8 rounded-lg bg-red-500/15 text-red-400 shrink-0">
-                <Smartphone className="h-4 w-4" />
-              </span>
-              <div className="flex-1 min-w-0">
-                <p className="text-sm text-white truncate">
-                  <span className="font-medium">{d.ownerName}</span>{" "}
-                  <span className="text-neutral-500 text-xs">· {d.device}</span>
-                </p>
-                <p className="text-[11px] text-neutral-500 flex items-center gap-1.5">
-                  <span
-                    className={`rounded px-1.5 py-0.5 text-[10px] uppercase tracking-wider ${
-                      d.ownerType === "admin"
-                        ? "bg-red-500/15 text-red-300"
-                        : "bg-sky-500/15 text-sky-300"
-                    }`}
-                  >
-                    {d.ownerType === "admin" ? "Admin" : "Monteur"}
-                  </span>
-                  <span>·</span>
-                  {d.online ? (
-                    <span className="inline-flex items-center gap-1 text-emerald-400 font-medium">
-                      <span className="relative flex h-1.5 w-1.5">
-                        <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75 animate-ping" />
-                        <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                      </span>
-                      En ligne
-                    </span>
-                  ) : (
-                    <span>{formatLastSeen(d.lastSeenAt)}</span>
-                  )}
-                </p>
-              </div>
-              <button
-                onClick={() => onForget(d.id)}
-                className="grid place-items-center h-8 w-8 rounded-lg text-neutral-400 hover:text-red-400 hover:bg-red-500/10 transition"
-                title="Retirer cet appareil"
-              >
-                <Trash2 className="h-4 w-4" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </Section>
-  );
-}
-
 function AccountsSection() {
   const fetchList = useServerFn(listAdmins);
   const q = useQuery({

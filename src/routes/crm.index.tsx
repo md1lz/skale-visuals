@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { loginAdmin, getAdminSessionFn } from "@/lib/admin-auth.functions";
+import { loginAdmin, getAdminSessionFn, tryAutoLoginByIp } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
 import { registerPushWorker, isStandaloneApp } from "@/lib/pwa";
 
@@ -24,31 +24,15 @@ export const Route = createFileRoute("/crm/")({
   component: CrmRoute,
 });
 
-function isDevHost() {
-  const h = window.location.hostname;
-  return (
-    h === "localhost" ||
-    h === "127.0.0.1" ||
-    h.endsWith(".lovableproject.com") ||
-    h.endsWith(".lovable.app") ||
-    h.endsWith(".lovable.dev")
-  );
-}
-
 function CrmRoute() {
-  const [allowed, setAllowed] = useState<boolean | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
-    if (isStandaloneApp() || isDevHost()) {
-      setAllowed(true);
-      void registerPushWorker();
-      return;
-    }
-    setAllowed(false);
-    window.location.replace("https://skalevisuals.com");
+    if (isStandaloneApp()) void registerPushWorker();
+    setReady(true);
   }, []);
 
-  if (allowed !== true) return <div className="min-h-[100dvh] bg-[#0D0D0D]" />;
+  if (!ready) return <div className="min-h-[100dvh] bg-[#0D0D0D]" />;
   return <CrmLogin />;
 }
 
@@ -56,6 +40,7 @@ function CrmLogin() {
   const login = useServerFn(loginAdmin);
   const fetchAdmin = useServerFn(getAdminSessionFn);
   const fetchEditor = useServerFn(getEditorSessionFn);
+  const autoLogin = useServerFn(tryAutoLoginByIp);
 
   const [checking, setChecking] = useState(true);
   const [username, setUsername] = useState("");
@@ -67,6 +52,7 @@ function CrmLogin() {
 
   useEffect(() => {
     let cancelled = false;
+    const source: "web" | "app" = isStandaloneApp() ? "app" : "web";
     (async () => {
       try {
         const [admin, editor] = await Promise.all([fetchAdmin(), fetchEditor()]);
@@ -79,6 +65,13 @@ function CrmLogin() {
           window.location.replace("/crm/monteur");
           return;
         }
+        // No active session: try devices remembered from this same source.
+        const auto = await autoLogin({ data: { source } });
+        if (cancelled) return;
+        if (auto.ok) {
+          window.location.replace("role" in auto && auto.role === "editor" ? "/crm/monteur" : "/crm/admin");
+          return;
+        }
       } catch {
         /* noop */
       }
@@ -87,7 +80,8 @@ function CrmLogin() {
     return () => {
       cancelled = true;
     };
-  }, [fetchAdmin, fetchEditor]);
+  }, [fetchAdmin, fetchEditor, autoLogin]);
+
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -95,7 +89,8 @@ function CrmLogin() {
     setPending(true);
     setError(null);
     try {
-      const res = await login({ data: { username, password, remember } });
+      const source: "web" | "app" = isStandaloneApp() ? "app" : "web";
+      const res = await login({ data: { username, password, remember, source } });
       if (!res.ok) {
         setError(
           "suspended" in res && res.suspended
