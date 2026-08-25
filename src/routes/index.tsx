@@ -328,7 +328,7 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
       </FadeIn>
 
       <FadeIn delay={0.1}>
-        <div className="site-window site-corner-glow mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl">
+        <div className="site-window site-corner-glow mx-auto mt-8 max-w-[1120px] overflow-hidden rounded-2xl">
           {/* macOS title bar */}
           <div className="relative z-10 flex items-center border-b border-foreground/10 px-4 py-3">
             <div className="flex gap-2">
@@ -337,7 +337,7 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
               <span className="h-3 w-3 rounded-full bg-[#28c840]" />
             </div>
             <p className="pointer-events-none absolute inset-x-0 text-center text-xs text-muted-foreground">
-              Nos réalisations
+              Skale Visuals
             </p>
           </div>
 
@@ -462,8 +462,11 @@ function CallCta() {
 
 function SiteFooter() {
   return (
-    <footer className="relative z-10 border-t border-foreground/[0.06]">
-      <div className="mx-auto w-full max-w-6xl px-4 py-12">
+    <footer className="relative z-10">
+      <div className="mx-auto w-full max-w-4xl px-4">
+        <div className="h-px w-full bg-foreground/[0.06]" />
+      </div>
+      <div className="mx-auto w-full max-w-4xl px-4 py-12">
         <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="font-kangge text-3xl text-foreground">
@@ -500,6 +503,7 @@ function SiteFooter() {
           </div>
 
           <nav className="sm:text-right">
+            <p className="mb-3 text-[11px] uppercase tracking-widest text-muted-foreground">Navigation</p>
             <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:justify-end">
               {NAV_LINKS.map((l) => (
                 <li key={l.label}>
