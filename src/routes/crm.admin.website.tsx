@@ -17,6 +17,8 @@ import {
   createHomeVideoUploadUrl,
 } from "@/lib/admin-home.functions";
 import type { HomeFolder, HomeSettings, HomeVideo } from "@/lib/home-content.functions";
+import { getAboutAdminContent, saveAboutContent } from "@/lib/admin-about.functions";
+import type { AboutContent } from "@/lib/about-content.shared";
 
 export const Route = createFileRoute("/crm/admin/website")({
   head: () => ({
@@ -556,6 +558,10 @@ function SiteAdmin() {
         </div>
       </section>
 
+      <AboutSection />
+
+
+
       {blocker.status === "blocked" && (
         <div className="fixed inset-0 z-[100] grid place-items-center bg-black/70 p-4">
           <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-900 p-5">
@@ -591,5 +597,218 @@ function SiteAdmin() {
         </div>
       )}
     </div>
+  );
+}
+
+/* ---------------- About Us ---------------- */
+
+function AboutSection() {
+  const [about, setAbout] = useState<AboutContent | null>(null);
+  const [previews, setPreviews] = useState<(string | null)[]>([null, null]);
+  const [saving, setSaving] = useState(false);
+  const photoRefs = useRef<(HTMLInputElement | null)[]>([null, null]);
+
+  useEffect(() => {
+    getAboutAdminContent()
+      .then((res) => {
+        setAbout(res.about as AboutContent);
+        setPreviews(res.photoPreviews ?? [null, null]);
+      })
+      .catch(() => {});
+  }, []);
+
+  function patch(p: Partial<AboutContent>) {
+    setAbout((a) => (a ? { ...a, ...p } : a));
+  }
+  function patchFounder(i: 0 | 1, p: Partial<AboutContent["founders"][number]>) {
+    setAbout((a) =>
+      a
+        ? {
+            ...a,
+            founders: [
+              i === 0 ? { ...a.founders[0], ...p } : a.founders[0],
+              i === 1 ? { ...a.founders[1], ...p } : a.founders[1],
+            ],
+          }
+        : a,
+    );
+  }
+  function patchValue(i: number, p: Partial<AboutContent["values"][number]>) {
+    setAbout((a) => (a ? { ...a, values: a.values.map((v, idx) => (idx === i ? { ...v, ...p } : v)) } : a));
+  }
+
+  async function save() {
+    if (!about) return;
+    setSaving(true);
+    try {
+      await saveAboutContent({ data: about });
+      toast.success("Page À propos mise à jour");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!about) return null;
+
+  return (
+    <section className={`${card} mt-6`}>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">About Us</h2>
+        <button onClick={save} disabled={saving} className={`${btn} bg-red-600 text-white hover:bg-red-500`}>
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          Enregistrer
+        </button>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block">
+          <span className="mb-1 block text-xs text-neutral-400">Titre intro</span>
+          <input className={input} value={about.introTitle} onChange={(e) => patch({ introTitle: e.target.value })} />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs text-neutral-400">Sous-titre intro</span>
+          <textarea
+            className={`${input} min-h-[72px]`}
+            value={about.introText}
+            onChange={(e) => patch({ introText: e.target.value })}
+          />
+        </label>
+      </div>
+
+      <div className="mt-5 grid gap-4 md:grid-cols-2">
+        {[0, 1].map((idx) => {
+          const i = idx as 0 | 1;
+          const f = about.founders[i];
+          return (
+            <div key={i} className="rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => photoRefs.current[i]?.click()}
+                  className="grid h-16 w-16 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+                >
+                  {previews[i] ? (
+                    <img src={previews[i]!} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <ImagePlus className="h-5 w-5" />
+                  )}
+                </button>
+                <input
+                  ref={(el) => {
+                    photoRefs.current[i] = el;
+                  }}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!file) return;
+                    try {
+                      const ref = await uploadAsset(file);
+                      patchFounder(i, { photo: ref });
+                      setPreviews((p) => p.map((v, x) => (x === i ? URL.createObjectURL(file) : v)));
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : "Upload échoué");
+                    }
+                  }}
+                />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <input
+                    className={input}
+                    placeholder="Nom"
+                    value={f.name}
+                    onChange={(e) => patchFounder(i, { name: e.target.value })}
+                  />
+                  <input
+                    className={input}
+                    placeholder="Rôle"
+                    value={f.role}
+                    onChange={(e) => patchFounder(i, { role: e.target.value })}
+                  />
+                </div>
+              </div>
+              <textarea
+                className={`${input} mt-3 min-h-[160px]`}
+                placeholder="Bio"
+                value={f.bio}
+                onChange={(e) => patchFounder(i, { bio: e.target.value })}
+              />
+              {f.photo && (
+                <button
+                  onClick={() => {
+                    patchFounder(i, { photo: null });
+                    setPreviews((p) => p.map((v, x) => (x === i ? null : v)));
+                  }}
+                  className="mt-2 text-xs text-neutral-500 hover:text-red-400"
+                >
+                  Retirer la photo
+                </button>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      {([
+        ["storyTitle", "storyText", "Histoire"],
+        ["visionTitle", "visionText", "Vision"],
+        ["teamTitle", "teamText", "Équipe"],
+      ] as const).map(([tk, bk, label]) => (
+        <div key={tk} className="mt-5 grid gap-4 sm:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
+          <label className="block">
+            <span className="mb-1 block text-xs text-neutral-400">Titre — {label}</span>
+            <input className={input} value={about[tk]} onChange={(e) => patch({ [tk]: e.target.value } as Partial<AboutContent>)} />
+          </label>
+          <label className="block">
+            <span className="mb-1 block text-xs text-neutral-400">Paragraphe — {label}</span>
+            <textarea
+              className={`${input} min-h-[96px]`}
+              value={about[bk]}
+              onChange={(e) => patch({ [bk]: e.target.value } as Partial<AboutContent>)}
+            />
+          </label>
+        </div>
+      ))}
+
+      <div className="mt-5">
+        <label className="block max-w-[320px]">
+          <span className="mb-1 block text-xs text-neutral-400">Titre — Valeurs</span>
+          <input className={input} value={about.valuesTitle} onChange={(e) => patch({ valuesTitle: e.target.value })} />
+        </label>
+        <div className="mt-3 grid gap-3 sm:grid-cols-3">
+          {about.values.map((v, i) => (
+            <div key={i} className="space-y-2 rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="flex gap-2">
+                <input
+                  className={`${input} w-16 text-center`}
+                  value={v.emoji}
+                  onChange={(e) => patchValue(i, { emoji: e.target.value })}
+                />
+                <input className={input} value={v.title} onChange={(e) => patchValue(i, { title: e.target.value })} />
+              </div>
+              <textarea
+                className={`${input} min-h-[72px]`}
+                value={v.text}
+                onChange={(e) => patchValue(i, { text: e.target.value })}
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-5 grid gap-4 sm:grid-cols-2">
+        <label className="block">
+          <span className="mb-1 block text-xs text-neutral-400">Titre CTA</span>
+          <input className={input} value={about.ctaTitle} onChange={(e) => patch({ ctaTitle: e.target.value })} />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs text-neutral-400">Texte du bouton CTA</span>
+          <input className={input} value={about.ctaButton} onChange={(e) => patch({ ctaButton: e.target.value })} />
+        </label>
+      </div>
+    </section>
   );
 }
