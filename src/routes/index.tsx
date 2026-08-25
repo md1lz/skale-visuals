@@ -344,9 +344,9 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
       </FadeIn>
 
       <FadeIn delay={0.1}>
-        <div className="site-surface mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl">
+        <div className="site-window site-corner-glow mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl">
           {/* macOS title bar */}
-          <div className="relative flex items-center border-b border-foreground/10 px-4 py-3">
+          <div className="relative z-10 flex items-center border-b border-foreground/10 px-4 py-3">
             <div className="flex gap-2">
               <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
               <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
