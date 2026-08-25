@@ -205,8 +205,8 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
         </FadeIn>
         <FadeIn delay={0.12}>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
-            Déléguez votre montage vidéo à une équipe qui livre vite et bien — pendant que vous vous concentrez sur
-            ce qui fait vraiment grossir votre activité.
+            Montage vidéo conçu pour performer : stratégies pensées pour augmenter ton watchtime, convertir et
+            faire grossir ton audience. Pas d'intermédiaire, pas de prise de tête. On s'occupe de tout.
           </p>
         </FadeIn>
 
@@ -218,7 +218,7 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
             ].map((s) => (
               <div
                 key={s.label}
-                className="site-surface site-corner-glow rounded-2xl px-7 py-6 sm:min-w-[190px]"
+                className="site-pill site-corner-glow rounded-2xl px-10 py-6 sm:min-w-[220px]"
               >
                 <div className="relative z-10">
                   <div className="text-3xl font-medium text-foreground sm:text-4xl">
@@ -328,7 +328,7 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
       </FadeIn>
 
       <FadeIn delay={0.1}>
-        <div className="site-window site-corner-glow mx-auto mt-8 max-w-[1120px] overflow-hidden rounded-2xl">
+        <div className="site-pill site-corner-glow mx-auto mt-8 max-w-[1120px] overflow-hidden rounded-2xl">
           {/* macOS title bar */}
           <div className="relative z-10 flex items-center border-b border-foreground/10 px-4 py-3">
             <div className="flex gap-2">
