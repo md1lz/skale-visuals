@@ -202,7 +202,7 @@ function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <FadeIn>
           {settings.titleStyle === "visuals" ? (
-            <h1 className="flex select-none items-center justify-center gap-3 text-5xl font-bold leading-none tracking-tighter text-foreground sm:gap-4 sm:text-6xl lg:text-7xl">
+            <h1 className="flex select-none items-center justify-center gap-3 text-5xl font-semibold leading-none tracking-tighter text-foreground sm:gap-4 sm:text-6xl lg:text-7xl">
               <span
                 className={`grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full ring-1 sm:h-16 sm:w-16 lg:h-20 lg:w-20 ${
                   theme === "light" ? "bg-white ring-black/10" : "bg-black ring-white/10"
@@ -211,7 +211,7 @@ function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "
                 <img
                   src={theme === "light" ? logoLight.url : logoDark.url}
                   alt="Logo Skale Visuals"
-                  className="h-full w-full scale-[1.75] object-contain"
+                  className="h-full w-full object-contain p-2"
                 />
               </span>
               Skale Visuals
