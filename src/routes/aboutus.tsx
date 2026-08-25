@@ -191,13 +191,13 @@ function AboutUsPage() {
         </section>
 
         {/* 2 — fondateurs */}
-        <section className="mt-16">
+        <section className="mt-8">
           <div className="grid gap-8 md:grid-cols-2">
             {about.founders.map((f, i) => (
               <FadeIn key={i} delay={i * 0.1}>
                 <article className="h-full px-6 py-10 text-center sm:px-8">
                   <div className="relative z-10 flex h-full flex-col items-center">
-                    <div className="site-surface relative grid h-40 w-40 place-items-center overflow-hidden rounded-full sm:h-52 sm:w-52">
+                    <div className="site-surface relative grid h-36 w-36 place-items-center overflow-hidden rounded-full sm:h-44 sm:w-44">
                       {f.photo ? (
                         <img
                           src={f.photo}
