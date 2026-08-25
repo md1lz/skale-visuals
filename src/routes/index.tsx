@@ -305,7 +305,7 @@ function Trust({ settings }: { settings: HomeContent["settings"] }) {
                   </span>
                 )}
               </div>
-              <p className="mt-2 truncate text-sm font-medium text-muted-foreground">{c.name}</p>
+              <p className="mt-2 text-sm font-medium leading-tight text-muted-foreground">{c.name}</p>
             </div>
           ))}
           <div className="w-16 sm:w-20">
