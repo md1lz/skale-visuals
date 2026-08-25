@@ -122,7 +122,7 @@ export function RememberedConnections({ source }: { source: "web" | "app" }) {
                     <span>@{row.username}</span>
                     <span>·</span>
                     <span className="rounded px-1.5 py-0.5 bg-white/5 text-neutral-400">
-                      {row.ownerType === "editor" ? "Monteur" : "Admin"}
+                      {row.ownerType === "editor" ? `Monteur · ${row.ownerName}` : "Admin"}
                     </span>
                     <span>·</span>
                     {row.online ? (
