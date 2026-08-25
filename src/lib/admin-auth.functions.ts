@@ -127,11 +127,17 @@ export const loginAdmin = createServerFn({ method: "POST" })
       .eq("id", match.id);
 
     if (data.remember && ip) {
-      await supabaseAdmin.from("admin_remembered_ips").upsert({
-        ip,
-        username: match.username,
-        last_seen_at: new Date().toISOString(),
-      });
+      await supabaseAdmin.from("admin_remembered_ips").upsert(
+        {
+          ip,
+          username: match.username,
+          source: data.source,
+          owner_type: "admin",
+          owner_id: match.id,
+          last_seen_at: new Date().toISOString(),
+        },
+        { onConflict: "ip,source,owner_type,username" },
+      );
     }
 
     const session = await useSession<AdminSessionData>(sessionConfig());
