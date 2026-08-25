@@ -62,14 +62,14 @@ function CrmLogin() {
           return;
         }
         if (editor) {
-          window.location.replace("/crm/monteur");
+          window.location.replace("/crm/editor");
           return;
         }
         // No active session: try devices remembered from this same source.
         const auto = await autoLogin({ data: { source } });
         if (cancelled) return;
         if (auto.ok) {
-          window.location.replace("role" in auto && auto.role === "editor" ? "/crm/monteur" : "/crm/admin");
+          window.location.replace("role" in auto && auto.role === "editor" ? "/crm/editor" : "/crm/admin");
           return;
         }
       } catch {
@@ -99,7 +99,7 @@ function CrmLogin() {
         );
         return;
       }
-      window.location.replace("role" in res && res.role === "editor" ? "/crm/monteur" : "/crm/admin");
+      window.location.replace("role" in res && res.role === "editor" ? "/crm/editor" : "/crm/admin");
     } catch {
       setError("Identifiants incorrects.");
     } finally {

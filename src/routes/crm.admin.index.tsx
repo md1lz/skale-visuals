@@ -255,7 +255,7 @@ function AdminHome() {
                 return (
                   <Link
                     key={f.id}
-                    to="/crm/admin/prospection"
+                    to="/crm/admin/prospects"
                     search={{ p: f.id }}
                     className="flex min-h-[44px] flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 hover:bg-white/[0.05] transition"
                   >

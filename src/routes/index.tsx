@@ -223,7 +223,7 @@ function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "
           )}
         </FadeIn>
         <FadeIn delay={0.12}>
-          <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
+          <p className="mx-auto mt-3 max-w-2xl text-balance text-base text-muted-foreground sm:mt-4 sm:text-lg">
             Montage vidéo conçu pour performer : stratégies pensées pour augmenter ton watchtime, convertir et
             faire grossir ton audience. Pas d'intermédiaire, pas de prise de tête. On s'occupe de tout.
           </p>
@@ -237,7 +237,7 @@ function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "
             ].map((s) => (
               <div
                 key={s.label}
-                className="site-pill site-corner-glow rounded-2xl px-10 py-6 sm:min-w-[220px]"
+                className="site-pill site-corner-glow rounded-2xl px-12 py-6 sm:min-w-[300px] lg:min-w-[340px]"
               >
                 <div className="relative z-10">
                   <div className="text-3xl font-medium text-foreground sm:text-4xl">
@@ -543,7 +543,16 @@ function SiteFooter() {
                   </button>
                 </li>
               ))}
+              <li>
+                <Link
+                  to="/aboutus"
+                  className="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                >
+                  À propos
+                </Link>
+              </li>
             </ul>
+
           </nav>
         </div>
 

@@ -18,7 +18,7 @@ import {
 } from "@/lib/admin-home.functions";
 import type { HomeFolder, HomeSettings, HomeVideo } from "@/lib/home-content.functions";
 
-export const Route = createFileRoute("/crm/admin/site")({
+export const Route = createFileRoute("/crm/admin/website")({
   head: () => ({
     meta: [
       { title: "Site web — Skale Admin" },

@@ -16,7 +16,7 @@ import {
   setBookingStatus,
 } from "@/lib/bookings.functions";
 
-export const Route = createFileRoute("/crm/admin/appels")({
+export const Route = createFileRoute("/crm/admin/calls")({
   component: AppelsPage,
 });
 

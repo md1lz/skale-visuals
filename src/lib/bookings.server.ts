@@ -116,7 +116,7 @@ export async function insertBooking(data: {
   });
   try {
     const { pushTo } = await import("./notifications.server");
-    await pushTo({ type: "admin" }, { body: message, url: "/crm/admin/appels", tag: "call-booked" });
+    await pushTo({ type: "admin" }, { body: message, url: "/crm/admin/calls", tag: "call-booked" });
   } catch {
     /* push is best-effort */
   }

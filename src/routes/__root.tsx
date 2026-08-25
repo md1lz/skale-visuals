@@ -146,7 +146,7 @@ function RootInner() {
   const loaderData = Route.useLoaderData();
   const isAdmin =
     pathname.startsWith("/crm/admin") ||
-    pathname.startsWith("/crm/monteur") ||
+    pathname.startsWith("/crm/editor") ||
     pathname.startsWith("/app") ||
     pathname.startsWith("/crm");
 

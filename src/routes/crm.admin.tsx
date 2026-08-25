@@ -28,7 +28,7 @@ export const Route = createFileRoute("/crm/admin")({
     const session = await getAdminSessionFn();
     if (!session) {
       const editor = await getEditorSessionFn();
-      if (editor) throw redirect({ to: "/crm/monteur" });
+      if (editor) throw redirect({ to: "/crm/editor" });
       throw redirect({ to: "/" });
     }
     return { session };
@@ -54,14 +54,14 @@ const NAV: {
   desktopOnly?: boolean;
 }[] = [
   { to: "/crm/admin", label: "Accueil", icon: Home, exact: true },
-  { to: "/crm/admin/analytiques", label: "Analytiques", icon: BarChart3 },
-  { to: "/crm/admin/site", label: "Site web", icon: Globe, desktopOnly: true },
-  { to: "/crm/admin/prospection", label: "Prospection", icon: Target },
+  { to: "/crm/admin/analytics", label: "Analytiques", icon: BarChart3 },
+  { to: "/crm/admin/website", label: "Site web", icon: Globe, desktopOnly: true },
+  { to: "/crm/admin/prospects", label: "Prospection", icon: Target },
   { to: "/crm/admin/clients", label: "Clients", icon: Users },
-  { to: "/crm/admin/projets", label: "Projets", icon: FolderKanban },
-  { to: "/crm/admin/monteurs", label: "Monteurs", icon: Scissors },
-  { to: "/crm/admin/appels", label: "Book a Call", icon: CalendarClock },
-  { to: "/crm/admin/parametres", label: "Paramètres", icon: Settings },
+  { to: "/crm/admin/projects", label: "Projets", icon: FolderKanban },
+  { to: "/crm/admin/editors", label: "Monteurs", icon: Scissors },
+  { to: "/crm/admin/calls", label: "Book a Call", icon: CalendarClock },
+  { to: "/crm/admin/settings", label: "Paramètres", icon: Settings },
 ];
 
 function AdminLayout() {

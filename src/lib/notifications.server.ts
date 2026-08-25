@@ -8,7 +8,7 @@ export function panelUrl(
   projectId: string | null,
   videoId?: string | null,
 ): string {
-  const base = role === "admin" ? "/crm/admin/projets" : "/crm/monteur/projets";
+  const base = role === "admin" ? "/crm/admin/projects" : "/crm/editor/projects";
   if (!projectId) return base;
   const v = videoId ? `&v=${videoId}` : "";
   return `${base}?p=${projectId}${v}`;
