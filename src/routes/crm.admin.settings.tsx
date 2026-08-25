@@ -32,7 +32,7 @@ import {
 import { RememberedConnections } from "@/components/RememberedConnections";
 
 
-export const Route = createFileRoute("/crm/admin/parametres")({
+export const Route = createFileRoute("/crm/admin/settings")({
   component: ParametresPage,
 });
 

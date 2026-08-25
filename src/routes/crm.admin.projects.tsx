@@ -27,7 +27,7 @@ import {
 } from "@/lib/admin-editors.functions";
 import { logAdminActivity } from "@/lib/admin-activity.functions";
 
-export const Route = createFileRoute("/crm/admin/projets")({
+export const Route = createFileRoute("/crm/admin/projects")({
   validateSearch: (s: Record<string, unknown>) =>
     ({
       p: typeof s.p === "string" ? s.p : undefined,

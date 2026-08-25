@@ -38,7 +38,7 @@ import {
   type Interested,
 } from "@/lib/admin-prospects.functions";
 
-export const Route = createFileRoute("/crm/admin/prospection")({
+export const Route = createFileRoute("/crm/admin/prospects")({
   validateSearch: (s: Record<string, unknown>) => ({ p: typeof s.p === "string" ? s.p : undefined }),
   component: AdminProspectionPage,
 });

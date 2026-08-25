@@ -15,20 +15,19 @@ import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CrmIndexRouteImport } from './routes/crm.index'
-import { Route as CrmMonteurRouteImport } from './routes/crm.monteur'
+import { Route as CrmEditorRouteImport } from './routes/crm.editor'
 import { Route as CrmAdminRouteImport } from './routes/crm.admin'
-import { Route as CrmMonteurIndexRouteImport } from './routes/crm.monteur.index'
+import { Route as CrmEditorIndexRouteImport } from './routes/crm.editor.index'
 import { Route as CrmAdminIndexRouteImport } from './routes/crm.admin.index'
 import { Route as CrmMonteurProjetsRouteImport } from './routes/crm.monteur.projets'
-import { Route as CrmMonteurParametresRouteImport } from './routes/crm.monteur.parametres'
-import { Route as CrmAdminSiteRouteImport } from './routes/crm.admin.site'
-import { Route as CrmAdminProspectionRouteImport } from './routes/crm.admin.prospection'
-import { Route as CrmAdminProjetsRouteImport } from './routes/crm.admin.projets'
-import { Route as CrmAdminParametresRouteImport } from './routes/crm.admin.parametres'
-import { Route as CrmAdminMonteursRouteImport } from './routes/crm.admin.monteurs'
+import { Route as CrmAdminWebsiteRouteImport } from './routes/crm.admin.website'
+import { Route as CrmAdminSettingsRouteImport } from './routes/crm.admin.settings'
+import { Route as CrmAdminProspectsRouteImport } from './routes/crm.admin.prospects'
+import { Route as CrmAdminProjectsRouteImport } from './routes/crm.admin.projects'
+import { Route as CrmAdminEditorsRouteImport } from './routes/crm.admin.editors'
 import { Route as CrmAdminClientsRouteImport } from './routes/crm.admin.clients'
-import { Route as CrmAdminAppelsRouteImport } from './routes/crm.admin.appels'
-import { Route as CrmAdminAnalytiquesRouteImport } from './routes/crm.admin.analytiques'
+import { Route as CrmAdminCallsRouteImport } from './routes/crm.admin.calls'
+import { Route as CrmAdminAnalyticsRouteImport } from './routes/crm.admin.analytics'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 
 const ImmobilierRoute = ImmobilierRouteImport.update({
@@ -61,9 +60,9 @@ const CrmIndexRoute = CrmIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CrmRoute,
 } as any)
-const CrmMonteurRoute = CrmMonteurRouteImport.update({
-  id: '/monteur',
-  path: '/monteur',
+const CrmEditorRoute = CrmEditorRouteImport.update({
+  id: '/editor',
+  path: '/editor',
   getParentRoute: () => CrmRoute,
 } as any)
 const CrmAdminRoute = CrmAdminRouteImport.update({
@@ -71,10 +70,10 @@ const CrmAdminRoute = CrmAdminRouteImport.update({
   path: '/admin',
   getParentRoute: () => CrmRoute,
 } as any)
-const CrmMonteurIndexRoute = CrmMonteurIndexRouteImport.update({
+const CrmEditorIndexRoute = CrmEditorIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => CrmMonteurRoute,
+  getParentRoute: () => CrmEditorRoute,
 } as any)
 const CrmAdminIndexRoute = CrmAdminIndexRouteImport.update({
   id: '/',
@@ -82,38 +81,33 @@ const CrmAdminIndexRoute = CrmAdminIndexRouteImport.update({
   getParentRoute: () => CrmAdminRoute,
 } as any)
 const CrmMonteurProjetsRoute = CrmMonteurProjetsRouteImport.update({
-  id: '/projets',
-  path: '/projets',
-  getParentRoute: () => CrmMonteurRoute,
+  id: '/monteur/projets',
+  path: '/monteur/projets',
+  getParentRoute: () => CrmRoute,
 } as any)
-const CrmMonteurParametresRoute = CrmMonteurParametresRouteImport.update({
-  id: '/parametres',
-  path: '/parametres',
-  getParentRoute: () => CrmMonteurRoute,
-} as any)
-const CrmAdminSiteRoute = CrmAdminSiteRouteImport.update({
-  id: '/site',
-  path: '/site',
+const CrmAdminWebsiteRoute = CrmAdminWebsiteRouteImport.update({
+  id: '/website',
+  path: '/website',
   getParentRoute: () => CrmAdminRoute,
 } as any)
-const CrmAdminProspectionRoute = CrmAdminProspectionRouteImport.update({
-  id: '/prospection',
-  path: '/prospection',
+const CrmAdminSettingsRoute = CrmAdminSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => CrmAdminRoute,
 } as any)
-const CrmAdminProjetsRoute = CrmAdminProjetsRouteImport.update({
-  id: '/projets',
-  path: '/projets',
+const CrmAdminProspectsRoute = CrmAdminProspectsRouteImport.update({
+  id: '/prospects',
+  path: '/prospects',
   getParentRoute: () => CrmAdminRoute,
 } as any)
-const CrmAdminParametresRoute = CrmAdminParametresRouteImport.update({
-  id: '/parametres',
-  path: '/parametres',
+const CrmAdminProjectsRoute = CrmAdminProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
   getParentRoute: () => CrmAdminRoute,
 } as any)
-const CrmAdminMonteursRoute = CrmAdminMonteursRouteImport.update({
-  id: '/monteurs',
-  path: '/monteurs',
+const CrmAdminEditorsRoute = CrmAdminEditorsRouteImport.update({
+  id: '/editors',
+  path: '/editors',
   getParentRoute: () => CrmAdminRoute,
 } as any)
 const CrmAdminClientsRoute = CrmAdminClientsRouteImport.update({
@@ -121,14 +115,14 @@ const CrmAdminClientsRoute = CrmAdminClientsRouteImport.update({
   path: '/clients',
   getParentRoute: () => CrmAdminRoute,
 } as any)
-const CrmAdminAppelsRoute = CrmAdminAppelsRouteImport.update({
-  id: '/appels',
-  path: '/appels',
+const CrmAdminCallsRoute = CrmAdminCallsRouteImport.update({
+  id: '/calls',
+  path: '/calls',
   getParentRoute: () => CrmAdminRoute,
 } as any)
-const CrmAdminAnalytiquesRoute = CrmAdminAnalytiquesRouteImport.update({
-  id: '/analytiques',
-  path: '/analytiques',
+const CrmAdminAnalyticsRoute = CrmAdminAnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
   getParentRoute: () => CrmAdminRoute,
 } as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
@@ -144,21 +138,20 @@ export interface FileRoutesByFullPath {
   '/crm': typeof CrmRouteWithChildren
   '/immobilier': typeof ImmobilierRoute
   '/crm/admin': typeof CrmAdminRouteWithChildren
-  '/crm/monteur': typeof CrmMonteurRouteWithChildren
+  '/crm/editor': typeof CrmEditorRouteWithChildren
   '/crm/': typeof CrmIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
-  '/crm/admin/appels': typeof CrmAdminAppelsRoute
+  '/crm/admin/analytics': typeof CrmAdminAnalyticsRoute
+  '/crm/admin/calls': typeof CrmAdminCallsRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/monteurs': typeof CrmAdminMonteursRoute
-  '/crm/admin/parametres': typeof CrmAdminParametresRoute
-  '/crm/admin/projets': typeof CrmAdminProjetsRoute
-  '/crm/admin/prospection': typeof CrmAdminProspectionRoute
-  '/crm/admin/site': typeof CrmAdminSiteRoute
-  '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
+  '/crm/admin/editors': typeof CrmAdminEditorsRoute
+  '/crm/admin/projects': typeof CrmAdminProjectsRoute
+  '/crm/admin/prospects': typeof CrmAdminProspectsRoute
+  '/crm/admin/settings': typeof CrmAdminSettingsRoute
+  '/crm/admin/website': typeof CrmAdminWebsiteRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
-  '/crm/monteur/': typeof CrmMonteurIndexRoute
+  '/crm/editor/': typeof CrmEditorIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -167,18 +160,17 @@ export interface FileRoutesByTo {
   '/immobilier': typeof ImmobilierRoute
   '/crm': typeof CrmIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
-  '/crm/admin/appels': typeof CrmAdminAppelsRoute
+  '/crm/admin/analytics': typeof CrmAdminAnalyticsRoute
+  '/crm/admin/calls': typeof CrmAdminCallsRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/monteurs': typeof CrmAdminMonteursRoute
-  '/crm/admin/parametres': typeof CrmAdminParametresRoute
-  '/crm/admin/projets': typeof CrmAdminProjetsRoute
-  '/crm/admin/prospection': typeof CrmAdminProspectionRoute
-  '/crm/admin/site': typeof CrmAdminSiteRoute
-  '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
+  '/crm/admin/editors': typeof CrmAdminEditorsRoute
+  '/crm/admin/projects': typeof CrmAdminProjectsRoute
+  '/crm/admin/prospects': typeof CrmAdminProspectsRoute
+  '/crm/admin/settings': typeof CrmAdminSettingsRoute
+  '/crm/admin/website': typeof CrmAdminWebsiteRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
   '/crm/admin': typeof CrmAdminIndexRoute
-  '/crm/monteur': typeof CrmMonteurIndexRoute
+  '/crm/editor': typeof CrmEditorIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -188,21 +180,20 @@ export interface FileRoutesById {
   '/crm': typeof CrmRouteWithChildren
   '/immobilier': typeof ImmobilierRoute
   '/crm/admin': typeof CrmAdminRouteWithChildren
-  '/crm/monteur': typeof CrmMonteurRouteWithChildren
+  '/crm/editor': typeof CrmEditorRouteWithChildren
   '/crm/': typeof CrmIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
-  '/crm/admin/appels': typeof CrmAdminAppelsRoute
+  '/crm/admin/analytics': typeof CrmAdminAnalyticsRoute
+  '/crm/admin/calls': typeof CrmAdminCallsRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/monteurs': typeof CrmAdminMonteursRoute
-  '/crm/admin/parametres': typeof CrmAdminParametresRoute
-  '/crm/admin/projets': typeof CrmAdminProjetsRoute
-  '/crm/admin/prospection': typeof CrmAdminProspectionRoute
-  '/crm/admin/site': typeof CrmAdminSiteRoute
-  '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
+  '/crm/admin/editors': typeof CrmAdminEditorsRoute
+  '/crm/admin/projects': typeof CrmAdminProjectsRoute
+  '/crm/admin/prospects': typeof CrmAdminProspectsRoute
+  '/crm/admin/settings': typeof CrmAdminSettingsRoute
+  '/crm/admin/website': typeof CrmAdminWebsiteRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
-  '/crm/monteur/': typeof CrmMonteurIndexRoute
+  '/crm/editor/': typeof CrmEditorIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -213,21 +204,20 @@ export interface FileRouteTypes {
     | '/crm'
     | '/immobilier'
     | '/crm/admin'
-    | '/crm/monteur'
+    | '/crm/editor'
     | '/crm/'
     | '/api/public/track'
-    | '/crm/admin/analytiques'
-    | '/crm/admin/appels'
+    | '/crm/admin/analytics'
+    | '/crm/admin/calls'
     | '/crm/admin/clients'
-    | '/crm/admin/monteurs'
-    | '/crm/admin/parametres'
-    | '/crm/admin/projets'
-    | '/crm/admin/prospection'
-    | '/crm/admin/site'
-    | '/crm/monteur/parametres'
+    | '/crm/admin/editors'
+    | '/crm/admin/projects'
+    | '/crm/admin/prospects'
+    | '/crm/admin/settings'
+    | '/crm/admin/website'
     | '/crm/monteur/projets'
     | '/crm/admin/'
-    | '/crm/monteur/'
+    | '/crm/editor/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -236,18 +226,17 @@ export interface FileRouteTypes {
     | '/immobilier'
     | '/crm'
     | '/api/public/track'
-    | '/crm/admin/analytiques'
-    | '/crm/admin/appels'
+    | '/crm/admin/analytics'
+    | '/crm/admin/calls'
     | '/crm/admin/clients'
-    | '/crm/admin/monteurs'
-    | '/crm/admin/parametres'
-    | '/crm/admin/projets'
-    | '/crm/admin/prospection'
-    | '/crm/admin/site'
-    | '/crm/monteur/parametres'
+    | '/crm/admin/editors'
+    | '/crm/admin/projects'
+    | '/crm/admin/prospects'
+    | '/crm/admin/settings'
+    | '/crm/admin/website'
     | '/crm/monteur/projets'
     | '/crm/admin'
-    | '/crm/monteur'
+    | '/crm/editor'
   id:
     | '__root__'
     | '/'
@@ -256,21 +245,20 @@ export interface FileRouteTypes {
     | '/crm'
     | '/immobilier'
     | '/crm/admin'
-    | '/crm/monteur'
+    | '/crm/editor'
     | '/crm/'
     | '/api/public/track'
-    | '/crm/admin/analytiques'
-    | '/crm/admin/appels'
+    | '/crm/admin/analytics'
+    | '/crm/admin/calls'
     | '/crm/admin/clients'
-    | '/crm/admin/monteurs'
-    | '/crm/admin/parametres'
-    | '/crm/admin/projets'
-    | '/crm/admin/prospection'
-    | '/crm/admin/site'
-    | '/crm/monteur/parametres'
+    | '/crm/admin/editors'
+    | '/crm/admin/projects'
+    | '/crm/admin/prospects'
+    | '/crm/admin/settings'
+    | '/crm/admin/website'
     | '/crm/monteur/projets'
     | '/crm/admin/'
-    | '/crm/monteur/'
+    | '/crm/editor/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -326,11 +314,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmIndexRouteImport
       parentRoute: typeof CrmRoute
     }
-    '/crm/monteur': {
-      id: '/crm/monteur'
-      path: '/monteur'
-      fullPath: '/crm/monteur'
-      preLoaderRoute: typeof CrmMonteurRouteImport
+    '/crm/editor': {
+      id: '/crm/editor'
+      path: '/editor'
+      fullPath: '/crm/editor'
+      preLoaderRoute: typeof CrmEditorRouteImport
       parentRoute: typeof CrmRoute
     }
     '/crm/admin': {
@@ -340,12 +328,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmAdminRouteImport
       parentRoute: typeof CrmRoute
     }
-    '/crm/monteur/': {
-      id: '/crm/monteur/'
+    '/crm/editor/': {
+      id: '/crm/editor/'
       path: '/'
-      fullPath: '/crm/monteur/'
-      preLoaderRoute: typeof CrmMonteurIndexRouteImport
-      parentRoute: typeof CrmMonteurRoute
+      fullPath: '/crm/editor/'
+      preLoaderRoute: typeof CrmEditorIndexRouteImport
+      parentRoute: typeof CrmEditorRoute
     }
     '/crm/admin/': {
       id: '/crm/admin/'
@@ -356,51 +344,44 @@ declare module '@tanstack/react-router' {
     }
     '/crm/monteur/projets': {
       id: '/crm/monteur/projets'
-      path: '/projets'
+      path: '/monteur/projets'
       fullPath: '/crm/monteur/projets'
       preLoaderRoute: typeof CrmMonteurProjetsRouteImport
-      parentRoute: typeof CrmMonteurRoute
+      parentRoute: typeof CrmRoute
     }
-    '/crm/monteur/parametres': {
-      id: '/crm/monteur/parametres'
-      path: '/parametres'
-      fullPath: '/crm/monteur/parametres'
-      preLoaderRoute: typeof CrmMonteurParametresRouteImport
-      parentRoute: typeof CrmMonteurRoute
-    }
-    '/crm/admin/site': {
-      id: '/crm/admin/site'
-      path: '/site'
-      fullPath: '/crm/admin/site'
-      preLoaderRoute: typeof CrmAdminSiteRouteImport
+    '/crm/admin/website': {
+      id: '/crm/admin/website'
+      path: '/website'
+      fullPath: '/crm/admin/website'
+      preLoaderRoute: typeof CrmAdminWebsiteRouteImport
       parentRoute: typeof CrmAdminRoute
     }
-    '/crm/admin/prospection': {
-      id: '/crm/admin/prospection'
-      path: '/prospection'
-      fullPath: '/crm/admin/prospection'
-      preLoaderRoute: typeof CrmAdminProspectionRouteImport
+    '/crm/admin/settings': {
+      id: '/crm/admin/settings'
+      path: '/settings'
+      fullPath: '/crm/admin/settings'
+      preLoaderRoute: typeof CrmAdminSettingsRouteImport
       parentRoute: typeof CrmAdminRoute
     }
-    '/crm/admin/projets': {
-      id: '/crm/admin/projets'
-      path: '/projets'
-      fullPath: '/crm/admin/projets'
-      preLoaderRoute: typeof CrmAdminProjetsRouteImport
+    '/crm/admin/prospects': {
+      id: '/crm/admin/prospects'
+      path: '/prospects'
+      fullPath: '/crm/admin/prospects'
+      preLoaderRoute: typeof CrmAdminProspectsRouteImport
       parentRoute: typeof CrmAdminRoute
     }
-    '/crm/admin/parametres': {
-      id: '/crm/admin/parametres'
-      path: '/parametres'
-      fullPath: '/crm/admin/parametres'
-      preLoaderRoute: typeof CrmAdminParametresRouteImport
+    '/crm/admin/projects': {
+      id: '/crm/admin/projects'
+      path: '/projects'
+      fullPath: '/crm/admin/projects'
+      preLoaderRoute: typeof CrmAdminProjectsRouteImport
       parentRoute: typeof CrmAdminRoute
     }
-    '/crm/admin/monteurs': {
-      id: '/crm/admin/monteurs'
-      path: '/monteurs'
-      fullPath: '/crm/admin/monteurs'
-      preLoaderRoute: typeof CrmAdminMonteursRouteImport
+    '/crm/admin/editors': {
+      id: '/crm/admin/editors'
+      path: '/editors'
+      fullPath: '/crm/admin/editors'
+      preLoaderRoute: typeof CrmAdminEditorsRouteImport
       parentRoute: typeof CrmAdminRoute
     }
     '/crm/admin/clients': {
@@ -410,18 +391,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmAdminClientsRouteImport
       parentRoute: typeof CrmAdminRoute
     }
-    '/crm/admin/appels': {
-      id: '/crm/admin/appels'
-      path: '/appels'
-      fullPath: '/crm/admin/appels'
-      preLoaderRoute: typeof CrmAdminAppelsRouteImport
+    '/crm/admin/calls': {
+      id: '/crm/admin/calls'
+      path: '/calls'
+      fullPath: '/crm/admin/calls'
+      preLoaderRoute: typeof CrmAdminCallsRouteImport
       parentRoute: typeof CrmAdminRoute
     }
-    '/crm/admin/analytiques': {
-      id: '/crm/admin/analytiques'
-      path: '/analytiques'
-      fullPath: '/crm/admin/analytiques'
-      preLoaderRoute: typeof CrmAdminAnalytiquesRouteImport
+    '/crm/admin/analytics': {
+      id: '/crm/admin/analytics'
+      path: '/analytics'
+      fullPath: '/crm/admin/analytics'
+      preLoaderRoute: typeof CrmAdminAnalyticsRouteImport
       parentRoute: typeof CrmAdminRoute
     }
     '/api/public/track': {
@@ -435,26 +416,26 @@ declare module '@tanstack/react-router' {
 }
 
 interface CrmAdminRouteChildren {
-  CrmAdminAnalytiquesRoute: typeof CrmAdminAnalytiquesRoute
-  CrmAdminAppelsRoute: typeof CrmAdminAppelsRoute
+  CrmAdminAnalyticsRoute: typeof CrmAdminAnalyticsRoute
+  CrmAdminCallsRoute: typeof CrmAdminCallsRoute
   CrmAdminClientsRoute: typeof CrmAdminClientsRoute
-  CrmAdminMonteursRoute: typeof CrmAdminMonteursRoute
-  CrmAdminParametresRoute: typeof CrmAdminParametresRoute
-  CrmAdminProjetsRoute: typeof CrmAdminProjetsRoute
-  CrmAdminProspectionRoute: typeof CrmAdminProspectionRoute
-  CrmAdminSiteRoute: typeof CrmAdminSiteRoute
+  CrmAdminEditorsRoute: typeof CrmAdminEditorsRoute
+  CrmAdminProjectsRoute: typeof CrmAdminProjectsRoute
+  CrmAdminProspectsRoute: typeof CrmAdminProspectsRoute
+  CrmAdminSettingsRoute: typeof CrmAdminSettingsRoute
+  CrmAdminWebsiteRoute: typeof CrmAdminWebsiteRoute
   CrmAdminIndexRoute: typeof CrmAdminIndexRoute
 }
 
 const CrmAdminRouteChildren: CrmAdminRouteChildren = {
-  CrmAdminAnalytiquesRoute: CrmAdminAnalytiquesRoute,
-  CrmAdminAppelsRoute: CrmAdminAppelsRoute,
+  CrmAdminAnalyticsRoute: CrmAdminAnalyticsRoute,
+  CrmAdminCallsRoute: CrmAdminCallsRoute,
   CrmAdminClientsRoute: CrmAdminClientsRoute,
-  CrmAdminMonteursRoute: CrmAdminMonteursRoute,
-  CrmAdminParametresRoute: CrmAdminParametresRoute,
-  CrmAdminProjetsRoute: CrmAdminProjetsRoute,
-  CrmAdminProspectionRoute: CrmAdminProspectionRoute,
-  CrmAdminSiteRoute: CrmAdminSiteRoute,
+  CrmAdminEditorsRoute: CrmAdminEditorsRoute,
+  CrmAdminProjectsRoute: CrmAdminProjectsRoute,
+  CrmAdminProspectsRoute: CrmAdminProspectsRoute,
+  CrmAdminSettingsRoute: CrmAdminSettingsRoute,
+  CrmAdminWebsiteRoute: CrmAdminWebsiteRoute,
   CrmAdminIndexRoute: CrmAdminIndexRoute,
 }
 
@@ -462,32 +443,30 @@ const CrmAdminRouteWithChildren = CrmAdminRoute._addFileChildren(
   CrmAdminRouteChildren,
 )
 
-interface CrmMonteurRouteChildren {
-  CrmMonteurParametresRoute: typeof CrmMonteurParametresRoute
-  CrmMonteurProjetsRoute: typeof CrmMonteurProjetsRoute
-  CrmMonteurIndexRoute: typeof CrmMonteurIndexRoute
+interface CrmEditorRouteChildren {
+  CrmEditorIndexRoute: typeof CrmEditorIndexRoute
 }
 
-const CrmMonteurRouteChildren: CrmMonteurRouteChildren = {
-  CrmMonteurParametresRoute: CrmMonteurParametresRoute,
-  CrmMonteurProjetsRoute: CrmMonteurProjetsRoute,
-  CrmMonteurIndexRoute: CrmMonteurIndexRoute,
+const CrmEditorRouteChildren: CrmEditorRouteChildren = {
+  CrmEditorIndexRoute: CrmEditorIndexRoute,
 }
 
-const CrmMonteurRouteWithChildren = CrmMonteurRoute._addFileChildren(
-  CrmMonteurRouteChildren,
+const CrmEditorRouteWithChildren = CrmEditorRoute._addFileChildren(
+  CrmEditorRouteChildren,
 )
 
 interface CrmRouteChildren {
   CrmAdminRoute: typeof CrmAdminRouteWithChildren
-  CrmMonteurRoute: typeof CrmMonteurRouteWithChildren
+  CrmEditorRoute: typeof CrmEditorRouteWithChildren
   CrmIndexRoute: typeof CrmIndexRoute
+  CrmMonteurProjetsRoute: typeof CrmMonteurProjetsRoute
 }
 
 const CrmRouteChildren: CrmRouteChildren = {
   CrmAdminRoute: CrmAdminRouteWithChildren,
-  CrmMonteurRoute: CrmMonteurRouteWithChildren,
+  CrmEditorRoute: CrmEditorRouteWithChildren,
   CrmIndexRoute: CrmIndexRoute,
+  CrmMonteurProjetsRoute: CrmMonteurProjetsRoute,
 }
 
 const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)

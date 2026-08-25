@@ -9,7 +9,7 @@ import { PushSetup } from "@/components/PushSetup";
 import { MessagePing } from "@/components/MessagePing";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
 
-export const Route = createFileRoute("/crm/monteur")({
+export const Route = createFileRoute("/crm/editor")({
   beforeLoad: async () => {
     const session = await getEditorSessionFn();
     if (!session) {

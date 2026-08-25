@@ -6,7 +6,7 @@ import { Bell, MessageSquare, Paperclip, AlertTriangle, CheckCircle2, FolderOpen
 import { listMyNotifications, listMyProjects, getEditorSessionFn } from "@/lib/editor.functions";
 import { statusBadgeClass, deadlineTone, fmtDateFR } from "@/lib/project-display";
 
-export const Route = createFileRoute("/crm/monteur/")({ component: EditorHome });
+export const Route = createFileRoute("/crm/editor/")({ component: EditorHome });
 
 function Initials({ name }: { name: string }) {
   const letters = name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();

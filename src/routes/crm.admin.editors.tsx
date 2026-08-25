@@ -29,7 +29,7 @@ import {
 } from "@/lib/admin-editors.functions";
 import { statusBadgeClass, fmtDateFR } from "@/lib/project-display";
 
-export const Route = createFileRoute("/crm/admin/monteurs")({ component: AdminEditorsPage });
+export const Route = createFileRoute("/crm/admin/editors")({ component: AdminEditorsPage });
 
 const eur = (n: number) => new Intl.NumberFormat("fr-FR", { style: "currency", currency: "EUR" }).format(n);
 
