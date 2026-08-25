@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Play, Sun, Moon, Mail, Instagram, Linkedin } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import logoMark from "@/assets/skale-logo-mark.jpg.asset.json";
 import {
   DEFAULT_HOME_SETTINGS,
   getHomeContent,
