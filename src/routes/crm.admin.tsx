@@ -4,11 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Home,
   BarChart3,
-  Video,
   Users,
   FolderKanban,
-  FileSignature,
-  Star,
   Settings,
   Scissors,
   Target,
@@ -58,15 +55,12 @@ const NAV: {
 }[] = [
   { to: "/crm/admin", label: "Accueil", icon: Home, exact: true },
   { to: "/crm/admin/analytiques", label: "Analytiques", icon: BarChart3 },
-  { to: "/crm/admin/videos", label: "Vidéos", icon: Video, desktopOnly: true },
   { to: "/crm/admin/site", label: "Site web", icon: Globe, desktopOnly: true },
   { to: "/crm/admin/prospection", label: "Prospection", icon: Target },
   { to: "/crm/admin/clients", label: "Clients", icon: Users },
   { to: "/crm/admin/projets", label: "Projets", icon: FolderKanban },
   { to: "/crm/admin/monteurs", label: "Monteurs", icon: Scissors },
   { to: "/crm/admin/appels", label: "Book a Call", icon: CalendarClock },
-  { to: "/crm/admin/devis", label: "Devis Tally", icon: FileSignature },
-  { to: "/crm/admin/avis", label: "Avis clients", icon: Star },
   { to: "/crm/admin/parametres", label: "Paramètres", icon: Settings },
 ];
 

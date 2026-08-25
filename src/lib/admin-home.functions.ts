@@ -51,6 +51,7 @@ const settingsSchema = z.object({
   videosCount: z.number().int().min(0).max(1_000_000),
   clientsCount: z.number().int().min(0).max(1_000_000),
   plusLabel: z.string().trim().max(16),
+  titleStyle: z.enum(["skale", "visuals"]).default("skale"),
   trust: z
     .array(z.object({ name: z.string().trim().max(80), photo: z.string().trim().max(500).nullable() }))
     .max(4),
@@ -195,4 +196,20 @@ export const createHomeAssetUploadUrl = createServerFn({ method: "POST" })
     await requireAdmin();
     const { createAssetUploadUrl } = await import("@/lib/home-assets.server");
     return createAssetUploadUrl(data.filename);
+  });
+
+/** Signed upload URL for a realisation video file (site-videos bucket). */
+export const createHomeVideoUploadUrl = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ filename: z.string().min(1).max(200) }).parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { toStorageReference } = await import("@/lib/video-storage.server");
+    const safe = data.filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+    const path = `home/${Date.now()}-${Math.random().toString(36).slice(2, 8)}-${safe}`;
+    const { data: signed, error } = await supabaseAdmin.storage
+      .from("site-videos")
+      .createSignedUploadUrl(path);
+    if (error || !signed) throw new Error(error?.message ?? "Upload URL failed");
+    return { uploadUrl: signed.signedUrl, token: signed.token, path, reference: toStorageReference(path) };
   });
