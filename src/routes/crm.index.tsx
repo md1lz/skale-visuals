@@ -89,7 +89,8 @@ function CrmLogin() {
     setPending(true);
     setError(null);
     try {
-      const res = await login({ data: { username, password, remember } });
+      const source: "web" | "app" = isStandaloneApp() ? "app" : "web";
+      const res = await login({ data: { username, password, remember, source } });
       if (!res.ok) {
         setError(
           "suspended" in res && res.suspended
