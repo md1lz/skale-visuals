@@ -222,7 +222,7 @@ function CalendarPane({
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row">
-      <motion.div layout className="flex-1">
+      <motion.div layout className="mx-auto w-full max-w-sm flex-1">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium capitalize text-foreground">
             {MONTHS[cursor.m]} {cursor.y}
