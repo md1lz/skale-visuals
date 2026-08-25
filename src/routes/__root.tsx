@@ -12,7 +12,6 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { AdminBubble } from "../components/AdminBubble";
 import { initTracker, trackPageView } from "../lib/tracker";
 import { Toaster } from "../components/ui/sonner";
 import { useQuery } from "@tanstack/react-query";
@@ -204,7 +203,6 @@ function RootInner() {
       ) : (
         <Outlet />
       )}
-      {!isAdmin && <AdminBubble />}
       <Toaster richColors position="bottom-right" theme="dark" />
     </>
   );
