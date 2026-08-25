@@ -75,7 +75,7 @@ function AppelsPage() {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="mx-auto w-full max-w-3xl space-y-8">
       <div>
         <h1 className="text-xl font-semibold">Book a Call</h1>
         <p className="text-sm text-neutral-400">Disponibilités et réservations d'appels.</p>
