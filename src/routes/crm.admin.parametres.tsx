@@ -29,14 +29,11 @@ import {
   type AdminTheme,
 } from "@/components/admin-prefs";
 import {
-  listRememberedIps,
-  forgetRememberedIp,
-  renameRememberedIp,
   listAdmins,
   updateAdminCredentials,
   createAdminAccount,
 } from "@/lib/admin-settings.functions";
-import { listPushDevices, forgetPushDevice } from "@/lib/push.functions";
+import { RememberedConnections } from "@/components/RememberedConnections";
 
 
 export const Route = createFileRoute("/crm/admin/parametres")({
@@ -87,8 +84,8 @@ function ParametresPage() {
 
       <ThemeSection />
       <BackgroundSection />
-      <ConnectionsSection />
-      <AppConnectionsSection />
+      <RememberedConnections source="web" />
+      <RememberedConnections source="app" />
       <NotificationsSettings defaultUrl="/crm/admin" />
       <AccountsSection />
     </div>
