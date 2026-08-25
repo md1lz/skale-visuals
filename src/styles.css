@@ -93,6 +93,12 @@
     );
   }
   h1, h2, h3, h4 { letter-spacing: -0.02em; }
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  label:has(> input[type="checkbox"]),
+  select:not(:disabled),
+  a[href] { cursor: pointer; }
+
 }
 
 @utility cinematic-glow {
