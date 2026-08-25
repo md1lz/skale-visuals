@@ -296,14 +296,25 @@ html.site-light .site-box-glow::before { opacity: 0; }
   &::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: -20%;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 60% 75% at 100% 0%, rgba(226, 75, 74, 0.30), transparent 65%),
-      radial-gradient(ellipse 50% 70% at 0% 40%, rgba(255, 255, 255, 0.05), transparent 70%);
+      radial-gradient(ellipse 160% 150% at 120% -20%, rgba(226, 75, 74, 0.10), transparent 55%),
+      radial-gradient(ellipse 150% 140% at -20% -20%, rgba(255, 255, 255, 0.05), transparent 55%);
+    filter: blur(18px);
   }
 }
 html.site-light .site-corner-glow::before { opacity: 0; }
+
+@utility site-pill {
+  background: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+html.site-light .site-pill {
+  background: #ffffff;
+  border-color: rgba(0, 0, 0, 0.09);
+}
+
 
 @utility site-window {
   background: #0b0b12;
