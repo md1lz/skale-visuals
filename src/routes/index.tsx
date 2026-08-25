@@ -186,10 +186,23 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
         <button
           type="button"
           onClick={toggle}
+          role="switch"
+          aria-checked={theme === "light"}
           aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
-          className="site-glass absolute right-4 grid h-10 w-10 place-items-center rounded-full text-foreground transition hover:scale-105"
+          className="site-glass absolute right-4 flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
         >
-          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <motion.span
+            layout
+            transition={{ type: "spring", stiffness: 500, damping: 34 }}
+            className="absolute h-8 w-8 rounded-full bg-foreground/90"
+            style={{ left: theme === "dark" ? 4 : 34 }}
+          />
+          <span className="relative z-10 grid h-8 w-8 place-items-center">
+            <Moon className={`h-4 w-4 transition-colors ${theme === "dark" ? "text-background" : "text-foreground/60"}`} />
+          </span>
+          <span className="relative z-10 grid h-8 w-8 place-items-center">
+            <Sun className={`h-4 w-4 transition-colors ${theme === "light" ? "text-background" : "text-foreground/60"}`} />
+          </span>
         </button>
       </div>
     </header>
