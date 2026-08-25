@@ -225,3 +225,52 @@
 @media (min-width: 768px) {
   .panel-zoom { zoom: 1.25; }
 }
+
+/* ---------- public site (home) theming ---------- */
+
+.site-root {
+  background-color: var(--site-bg);
+  color: var(--foreground);
+  min-height: 100vh;
+}
+
+:root {
+  --site-bg: #080810;
+  --site-surface: rgba(255, 255, 255, 0.05);
+  --site-surface-border: rgba(255, 255, 255, 0.12);
+}
+
+html.site-light {
+  --background: oklch(0.98 0 0);
+  --foreground: oklch(0.18 0.01 280);
+  --muted-foreground: oklch(0.52 0.01 280);
+  --site-bg: #f5f5f7;
+  --site-surface: rgba(0, 0, 0, 0.04);
+  --site-surface-border: rgba(0, 0, 0, 0.09);
+  color-scheme: light;
+}
+html.site-light body { background-color: var(--site-bg); }
+html.site-light body::before,
+html.site-light body::after { opacity: 0; }
+
+@utility site-surface {
+  background: var(--site-surface);
+  border: 1px solid var(--site-surface-border);
+  backdrop-filter: blur(14px) saturate(140%);
+}
+
+@utility site-glass {
+  background: var(--site-surface);
+  border: 1px solid var(--site-surface-border);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
+@keyframes ticker {
+  from { transform: translateX(0); }
+  to { transform: translateX(-33.3333%); }
+}
+@utility ticker-track { animation: ticker 28s linear infinite; }
+@utility ticker-mask {
+  mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 8%, black 92%, transparent);
+}

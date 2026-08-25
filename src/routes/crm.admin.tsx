@@ -12,6 +12,7 @@ import {
   Settings,
   Scissors,
   Target,
+  Globe,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -57,6 +58,7 @@ const NAV: {
   { to: "/crm/admin", label: "Accueil", icon: Home, exact: true },
   { to: "/crm/admin/analytiques", label: "Analytiques", icon: BarChart3 },
   { to: "/crm/admin/videos", label: "Vidéos", icon: Video, desktopOnly: true },
+  { to: "/crm/admin/site", label: "Site web", icon: Globe, desktopOnly: true },
   { to: "/crm/admin/prospection", label: "Prospection", icon: Target },
   { to: "/crm/admin/clients", label: "Clients", icon: Users },
   { to: "/crm/admin/projets", label: "Projets", icon: FolderKanban },

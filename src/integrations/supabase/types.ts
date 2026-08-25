@@ -10,7 +10,7 @@ export type Database = {
   // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
-    PostgrestVersion: "14.5"
+    PostgrestVersion: "14.17"
   }
   public: {
     Tables: {
@@ -249,6 +249,68 @@ export type Database = {
           username?: string
         }
         Relationships: []
+      }
+      home_folders: {
+        Row: {
+          created_at: string
+          id: string
+          label: string
+          position: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          label: string
+          position?: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          label?: string
+          position?: number
+        }
+        Relationships: []
+      }
+      home_videos: {
+        Row: {
+          author: string
+          created_at: string
+          folder_id: string
+          id: string
+          position: number
+          source_url: string
+          thumbnail_url: string | null
+          title: string
+        }
+        Insert: {
+          author?: string
+          created_at?: string
+          folder_id: string
+          id?: string
+          position?: number
+          source_url?: string
+          thumbnail_url?: string | null
+          title?: string
+        }
+        Update: {
+          author?: string
+          created_at?: string
+          folder_id?: string
+          id?: string
+          position?: number
+          source_url?: string
+          thumbnail_url?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "home_videos_folder_id_fkey"
+            columns: ["folder_id"]
+            isOneToOne: false
+            referencedRelation: "home_folders"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       notifications: {
         Row: {

@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as ImmobilierRouteImport } from './routes/immobilier'
 import { Route as CrmRouteImport } from './routes/crm'
+import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CrmIndexRouteImport } from './routes/crm.index'
@@ -21,6 +22,7 @@ import { Route as CrmAdminIndexRouteImport } from './routes/crm.admin.index'
 import { Route as CrmMonteurProjetsRouteImport } from './routes/crm.monteur.projets'
 import { Route as CrmMonteurParametresRouteImport } from './routes/crm.monteur.parametres'
 import { Route as CrmAdminVideosRouteImport } from './routes/crm.admin.videos'
+import { Route as CrmAdminSiteRouteImport } from './routes/crm.admin.site'
 import { Route as CrmAdminProspectionRouteImport } from './routes/crm.admin.prospection'
 import { Route as CrmAdminProjetsRouteImport } from './routes/crm.admin.projets'
 import { Route as CrmAdminParametresRouteImport } from './routes/crm.admin.parametres'
@@ -39,6 +41,11 @@ const ImmobilierRoute = ImmobilierRouteImport.update({
 const CrmRoute = CrmRouteImport.update({
   id: '/crm',
   path: '/crm',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookacallRoute = BookacallRouteImport.update({
+  id: '/bookacall',
+  path: '/bookacall',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AppRoute = AppRouteImport.update({
@@ -91,6 +98,11 @@ const CrmAdminVideosRoute = CrmAdminVideosRouteImport.update({
   path: '/videos',
   getParentRoute: () => CrmAdminRoute,
 } as any)
+const CrmAdminSiteRoute = CrmAdminSiteRouteImport.update({
+  id: '/site',
+  path: '/site',
+  getParentRoute: () => CrmAdminRoute,
+} as any)
 const CrmAdminProspectionRoute = CrmAdminProspectionRouteImport.update({
   id: '/prospection',
   path: '/prospection',
@@ -140,6 +152,7 @@ const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
   '/immobilier': typeof ImmobilierRoute
   '/crm/admin': typeof CrmAdminRouteWithChildren
@@ -154,6 +167,7 @@ export interface FileRoutesByFullPath {
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
+  '/crm/admin/site': typeof CrmAdminSiteRoute
   '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
@@ -163,6 +177,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/bookacall': typeof BookacallRoute
   '/immobilier': typeof ImmobilierRoute
   '/crm': typeof CrmIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -174,6 +189,7 @@ export interface FileRoutesByTo {
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
+  '/crm/admin/site': typeof CrmAdminSiteRoute
   '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
@@ -184,6 +200,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/app': typeof AppRoute
+  '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
   '/immobilier': typeof ImmobilierRoute
   '/crm/admin': typeof CrmAdminRouteWithChildren
@@ -198,6 +215,7 @@ export interface FileRoutesById {
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
+  '/crm/admin/site': typeof CrmAdminSiteRoute
   '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
@@ -209,6 +227,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/app'
+    | '/bookacall'
     | '/crm'
     | '/immobilier'
     | '/crm/admin'
@@ -223,6 +242,7 @@ export interface FileRouteTypes {
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
+    | '/crm/admin/site'
     | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
@@ -232,6 +252,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/app'
+    | '/bookacall'
     | '/immobilier'
     | '/crm'
     | '/api/public/track'
@@ -243,6 +264,7 @@ export interface FileRouteTypes {
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
+    | '/crm/admin/site'
     | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
@@ -252,6 +274,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/app'
+    | '/bookacall'
     | '/crm'
     | '/immobilier'
     | '/crm/admin'
@@ -266,6 +289,7 @@ export interface FileRouteTypes {
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
+    | '/crm/admin/site'
     | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
@@ -276,6 +300,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AppRoute: typeof AppRoute
+  BookacallRoute: typeof BookacallRoute
   CrmRoute: typeof CrmRouteWithChildren
   ImmobilierRoute: typeof ImmobilierRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -295,6 +320,13 @@ declare module '@tanstack/react-router' {
       path: '/crm'
       fullPath: '/crm'
       preLoaderRoute: typeof CrmRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/bookacall': {
+      id: '/bookacall'
+      path: '/bookacall'
+      fullPath: '/bookacall'
+      preLoaderRoute: typeof BookacallRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/app': {
@@ -365,6 +397,13 @@ declare module '@tanstack/react-router' {
       path: '/videos'
       fullPath: '/crm/admin/videos'
       preLoaderRoute: typeof CrmAdminVideosRouteImport
+      parentRoute: typeof CrmAdminRoute
+    }
+    '/crm/admin/site': {
+      id: '/crm/admin/site'
+      path: '/site'
+      fullPath: '/crm/admin/site'
+      preLoaderRoute: typeof CrmAdminSiteRouteImport
       parentRoute: typeof CrmAdminRoute
     }
     '/crm/admin/prospection': {
@@ -442,6 +481,7 @@ interface CrmAdminRouteChildren {
   CrmAdminParametresRoute: typeof CrmAdminParametresRoute
   CrmAdminProjetsRoute: typeof CrmAdminProjetsRoute
   CrmAdminProspectionRoute: typeof CrmAdminProspectionRoute
+  CrmAdminSiteRoute: typeof CrmAdminSiteRoute
   CrmAdminVideosRoute: typeof CrmAdminVideosRoute
   CrmAdminIndexRoute: typeof CrmAdminIndexRoute
 }
@@ -455,6 +495,7 @@ const CrmAdminRouteChildren: CrmAdminRouteChildren = {
   CrmAdminParametresRoute: CrmAdminParametresRoute,
   CrmAdminProjetsRoute: CrmAdminProjetsRoute,
   CrmAdminProspectionRoute: CrmAdminProspectionRoute,
+  CrmAdminSiteRoute: CrmAdminSiteRoute,
   CrmAdminVideosRoute: CrmAdminVideosRoute,
   CrmAdminIndexRoute: CrmAdminIndexRoute,
 }
@@ -496,6 +537,7 @@ const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AppRoute: AppRoute,
+  BookacallRoute: BookacallRoute,
   CrmRoute: CrmRouteWithChildren,
   ImmobilierRoute: ImmobilierRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
