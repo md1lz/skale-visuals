@@ -299,19 +299,19 @@ html.site-light .site-box-glow::before { opacity: 0; }
     inset: -20%;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 160% 150% at 120% -20%, rgba(226, 75, 74, 0.10), transparent 55%),
-      radial-gradient(ellipse 150% 140% at -20% -20%, rgba(255, 255, 255, 0.05), transparent 55%);
-    filter: blur(18px);
+      radial-gradient(ellipse 160% 150% at 120% -20%, rgba(226, 75, 74, 0.22), transparent 55%),
+      radial-gradient(ellipse 150% 140% at -20% -20%, rgba(255, 255, 255, 0.11), transparent 55%);
+    filter: blur(14px);
   }
 }
 html.site-light .site-corner-glow::before { opacity: 0; }
 
 @utility site-pill {
-  background: #000000;
+  background: #161616;
   border: 1px solid rgba(255, 255, 255, 0.10);
 }
 html.site-light .site-pill {
-  background: #ffffff;
+  background: #f5f5f7;
   border-color: rgba(0, 0, 0, 0.09);
 }
 
