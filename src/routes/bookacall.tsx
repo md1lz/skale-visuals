@@ -104,7 +104,7 @@ function BookACall() {
         >
           <motion.span
             animate={{ x: theme === "dark" ? 0 : 30 }}
-            transition={{ type: "spring", stiffness: 500, damping: 34 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
             className="absolute left-1 h-8 w-8 rounded-full bg-foreground/90"
           />
           <span className="relative z-10 grid h-8 w-8 place-items-center">
@@ -122,7 +122,7 @@ function BookACall() {
             layout
             initial={{ opacity: 0, y: 18, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ layout: { type: "spring", stiffness: 240, damping: 30 }, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] }, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             className="site-pill site-corner-glow overflow-hidden rounded-3xl"
           >
             <div className="grid gap-0 md:grid-cols-[280px_1fr]">
@@ -255,7 +255,7 @@ function CalendarPane({
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
-      <motion.div layout className="mx-auto w-full max-w-sm flex-1">
+      <motion.div layout transition={{ layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }} className="mx-auto w-full max-w-sm flex-1">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium capitalize text-foreground">
             {MONTHS[cursor.m]} {cursor.y}
@@ -298,9 +298,9 @@ function CalendarPane({
             ) : (
               <motion.button
                 key={d}
-                whileHover={isAvailable(d) ? { scale: 1.08 } : undefined}
-                whileTap={isAvailable(d) ? { scale: 0.94 } : undefined}
-                transition={{ type: "spring", stiffness: 420, damping: 26 }}
+                whileHover={isAvailable(d) ? { scale: 1.06 } : undefined}
+                whileTap={isAvailable(d) ? { scale: 0.96 } : undefined}
+                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
                 type="button"
                 disabled={!isAvailable(d)}
                 onClick={() => onPickDate(d)}
@@ -347,9 +347,9 @@ function CalendarPane({
                 >
                   <motion.button
                     layout
-                    whileHover={{ scale: 1.015 }}
-                    whileTap={{ scale: 0.985 }}
-                    transition={{ type: "spring", stiffness: 380, damping: 28 }}
+                    whileHover={{ scale: 1.01 }}
+                    whileTap={{ scale: 0.99 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                     type="button"
                     onClick={() => onPickTime(t)}
                     className={`flex-1 cursor-pointer rounded-xl border py-2.5 text-sm transition ${
