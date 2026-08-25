@@ -195,7 +195,7 @@ function AboutUsPage() {
           <div className="grid gap-8 md:grid-cols-2">
             {about.founders.map((f, i) => (
               <FadeIn key={i} delay={i * 0.1}>
-                <article className="site-pill site-corner-glow h-full rounded-3xl px-6 py-10 text-center sm:px-8">
+                <article className="h-full px-6 py-10 text-center sm:px-8">
                   <div className="relative z-10 flex h-full flex-col items-center">
                     <div className="site-surface relative grid h-40 w-40 place-items-center overflow-hidden rounded-full sm:h-52 sm:w-52">
                       {f.photo ? (
@@ -228,7 +228,7 @@ function AboutUsPage() {
         {/* 3 — histoire */}
         <section className="mt-8">
           <FadeIn>
-            <div className="site-pill site-corner-glow mx-auto max-w-3xl rounded-3xl px-6 py-10 text-center sm:px-10">
+            <div className="mx-auto max-w-3xl px-6 py-10 text-center sm:px-10">
               <div className="relative z-10">
                 <h2 className="text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
                   {about.storyTitle}
@@ -244,7 +244,7 @@ function AboutUsPage() {
         {/* 4 — vision */}
         <section className="mt-8">
           <FadeIn>
-            <div className="site-pill site-corner-glow mx-auto max-w-3xl rounded-3xl px-6 py-10 text-center sm:px-10">
+            <div className="mx-auto max-w-3xl px-6 py-10 text-center sm:px-10">
               <div className="relative z-10">
                 <h2 className="text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
                   {about.visionTitle}
@@ -258,7 +258,7 @@ function AboutUsPage() {
         </section>
 
         {/* 5 — valeurs */}
-        <section className="mt-16">
+        <section className="mt-8">
           <FadeIn>
             <h2 className="text-center text-2xl font-medium text-foreground sm:text-3xl">{about.valuesTitle}</h2>
           </FadeIn>
@@ -282,7 +282,7 @@ function AboutUsPage() {
         {/* 6 — équipe */}
         <section className="mt-8">
           <FadeIn>
-            <div className="site-pill site-corner-glow mx-auto max-w-3xl rounded-3xl px-6 py-10 text-center sm:px-10">
+            <div className="mx-auto max-w-3xl px-6 py-10 text-center sm:px-10">
               <div className="relative z-10">
                 <h2 className="text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
                   {about.teamTitle}
@@ -290,6 +290,25 @@ function AboutUsPage() {
                 <div className="mx-auto mt-5 max-w-2xl space-y-4 text-balance text-lg font-medium leading-relaxed text-foreground/85 sm:text-xl">
                   <Paragraphs text={about.teamText} />
                 </div>
+              </div>
+            </div>
+          </FadeIn>
+        </section>
+
+        {/* 7 — CTA */}
+        <section className="mt-8 text-center">
+          <FadeIn>
+            <div className="site-pill site-corner-glow mx-auto max-w-2xl rounded-3xl px-6 py-12 sm:px-10">
+              <div className="relative z-10">
+                <h2 className="text-balance text-3xl font-medium text-foreground sm:text-4xl">
+                  {about.ctaTitle}
+                </h2>
+                <Link
+                  to="/bookacall"
+                  className="btn-glow mt-8 inline-flex items-center gap-2 rounded-full bg-primary-deep px-7 py-3.5 text-sm font-medium text-primary-foreground"
+                >
+                  {about.ctaButton}
+                </Link>
               </div>
             </div>
           </FadeIn>
