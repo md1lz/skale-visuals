@@ -307,7 +307,7 @@ function Trust({ settings }: { settings: HomeContent["settings"] }) {
           ))}
           <div className="w-16 sm:w-20">
             <div className="site-surface mx-auto grid h-16 w-16 place-items-center rounded-full sm:h-20 sm:w-20">
-              <span className="text-base font-semibold text-primary sm:text-lg">{settings.plusLabel}</span>
+              <span className="text-base font-semibold text-foreground sm:text-lg">{settings.plusLabel}</span>
             </div>
           </div>
         </div>
