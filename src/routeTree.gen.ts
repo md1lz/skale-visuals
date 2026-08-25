@@ -21,6 +21,7 @@ import { Route as CrmAdminIndexRouteImport } from './routes/crm.admin.index'
 import { Route as CrmMonteurProjetsRouteImport } from './routes/crm.monteur.projets'
 import { Route as CrmMonteurParametresRouteImport } from './routes/crm.monteur.parametres'
 import { Route as CrmAdminVideosRouteImport } from './routes/crm.admin.videos'
+import { Route as CrmAdminSiteRouteImport } from './routes/crm.admin.site'
 import { Route as CrmAdminProspectionRouteImport } from './routes/crm.admin.prospection'
 import { Route as CrmAdminProjetsRouteImport } from './routes/crm.admin.projets'
 import { Route as CrmAdminParametresRouteImport } from './routes/crm.admin.parametres'
@@ -91,6 +92,11 @@ const CrmAdminVideosRoute = CrmAdminVideosRouteImport.update({
   path: '/videos',
   getParentRoute: () => CrmAdminRoute,
 } as any)
+const CrmAdminSiteRoute = CrmAdminSiteRouteImport.update({
+  id: '/site',
+  path: '/site',
+  getParentRoute: () => CrmAdminRoute,
+} as any)
 const CrmAdminProspectionRoute = CrmAdminProspectionRouteImport.update({
   id: '/prospection',
   path: '/prospection',
@@ -154,6 +160,7 @@ export interface FileRoutesByFullPath {
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
+  '/crm/admin/site': typeof CrmAdminSiteRoute
   '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
@@ -174,6 +181,7 @@ export interface FileRoutesByTo {
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
+  '/crm/admin/site': typeof CrmAdminSiteRoute
   '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
@@ -198,6 +206,7 @@ export interface FileRoutesById {
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
+  '/crm/admin/site': typeof CrmAdminSiteRoute
   '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
@@ -223,6 +232,7 @@ export interface FileRouteTypes {
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
+    | '/crm/admin/site'
     | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
@@ -243,6 +253,7 @@ export interface FileRouteTypes {
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
+    | '/crm/admin/site'
     | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
@@ -266,6 +277,7 @@ export interface FileRouteTypes {
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
+    | '/crm/admin/site'
     | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
@@ -367,6 +379,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmAdminVideosRouteImport
       parentRoute: typeof CrmAdminRoute
     }
+    '/crm/admin/site': {
+      id: '/crm/admin/site'
+      path: '/site'
+      fullPath: '/crm/admin/site'
+      preLoaderRoute: typeof CrmAdminSiteRouteImport
+      parentRoute: typeof CrmAdminRoute
+    }
     '/crm/admin/prospection': {
       id: '/crm/admin/prospection'
       path: '/prospection'
@@ -442,6 +461,7 @@ interface CrmAdminRouteChildren {
   CrmAdminParametresRoute: typeof CrmAdminParametresRoute
   CrmAdminProjetsRoute: typeof CrmAdminProjetsRoute
   CrmAdminProspectionRoute: typeof CrmAdminProspectionRoute
+  CrmAdminSiteRoute: typeof CrmAdminSiteRoute
   CrmAdminVideosRoute: typeof CrmAdminVideosRoute
   CrmAdminIndexRoute: typeof CrmAdminIndexRoute
 }
@@ -455,6 +475,7 @@ const CrmAdminRouteChildren: CrmAdminRouteChildren = {
   CrmAdminParametresRoute: CrmAdminParametresRoute,
   CrmAdminProjetsRoute: CrmAdminProjetsRoute,
   CrmAdminProspectionRoute: CrmAdminProspectionRoute,
+  CrmAdminSiteRoute: CrmAdminSiteRoute,
   CrmAdminVideosRoute: CrmAdminVideosRoute,
   CrmAdminIndexRoute: CrmAdminIndexRoute,
 }
