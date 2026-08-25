@@ -186,10 +186,22 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
         <button
           type="button"
           onClick={toggle}
+          role="switch"
+          aria-checked={theme === "light"}
           aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
-          className="site-glass absolute right-4 grid h-10 w-10 place-items-center rounded-full text-foreground transition hover:scale-105"
+          className="site-glass absolute right-4 flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
         >
-          {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+          <motion.span
+            animate={{ x: theme === "dark" ? 0 : 30 }}
+            transition={{ type: "spring", stiffness: 500, damping: 34 }}
+            className="absolute left-1 h-8 w-8 rounded-full bg-foreground/90"
+          />
+          <span className="relative z-10 grid h-8 w-8 place-items-center">
+            <Moon className={`h-4 w-4 transition-colors ${theme === "dark" ? "text-background" : "text-foreground/60"}`} />
+          </span>
+          <span className="relative z-10 grid h-8 w-8 place-items-center">
+            <Sun className={`h-4 w-4 transition-colors ${theme === "light" ? "text-background" : "text-foreground/60"}`} />
+          </span>
         </button>
       </div>
     </header>
@@ -201,7 +213,6 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
 function Hero({ settings }: { settings: HomeContent["settings"] }) {
   return (
     <section className="relative overflow-hidden pb-6 pt-10 lg:pt-16">
-      <div className="cinematic-glow pointer-events-none absolute inset-0" />
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <FadeIn>
           <h1 className="font-kangge select-none text-6xl leading-none text-foreground sm:text-7xl lg:text-8xl">
@@ -216,19 +227,22 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
         </FadeIn>
 
         <FadeIn delay={0.24}>
-          <div className="mt-10 flex items-center justify-center gap-4">
+          <div className="mt-12 flex flex-col items-stretch justify-center gap-5 sm:flex-row">
             {[
               { value: settings.videosCount, label: "vidéos montées" },
               { value: settings.clientsCount, label: "clients accompagnés" },
             ].map((s) => (
               <div
                 key={s.label}
-                className="site-surface min-w-[150px] rounded-2xl px-6 py-5 sm:min-w-[180px]"
+                className="site-surface site-box-glow flex-1 rounded-3xl px-10 py-10 sm:min-w-[260px]"
               >
-                <div className="text-3xl font-medium text-foreground sm:text-4xl">
-                  <StepCounter to={s.value} />
+                <div className="relative z-10">
+                  <div className="text-5xl font-medium text-foreground sm:text-6xl">
+                    <span className="text-primary">+</span>
+                    <StepCounter to={s.value} />
+                  </div>
+                  <div className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
                 </div>
-                <div className="mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
               </div>
             ))}
           </div>
@@ -252,8 +266,8 @@ const FORMATS = [
 
 function FormatsTicker() {
   return (
-    <section className="relative overflow-hidden py-8">
-      <div className="ticker-mask flex w-max gap-3 ticker-track">
+    <section className="ticker-fade relative overflow-hidden py-8">
+      <div className="flex w-max gap-3 ticker-track">
         {[...FORMATS, ...FORMATS, ...FORMATS].map((f, i) => (
           <span
             key={`${f}-${i}`}
@@ -293,7 +307,7 @@ function Trust({ settings }: { settings: HomeContent["settings"] }) {
           ))}
           <div className="w-16 sm:w-20">
             <div className="site-surface mx-auto grid h-16 w-16 place-items-center rounded-full sm:h-20 sm:w-20">
-              <span className="text-base font-semibold text-primary sm:text-lg">{settings.plusLabel}</span>
+              <span className="text-base font-semibold text-foreground sm:text-lg">{settings.plusLabel}</span>
             </div>
           </div>
         </div>
@@ -330,9 +344,9 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
       </FadeIn>
 
       <FadeIn delay={0.1}>
-        <div className="site-surface mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl">
+        <div className="site-window site-corner-glow mx-auto mt-8 max-w-5xl overflow-hidden rounded-2xl">
           {/* macOS title bar */}
-          <div className="relative flex items-center border-b border-foreground/10 px-4 py-3">
+          <div className="relative z-10 flex items-center border-b border-foreground/10 px-4 py-3">
             <div className="flex gap-2">
               <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
               <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
@@ -343,7 +357,7 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
             </p>
           </div>
 
-          <div className="grid gap-0 md:grid-cols-[170px_minmax(0,1fr)_200px]">
+          <div className="relative z-10 grid gap-0 md:grid-cols-[170px_minmax(0,1fr)_200px]">
             {/* folders */}
             <div className="border-b border-foreground/10 p-4 md:border-b-0 md:border-r">
               <p className="mb-3 text-[10px] uppercase tracking-widest text-muted-foreground">Dossiers</p>
@@ -460,6 +474,65 @@ function CallCta() {
   );
 }
 
+/* ---------------- footer ---------------- */
+
+function SiteFooter() {
+  return (
+    <footer className="relative z-10 border-t border-foreground/10">
+      <div className="mx-auto w-full max-w-6xl px-4 py-12">
+        <div className="grid gap-10 sm:grid-cols-3">
+          <div>
+            <p className="font-kangge text-3xl text-foreground">
+              skale<span className="text-primary">.</span>
+            </p>
+            <p className="mt-3 max-w-xs text-xs text-muted-foreground">
+              Montage vidéo pour créateurs et marques.
+            </p>
+          </div>
+
+          <div>
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Navigation</p>
+            <ul className="mt-3 space-y-2">
+              {NAV_LINKS.map((l) => (
+                <li key={l.label}>
+                  <button
+                    type="button"
+                    onClick={() => scrollTo(l.target)}
+                    className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+                  >
+                    {l.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Contact</p>
+            <a
+              href="mailto:contact@skalevisuals.com"
+              className="mt-3 block text-sm text-foreground/80 transition-colors hover:text-foreground"
+            >
+              contact@skalevisuals.com
+            </a>
+            <Link
+              to="/bookacall"
+              className="mt-4 inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+            >
+              Réserver un call
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-foreground/10 pt-6 text-xs text-muted-foreground sm:flex-row">
+          <p>Made by Skale Visuals</p>
+          <p>© 2026 Skale Visuals</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 /* ---------------- page ---------------- */
 
 function Home() {
@@ -476,6 +549,7 @@ function Home() {
         <Realisations folders={folders} videos={videos} />
         <CallCta />
       </main>
+      <SiteFooter />
     </div>
   );
 }
