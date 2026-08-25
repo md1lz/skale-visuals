@@ -209,29 +209,55 @@ export const updateAdminProfile = createServerFn({ method: "POST" })
   });
 
 
-export const tryAutoLoginByIp = createServerFn({ method: "POST" }).handler(async () => {
-  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-  const ip = getClientIp();
-  if (!ip) return { ok: false as const };
+export const tryAutoLoginByIp = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) =>
+    z.object({ source: z.enum(["web", "app"]).optional().default("web") }).parse(d ?? {}),
+  )
+  .handler(async ({ data }) => {
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const ip = getClientIp();
+    if (!ip) return { ok: false as const };
 
-  const { data: row } = await supabaseAdmin
-    .from("admin_remembered_ips")
-    .select("username")
-    .eq("ip", ip)
-    .maybeSingle();
+    const { data: rows } = await supabaseAdmin
+      .from("admin_remembered_ips")
+      .select("id, username, owner_type, owner_id")
+      .eq("ip", ip)
+      .eq("source", data.source)
+      .order("last_seen_at", { ascending: false })
+      .limit(1);
 
-  if (!row?.username) return { ok: false as const };
+    const row = rows?.[0];
+    if (!row?.username) return { ok: false as const };
 
-  await supabaseAdmin
-    .from("admin_remembered_ips")
-    .update({ last_seen_at: new Date().toISOString() })
-    .eq("ip", ip);
+    await supabaseAdmin
+      .from("admin_remembered_ips")
+      .update({ last_seen_at: new Date().toISOString() })
+      .eq("id", row.id);
 
-  const session = await useSession<AdminSessionData>(sessionConfig());
-  await session.update({ user: row.username, loggedInAt: Date.now() });
+    if (row.owner_type === "editor") {
+      const { data: editor } = await supabaseAdmin
+        .from("editor_accounts")
+        .select("id, username, display_name, status")
+        .eq("id", row.owner_id ?? "")
+        .maybeSingle();
+      if (!editor || editor.status !== "active") return { ok: false as const };
 
-  return { ok: true as const, user: row.username };
-});
+      const { getEditorSession } = await import("./auth-sessions.server");
+      const eSession = await getEditorSession();
+      await eSession.update({
+        editorId: editor.id,
+        username: editor.username,
+        displayName: editor.display_name,
+        loggedInAt: Date.now(),
+      });
+      return { ok: true as const, role: "editor" as const, user: editor.username };
+    }
+
+    const session = await useSession<AdminSessionData>(sessionConfig());
+    await session.update({ user: row.username, loggedInAt: Date.now() });
+
+    return { ok: true as const, role: "admin" as const, user: row.username };
+  });
 
 
 export const getAdminSessionFn = createServerFn({ method: "GET" }).handler(async () => {
