@@ -192,12 +192,12 @@ function AboutUsPage() {
 
         {/* 2 — fondateurs */}
         <section className="mt-16">
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-8 md:grid-cols-2">
             {about.founders.map((f, i) => (
               <FadeIn key={i} delay={i * 0.1}>
-                <article className="site-pill site-corner-glow h-full rounded-3xl px-6 py-8 text-center sm:px-8">
+                <article className="site-pill site-corner-glow h-full rounded-3xl px-6 py-10 text-center sm:px-8">
                   <div className="relative z-10 flex h-full flex-col items-center">
-                    <div className="site-surface grid h-24 w-24 place-items-center overflow-hidden rounded-full">
+                    <div className="site-surface relative grid h-40 w-40 place-items-center overflow-hidden rounded-full sm:h-52 sm:w-52">
                       {f.photo ? (
                         <img
                           src={f.photo}
@@ -206,14 +206,16 @@ function AboutUsPage() {
                           loading="lazy"
                         />
                       ) : (
-                        <span className="text-2xl font-medium text-foreground/80">
+                        <span className="text-4xl font-medium text-foreground/80 sm:text-5xl">
                           {(f.name || "?").trim().charAt(0).toUpperCase()}
                         </span>
                       )}
                     </div>
-                    <h2 className="mt-5 text-2xl font-semibold tracking-tight text-foreground">{f.name}</h2>
-                    <h3 className="mt-1 text-[11px] uppercase tracking-widest text-primary">{f.role}</h3>
-                    <div className="mt-5 space-y-3 text-left text-sm leading-relaxed text-muted-foreground">
+                    <h2 className="mt-6 text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
+                      {f.name}
+                    </h2>
+                    <h3 className="mt-1.5 text-xs uppercase tracking-widest text-primary">{f.role}</h3>
+                    <div className="mt-6 space-y-4 text-left text-lg font-medium leading-relaxed text-foreground/85 sm:text-xl">
                       <Paragraphs text={f.bio} />
                     </div>
                   </div>
@@ -224,14 +226,14 @@ function AboutUsPage() {
         </section>
 
         {/* 3 — histoire */}
-        <section className="mt-16">
+        <section className="mt-8">
           <FadeIn>
             <div className="site-pill site-corner-glow mx-auto max-w-3xl rounded-3xl px-6 py-10 text-center sm:px-10">
               <div className="relative z-10">
-                <h2 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+                <h2 className="text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
                   {about.storyTitle}
                 </h2>
-                <div className="mx-auto mt-4 max-w-2xl space-y-3 text-balance text-sm text-muted-foreground sm:text-base">
+                <div className="mx-auto mt-5 max-w-2xl space-y-4 text-balance text-lg font-medium leading-relaxed text-foreground/85 sm:text-xl">
                   <Paragraphs text={about.storyText} />
                 </div>
               </div>
@@ -244,10 +246,10 @@ function AboutUsPage() {
           <FadeIn>
             <div className="site-pill site-corner-glow mx-auto max-w-3xl rounded-3xl px-6 py-10 text-center sm:px-10">
               <div className="relative z-10">
-                <h2 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+                <h2 className="text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
                   {about.visionTitle}
                 </h2>
-                <div className="mx-auto mt-4 max-w-2xl space-y-3 text-balance text-sm text-muted-foreground sm:text-base">
+                <div className="mx-auto mt-5 max-w-2xl space-y-4 text-balance text-lg font-medium leading-relaxed text-foreground/85 sm:text-xl">
                   <Paragraphs text={about.visionText} />
                 </div>
               </div>
@@ -278,14 +280,14 @@ function AboutUsPage() {
         </section>
 
         {/* 6 — équipe */}
-        <section className="mt-16">
+        <section className="mt-8">
           <FadeIn>
             <div className="site-pill site-corner-glow mx-auto max-w-3xl rounded-3xl px-6 py-10 text-center sm:px-10">
               <div className="relative z-10">
-                <h2 className="text-3xl font-medium tracking-tight text-foreground sm:text-4xl">
+                <h2 className="text-2xl font-medium tracking-tight text-foreground sm:text-3xl">
                   {about.teamTitle}
                 </h2>
-                <div className="mx-auto mt-4 max-w-2xl space-y-3 text-balance text-sm text-muted-foreground sm:text-base">
+                <div className="mx-auto mt-5 max-w-2xl space-y-4 text-balance text-lg font-medium leading-relaxed text-foreground/85 sm:text-xl">
                   <Paragraphs text={about.teamText} />
                 </div>
               </div>
@@ -293,24 +295,6 @@ function AboutUsPage() {
           </FadeIn>
         </section>
 
-        {/* 7 — CTA */}
-        <section className="mt-16 text-center">
-          <FadeIn>
-            <div className="site-pill site-corner-glow mx-auto max-w-2xl rounded-3xl px-6 py-12 sm:px-10">
-              <div className="relative z-10">
-                <h2 className="text-balance text-3xl font-medium text-foreground sm:text-4xl">
-                  {about.ctaTitle}
-                </h2>
-                <Link
-                  to="/bookacall"
-                  className="btn-glow mt-8 inline-flex items-center gap-2 rounded-full bg-primary-deep px-7 py-3.5 text-sm font-medium text-primary-foreground"
-                >
-                  {about.ctaButton}
-                </Link>
-              </div>
-            </div>
-          </FadeIn>
-        </section>
       </main>
     </div>
   );
