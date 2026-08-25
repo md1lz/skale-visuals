@@ -30,6 +30,7 @@ import { Route as CrmAdminMonteursRouteImport } from './routes/crm.admin.monteur
 import { Route as CrmAdminDevisRouteImport } from './routes/crm.admin.devis'
 import { Route as CrmAdminClientsRouteImport } from './routes/crm.admin.clients'
 import { Route as CrmAdminAvisRouteImport } from './routes/crm.admin.avis'
+import { Route as CrmAdminAppelsRouteImport } from './routes/crm.admin.appels'
 import { Route as CrmAdminAnalytiquesRouteImport } from './routes/crm.admin.analytiques'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 
@@ -138,6 +139,11 @@ const CrmAdminAvisRoute = CrmAdminAvisRouteImport.update({
   path: '/avis',
   getParentRoute: () => CrmAdminRoute,
 } as any)
+const CrmAdminAppelsRoute = CrmAdminAppelsRouteImport.update({
+  id: '/appels',
+  path: '/appels',
+  getParentRoute: () => CrmAdminRoute,
+} as any)
 const CrmAdminAnalytiquesRoute = CrmAdminAnalytiquesRouteImport.update({
   id: '/analytiques',
   path: '/analytiques',
@@ -160,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/crm/': typeof CrmIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
+  '/crm/admin/appels': typeof CrmAdminAppelsRoute
   '/crm/admin/avis': typeof CrmAdminAvisRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
   '/crm/admin/devis': typeof CrmAdminDevisRoute
@@ -182,6 +189,7 @@ export interface FileRoutesByTo {
   '/crm': typeof CrmIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
+  '/crm/admin/appels': typeof CrmAdminAppelsRoute
   '/crm/admin/avis': typeof CrmAdminAvisRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
   '/crm/admin/devis': typeof CrmAdminDevisRoute
@@ -208,6 +216,7 @@ export interface FileRoutesById {
   '/crm/': typeof CrmIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
+  '/crm/admin/appels': typeof CrmAdminAppelsRoute
   '/crm/admin/avis': typeof CrmAdminAvisRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
   '/crm/admin/devis': typeof CrmAdminDevisRoute
@@ -235,6 +244,7 @@ export interface FileRouteTypes {
     | '/crm/'
     | '/api/public/track'
     | '/crm/admin/analytiques'
+    | '/crm/admin/appels'
     | '/crm/admin/avis'
     | '/crm/admin/clients'
     | '/crm/admin/devis'
@@ -257,6 +267,7 @@ export interface FileRouteTypes {
     | '/crm'
     | '/api/public/track'
     | '/crm/admin/analytiques'
+    | '/crm/admin/appels'
     | '/crm/admin/avis'
     | '/crm/admin/clients'
     | '/crm/admin/devis'
@@ -282,6 +293,7 @@ export interface FileRouteTypes {
     | '/crm/'
     | '/api/public/track'
     | '/crm/admin/analytiques'
+    | '/crm/admin/appels'
     | '/crm/admin/avis'
     | '/crm/admin/clients'
     | '/crm/admin/devis'
@@ -455,6 +467,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmAdminAvisRouteImport
       parentRoute: typeof CrmAdminRoute
     }
+    '/crm/admin/appels': {
+      id: '/crm/admin/appels'
+      path: '/appels'
+      fullPath: '/crm/admin/appels'
+      preLoaderRoute: typeof CrmAdminAppelsRouteImport
+      parentRoute: typeof CrmAdminRoute
+    }
     '/crm/admin/analytiques': {
       id: '/crm/admin/analytiques'
       path: '/analytiques'
@@ -474,6 +493,7 @@ declare module '@tanstack/react-router' {
 
 interface CrmAdminRouteChildren {
   CrmAdminAnalytiquesRoute: typeof CrmAdminAnalytiquesRoute
+  CrmAdminAppelsRoute: typeof CrmAdminAppelsRoute
   CrmAdminAvisRoute: typeof CrmAdminAvisRoute
   CrmAdminClientsRoute: typeof CrmAdminClientsRoute
   CrmAdminDevisRoute: typeof CrmAdminDevisRoute
@@ -488,6 +508,7 @@ interface CrmAdminRouteChildren {
 
 const CrmAdminRouteChildren: CrmAdminRouteChildren = {
   CrmAdminAnalytiquesRoute: CrmAdminAnalytiquesRoute,
+  CrmAdminAppelsRoute: CrmAdminAppelsRoute,
   CrmAdminAvisRoute: CrmAdminAvisRoute,
   CrmAdminClientsRoute: CrmAdminClientsRoute,
   CrmAdminDevisRoute: CrmAdminDevisRoute,
