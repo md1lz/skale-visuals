@@ -32,6 +32,7 @@ const loginSchema = z.object({
   username: z.string().trim().min(1).max(64),
   password: z.string().min(1).max(256),
   remember: z.boolean().optional().default(false),
+  source: z.enum(["web", "app"]).optional().default("web"),
 });
 
 function getClientIp(): string | null {
