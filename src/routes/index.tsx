@@ -4,7 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Play, Sun, Moon, Mail, Instagram, Linkedin } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-import logoMark from "@/assets/skale-logo-mark.jpg.asset.json";
+import logoDark from "@/assets/skale-logo-dark.png.asset.json";
+import logoLight from "@/assets/skale-logo-light.png.asset.json";
 import {
   DEFAULT_HOME_SETTINGS,
   getHomeContent,
@@ -195,15 +196,23 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
 
 /* ---------------- hero ---------------- */
 
-function Hero({ settings }: { settings: HomeContent["settings"] }) {
+function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "dark" | "light" }) {
   return (
     <section className="relative overflow-hidden pb-6 pt-10 lg:pt-16">
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <FadeIn>
           {settings.titleStyle === "visuals" ? (
             <h1 className="flex select-none items-center justify-center gap-3 text-4xl font-medium leading-none tracking-tight text-foreground sm:gap-4 sm:text-5xl lg:text-6xl">
-              <span className="site-surface grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full sm:h-14 sm:w-14 lg:h-16 lg:w-16">
-                <img src={logoMark.url} alt="Logo Skale Visuals" className="h-full w-full object-cover" />
+              <span
+                className={`grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full ring-1 sm:h-16 sm:w-16 lg:h-20 lg:w-20 ${
+                  theme === "light" ? "bg-white ring-black/10" : "bg-black ring-white/10"
+                }`}
+              >
+                <img
+                  src={theme === "light" ? logoLight.url : logoDark.url}
+                  alt="Logo Skale Visuals"
+                  className="h-full w-full scale-[1.75] object-contain"
+                />
               </span>
               Skale Visuals
             </h1>
@@ -557,7 +566,7 @@ function Home() {
     <div className="site-root relative min-h-screen">
       <Navbar theme={theme} toggle={toggle} />
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4">
-        <Hero settings={settings} />
+        <Hero settings={settings} theme={theme} />
         <FormatsTicker />
         <Trust settings={settings} />
         <Realisations folders={folders} videos={videos} />
