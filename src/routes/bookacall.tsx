@@ -240,18 +240,18 @@ function CalendarPane({
   const isAvailable = (d: string) => d >= todayIso && slotsFor(d).length > 0;
 
   return (
-    <div className="flex flex-col gap-6 lg:flex-row">
+    <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
       <motion.div layout className="mx-auto w-full max-w-sm flex-1">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium capitalize text-foreground">
             {MONTHS[cursor.m]} {cursor.y}
           </h2>
-          <div className="flex gap-1">
+          <div className="flex gap-2">
             <button
               type="button"
               aria-label="Mois précédent"
               onClick={() => setCursor((c) => (c.m === 0 ? { y: c.y - 1, m: 11 } : { ...c, m: c.m - 1 }))}
-              className="rounded-full px-2.5 py-1 text-sm text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/20 text-sm text-foreground/70 transition hover:border-primary/60 hover:bg-foreground/10 hover:text-foreground"
             >
               ‹
             </button>
@@ -259,7 +259,7 @@ function CalendarPane({
               type="button"
               aria-label="Mois suivant"
               onClick={() => setCursor((c) => (c.m === 11 ? { y: c.y + 1, m: 0 } : { ...c, m: c.m + 1 }))}
-              className="rounded-full px-2.5 py-1 text-sm text-muted-foreground transition hover:bg-foreground/10 hover:text-foreground"
+              className="flex h-8 w-8 cursor-pointer items-center justify-center rounded-full border border-foreground/20 text-sm text-foreground/70 transition hover:border-primary/60 hover:bg-foreground/10 hover:text-foreground"
             >
               ›
             </button>
@@ -283,10 +283,10 @@ function CalendarPane({
                 onClick={() => onPickDate(d)}
                 className={`aspect-square rounded-full text-sm transition ${
                   date === d
-                    ? "bg-primary text-primary-foreground"
+                    ? "cursor-pointer bg-primary text-primary-foreground"
                     : isAvailable(d)
-                      ? "bg-foreground/5 text-foreground hover:bg-primary/20"
-                      : "text-muted-foreground/40"
+                      ? "cursor-pointer bg-foreground/5 text-foreground hover:bg-primary/20"
+                      : "cursor-not-allowed text-muted-foreground/40"
                 }`}
               >
                 {Number(d.slice(-2))}
@@ -302,14 +302,15 @@ function CalendarPane({
       <AnimatePresence>
         {date && (
           <motion.div
-            initial={{ opacity: 0, x: 24, width: 0 }}
-            animate={{ opacity: 1, x: 0, width: "auto" }}
-            exit={{ opacity: 0, x: 24, width: 0 }}
+            key="slots"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="lg:w-64 lg:shrink-0"
+            className="flex w-full flex-col lg:w-80 lg:shrink-0"
           >
             <p className="text-sm font-medium capitalize text-foreground">{prettyDate(date)}</p>
-            <div className="mt-3 max-h-80 space-y-2 overflow-y-auto pr-1">
+            <div className="mt-3 flex-1 space-y-2 overflow-y-auto pr-1">
               {slotsFor(date).length === 0 && (
                 <p className="text-xs text-muted-foreground">Aucun créneau disponible.</p>
               )}
@@ -319,7 +320,7 @@ function CalendarPane({
                     layout
                     type="button"
                     onClick={() => onPickTime(t)}
-                    className={`flex-1 rounded-xl border py-2.5 text-sm transition ${
+                    className={`flex-1 cursor-pointer rounded-xl border py-2.5 text-sm transition ${
                       time === t
                         ? "border-primary bg-primary/15 text-foreground"
                         : "border-foreground/15 text-foreground hover:border-primary/60"
@@ -327,16 +328,17 @@ function CalendarPane({
                   >
                     {t}
                   </motion.button>
-                  <AnimatePresence>
+                  <AnimatePresence mode="popLayout">
                     {time === t && (
                       <motion.button
                         layout
-                        initial={{ opacity: 0, width: 0 }}
-                        animate={{ opacity: 1, width: "50%" }}
-                        exit={{ opacity: 0, width: 0 }}
+                        initial={{ opacity: 0, scale: 0.9 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.9 }}
+                        transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
                         type="button"
                         onClick={onNext}
-                        className="rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground"
+                        className="w-32 shrink-0 cursor-pointer rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground"
                       >
                         Suivant
                       </motion.button>
@@ -350,6 +352,7 @@ function CalendarPane({
       </AnimatePresence>
     </div>
   );
+
 }
 
 /* ---------------- form ---------------- */
