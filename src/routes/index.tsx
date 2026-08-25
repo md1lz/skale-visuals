@@ -213,7 +213,6 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
 function Hero({ settings }: { settings: HomeContent["settings"] }) {
   return (
     <section className="relative overflow-hidden pb-6 pt-10 lg:pt-16">
-      <div className="cinematic-glow pointer-events-none absolute inset-0" />
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <FadeIn>
           <h1 className="font-kangge select-none text-6xl leading-none text-foreground sm:text-7xl lg:text-8xl">
@@ -228,19 +227,22 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
         </FadeIn>
 
         <FadeIn delay={0.24}>
-          <div className="mt-10 flex items-center justify-center gap-4">
+          <div className="mt-12 flex flex-col items-stretch justify-center gap-5 sm:flex-row">
             {[
               { value: settings.videosCount, label: "vidéos montées" },
               { value: settings.clientsCount, label: "clients accompagnés" },
             ].map((s) => (
               <div
                 key={s.label}
-                className="site-surface min-w-[150px] rounded-2xl px-6 py-5 sm:min-w-[180px]"
+                className="site-surface site-box-glow flex-1 rounded-3xl px-10 py-10 sm:min-w-[260px]"
               >
-                <div className="text-3xl font-medium text-foreground sm:text-4xl">
-                  <StepCounter to={s.value} />
+                <div className="relative z-10">
+                  <div className="text-5xl font-medium text-foreground sm:text-6xl">
+                    <span className="text-primary">+</span>
+                    <StepCounter to={s.value} />
+                  </div>
+                  <div className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
                 </div>
-                <div className="mt-1 text-[11px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
               </div>
             ))}
           </div>
