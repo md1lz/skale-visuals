@@ -296,12 +296,12 @@ html.site-light .site-box-glow::before { opacity: 0; }
   &::before {
     content: "";
     position: absolute;
-    inset: 0;
+    inset: -20%;
     pointer-events: none;
     background:
-      radial-gradient(ellipse 140% 130% at 110% -10%, rgba(226, 75, 74, 0.14), transparent 55%),
-      radial-gradient(ellipse 130% 120% at -10% -10%, rgba(255, 255, 255, 0.07), transparent 55%);
-    filter: blur(12px);
+      radial-gradient(ellipse 160% 150% at 120% -20%, rgba(226, 75, 74, 0.10), transparent 55%),
+      radial-gradient(ellipse 150% 140% at -20% -20%, rgba(255, 255, 255, 0.05), transparent 55%);
+    filter: blur(18px);
   }
 }
 html.site-light .site-corner-glow::before { opacity: 0; }
