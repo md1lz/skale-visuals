@@ -17,6 +17,7 @@
   --color-popover-foreground: var(--popover-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-primary-deep: var(--primary-deep);
   --color-secondary: var(--secondary);
   --color-secondary-foreground: var(--secondary-foreground);
   --color-muted: var(--muted);
@@ -43,6 +44,7 @@
   /* Red #E24B4A */
   --primary: oklch(0.63 0.21 25);
   --primary-foreground: oklch(0.99 0 0);
+  --primary-deep: oklch(0.48 0.17 25);
   --secondary: oklch(0.22 0.02 280);
   --secondary-foreground: oklch(0.98 0 0);
   --muted: oklch(0.22 0.02 280);

@@ -440,7 +440,7 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
 
 function CallCta() {
   return (
-    <section id="cta" className="scroll-mt-24 pb-24 pt-6 text-center">
+    <section id="cta" className="scroll-mt-24 px-5 pb-24 pt-6 text-center">
       <FadeIn>
         <div className="site-pill site-corner-glow mx-auto max-w-2xl rounded-3xl px-6 py-12 sm:px-10">
           <h2 className="text-balance text-3xl font-medium text-foreground sm:text-4xl">
