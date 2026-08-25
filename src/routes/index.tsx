@@ -199,9 +199,18 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
     <section className="relative overflow-hidden pb-6 pt-10 lg:pt-16">
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <FadeIn>
-          <h1 className="font-kangge select-none text-6xl leading-none text-foreground sm:text-7xl lg:text-8xl">
-            skale<span className="text-primary">.</span>
-          </h1>
+          {settings.titleStyle === "visuals" ? (
+            <h1 className="flex select-none items-center justify-center gap-3 text-4xl font-medium leading-none tracking-tight text-foreground sm:gap-4 sm:text-5xl lg:text-6xl">
+              <span className="site-surface grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full sm:h-14 sm:w-14 lg:h-16 lg:w-16">
+                <img src={logoMark.url} alt="Logo Skale Visuals" className="h-full w-full object-cover" />
+              </span>
+              Skale Visuals
+            </h1>
+          ) : (
+            <h1 className="font-kangge select-none text-6xl leading-none text-foreground sm:text-7xl lg:text-8xl">
+              skale<span className="text-primary">.</span>
+            </h1>
+          )}
         </FadeIn>
         <FadeIn delay={0.12}>
           <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
