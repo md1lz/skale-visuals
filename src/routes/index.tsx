@@ -250,7 +250,7 @@ const FORMATS = [
 
 function FormatsTicker() {
   return (
-    <section className="ticker-fade relative mx-auto max-w-2xl overflow-hidden py-8">
+    <section className="ticker-fade relative mx-auto max-w-5xl overflow-hidden py-8">
       <div className="flex w-max gap-3 ticker-track">
         {[...FORMATS, ...FORMATS, ...FORMATS].map((f, i) => (
           <span
