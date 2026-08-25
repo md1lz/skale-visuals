@@ -192,10 +192,9 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
           className="site-glass absolute right-4 flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
         >
           <motion.span
-            layout
+            animate={{ x: theme === "dark" ? 0 : 30 }}
             transition={{ type: "spring", stiffness: 500, damping: 34 }}
-            className="absolute h-8 w-8 rounded-full bg-foreground/90"
-            style={{ left: theme === "dark" ? 4 : 34 }}
+            className="absolute left-1 h-8 w-8 rounded-full bg-foreground/90"
           />
           <span className="relative z-10 grid h-8 w-8 place-items-center">
             <Moon className={`h-4 w-4 transition-colors ${theme === "dark" ? "text-background" : "text-foreground/60"}`} />
