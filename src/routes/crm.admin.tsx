@@ -13,6 +13,7 @@ import {
   Scissors,
   Target,
   Globe,
+  CalendarClock,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -63,6 +64,7 @@ const NAV: {
   { to: "/crm/admin/clients", label: "Clients", icon: Users },
   { to: "/crm/admin/projets", label: "Projets", icon: FolderKanban },
   { to: "/crm/admin/monteurs", label: "Monteurs", icon: Scissors },
+  { to: "/crm/admin/appels", label: "Book a Call", icon: CalendarClock },
   { to: "/crm/admin/devis", label: "Devis Tally", icon: FileSignature },
   { to: "/crm/admin/avis", label: "Avis clients", icon: Star },
   { to: "/crm/admin/parametres", label: "Paramètres", icon: Settings },

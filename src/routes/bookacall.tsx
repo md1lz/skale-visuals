@@ -87,8 +87,6 @@ function BookACall() {
 
   return (
     <div className="site-root relative min-h-screen overflow-hidden px-4 py-6">
-      <div className="pointer-events-none absolute inset-0 site-bg-glow" aria-hidden />
-
       <header className="relative z-10 mx-auto flex w-full max-w-5xl items-center justify-between">
         <div className="flex items-center gap-3">
           <button
