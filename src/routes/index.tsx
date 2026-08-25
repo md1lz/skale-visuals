@@ -166,7 +166,7 @@ function scrollTo(target: string) {
 function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void }) {
   return (
     <header className="sticky top-0 z-40 w-full py-4">
-      <div className="relative mx-auto flex max-w-6xl items-center justify-end px-4">
+      <div className="relative flex w-full items-center justify-end px-4">
         <button
           type="button"
           onClick={toggle}
@@ -440,9 +440,9 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
 
 function CallCta() {
   return (
-    <section id="cta" className="scroll-mt-24 pb-24 pt-6 text-center">
+    <section id="cta" className="scroll-mt-24 px-5 pb-24 pt-6 text-center">
       <FadeIn>
-        <div className="mx-auto max-w-2xl px-5">
+        <div className="site-pill site-corner-glow mx-auto max-w-2xl rounded-3xl px-6 py-12 sm:px-10">
           <h2 className="text-balance text-3xl font-medium text-foreground sm:text-4xl">
             Prêt à faire décoller ta chaîne&nbsp;?
           </h2>
@@ -452,12 +452,12 @@ function CallCta() {
           </p>
           <Link
             to="/bookacall"
-            className="btn-glow mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground"
+            className="btn-glow mt-8 inline-flex items-center gap-2 rounded-full bg-primary-deep px-7 py-3.5 text-sm font-medium text-primary-foreground"
           >
             Réserve ton call
           </Link>
           <p className="mt-4 text-[11px] text-muted-foreground">
-            Places limitées : seulement 5 appels réservés chaque semaine.
+            Places limitées chaque semaine
           </p>
         </div>
       </FadeIn>
