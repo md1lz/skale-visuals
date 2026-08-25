@@ -100,7 +100,7 @@ function BookACall() {
           role="switch"
           aria-checked={theme === "light"}
           aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
-          className="site-glass relative flex h-10 w-[74px] cursor-pointer items-center rounded-full p-1 transition hover:scale-[1.03]"
+          className="site-glass relative flex h-10 w-[74px] cursor-pointer items-center rounded-full p-1 transition-colors duration-300"
         >
           <motion.span
             animate={{ x: theme === "dark" ? 0 : 30 }}
@@ -119,10 +119,9 @@ function BookACall() {
       <main className={`relative z-10 mx-auto mt-8 w-full pb-16 transition-[max-width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${date ? "max-w-5xl" : "max-w-3xl"}`}>
         <div className="relative">
           <motion.div
-            layout
-            initial={{ opacity: 0, y: 18, scale: 0.985 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            transition={{ layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] }, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
             className="site-pill site-corner-glow overflow-hidden rounded-3xl"
           >
             <div className="grid gap-0 md:grid-cols-[280px_1fr]">
@@ -255,7 +254,7 @@ function CalendarPane({
 
   return (
     <div className="flex flex-col gap-6 lg:flex-row lg:items-stretch">
-      <motion.div layout transition={{ layout: { duration: 0.45, ease: [0.22, 1, 0.36, 1] } }} className="mx-auto w-full max-w-sm flex-1">
+      <div className="mx-auto w-full max-w-sm flex-1">
         <div className="flex items-center justify-between">
           <h2 className="text-sm font-medium capitalize text-foreground">
             {MONTHS[cursor.m]} {cursor.y}
@@ -296,11 +295,8 @@ function CalendarPane({
             d === null ? (
               <span key={`e${i}`} />
             ) : (
-              <motion.button
+              <button
                 key={d}
-                whileHover={isAvailable(d) ? { scale: 1.06 } : undefined}
-                whileTap={isAvailable(d) ? { scale: 0.96 } : undefined}
-                transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
                 type="button"
                 disabled={!isAvailable(d)}
                 onClick={() => onPickDate(d)}
@@ -313,14 +309,14 @@ function CalendarPane({
                 }`}
               >
                 {Number(d.slice(-2))}
-              </motion.button>
+              </button>
             ),
           )}
         </motion.div>
         <p className="mt-4 flex items-center gap-2 text-[11px] text-muted-foreground">
           <Globe className="h-3.5 w-3.5" /> Heure d'Europe Centrale (Paris)
         </p>
-      </motion.div>
+      </div>
 
       <AnimatePresence>
         {date && (
@@ -345,11 +341,7 @@ function CalendarPane({
                   transition={{ delay: Math.min(i * 0.03, 0.24), duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                   className="flex gap-2"
                 >
-                  <motion.button
-                    layout
-                    whileHover={{ scale: 1.01 }}
-                    whileTap={{ scale: 0.99 }}
-                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  <button
                     type="button"
                     onClick={() => onPickTime(t)}
                     className={`flex-1 cursor-pointer rounded-xl border py-2.5 text-sm transition ${
@@ -359,15 +351,14 @@ function CalendarPane({
                     }`}
                   >
                     {t}
-                  </motion.button>
-                  <AnimatePresence mode="popLayout">
+                  </button>
+                  <AnimatePresence>
                     {time === t && (
                       <motion.button
-                        layout
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        exit={{ opacity: 0, scale: 0.9 }}
-                        transition={{ layout: { duration: 0.3, ease: [0.22, 1, 0.36, 1] }, duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+                        initial={{ opacity: 0, x: 12 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 12 }}
+                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
                         type="button"
                         onClick={onNext}
                         className="w-32 shrink-0 cursor-pointer rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground"
