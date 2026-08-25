@@ -64,8 +64,6 @@ const NAV: {
   { to: "/crm/admin/projets", label: "Projets", icon: FolderKanban },
   { to: "/crm/admin/monteurs", label: "Monteurs", icon: Scissors },
   { to: "/crm/admin/appels", label: "Book a Call", icon: CalendarClock },
-  { to: "/crm/admin/devis", label: "Devis Tally", icon: FileSignature },
-  { to: "/crm/admin/avis", label: "Avis clients", icon: Star },
   { to: "/crm/admin/parametres", label: "Paramètres", icon: Settings },
 ];
 
