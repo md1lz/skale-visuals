@@ -88,6 +88,20 @@ export const loginAdmin = createServerFn({ method: "POST" })
         .update({ last_login_at: new Date().toISOString() })
         .eq("id", editor.id);
 
+      if (data.remember && ip) {
+        await supabaseAdmin.from("admin_remembered_ips").upsert(
+          {
+            ip,
+            username: editor.username,
+            source: data.source,
+            owner_type: "editor",
+            owner_id: editor.id,
+            last_seen_at: new Date().toISOString(),
+          },
+          { onConflict: "ip,source,owner_type,username" },
+        );
+      }
+
       const { getEditorSession } = await import("./auth-sessions.server");
       const eSession = await getEditorSession();
       await eSession.update({
