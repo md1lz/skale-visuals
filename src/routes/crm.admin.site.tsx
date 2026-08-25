@@ -1,6 +1,6 @@
 import { createFileRoute, useBlocker } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Plus, Trash2, Save, ArrowUp, ArrowDown, ImagePlus, Loader2, FolderPlus } from "lucide-react";
+import { Plus, Trash2, Save, ArrowUp, ArrowDown, ImagePlus, Loader2, FolderPlus, Upload } from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -14,6 +14,7 @@ import {
   deleteHomeVideo,
   reorderHomeVideos,
   createHomeAssetUploadUrl,
+  createHomeVideoUploadUrl,
 } from "@/lib/admin-home.functions";
 import type { HomeFolder, HomeSettings, HomeVideo } from "@/lib/home-content.functions";
 
@@ -34,6 +35,20 @@ export const Route = createFileRoute("/crm/admin/site")({
   ),
   notFoundComponent: () => <div className="p-8 text-sm text-neutral-400">Introuvable.</div>,
 });
+
+async function uploadVideoFile(file: File, onProgress?: (p: number) => void): Promise<string> {
+  const { uploadUrl, reference } = await createHomeVideoUploadUrl({ data: { filename: file.name } });
+  await new Promise<void>((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open("PUT", uploadUrl);
+    xhr.setRequestHeader("content-type", file.type || "application/octet-stream");
+    xhr.upload.onprogress = (e) => e.lengthComputable && onProgress?.(Math.round((e.loaded / e.total) * 100));
+    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error("Upload échoué")));
+    xhr.onerror = () => reject(new Error("Upload échoué"));
+    xhr.send(file);
+  });
+  return reference;
+}
 
 async function uploadAsset(file: File): Promise<string> {
   const { uploadUrl, reference } = await createHomeAssetUploadUrl({ data: { filename: file.name } });
@@ -59,6 +74,7 @@ function SiteAdmin() {
   const [saving, setSaving] = useState(false);
   const [newFolder, setNewFolder] = useState("");
   const fileRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  const [uploads, setUploads] = useState<Record<string, number | undefined>>({});
 
   async function reload() {
     setLoading(true);
@@ -104,6 +120,7 @@ function SiteAdmin() {
           videosCount: Number(settings.videosCount) || 0,
           clientsCount: Number(settings.clientsCount) || 0,
           plusLabel: settings.plusLabel,
+          titleStyle: settings.titleStyle,
           trust: settings.trust.map((t) => ({ name: t.name, photo: t.photo })),
         },
       });
@@ -194,6 +211,20 @@ function SiteAdmin() {
     await reorderHomeVideos({ data: { ids } });
   }
 
+  async function handleVideoFile(id: string, file: File) {
+    setUploads((u) => ({ ...u, [id]: 0 }));
+    try {
+      const ref = await uploadVideoFile(file, (p) => setUploads((u) => ({ ...u, [id]: p })));
+      patchVideo(id, { source_url: ref });
+      await updateHomeVideo({ data: { id, source_url: ref } });
+      toast.success("Vidéo importée");
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : "Upload échoué");
+    } finally {
+      setUploads((u) => ({ ...u, [id]: undefined }));
+    }
+  }
+
   async function pickImage(key: string, onDone: (ref: string) => void) {
     const el = fileRefs.current[key];
     el?.click();
@@ -247,6 +278,29 @@ function SiteAdmin() {
               onChange={(e) => patchSettings({ clientsCount: Number(e.target.value) })}
             />
           </label>
+        </div>
+        <div className="mt-5">
+          <span className="mb-2 block text-xs text-neutral-400">Titre du site</span>
+          <div className="grid gap-3 sm:grid-cols-2">
+            {([
+              { key: "skale", label: "skale.", hint: "Logo typographique Kangge avec point rouge" },
+              { key: "visuals", label: "Skale Visuals", hint: "Titre avec pastille ronde et logo" },
+            ] as const).map((opt) => (
+              <button
+                key={opt.key}
+                type="button"
+                onClick={() => patchSettings({ titleStyle: opt.key })}
+                className={`rounded-xl border p-4 text-left transition ${
+                  settings.titleStyle === opt.key
+                    ? "border-red-600/50 bg-red-600/10"
+                    : "border-white/10 bg-black/20 hover:bg-white/5"
+                }`}
+              >
+                <span className="block text-lg text-white">{opt.label}</span>
+                <span className="mt-1 block text-xs text-neutral-400">{opt.hint}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -400,6 +454,43 @@ function SiteAdmin() {
                           placeholder="Miniature (URL) — optionnel"
                           value={v.thumbnail_url ?? ""}
                           onChange={(e) => patchVideo(v.id, { thumbnail_url: e.target.value || null })}
+                        />
+                      </div>
+                      <div
+                        onDragOver={(e) => e.preventDefault()}
+                        onDrop={async (e) => {
+                          e.preventDefault();
+                          const f = e.dataTransfer.files?.[0];
+                          if (f) await handleVideoFile(v.id, f);
+                        }}
+                        className="mt-2 rounded-lg border border-dashed border-white/15 bg-black/20 p-3 text-center"
+                      >
+                        <p className="text-xs text-neutral-400">
+                          {uploads[v.id] != null
+                            ? `Envoi en cours… ${uploads[v.id]}%`
+                            : v.source_url.startsWith("storage://")
+                              ? "Fichier vidéo importé ✓ — glissez un fichier pour remplacer"
+                              : "Glissez un fichier vidéo ici ou importez-le"}
+                        </p>
+                        <button
+                          onClick={() => fileRefs.current[`video-${v.id}`]?.click()}
+                          disabled={uploads[v.id] != null}
+                          className={`${btn} mt-2 border border-white/10 text-neutral-300 hover:bg-white/10`}
+                        >
+                          <Upload className="h-4 w-4" /> Importer une vidéo
+                        </button>
+                        <input
+                          ref={(el) => {
+                            fileRefs.current[`video-${v.id}`] = el;
+                          }}
+                          type="file"
+                          accept="video/*"
+                          className="hidden"
+                          onChange={async (e) => {
+                            const f = e.target.files?.[0];
+                            e.target.value = "";
+                            if (f) await handleVideoFile(v.id, f);
+                          }}
                         />
                       </div>
                       <div className="mt-2 flex items-center gap-2">
