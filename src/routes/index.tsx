@@ -442,16 +442,29 @@ function CallCta() {
   return (
     <section id="cta" className="scroll-mt-24 pb-24 pt-6 text-center">
       <FadeIn>
-        <Link
-          to="/bookacall"
-          className="btn-glow inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-sm font-medium text-primary-foreground"
-        >
-          Réserver un call dès maintenant
-        </Link>
+        <div className="mx-auto max-w-2xl px-5">
+          <h2 className="text-balance text-3xl font-medium text-foreground sm:text-4xl">
+            Prêt à faire décoller ta chaîne&nbsp;?
+          </h2>
+          <p className="mx-auto mt-4 max-w-lg text-balance text-sm text-muted-foreground sm:text-base">
+            30 min en call. On analyse ton contenu, on identifie ce qui bloque, et on repart avec un plan
+            de montage clair pour ta croissance.
+          </p>
+          <Link
+            to="/bookacall"
+            className="btn-glow mt-8 inline-flex items-center gap-2 rounded-full bg-primary px-7 py-3.5 text-sm font-medium text-primary-foreground"
+          >
+            Réserve ton call
+          </Link>
+          <p className="mt-4 text-[11px] text-muted-foreground">
+            Places limitées : seulement 5 appels réservés chaque semaine.
+          </p>
+        </div>
       </FadeIn>
     </section>
   );
 }
+
 
 /* ---------------- footer ---------------- */
 
