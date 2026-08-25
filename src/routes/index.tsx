@@ -204,24 +204,24 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
           </h1>
         </FadeIn>
         <FadeIn delay={0.12}>
-          <p className="mx-auto mt-6 max-w-2xl text-balance text-sm text-muted-foreground sm:text-base">
+          <p className="mx-auto mt-6 max-w-2xl text-balance text-base text-muted-foreground sm:text-lg">
             Déléguez votre montage vidéo à une équipe qui livre vite et bien — pendant que vous vous concentrez sur
             ce qui fait vraiment grossir votre activité.
           </p>
         </FadeIn>
 
         <FadeIn delay={0.24}>
-          <div className="mt-12 flex flex-col items-stretch justify-center gap-5 sm:flex-row">
+          <div className="mt-12 flex flex-col items-stretch justify-center gap-4 sm:flex-row">
             {[
               { value: settings.videosCount, label: "vidéos montées" },
               { value: settings.clientsCount, label: "clients accompagnés" },
             ].map((s) => (
               <div
                 key={s.label}
-                className="site-surface site-box-glow flex-1 rounded-3xl px-10 py-10 sm:min-w-[260px]"
+                className="site-surface site-box-glow rounded-2xl px-7 py-6 sm:min-w-[190px]"
               >
                 <div className="relative z-10">
-                  <div className="text-5xl font-medium text-foreground sm:text-6xl">
+                  <div className="text-3xl font-medium text-foreground sm:text-4xl">
                     <span>+</span>
                     <StepCounter to={s.value} />
                   </div>
@@ -250,7 +250,7 @@ const FORMATS = [
 
 function FormatsTicker() {
   return (
-    <section className="ticker-fade relative overflow-hidden py-8">
+    <section className="ticker-fade relative mx-auto max-w-2xl overflow-hidden py-8">
       <div className="flex w-max gap-3 ticker-track">
         {[...FORMATS, ...FORMATS, ...FORMATS].map((f, i) => (
           <span
