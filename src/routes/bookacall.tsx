@@ -88,97 +88,116 @@ function BookACall() {
   return (
     <div className="site-root relative min-h-screen overflow-hidden px-4 py-6">
       <header className="relative z-10 mx-auto flex w-full max-w-5xl items-center justify-between">
-        <div className="flex items-center gap-3">
-          <button
-            type="button"
-            onClick={toggle}
-            aria-label="Changer de thème"
-            className="site-pill flex h-9 w-9 items-center justify-center rounded-full text-foreground/80 transition hover:text-foreground"
-          >
-            {theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </button>
-          <Link
-            to="/"
-            className="flex items-center gap-1.5 text-xs text-muted-foreground transition hover:text-foreground"
-          >
-            <ArrowLeft className="h-3.5 w-3.5" /> Retour
-          </Link>
-        </div>
-        <span className="site-pill rounded-full px-3 py-1.5 text-[11px] text-muted-foreground">
-          Alimenté par <span className="font-kangge text-foreground">skale</span>
-          <span className="text-primary">.</span>
-        </span>
+        <Link
+          to="/"
+          className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground transition hover:text-foreground"
+        >
+          <ArrowLeft className="h-3.5 w-3.5" /> Retour
+        </Link>
+        <button
+          type="button"
+          onClick={toggle}
+          role="switch"
+          aria-checked={theme === "light"}
+          aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
+          className="site-glass relative flex h-10 w-[74px] cursor-pointer items-center rounded-full p-1 transition hover:scale-[1.03]"
+        >
+          <motion.span
+            animate={{ x: theme === "dark" ? 0 : 30 }}
+            transition={{ type: "spring", stiffness: 500, damping: 34 }}
+            className="absolute left-1 h-8 w-8 rounded-full bg-foreground/90"
+          />
+          <span className="relative z-10 grid h-8 w-8 place-items-center">
+            <Moon className={`h-4 w-4 transition-colors ${theme === "dark" ? "text-background" : "text-foreground/60"}`} />
+          </span>
+          <span className="relative z-10 grid h-8 w-8 place-items-center">
+            <Sun className={`h-4 w-4 transition-colors ${theme === "light" ? "text-background" : "text-foreground/60"}`} />
+          </span>
+        </button>
       </header>
 
       <main className="relative z-10 mx-auto mt-8 w-full max-w-5xl pb-16">
-        <div className="site-pill site-corner-glow overflow-hidden rounded-3xl">
-          <div className="grid gap-0 md:grid-cols-[300px_1fr]">
-            {/* left column */}
-            <aside className="border-b border-foreground/10 p-6 md:border-b-0 md:border-r">
-              <p className="font-kangge text-3xl text-foreground">
-                skale<span className="text-primary">.</span>
-              </p>
-              <h1 className="mt-6 text-lg font-medium text-foreground">
-                Appel de consultation | Skale Visuals
-              </h1>
-              <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
-                <p className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" /> 30 min
+        <div className="relative">
+          <motion.div layout transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="site-pill site-corner-glow overflow-hidden rounded-3xl">
+            <div className="grid gap-0 md:grid-cols-[280px_1fr]">
+              {/* left column */}
+              <aside className="border-b border-foreground/10 p-6 md:border-b-0 md:border-r">
+                <p className="font-kangge text-3xl text-foreground">
+                  skale<span className="text-primary">.</span>
                 </p>
-                <AnimatePresence>
-                  {date && (
-                    <motion.p
-                      initial={{ opacity: 0, y: -4 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      className="flex items-start gap-2 text-foreground"
-                    >
-                      <CalendarDays className="mt-0.5 h-4 w-4 shrink-0" />
-                      <span className="capitalize">
-                        {time ? `${time} — ` : ""}
-                        {prettyDate(date)}
-                      </span>
-                    </motion.p>
-                  )}
-                </AnimatePresence>
-                <p className="flex items-center gap-2">
-                  <Globe className="h-4 w-4" /> Heure d'Europe Centrale (Paris)
-                </p>
-              </div>
-            </aside>
+                <h1 className="mt-6 text-lg font-medium text-foreground">
+                  Appel de consultation | Skale Visuals
+                </h1>
+                <div className="mt-4 space-y-2.5 text-sm text-muted-foreground">
+                  <p className="flex items-center gap-2">
+                    <Clock className="h-4 w-4" /> 30 min
+                  </p>
+                  <AnimatePresence>
+                    {date && (
+                      <motion.p
+                        initial={{ opacity: 0, y: -4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0 }}
+                        className="flex items-start gap-2 text-foreground"
+                      >
+                        <CalendarDays className="mt-0.5 h-4 w-4 shrink-0" />
+                        <span className="capitalize">
+                          {time ? `${time} — ` : ""}
+                          {prettyDate(date)}
+                        </span>
+                      </motion.p>
+                    )}
+                  </AnimatePresence>
+                  <p className="flex items-center gap-2">
+                    <Globe className="h-4 w-4" /> Heure d'Europe Centrale (Paris)
+                  </p>
+                </div>
+              </aside>
 
-            {/* right column */}
-            <section className="p-6">
-              {done ? (
-                <Confirmed date={date!} time={time!} />
-              ) : step === "calendar" ? (
-                <CalendarPane
-                  availability={availability}
-                  taken={taken}
-                  date={date}
-                  time={time}
-                  onPickDate={(d) => {
-                    setDate(d);
-                    setTime(null);
-                  }}
-                  onPickTime={setTime}
-                  onNext={() => setStep("form")}
-                />
-              ) : (
-                <BookingForm
-                  date={date!}
-                  time={time!}
-                  onBack={() => setStep("calendar")}
-                  onDone={() => setDone(true)}
-                />
-              )}
-            </section>
-          </div>
+              {/* right column */}
+              <section className="p-6">
+                {done ? (
+                  <Confirmed date={date!} time={time!} />
+                ) : step === "calendar" ? (
+                  <CalendarPane
+                    availability={availability}
+                    taken={taken}
+                    date={date}
+                    time={time}
+                    onPickDate={(d) => {
+                      setDate(d);
+                      setTime(null);
+                    }}
+                    onPickTime={setTime}
+                    onNext={() => setStep("form")}
+                  />
+                ) : (
+                  <BookingForm
+                    date={date!}
+                    time={time!}
+                    onBack={() => setStep("calendar")}
+                    onDone={() => setDone(true)}
+                  />
+                )}
+              </section>
+            </div>
+          </motion.div>
+
+          {/* Calendly-style side watermark */}
+          <span className="pointer-events-none absolute left-full top-1/2 hidden origin-left translate-x-3 -translate-y-1/2 rotate-90 whitespace-nowrap text-[11px] tracking-wide text-muted-foreground lg:block">
+            Alimenté par <span className="font-kangge text-foreground">skale</span>
+            <span className="text-primary">.</span>
+          </span>
         </div>
+        <p className="mt-5 text-center text-[11px] text-muted-foreground lg:hidden">
+          Alimenté par <span className="font-kangge text-foreground">skale</span>
+          <span className="text-primary">.</span>
+        </p>
       </main>
     </div>
   );
 }
+
 
 /* ---------------- calendar ---------------- */
 
