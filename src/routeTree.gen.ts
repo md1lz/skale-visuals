@@ -21,15 +21,12 @@ import { Route as CrmMonteurIndexRouteImport } from './routes/crm.monteur.index'
 import { Route as CrmAdminIndexRouteImport } from './routes/crm.admin.index'
 import { Route as CrmMonteurProjetsRouteImport } from './routes/crm.monteur.projets'
 import { Route as CrmMonteurParametresRouteImport } from './routes/crm.monteur.parametres'
-import { Route as CrmAdminVideosRouteImport } from './routes/crm.admin.videos'
 import { Route as CrmAdminSiteRouteImport } from './routes/crm.admin.site'
 import { Route as CrmAdminProspectionRouteImport } from './routes/crm.admin.prospection'
 import { Route as CrmAdminProjetsRouteImport } from './routes/crm.admin.projets'
 import { Route as CrmAdminParametresRouteImport } from './routes/crm.admin.parametres'
 import { Route as CrmAdminMonteursRouteImport } from './routes/crm.admin.monteurs'
-import { Route as CrmAdminDevisRouteImport } from './routes/crm.admin.devis'
 import { Route as CrmAdminClientsRouteImport } from './routes/crm.admin.clients'
-import { Route as CrmAdminAvisRouteImport } from './routes/crm.admin.avis'
 import { Route as CrmAdminAppelsRouteImport } from './routes/crm.admin.appels'
 import { Route as CrmAdminAnalytiquesRouteImport } from './routes/crm.admin.analytiques'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -94,11 +91,6 @@ const CrmMonteurParametresRoute = CrmMonteurParametresRouteImport.update({
   path: '/parametres',
   getParentRoute: () => CrmMonteurRoute,
 } as any)
-const CrmAdminVideosRoute = CrmAdminVideosRouteImport.update({
-  id: '/videos',
-  path: '/videos',
-  getParentRoute: () => CrmAdminRoute,
-} as any)
 const CrmAdminSiteRoute = CrmAdminSiteRouteImport.update({
   id: '/site',
   path: '/site',
@@ -124,19 +116,9 @@ const CrmAdminMonteursRoute = CrmAdminMonteursRouteImport.update({
   path: '/monteurs',
   getParentRoute: () => CrmAdminRoute,
 } as any)
-const CrmAdminDevisRoute = CrmAdminDevisRouteImport.update({
-  id: '/devis',
-  path: '/devis',
-  getParentRoute: () => CrmAdminRoute,
-} as any)
 const CrmAdminClientsRoute = CrmAdminClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
-  getParentRoute: () => CrmAdminRoute,
-} as any)
-const CrmAdminAvisRoute = CrmAdminAvisRouteImport.update({
-  id: '/avis',
-  path: '/avis',
   getParentRoute: () => CrmAdminRoute,
 } as any)
 const CrmAdminAppelsRoute = CrmAdminAppelsRouteImport.update({
@@ -167,15 +149,12 @@ export interface FileRoutesByFullPath {
   '/api/public/track': typeof ApiPublicTrackRoute
   '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
   '/crm/admin/appels': typeof CrmAdminAppelsRoute
-  '/crm/admin/avis': typeof CrmAdminAvisRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/devis': typeof CrmAdminDevisRoute
   '/crm/admin/monteurs': typeof CrmAdminMonteursRoute
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
   '/crm/admin/site': typeof CrmAdminSiteRoute
-  '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
@@ -190,15 +169,12 @@ export interface FileRoutesByTo {
   '/api/public/track': typeof ApiPublicTrackRoute
   '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
   '/crm/admin/appels': typeof CrmAdminAppelsRoute
-  '/crm/admin/avis': typeof CrmAdminAvisRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/devis': typeof CrmAdminDevisRoute
   '/crm/admin/monteurs': typeof CrmAdminMonteursRoute
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
   '/crm/admin/site': typeof CrmAdminSiteRoute
-  '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
   '/crm/admin': typeof CrmAdminIndexRoute
@@ -217,15 +193,12 @@ export interface FileRoutesById {
   '/api/public/track': typeof ApiPublicTrackRoute
   '/crm/admin/analytiques': typeof CrmAdminAnalytiquesRoute
   '/crm/admin/appels': typeof CrmAdminAppelsRoute
-  '/crm/admin/avis': typeof CrmAdminAvisRoute
   '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/devis': typeof CrmAdminDevisRoute
   '/crm/admin/monteurs': typeof CrmAdminMonteursRoute
   '/crm/admin/parametres': typeof CrmAdminParametresRoute
   '/crm/admin/projets': typeof CrmAdminProjetsRoute
   '/crm/admin/prospection': typeof CrmAdminProspectionRoute
   '/crm/admin/site': typeof CrmAdminSiteRoute
-  '/crm/admin/videos': typeof CrmAdminVideosRoute
   '/crm/monteur/parametres': typeof CrmMonteurParametresRoute
   '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
@@ -245,15 +218,12 @@ export interface FileRouteTypes {
     | '/api/public/track'
     | '/crm/admin/analytiques'
     | '/crm/admin/appels'
-    | '/crm/admin/avis'
     | '/crm/admin/clients'
-    | '/crm/admin/devis'
     | '/crm/admin/monteurs'
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
     | '/crm/admin/site'
-    | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
     | '/crm/admin/'
@@ -268,15 +238,12 @@ export interface FileRouteTypes {
     | '/api/public/track'
     | '/crm/admin/analytiques'
     | '/crm/admin/appels'
-    | '/crm/admin/avis'
     | '/crm/admin/clients'
-    | '/crm/admin/devis'
     | '/crm/admin/monteurs'
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
     | '/crm/admin/site'
-    | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
     | '/crm/admin'
@@ -294,15 +261,12 @@ export interface FileRouteTypes {
     | '/api/public/track'
     | '/crm/admin/analytiques'
     | '/crm/admin/appels'
-    | '/crm/admin/avis'
     | '/crm/admin/clients'
-    | '/crm/admin/devis'
     | '/crm/admin/monteurs'
     | '/crm/admin/parametres'
     | '/crm/admin/projets'
     | '/crm/admin/prospection'
     | '/crm/admin/site'
-    | '/crm/admin/videos'
     | '/crm/monteur/parametres'
     | '/crm/monteur/projets'
     | '/crm/admin/'
@@ -404,13 +368,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmMonteurParametresRouteImport
       parentRoute: typeof CrmMonteurRoute
     }
-    '/crm/admin/videos': {
-      id: '/crm/admin/videos'
-      path: '/videos'
-      fullPath: '/crm/admin/videos'
-      preLoaderRoute: typeof CrmAdminVideosRouteImport
-      parentRoute: typeof CrmAdminRoute
-    }
     '/crm/admin/site': {
       id: '/crm/admin/site'
       path: '/site'
@@ -446,25 +403,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmAdminMonteursRouteImport
       parentRoute: typeof CrmAdminRoute
     }
-    '/crm/admin/devis': {
-      id: '/crm/admin/devis'
-      path: '/devis'
-      fullPath: '/crm/admin/devis'
-      preLoaderRoute: typeof CrmAdminDevisRouteImport
-      parentRoute: typeof CrmAdminRoute
-    }
     '/crm/admin/clients': {
       id: '/crm/admin/clients'
       path: '/clients'
       fullPath: '/crm/admin/clients'
       preLoaderRoute: typeof CrmAdminClientsRouteImport
-      parentRoute: typeof CrmAdminRoute
-    }
-    '/crm/admin/avis': {
-      id: '/crm/admin/avis'
-      path: '/avis'
-      fullPath: '/crm/admin/avis'
-      preLoaderRoute: typeof CrmAdminAvisRouteImport
       parentRoute: typeof CrmAdminRoute
     }
     '/crm/admin/appels': {
@@ -494,30 +437,24 @@ declare module '@tanstack/react-router' {
 interface CrmAdminRouteChildren {
   CrmAdminAnalytiquesRoute: typeof CrmAdminAnalytiquesRoute
   CrmAdminAppelsRoute: typeof CrmAdminAppelsRoute
-  CrmAdminAvisRoute: typeof CrmAdminAvisRoute
   CrmAdminClientsRoute: typeof CrmAdminClientsRoute
-  CrmAdminDevisRoute: typeof CrmAdminDevisRoute
   CrmAdminMonteursRoute: typeof CrmAdminMonteursRoute
   CrmAdminParametresRoute: typeof CrmAdminParametresRoute
   CrmAdminProjetsRoute: typeof CrmAdminProjetsRoute
   CrmAdminProspectionRoute: typeof CrmAdminProspectionRoute
   CrmAdminSiteRoute: typeof CrmAdminSiteRoute
-  CrmAdminVideosRoute: typeof CrmAdminVideosRoute
   CrmAdminIndexRoute: typeof CrmAdminIndexRoute
 }
 
 const CrmAdminRouteChildren: CrmAdminRouteChildren = {
   CrmAdminAnalytiquesRoute: CrmAdminAnalytiquesRoute,
   CrmAdminAppelsRoute: CrmAdminAppelsRoute,
-  CrmAdminAvisRoute: CrmAdminAvisRoute,
   CrmAdminClientsRoute: CrmAdminClientsRoute,
-  CrmAdminDevisRoute: CrmAdminDevisRoute,
   CrmAdminMonteursRoute: CrmAdminMonteursRoute,
   CrmAdminParametresRoute: CrmAdminParametresRoute,
   CrmAdminProjetsRoute: CrmAdminProjetsRoute,
   CrmAdminProspectionRoute: CrmAdminProspectionRoute,
   CrmAdminSiteRoute: CrmAdminSiteRoute,
-  CrmAdminVideosRoute: CrmAdminVideosRoute,
   CrmAdminIndexRoute: CrmAdminIndexRoute,
 }
 
