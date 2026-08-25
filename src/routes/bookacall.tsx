@@ -352,13 +352,13 @@ function CalendarPane({
                   >
                     {t}
                   </button>
-                  <AnimatePresence>
+                  <AnimatePresence mode="wait">
                     {time === t && (
                       <motion.button
-                        initial={{ opacity: 0, x: 12 }}
+                        initial={{ opacity: 0, x: 18 }}
                         animate={{ opacity: 1, x: 0 }}
-                        exit={{ opacity: 0, x: 12 }}
-                        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                        exit={{ opacity: 0, x: -18 }}
+                        transition={{ duration: 0.28, ease: [0.22, 1, 0.36, 1] }}
                         type="button"
                         onClick={onNext}
                         className="w-32 shrink-0 cursor-pointer rounded-xl bg-primary py-2.5 text-sm font-medium text-primary-foreground"
