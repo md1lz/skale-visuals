@@ -333,7 +333,7 @@ html.site-light .site-window {
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 12%;
+  width: 6%;
   z-index: 2;
   pointer-events: none;
 }
