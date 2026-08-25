@@ -9,7 +9,6 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as ImmobilierRouteImport } from './routes/immobilier'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
@@ -19,7 +18,8 @@ import { Route as CrmEditorRouteImport } from './routes/crm.editor'
 import { Route as CrmAdminRouteImport } from './routes/crm.admin'
 import { Route as CrmEditorIndexRouteImport } from './routes/crm.editor.index'
 import { Route as CrmAdminIndexRouteImport } from './routes/crm.admin.index'
-import { Route as CrmMonteurProjetsRouteImport } from './routes/crm.monteur.projets'
+import { Route as CrmEditorSettingsRouteImport } from './routes/crm.editor.settings'
+import { Route as CrmEditorProjectsRouteImport } from './routes/crm.editor.projects'
 import { Route as CrmAdminWebsiteRouteImport } from './routes/crm.admin.website'
 import { Route as CrmAdminSettingsRouteImport } from './routes/crm.admin.settings'
 import { Route as CrmAdminProspectsRouteImport } from './routes/crm.admin.prospects'
@@ -30,11 +30,6 @@ import { Route as CrmAdminCallsRouteImport } from './routes/crm.admin.calls'
 import { Route as CrmAdminAnalyticsRouteImport } from './routes/crm.admin.analytics'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 
-const ImmobilierRoute = ImmobilierRouteImport.update({
-  id: '/immobilier',
-  path: '/immobilier',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const CrmRoute = CrmRouteImport.update({
   id: '/crm',
   path: '/crm',
@@ -80,10 +75,15 @@ const CrmAdminIndexRoute = CrmAdminIndexRouteImport.update({
   path: '/',
   getParentRoute: () => CrmAdminRoute,
 } as any)
-const CrmMonteurProjetsRoute = CrmMonteurProjetsRouteImport.update({
-  id: '/monteur/projets',
-  path: '/monteur/projets',
-  getParentRoute: () => CrmRoute,
+const CrmEditorSettingsRoute = CrmEditorSettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => CrmEditorRoute,
+} as any)
+const CrmEditorProjectsRoute = CrmEditorProjectsRouteImport.update({
+  id: '/projects',
+  path: '/projects',
+  getParentRoute: () => CrmEditorRoute,
 } as any)
 const CrmAdminWebsiteRoute = CrmAdminWebsiteRouteImport.update({
   id: '/website',
@@ -136,7 +136,6 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
-  '/immobilier': typeof ImmobilierRoute
   '/crm/admin': typeof CrmAdminRouteWithChildren
   '/crm/editor': typeof CrmEditorRouteWithChildren
   '/crm/': typeof CrmIndexRoute
@@ -149,7 +148,8 @@ export interface FileRoutesByFullPath {
   '/crm/admin/prospects': typeof CrmAdminProspectsRoute
   '/crm/admin/settings': typeof CrmAdminSettingsRoute
   '/crm/admin/website': typeof CrmAdminWebsiteRoute
-  '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
+  '/crm/editor/projects': typeof CrmEditorProjectsRoute
+  '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
   '/crm/editor/': typeof CrmEditorIndexRoute
 }
@@ -157,7 +157,6 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/immobilier': typeof ImmobilierRoute
   '/crm': typeof CrmIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/crm/admin/analytics': typeof CrmAdminAnalyticsRoute
@@ -168,7 +167,8 @@ export interface FileRoutesByTo {
   '/crm/admin/prospects': typeof CrmAdminProspectsRoute
   '/crm/admin/settings': typeof CrmAdminSettingsRoute
   '/crm/admin/website': typeof CrmAdminWebsiteRoute
-  '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
+  '/crm/editor/projects': typeof CrmEditorProjectsRoute
+  '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin': typeof CrmAdminIndexRoute
   '/crm/editor': typeof CrmEditorIndexRoute
 }
@@ -178,7 +178,6 @@ export interface FileRoutesById {
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
-  '/immobilier': typeof ImmobilierRoute
   '/crm/admin': typeof CrmAdminRouteWithChildren
   '/crm/editor': typeof CrmEditorRouteWithChildren
   '/crm/': typeof CrmIndexRoute
@@ -191,7 +190,8 @@ export interface FileRoutesById {
   '/crm/admin/prospects': typeof CrmAdminProspectsRoute
   '/crm/admin/settings': typeof CrmAdminSettingsRoute
   '/crm/admin/website': typeof CrmAdminWebsiteRoute
-  '/crm/monteur/projets': typeof CrmMonteurProjetsRoute
+  '/crm/editor/projects': typeof CrmEditorProjectsRoute
+  '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
   '/crm/editor/': typeof CrmEditorIndexRoute
 }
@@ -202,7 +202,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/bookacall'
     | '/crm'
-    | '/immobilier'
     | '/crm/admin'
     | '/crm/editor'
     | '/crm/'
@@ -215,7 +214,8 @@ export interface FileRouteTypes {
     | '/crm/admin/prospects'
     | '/crm/admin/settings'
     | '/crm/admin/website'
-    | '/crm/monteur/projets'
+    | '/crm/editor/projects'
+    | '/crm/editor/settings'
     | '/crm/admin/'
     | '/crm/editor/'
   fileRoutesByTo: FileRoutesByTo
@@ -223,7 +223,6 @@ export interface FileRouteTypes {
     | '/'
     | '/app'
     | '/bookacall'
-    | '/immobilier'
     | '/crm'
     | '/api/public/track'
     | '/crm/admin/analytics'
@@ -234,7 +233,8 @@ export interface FileRouteTypes {
     | '/crm/admin/prospects'
     | '/crm/admin/settings'
     | '/crm/admin/website'
-    | '/crm/monteur/projets'
+    | '/crm/editor/projects'
+    | '/crm/editor/settings'
     | '/crm/admin'
     | '/crm/editor'
   id:
@@ -243,7 +243,6 @@ export interface FileRouteTypes {
     | '/app'
     | '/bookacall'
     | '/crm'
-    | '/immobilier'
     | '/crm/admin'
     | '/crm/editor'
     | '/crm/'
@@ -256,7 +255,8 @@ export interface FileRouteTypes {
     | '/crm/admin/prospects'
     | '/crm/admin/settings'
     | '/crm/admin/website'
-    | '/crm/monteur/projets'
+    | '/crm/editor/projects'
+    | '/crm/editor/settings'
     | '/crm/admin/'
     | '/crm/editor/'
   fileRoutesById: FileRoutesById
@@ -266,19 +266,11 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
   CrmRoute: typeof CrmRouteWithChildren
-  ImmobilierRoute: typeof ImmobilierRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/immobilier': {
-      id: '/immobilier'
-      path: '/immobilier'
-      fullPath: '/immobilier'
-      preLoaderRoute: typeof ImmobilierRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/crm': {
       id: '/crm'
       path: '/crm'
@@ -342,12 +334,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmAdminIndexRouteImport
       parentRoute: typeof CrmAdminRoute
     }
-    '/crm/monteur/projets': {
-      id: '/crm/monteur/projets'
-      path: '/monteur/projets'
-      fullPath: '/crm/monteur/projets'
-      preLoaderRoute: typeof CrmMonteurProjetsRouteImport
-      parentRoute: typeof CrmRoute
+    '/crm/editor/settings': {
+      id: '/crm/editor/settings'
+      path: '/settings'
+      fullPath: '/crm/editor/settings'
+      preLoaderRoute: typeof CrmEditorSettingsRouteImport
+      parentRoute: typeof CrmEditorRoute
+    }
+    '/crm/editor/projects': {
+      id: '/crm/editor/projects'
+      path: '/projects'
+      fullPath: '/crm/editor/projects'
+      preLoaderRoute: typeof CrmEditorProjectsRouteImport
+      parentRoute: typeof CrmEditorRoute
     }
     '/crm/admin/website': {
       id: '/crm/admin/website'
@@ -444,10 +443,14 @@ const CrmAdminRouteWithChildren = CrmAdminRoute._addFileChildren(
 )
 
 interface CrmEditorRouteChildren {
+  CrmEditorProjectsRoute: typeof CrmEditorProjectsRoute
+  CrmEditorSettingsRoute: typeof CrmEditorSettingsRoute
   CrmEditorIndexRoute: typeof CrmEditorIndexRoute
 }
 
 const CrmEditorRouteChildren: CrmEditorRouteChildren = {
+  CrmEditorProjectsRoute: CrmEditorProjectsRoute,
+  CrmEditorSettingsRoute: CrmEditorSettingsRoute,
   CrmEditorIndexRoute: CrmEditorIndexRoute,
 }
 
@@ -459,14 +462,12 @@ interface CrmRouteChildren {
   CrmAdminRoute: typeof CrmAdminRouteWithChildren
   CrmEditorRoute: typeof CrmEditorRouteWithChildren
   CrmIndexRoute: typeof CrmIndexRoute
-  CrmMonteurProjetsRoute: typeof CrmMonteurProjetsRoute
 }
 
 const CrmRouteChildren: CrmRouteChildren = {
   CrmAdminRoute: CrmAdminRouteWithChildren,
   CrmEditorRoute: CrmEditorRouteWithChildren,
   CrmIndexRoute: CrmIndexRoute,
-  CrmMonteurProjetsRoute: CrmMonteurProjetsRoute,
 }
 
 const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
@@ -476,7 +477,6 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
   CrmRoute: CrmRouteWithChildren,
-  ImmobilierRoute: ImmobilierRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
 }
 export const routeTree = rootRouteImport

@@ -34,9 +34,9 @@ export const Route = createFileRoute("/crm/editor")({
 });
 
 const NAV: { to: string; label: string; icon: typeof Home; exact?: boolean }[] = [
-  { to: "/crm/monteur", label: "Accueil", icon: Home, exact: true },
-  { to: "/crm/monteur/projets", label: "Mes projets", icon: FolderKanban },
-  { to: "/crm/monteur/parametres", label: "Paramètres", icon: Settings },
+  { to: "/crm/editor", label: "Accueil", icon: Home, exact: true },
+  { to: "/crm/editor/projects", label: "Mes projets", icon: FolderKanban },
+  { to: "/crm/editor/settings", label: "Paramètres", icon: Settings },
 ];
 
 function EditorLayout() {
@@ -99,7 +99,7 @@ function EditorLayoutInner() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to as "/crm/monteur"}
+                  to={item.to as "/crm/editor"}
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
                     active
                       ? "bg-red-600/15 text-white border border-red-600/30"

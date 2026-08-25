@@ -6,7 +6,7 @@ import { Palette, ImageIcon, Upload, Trash2, Check, Sun, Moon, MonitorSmartphone
 import { RememberedConnections } from "@/components/RememberedConnections";
 import { ADMIN_THEMES, useAdminPrefs, type AdminTheme } from "@/components/admin-prefs";
 
-export const Route = createFileRoute("/crm/monteur/parametres")({ component: EditorSettingsPage });
+export const Route = createFileRoute("/crm/editor/settings")({ component: EditorSettingsPage });
 
 function Section({
   icon: Icon,
@@ -51,7 +51,7 @@ function EditorSettingsPage() {
       <BackgroundSection />
       <RememberedConnections source="web" />
       <RememberedConnections source="app" />
-      <NotificationsSettings defaultUrl="/crm/monteur" />
+      <NotificationsSettings defaultUrl="/crm/editor" />
     </div>
   );
 }
