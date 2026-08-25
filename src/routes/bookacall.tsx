@@ -87,7 +87,7 @@ function BookACall() {
 
   return (
     <div className="site-root relative min-h-screen overflow-hidden px-4 py-6">
-      <header className="relative z-10 mx-auto flex w-full max-w-5xl items-center justify-between">
+      <header className="relative z-10 flex w-full items-center justify-between">
         <Link
           to="/"
           className="flex cursor-pointer items-center gap-1.5 text-xs text-muted-foreground transition hover:text-foreground"
@@ -116,7 +116,7 @@ function BookACall() {
         </button>
       </header>
 
-      <main className="relative z-10 mx-auto mt-8 w-full max-w-5xl pb-16">
+      <main className={`relative z-10 mx-auto mt-8 w-full pb-16 transition-[max-width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${date ? "max-w-5xl" : "max-w-3xl"}`}>
         <div className="relative">
           <motion.div layout transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }} className="site-pill site-corner-glow overflow-hidden rounded-3xl">
             <div className="grid gap-0 md:grid-cols-[280px_1fr]">
