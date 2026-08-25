@@ -4,11 +4,8 @@ import { AnimatePresence, motion } from "framer-motion";
 import {
   Home,
   BarChart3,
-  Video,
   Users,
   FolderKanban,
-  FileSignature,
-  Star,
   Settings,
   Scissors,
   Target,
