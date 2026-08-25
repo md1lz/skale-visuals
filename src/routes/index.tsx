@@ -474,6 +474,65 @@ function CallCta() {
   );
 }
 
+/* ---------------- footer ---------------- */
+
+function SiteFooter() {
+  return (
+    <footer className="relative z-10 border-t border-foreground/10">
+      <div className="mx-auto w-full max-w-6xl px-4 py-12">
+        <div className="grid gap-10 sm:grid-cols-3">
+          <div>
+            <p className="font-kangge text-3xl text-foreground">
+              skale<span className="text-primary">.</span>
+            </p>
+            <p className="mt-3 max-w-xs text-xs text-muted-foreground">
+              Montage vidéo pour créateurs et marques.
+            </p>
+          </div>
+
+          <div>
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Navigation</p>
+            <ul className="mt-3 space-y-2">
+              {NAV_LINKS.map((l) => (
+                <li key={l.label}>
+                  <button
+                    type="button"
+                    onClick={() => scrollTo(l.target)}
+                    className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+                  >
+                    {l.label}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div>
+            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Contact</p>
+            <a
+              href="mailto:contact@skalevisuals.com"
+              className="mt-3 block text-sm text-foreground/80 transition-colors hover:text-foreground"
+            >
+              contact@skalevisuals.com
+            </a>
+            <Link
+              to="/bookacall"
+              className="mt-4 inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
+            >
+              Réserver un call
+            </Link>
+          </div>
+        </div>
+
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-foreground/10 pt-6 text-xs text-muted-foreground sm:flex-row">
+          <p>Made by Skale Visuals</p>
+          <p>© 2026 Skale Visuals</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
 /* ---------------- page ---------------- */
 
 function Home() {
@@ -490,6 +549,7 @@ function Home() {
         <Realisations folders={folders} videos={videos} />
         <CallCta />
       </main>
+      <SiteFooter />
     </div>
   );
 }
