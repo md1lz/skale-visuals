@@ -1,0 +1,1 @@
+CREATE POLICY "No direct client access to call bookings" ON public.call_bookings FOR ALL TO anon, authenticated USING (false) WITH CHECK (false);

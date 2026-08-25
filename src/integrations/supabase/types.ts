@@ -122,6 +122,54 @@ export type Database = {
         }
         Relationships: []
       }
+      call_bookings: {
+        Row: {
+          created_at: string
+          email: string
+          guests: string[]
+          id: string
+          location_type: string
+          meet_link: string | null
+          name: string
+          notes: string | null
+          phone: string | null
+          slot_date: string
+          slot_time: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          guests?: string[]
+          id?: string
+          location_type?: string
+          meet_link?: string | null
+          name: string
+          notes?: string | null
+          phone?: string | null
+          slot_date: string
+          slot_time: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          guests?: string[]
+          id?: string
+          location_type?: string
+          meet_link?: string | null
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          slot_date?: string
+          slot_time?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           budget: number | null
