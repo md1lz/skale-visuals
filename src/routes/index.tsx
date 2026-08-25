@@ -543,7 +543,16 @@ function SiteFooter() {
                   </button>
                 </li>
               ))}
+              <li>
+                <Link
+                  to="/aboutus"
+                  className="text-sm text-foreground/70 transition-colors hover:text-foreground"
+                >
+                  À propos
+                </Link>
+              </li>
             </ul>
+
           </nav>
         </div>
 

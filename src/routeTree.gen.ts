@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
+import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as CrmIndexRouteImport } from './routes/crm.index'
 import { Route as CrmEditorRouteImport } from './routes/crm.editor'
@@ -43,6 +44,11 @@ const BookacallRoute = BookacallRouteImport.update({
 const AppRoute = AppRouteImport.update({
   id: '/app',
   path: '/app',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AboutusRoute = AboutusRouteImport.update({
+  id: '/aboutus',
+  path: '/aboutus',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -133,6 +139,7 @@ const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
@@ -155,6 +162,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmIndexRoute
@@ -175,6 +183,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
@@ -199,6 +208,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/aboutus'
     | '/app'
     | '/bookacall'
     | '/crm'
@@ -221,6 +231,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/aboutus'
     | '/app'
     | '/bookacall'
     | '/crm'
@@ -240,6 +251,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/aboutus'
     | '/app'
     | '/bookacall'
     | '/crm'
@@ -263,6 +275,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AboutusRoute: typeof AboutusRoute
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
   CrmRoute: typeof CrmRouteWithChildren
@@ -290,6 +303,13 @@ declare module '@tanstack/react-router' {
       path: '/app'
       fullPath: '/app'
       preLoaderRoute: typeof AppRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aboutus': {
+      id: '/aboutus'
+      path: '/aboutus'
+      fullPath: '/aboutus'
+      preLoaderRoute: typeof AboutusRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -474,6 +494,7 @@ const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AboutusRoute: AboutusRoute,
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
   CrmRoute: CrmRouteWithChildren,
