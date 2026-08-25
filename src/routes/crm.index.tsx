@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { loginAdmin, getAdminSessionFn } from "@/lib/admin-auth.functions";
+import { loginAdmin, getAdminSessionFn, tryAutoLoginByIp } from "@/lib/admin-auth.functions";
 import { getEditorSessionFn } from "@/lib/editor.functions";
 import { registerPushWorker, isStandaloneApp } from "@/lib/pwa";
 
