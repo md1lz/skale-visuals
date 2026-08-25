@@ -218,7 +218,7 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
             ].map((s) => (
               <div
                 key={s.label}
-                className="site-surface site-box-glow rounded-2xl px-7 py-6 sm:min-w-[190px]"
+                className="site-surface site-corner-glow rounded-2xl px-7 py-6 sm:min-w-[190px]"
               >
                 <div className="relative z-10">
                   <div className="text-3xl font-medium text-foreground sm:text-4xl">
@@ -399,12 +399,6 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
                   </>
                 )}
               </div>
-              {selected && (
-                <div className="mt-3 text-center">
-                  <p className="text-sm font-medium text-foreground">{selected.title}</p>
-                  <p className="text-xs text-muted-foreground">{selected.author}</p>
-                </div>
-              )}
             </div>
 
             {/* video list */}
