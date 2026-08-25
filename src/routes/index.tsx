@@ -237,7 +237,7 @@ function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "
             ].map((s) => (
               <div
                 key={s.label}
-                className="site-pill site-corner-glow rounded-2xl px-10 py-6 sm:min-w-[220px]"
+                className="site-pill site-corner-glow rounded-2xl px-12 py-6 sm:min-w-[300px] lg:min-w-[340px]"
               >
                 <div className="relative z-10">
                   <div className="text-3xl font-medium text-foreground sm:text-4xl">
