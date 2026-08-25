@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useInView } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Sun, Moon } from "lucide-react";
+import { Play, Sun, Moon, Mail, Instagram, Linkedin } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -166,30 +166,14 @@ function scrollTo(target: string) {
 function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void }) {
   return (
     <header className="sticky top-0 z-40 w-full py-4">
-      <div className="relative mx-auto flex max-w-6xl items-center justify-center px-4">
-        <nav className="site-glass rounded-full px-2 py-1.5">
-          <ul className="flex items-center gap-1 whitespace-nowrap leading-none">
-            {NAV_LINKS.map((l) => (
-              <li key={l.label}>
-                <button
-                  type="button"
-                  onClick={() => scrollTo(l.target)}
-                  className="block rounded-full px-3.5 py-1.5 text-xs sm:text-sm text-foreground/80 transition-colors hover:bg-foreground/10 hover:text-foreground"
-                >
-                  {l.label}
-                </button>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
+      <div className="relative mx-auto flex max-w-6xl items-center justify-end px-4">
         <button
           type="button"
           onClick={toggle}
           role="switch"
           aria-checked={theme === "light"}
           aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
-          className="site-glass absolute right-4 flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
+          className="site-glass relative flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
         >
           <motion.span
             animate={{ x: theme === "dark" ? 0 : 30 }}
@@ -238,7 +222,7 @@ function Hero({ settings }: { settings: HomeContent["settings"] }) {
               >
                 <div className="relative z-10">
                   <div className="text-5xl font-medium text-foreground sm:text-6xl">
-                    <span className="text-primary">+</span>
+                    <span>+</span>
                     <StepCounter to={s.value} />
                   </div>
                   <div className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
@@ -478,55 +462,63 @@ function CallCta() {
 
 function SiteFooter() {
   return (
-    <footer className="relative z-10 border-t border-foreground/10">
+    <footer className="relative z-10 border-t border-foreground/[0.06]">
       <div className="mx-auto w-full max-w-6xl px-4 py-12">
-        <div className="grid gap-10 sm:grid-cols-3">
+        <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="font-kangge text-3xl text-foreground">
               skale<span className="text-primary">.</span>
             </p>
-            <p className="mt-3 max-w-xs text-xs text-muted-foreground">
-              Montage vidéo pour créateurs et marques.
-            </p>
+            <div className="mt-4 space-y-2.5">
+              <a
+                href="mailto:contact@skalevisuals.com"
+                className="flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
+              >
+                <Mail className="h-4 w-4" />
+                contact@skalevisuals.com
+              </a>
+              <a
+                href="https://www.instagram.com/skalevisuals/"
+                target="_blank"
+                rel="noreferrer"
+                className="flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
+              >
+                <Instagram className="h-4 w-4" />
+                @skalevisuals
+              </a>
+              <a
+                href="https://www.linkedin.com/company/skalevisuals/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="LinkedIn Skale Visuals"
+                className="flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
+              >
+                <Linkedin className="h-4 w-4" />
+                LinkedIn
+              </a>
+            </div>
           </div>
 
-          <div>
-            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Navigation</p>
-            <ul className="mt-3 space-y-2">
+          <nav className="sm:text-right">
+            <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:justify-end">
               {NAV_LINKS.map((l) => (
                 <li key={l.label}>
                   <button
                     type="button"
                     onClick={() => scrollTo(l.target)}
-                    className="text-sm text-foreground/80 transition-colors hover:text-foreground"
+                    className="text-sm text-foreground/70 transition-colors hover:text-foreground"
                   >
                     {l.label}
                   </button>
                 </li>
               ))}
             </ul>
-          </div>
-
-          <div>
-            <p className="text-[11px] uppercase tracking-widest text-muted-foreground">Contact</p>
-            <a
-              href="mailto:contact@skalevisuals.com"
-              className="mt-3 block text-sm text-foreground/80 transition-colors hover:text-foreground"
-            >
-              contact@skalevisuals.com
-            </a>
-            <Link
-              to="/bookacall"
-              className="mt-4 inline-flex items-center rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground transition hover:opacity-90"
-            >
-              Réserver un call
-            </Link>
-          </div>
+          </nav>
         </div>
 
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-foreground/10 pt-6 text-xs text-muted-foreground sm:flex-row">
-          <p>Made by Skale Visuals</p>
-          <p>© 2026 Skale Visuals</p>
+        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-foreground/[0.06] pt-6 text-xs text-muted-foreground sm:flex-row">
+          <p>© 2026 Skale Visuals. Tous droits réservés.</p>
+          <p>Made in France by Madi Harrois</p>
         </div>
       </div>
     </footer>
