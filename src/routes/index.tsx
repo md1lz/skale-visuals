@@ -357,7 +357,7 @@ function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: Home
             </p>
           </div>
 
-          <div className="grid gap-0 md:grid-cols-[170px_minmax(0,1fr)_200px]">
+          <div className="relative z-10 grid gap-0 md:grid-cols-[170px_minmax(0,1fr)_200px]">
             {/* folders */}
             <div className="border-b border-foreground/10 p-4 md:border-b-0 md:border-r">
               <p className="mb-3 text-[10px] uppercase tracking-widest text-muted-foreground">Dossiers</p>
