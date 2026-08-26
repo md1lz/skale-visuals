@@ -200,7 +200,15 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
 
 /* ---------------- hero ---------------- */
 
-function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "dark" | "light" }) {
+function Hero({
+  settings,
+  theme,
+  themeReady,
+}: {
+  settings: HomeContent["settings"];
+  theme: "dark" | "light";
+  themeReady: boolean;
+}) {
   return (
     <section className="relative overflow-hidden pb-6 pt-10 lg:pt-16">
       <div className="relative mx-auto max-w-3xl px-5 text-center">
