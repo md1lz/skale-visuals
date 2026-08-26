@@ -45,16 +45,11 @@ const Email = ({ name, slotDate = "", slotTime = "", locationType = "meet" }: Pr
           <Text style={detail}>{locationType === "phone" ? "📞 Par téléphone" : "🎥 Google Meet"}</Text>
         </Section>
         {locationType === "meet" ? (
-          <Text style={text}>
-            Vous recevrez votre lien Google Meet dans les prochaines 24 heures. Si vous avez des questions
-            en attendant, répondez simplement à cet email.
-          </Text>
+          <Text style={text}>Vous recevrez votre lien Google Meet dans les prochaines 24 heures.</Text>
         ) : (
-          <Text style={text}>
-            Nous vous appellerons au numéro communiqué. Si vous avez des questions en attendant, répondez
-            simplement à cet email.
-          </Text>
+          <Text style={text}>Nous vous appellerons au numéro communiqué.</Text>
         )}
+        <Text style={text}>{CONTACT_LINE}</Text>
         <Text style={text}>
           À très vite,
           <br />
