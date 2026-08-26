@@ -538,7 +538,7 @@ function Comparatif() {
             />
 
             {/* header */}
-            <div className="relative z-20 col-start-1" aria-hidden />
+            <div className="relative z-20 col-start-1 border-b border-foreground/10" aria-hidden />
             <div className="relative z-20 col-start-2 border-b border-foreground/10 px-2 py-3 text-center text-xs font-bold text-muted-foreground sm:px-4">
               {content.otherLabel}
             </div>
@@ -578,7 +578,7 @@ function Comparatif() {
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-primary/40 bg-primary/20 backdrop-blur-md">
                       <Check className="h-4 w-4 text-primary" aria-hidden />
                     </span>
-                    <span className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-bold text-white sm:text-base">
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold text-white sm:text-base">
                       {row.skaleTitle}
                     </span>
                   </div>
