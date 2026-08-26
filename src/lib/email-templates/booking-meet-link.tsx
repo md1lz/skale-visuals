@@ -4,6 +4,7 @@ import { Body, Button, Container, Head, Heading, Hr, Html, Img, Preview, Text } 
 import type { TemplateEntry } from "./registry";
 import {
   button,
+  CONTACT_LINE,
   container,
   firstName,
   footer,
@@ -43,7 +44,8 @@ const Email = ({ name, slotDate = "", slotTime = "", meetLink = "" }: Props) => 
             </Button>
           </>
         ) : null}
-        <Text style={{ ...text, marginTop: "28px" }}>
+        <Text style={{ ...text, marginTop: "28px" }}>{CONTACT_LINE}</Text>
+        <Text style={text}>
           À très vite,
           <br />
           L'équipe Skale Visuals

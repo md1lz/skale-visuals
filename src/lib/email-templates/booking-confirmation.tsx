@@ -3,7 +3,7 @@ import { Body, Container, Head, Heading, Hr, Html, Img, Preview, Section, Text }
 
 import type { TemplateEntry } from "./registry";
 import {
-
+  CONTACT_LINE,
   container,
   detail,
   detailBox,
