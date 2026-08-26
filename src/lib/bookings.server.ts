@@ -121,7 +121,7 @@ export async function insertBooking(data: {
   return { id: inserted.id, meet_link: inserted.meet_link };
 }
 
-const ADMIN_EMAILS = ["lorenzodidio875@gmail.com", "harrois.madi@gmail.com"];
+const ADMIN_EMAILS = ["skalevisuals086@gmail.com"];
 const ADMIN_CALLS_URL = "https://skalevisuals.com/crm/admin/calls";
 
 async function safeSend(
