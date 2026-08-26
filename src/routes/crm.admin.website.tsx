@@ -19,6 +19,8 @@ import {
 import type { HomeFolder, HomeSettings, HomeVideo } from "@/lib/home-content.functions";
 import { getAboutAdminContent, saveAboutContent } from "@/lib/admin-about.functions";
 import type { AboutContent } from "@/lib/about-content.shared";
+import { getCompareAdminContent, saveCompareContent } from "@/lib/admin-compare.functions";
+import type { CompareContent, CompareRow } from "@/lib/compare-content.shared";
 
 export const Route = createFileRoute("/crm/admin/website")({
   head: () => ({
@@ -560,6 +562,8 @@ function SiteAdmin() {
 
       <AboutSection />
 
+      <CompareSection />
+
 
 
       {blocker.status === "blocked" && (
@@ -809,6 +813,165 @@ function AboutSection() {
           <input className={input} value={about.ctaButton} onChange={(e) => patch({ ctaButton: e.target.value })} />
         </label>
       </div>
+    </section>
+  );
+}
+
+/* ---------------- Comparatif ---------------- */
+
+const EMPTY_ROW: CompareRow = { criterion: "", other: "", skaleTitle: "", skaleText: "" };
+
+function CompareSection() {
+  const [content, setContent] = useState<CompareContent | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+
+  useEffect(() => {
+    getCompareAdminContent()
+      .then((c) => setContent(c as CompareContent))
+      .catch(() => {});
+  }, []);
+
+  function patch(p: Partial<CompareContent>) {
+    setContent((c) => (c ? { ...c, ...p } : c));
+  }
+  function patchRow(i: number, p: Partial<CompareRow>) {
+    setContent((c) => (c ? { ...c, rows: c.rows.map((r, idx) => (idx === i ? { ...r, ...p } : r)) } : c));
+  }
+  function addRow() {
+    setContent((c) => (c ? { ...c, rows: [...c.rows, { ...EMPTY_ROW }] } : c));
+  }
+  function removeRow(i: number) {
+    if (!window.confirm("Supprimer cette ligne du comparatif ?")) return;
+    setContent((c) => (c ? { ...c, rows: c.rows.filter((_, idx) => idx !== i) } : c));
+  }
+  function moveRow(from: number, to: number) {
+    setContent((c) => {
+      if (!c || from === to || to < 0 || to >= c.rows.length) return c;
+      const rows = [...c.rows];
+      const [row] = rows.splice(from, 1);
+      rows.splice(to, 0, row);
+      return { ...c, rows };
+    });
+  }
+
+  async function save() {
+    if (!content) return;
+    setSaving(true);
+    try {
+      await saveCompareContent({ data: content });
+      toast.success("Comparatif mis à jour");
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erreur");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  if (!content) return null;
+
+  return (
+    <section className={`${card} mt-6`}>
+      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">Comparatif</h2>
+        <button onClick={save} disabled={saving} className={`${btn} bg-red-600 text-white hover:bg-red-500`}>
+          {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
+          Enregistrer
+        </button>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2">
+        <label className="block">
+          <span className="mb-1 block text-xs text-neutral-400">Badge</span>
+          <input className={input} value={content.badge} onChange={(e) => patch({ badge: e.target.value })} />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs text-neutral-400">Titre</span>
+          <input className={input} value={content.title} onChange={(e) => patch({ title: e.target.value })} />
+        </label>
+        <label className="block sm:col-span-2">
+          <span className="mb-1 block text-xs text-neutral-400">Sous-titre</span>
+          <textarea
+            className={`${input} min-h-[72px]`}
+            value={content.subtitle}
+            onChange={(e) => patch({ subtitle: e.target.value })}
+          />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs text-neutral-400">Libellé colonne concurrence</span>
+          <input className={input} value={content.otherLabel} onChange={(e) => patch({ otherLabel: e.target.value })} />
+        </label>
+        <label className="block">
+          <span className="mb-1 block text-xs text-neutral-400">Libellé colonne Skale</span>
+          <input className={input} value={content.skaleLabel} onChange={(e) => patch({ skaleLabel: e.target.value })} />
+        </label>
+      </div>
+
+      <div className="mt-5 space-y-3">
+        {content.rows.map((row, i) => (
+          <div
+            key={i}
+            draggable
+            onDragStart={() => setDragIndex(i)}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => {
+              if (dragIndex !== null) moveRow(dragIndex, i);
+              setDragIndex(null);
+            }}
+            onDragEnd={() => setDragIndex(null)}
+            className={`rounded-xl border border-white/10 bg-black/20 p-3 ${dragIndex === i ? "opacity-50" : ""}`}
+          >
+            <div className="mb-2 flex items-center justify-between gap-2">
+              <span className="cursor-grab text-xs text-neutral-500">⠿ Ligne {i + 1}</span>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => moveRow(i, i - 1)}
+                  className={`${btn} px-2 text-neutral-400 hover:text-white`}
+                  aria-label="Monter"
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => moveRow(i, i + 1)}
+                  className={`${btn} px-2 text-neutral-400 hover:text-white`}
+                  aria-label="Descendre"
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => removeRow(i)}
+                  className={`${btn} px-2 text-red-400 hover:bg-red-500/10`}
+                  aria-label="Supprimer"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <label className="block">
+                <span className="mb-1 block text-xs text-neutral-400">Critère</span>
+                <input className={input} value={row.criterion} onChange={(e) => patchRow(i, { criterion: e.target.value })} />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs text-neutral-400">Texte Freelance / Agence</span>
+                <input className={input} value={row.other} onChange={(e) => patchRow(i, { other: e.target.value })} />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs text-neutral-400">Titre Skale</span>
+                <input className={input} value={row.skaleTitle} onChange={(e) => patchRow(i, { skaleTitle: e.target.value })} />
+              </label>
+              <label className="block">
+                <span className="mb-1 block text-xs text-neutral-400">Description Skale</span>
+                <input className={input} value={row.skaleText} onChange={(e) => patchRow(i, { skaleText: e.target.value })} />
+              </label>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <button onClick={addRow} className={`${btn} mt-3 border border-white/10 text-white hover:bg-white/10`}>
+        <Plus className="h-4 w-4" /> Ajouter une ligne
+      </button>
     </section>
   );
 }
