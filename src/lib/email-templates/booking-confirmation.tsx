@@ -3,7 +3,7 @@ import { Body, Container, Head, Heading, Hr, Html, Preview, Section, Text } from
 
 import type { TemplateEntry } from "./registry";
 import {
-  button,
+
   container,
   detail,
   detailBox,
@@ -75,4 +75,3 @@ export const template = {
   previewData: { name: "Julie Martin", slotDate: "2026-09-08", slotTime: "15:00", locationType: "meet" },
 } satisfies TemplateEntry;
 
-export const buttonStyle = button;
