@@ -41,9 +41,11 @@ export const Route = createFileRoute("/")({
 
 function useTheme() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [themeReady, setThemeReady] = useState(false);
   useEffect(() => {
     const stored = window.localStorage.getItem("skale-theme");
     if (stored === "light" || stored === "dark") setTheme(stored);
+    setThemeReady(true);
   }, []);
   useEffect(() => {
     const root = document.documentElement;
@@ -51,7 +53,7 @@ function useTheme() {
     window.localStorage.setItem("skale-theme", theme);
     return () => root.classList.remove("site-light");
   }, [theme]);
-  return { theme, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
+  return { theme, themeReady, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
 }
 
 /* ---------------- data ---------------- */
@@ -198,7 +200,15 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
 
 /* ---------------- hero ---------------- */
 
-function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "dark" | "light" }) {
+function Hero({
+  settings,
+  theme,
+  themeReady,
+}: {
+  settings: HomeContent["settings"];
+  theme: "dark" | "light";
+  themeReady: boolean;
+}) {
   return (
     <section className="relative overflow-hidden pb-6 pt-10 lg:pt-16">
       <div className="relative mx-auto max-w-3xl px-5 text-center">
@@ -210,11 +220,15 @@ function Hero({ settings, theme }: { settings: HomeContent["settings"]; theme: "
                   theme === "light" ? "bg-white ring-black/10" : "bg-black ring-white/10"
                 }`}
               >
-                <img
-                  src={theme === "light" ? logoLight.url : logoDark.url}
-                  alt="Logo Skale Visuals"
-                  className="h-full w-full object-contain p-2"
-                />
+                {themeReady && (
+                  <img
+                    key={theme}
+                    src={theme === "light" ? logoLight.url : logoDark.url}
+                    alt="Logo Skale Visuals"
+                    decoding="async"
+                    className="h-full w-full object-contain p-2"
+                  />
+                )}
               </span>
               Skale Visuals
             </h1>
@@ -679,14 +693,14 @@ function SiteFooter() {
 /* ---------------- page ---------------- */
 
 function Home() {
-  const { theme, toggle } = useTheme();
+  const { theme, themeReady, toggle } = useTheme();
   const { settings, folders, videos } = useHomeContent();
 
   return (
     <div className="site-root relative min-h-screen">
       <Navbar theme={theme} toggle={toggle} />
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4">
-        <Hero settings={settings} theme={theme} />
+        <Hero settings={settings} theme={theme} themeReady={themeReady} />
         <FormatsTicker />
         <Trust settings={settings} />
         <Realisations folders={folders} videos={videos} />
