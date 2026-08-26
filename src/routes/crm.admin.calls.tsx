@@ -290,6 +290,7 @@ function AppelsPage() {
                   <p className="mt-1 text-xs text-neutral-400">
                     {b.location_type === "meet" ? "Google Meet" : `Téléphone · ${b.phone || "—"}`}
                   </p>
+                  {b.location_type === "meet" && <MeetLinkField booking={b} />}
                   {b.notes && <p className="mt-1 text-xs text-neutral-500">{b.notes}</p>}
                   <select
                     value={b.status}
