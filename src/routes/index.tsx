@@ -539,7 +539,7 @@ function Comparatif() {
 
             {/* header */}
             <div className="relative z-20 col-start-1 border-b border-foreground/10" aria-hidden />
-            <div className="relative z-20 col-start-2 border-b border-foreground/10 px-2 py-3 text-center text-xs font-bold text-muted-foreground sm:px-4">
+            <div className="relative z-20 col-start-2 border-b border-foreground/10 px-2 py-3 text-center text-base font-bold text-muted-foreground sm:text-lg sm:px-4">
               {content.otherLabel}
             </div>
             <div className="relative z-20 col-start-3 border-b border-foreground/10 px-2 py-3 text-center sm:px-4">
