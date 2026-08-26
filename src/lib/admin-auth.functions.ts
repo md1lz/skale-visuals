@@ -89,7 +89,7 @@ export const loginAdmin = createServerFn({ method: "POST" })
         .eq("id", editor.id);
 
       if (data.remember && ip) {
-        await supabaseAdmin.from("admin_remembered_ips").upsert(
+        const { error: rememberError } = await supabaseAdmin.from("admin_remembered_ips").upsert(
           {
             ip,
             username: editor.username,
@@ -100,7 +100,9 @@ export const loginAdmin = createServerFn({ method: "POST" })
           },
           { onConflict: "ip,source,owner_type,username" },
         );
+        if (rememberError) console.error("[remember editor device]", rememberError.message);
       }
+
 
       const { getEditorSession } = await import("./auth-sessions.server");
       const eSession = await getEditorSession();
