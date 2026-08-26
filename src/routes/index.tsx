@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useInView } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Sun, Moon, Mail, Instagram, Linkedin } from "lucide-react";
+import { Play, Sun, Moon, Mail, Instagram, Linkedin, AlertTriangle, Check } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import logoDark from "@/assets/skale-logo-dark.png.asset.json";
