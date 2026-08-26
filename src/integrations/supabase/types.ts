@@ -142,9 +142,11 @@ export type Database = {
           id: string
           location_type: string
           meet_link: string | null
+          meet_link_sent_at: string | null
           name: string
           notes: string | null
           phone: string | null
+          reminder_sent_at: string | null
           slot_date: string
           slot_time: string
           status: string
@@ -157,9 +159,11 @@ export type Database = {
           id?: string
           location_type?: string
           meet_link?: string | null
+          meet_link_sent_at?: string | null
           name: string
           notes?: string | null
           phone?: string | null
+          reminder_sent_at?: string | null
           slot_date: string
           slot_time: string
           status?: string
@@ -172,9 +176,11 @@ export type Database = {
           id?: string
           location_type?: string
           meet_link?: string | null
+          meet_link_sent_at?: string | null
           name?: string
           notes?: string | null
           phone?: string | null
+          reminder_sent_at?: string | null
           slot_date?: string
           slot_time?: string
           status?: string

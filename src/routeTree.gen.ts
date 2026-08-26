@@ -31,6 +31,7 @@ import { Route as CrmAdminCallsRouteImport } from './routes/crm.admin.calls'
 import { Route as CrmAdminAnalyticsRouteImport } from './routes/crm.admin.analytics'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
+import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 
 const CrmRoute = CrmRouteImport.update({
   id: '/crm',
@@ -143,6 +144,12 @@ const LovableEmailTransactionalPreviewRoute =
     path: '/lovable/email/transactional/preview',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicHooksBookingRemindersRoute =
+  ApiPublicHooksBookingRemindersRouteImport.update({
+    id: '/api/public/hooks/booking-reminders',
+    path: '/api/public/hooks/booking-reminders',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -166,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
   '/crm/editor/': typeof CrmEditorIndexRoute
+  '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
@@ -187,6 +195,7 @@ export interface FileRoutesByTo {
   '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin': typeof CrmAdminIndexRoute
   '/crm/editor': typeof CrmEditorIndexRoute
+  '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
@@ -212,6 +221,7 @@ export interface FileRoutesById {
   '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
   '/crm/editor/': typeof CrmEditorIndexRoute
+  '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
@@ -238,6 +248,7 @@ export interface FileRouteTypes {
     | '/crm/editor/settings'
     | '/crm/admin/'
     | '/crm/editor/'
+    | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -259,6 +270,7 @@ export interface FileRouteTypes {
     | '/crm/editor/settings'
     | '/crm/admin'
     | '/crm/editor'
+    | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
   id:
     | '__root__'
@@ -283,6 +295,7 @@ export interface FileRouteTypes {
     | '/crm/editor/settings'
     | '/crm/admin/'
     | '/crm/editor/'
+    | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
@@ -293,6 +306,7 @@ export interface RootRouteChildren {
   BookacallRoute: typeof BookacallRoute
   CrmRoute: typeof CrmRouteWithChildren
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
+  ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
@@ -452,6 +466,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/hooks/booking-reminders': {
+      id: '/api/public/hooks/booking-reminders'
+      path: '/api/public/hooks/booking-reminders'
+      fullPath: '/api/public/hooks/booking-reminders'
+      preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -520,6 +541,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookacallRoute: BookacallRoute,
   CrmRoute: CrmRouteWithChildren,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
+  ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport

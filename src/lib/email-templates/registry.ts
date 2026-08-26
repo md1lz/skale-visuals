@@ -1,5 +1,10 @@
 import type { ComponentType } from 'react'
 
+import { template as bookingConfirmation } from './booking-confirmation'
+import { template as bookingMeetLink } from './booking-meet-link'
+import { template as bookingReminder } from './booking-reminder'
+import { template as bookingAdminAlert } from './booking-admin-alert'
+
 export interface TemplateEntry {
   component: ComponentType<any>
   subject: string | ((data: Record<string, any>) => string)
@@ -18,6 +23,8 @@ export interface TemplateEntry {
  *   // then add to TEMPLATES: 'welcome': welcomeTemplate
  */
 export const TEMPLATES: Record<string, TemplateEntry> = {
-  // Add templates here as they are created, e.g.:
-  // 'welcome': welcomeTemplate,
+  'booking-confirmation': bookingConfirmation,
+  'booking-meet-link': bookingMeetLink,
+  'booking-reminder': bookingReminder,
+  'booking-admin-alert': bookingAdminAlert,
 }

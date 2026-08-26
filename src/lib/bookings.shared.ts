@@ -30,6 +30,8 @@ export type Booking = {
   notes: string | null;
   status: "Confirmé" | "Annulé" | "Effectué";
   meet_link: string | null;
+  meet_link_sent_at?: string | null;
+  reminder_sent_at?: string | null;
   created_at: string;
 };
 
@@ -81,3 +83,8 @@ export const bookingStatusSchema = z.object({
 });
 
 export const bookingIdSchema = z.object({ id: z.string().uuid() });
+
+export const meetLinkSchema = z.object({
+  id: z.string().uuid(),
+  meet_link: z.string().trim().url("Lien invalide").max(500),
+});
