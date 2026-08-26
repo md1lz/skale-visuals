@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
-import { CalendarDays, Check, Loader2, Phone, Trash2, Video } from "lucide-react";
+import { CalendarDays, Check, Loader2, Phone, Send, Trash2, Video } from "lucide-react";
 
 import {
   DAY_LABELS,
@@ -12,6 +12,7 @@ import {
 import {
   deleteBooking,
   getBookingAdminData,
+  sendBookingMeetLink,
   setAvailability as saveAvailability,
   setBookingStatus,
 } from "@/lib/bookings.functions";
@@ -21,6 +22,54 @@ export const Route = createFileRoute("/crm/admin/calls")({
 });
 
 const STATUSES = ["Confirmé", "Annulé", "Effectué"] as const;
+
+function MeetLinkField({ booking }: { booking: Booking }) {
+  const [link, setLink] = useState(booking.meet_link ?? "");
+  const [state, setState] = useState<"idle" | "sending" | "sent" | "error">("idle");
+
+  const send = async () => {
+    if (!link.trim()) return;
+    setState("sending");
+    try {
+      await sendBookingMeetLink({ data: { id: booking.id, meet_link: link.trim() } });
+      setState("sent");
+      window.setTimeout(() => setState("idle"), 3000);
+    } catch {
+      setState("error");
+    }
+  };
+
+  return (
+    <div className="mt-2 flex flex-wrap items-center gap-2">
+      <input
+        type="url"
+        value={link}
+        placeholder="https://meet.google.com/…"
+        onChange={(e) => {
+          setLink(e.target.value);
+          setState("idle");
+        }}
+        className="min-w-[180px] flex-1 rounded-lg border border-white/10 bg-transparent px-2 py-1 text-xs"
+      />
+      <button
+        type="button"
+        onClick={send}
+        disabled={!link.trim() || state === "sending"}
+        className="inline-flex items-center gap-1.5 rounded-full bg-red-500 px-3 py-1.5 text-xs font-medium text-white disabled:opacity-50"
+      >
+        {state === "sending" ? (
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+        ) : state === "sent" ? (
+          <Check className="h-3.5 w-3.5" />
+        ) : (
+          <Send className="h-3.5 w-3.5" />
+        )}
+        {state === "sent" ? "Envoyé" : "Envoyer le lien"}
+      </button>
+      {state === "error" && <span className="text-xs text-red-400">Échec de l'envoi</span>}
+    </div>
+  );
+}
 
 function AppelsPage() {
   const [availability, setAvailability] = useState<Availability>(DEFAULT_AVAILABILITY);
