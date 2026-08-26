@@ -542,8 +542,11 @@ function Comparatif() {
           <div className="relative grid grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr]">
             {/* floating Skale card shell */}
             <div
-              className="pointer-events-none absolute inset-y-[-14px] left-0 right-0 z-10 col-start-3 rounded-[26px] border border-primary/30 site-corner-glow bg-primary/[0.06] shadow-[0_20px_60px_-20px_color-mix(in_oklab,var(--primary)_45%,transparent)]"
-              style={{ gridRow: `1 / span ${content.rows.length}` }}
+              className="pointer-events-none absolute inset-y-[-14px] left-0 right-0 z-10 col-start-3 rounded-[26px] border border-primary/30 site-corner-glow bg-primary/[0.06]"
+              style={{
+                gridRow: `1 / span ${content.rows.length}`,
+                boxShadow: "0 20px 60px -20px color-mix(in oklab, var(--primary) 45%, transparent)",
+              }}
             />
 
             {content.rows.map((row, i) => {
