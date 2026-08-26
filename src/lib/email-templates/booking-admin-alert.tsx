@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Section, Text } from "@react-email/components";
+import { Body, Button, Container, Head, Heading, Hr, Html, Img, Preview, Section, Text } from "@react-email/components";
 
 import type { TemplateEntry } from "./registry";
 import {
@@ -11,6 +11,7 @@ import {
   formatFrDate,
   heading,
   hr,
+  LOGO_URL,
   logo,
   main,
   text,
@@ -44,9 +45,7 @@ const Email = ({
     <Preview>{`Nouveau call booké — ${name} — ${slotDate} à ${slotTime}`}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>
-          skale<span style={{ color: "#e11d48" }}>.</span>
-        </Text>
+        <Img src={LOGO_URL} alt="Skale Visuals" style={logo} />
         <Heading style={heading}>Nouveau call booké.</Heading>
         <Section style={detailBox}>
           <Text style={detail}>👤 {name}</Text>

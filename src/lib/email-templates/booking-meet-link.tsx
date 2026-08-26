@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Text } from "@react-email/components";
+import { Body, Button, Container, Head, Heading, Hr, Html, Img, Preview, Text } from "@react-email/components";
 
 import type { TemplateEntry } from "./registry";
 import {
@@ -10,6 +10,7 @@ import {
   formatFrDate,
   heading,
   hr,
+  LOGO_URL,
   logo,
   main,
   text,
@@ -28,9 +29,7 @@ const Email = ({ name, slotDate = "", slotTime = "", meetLink = "" }: Props) => 
     <Preview>Votre lien Google Meet pour l'appel avec Skale Visuals.</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>
-          skale<span style={{ color: "#e11d48" }}>.</span>
-        </Text>
+        <Img src={LOGO_URL} alt="Skale Visuals" style={logo} />
         <Heading style={heading}>Votre lien Meet.</Heading>
         <Text style={text}>Bonjour{firstName(name) ? ` ${firstName(name)}` : ""},</Text>
         <Text style={text}>
