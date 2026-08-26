@@ -1,5 +1,10 @@
 import type { ComponentType } from 'react'
 
+import { template as bookingConfirmation } from './booking-confirmation'
+import { template as bookingMeetLink } from './booking-meet-link'
+import { template as bookingReminder } from './booking-reminder'
+import { template as bookingAdminAlert } from './booking-admin-alert'
+
 export interface TemplateEntry {
   component: ComponentType<any>
   subject: string | ((data: Record<string, any>) => string)
