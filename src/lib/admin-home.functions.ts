@@ -113,6 +113,17 @@ export const deleteHomeFolder = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
+export const reorderHomeFolders = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ ids: z.array(z.string().uuid()).max(100) }).parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    await Promise.all(
+      data.ids.map((id, i) => supabaseAdmin.from("home_folders").update({ position: i }).eq("id", id)),
+    );
+    return { ok: true as const };
+  });
+
 /* ---------------- videos ---------------- */
 
 export const createHomeVideo = createServerFn({ method: "POST" })
