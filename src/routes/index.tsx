@@ -566,7 +566,7 @@ function Comparatif() {
                       {row.criterion}
                     </span>
                   </div>
-                  <div className={`relative z-20 flex items-start gap-3 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
+                  <div className={`relative z-20 flex items-center gap-3 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-foreground/20 bg-foreground/10 backdrop-blur-md">
                       <AlertTriangle className="h-4 w-4 text-muted-foreground" aria-hidden />
                     </span>
