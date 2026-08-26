@@ -527,54 +527,59 @@ function Comparatif() {
 
       <FadeIn delay={0.1}>
         <div className="relative mx-auto mt-10 max-w-[1000px]">
-          {/* header */}
-          <div className="grid grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr] border-b border-foreground/10 pb-3 pt-1">
-            <div className="hidden sm:block" />
-            <div className="px-2 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground sm:px-4">
-              {content.otherLabel}
-            </div>
-            <div className="px-2 text-center sm:px-4">
-              <span className="font-kangge text-2xl text-foreground">{content.skaleLabel}</span>
-            </div>
-          </div>
-
-          {/* rows */}
           <div className="relative grid grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr]">
-            {/* floating Skale card shell */}
+            {/* floating Skale card shell — spans header + rows */}
             <div
-              className="pointer-events-none absolute inset-y-[-14px] left-0 right-0 z-10 col-start-3 rounded-[26px] border border-primary/30 site-corner-glow bg-primary/[0.06]"
+              className="pointer-events-none absolute inset-y-[-12px] left-0 right-0 z-10 col-start-3 rounded-[26px] border border-primary/30 site-corner-glow bg-primary/[0.06]"
               style={{
-                gridRow: `1 / span ${content.rows.length}`,
+                gridRow: `1 / span ${content.rows.length + 1}`,
                 boxShadow: "0 20px 60px -20px color-mix(in oklab, var(--primary) 45%, transparent)",
               }}
             />
 
+            {/* header */}
+            <div className="relative z-20 col-start-1" aria-hidden />
+            <div className="relative z-20 col-start-2 border-b border-foreground/10 px-2 py-3 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground sm:px-4">
+              {content.otherLabel}
+            </div>
+            <div className="relative z-20 col-start-3 px-2 py-3 text-center sm:px-4">
+              <span className="font-kangge text-2xl text-white sm:text-3xl">
+                {content.skaleLabel.endsWith(".") ? (
+                  <>
+                    {content.skaleLabel.slice(0, -1)}
+                    <span className="text-primary">.</span>
+                  </>
+                ) : (
+                  content.skaleLabel
+                )}
+              </span>
+            </div>
+
+            {/* rows */}
             {content.rows.map((row, i) => {
               const isLast = i === content.rows.length - 1;
               const borderClass = isLast ? "" : "border-b border-foreground/10";
-              const skaleLine = `${row.skaleTitle}${row.skaleText ? ` — ${row.skaleText}` : ""}`;
               return (
                 <div key={`${row.criterion}-${i}`} className="contents">
-                  <div className={`relative z-20 px-2 py-4 sm:px-4 sm:py-5 ${borderClass}`}>
+                  <div className={`relative z-20 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
                     <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       {row.criterion}
                     </span>
                   </div>
-                  <div className={`relative z-20 flex items-start gap-3 px-2 py-4 sm:px-4 sm:py-5 ${borderClass}`}>
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-foreground/20 bg-foreground/10 backdrop-blur-md">
+                  <div className={`relative z-20 flex items-start gap-3 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-foreground/20 bg-foreground/10 backdrop-blur-md">
                       <AlertTriangle className="h-4 w-4 text-muted-foreground" aria-hidden />
                     </span>
-                    <span className="text-sm font-bold text-muted-foreground">{row.other}</span>
+                    <span className="text-sm font-bold uppercase text-muted-foreground sm:text-base">
+                      {row.other}
+                    </span>
                   </div>
-                  <div className={`relative z-20 flex items-start gap-3 px-2 py-4 sm:px-4 sm:py-5 ${borderClass}`}>
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-primary/40 bg-primary/20 backdrop-blur-md">
+                  <div className={`relative z-20 flex items-start gap-3 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-primary/40 bg-primary/20 backdrop-blur-md">
                       <Check className="h-4 w-4 text-primary" aria-hidden />
                     </span>
-                    <span
-                      className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold text-foreground"
-                      title={skaleLine}
-                    >
-                      {skaleLine}
+                    <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold uppercase text-white sm:text-base">
+                      {row.skaleTitle}
                     </span>
                   </div>
                 </div>
