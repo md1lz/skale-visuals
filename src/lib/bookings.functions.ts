@@ -5,6 +5,7 @@ import {
   bookingIdSchema,
   bookingStatusSchema,
   createBookingSchema,
+  meetLinkSchema,
 } from "./bookings.shared";
 
 export const getBookingPublicData = createServerFn({ method: "GET" }).handler(async () => {
@@ -55,4 +56,12 @@ export const deleteBooking = createServerFn({ method: "POST" })
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     await supabaseAdmin.from("call_bookings").delete().eq("id", data.id);
     return { ok: true };
+  });
+
+export const sendBookingMeetLink = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => meetLinkSchema.parse(d))
+  .handler(async ({ data }) => {
+    const { requireAdmin, sendMeetLink } = await import("./bookings.server");
+    await requireAdmin();
+    return sendMeetLink(data.id, data.meet_link);
   });

@@ -81,3 +81,8 @@ export const bookingStatusSchema = z.object({
 });
 
 export const bookingIdSchema = z.object({ id: z.string().uuid() });
+
+export const meetLinkSchema = z.object({
+  id: z.string().uuid(),
+  meet_link: z.string().trim().url("Lien invalide").max(500),
+});
