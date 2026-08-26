@@ -539,10 +539,10 @@ function Comparatif() {
 
             {/* header */}
             <div className="relative z-20 col-start-1" aria-hidden />
-            <div className="relative z-20 col-start-2 border-b border-foreground/10 px-2 py-3 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground sm:px-4">
+            <div className="relative z-20 col-start-2 border-b border-foreground/10 px-2 py-3 text-center text-xs font-bold text-muted-foreground sm:px-4">
               {content.otherLabel}
             </div>
-            <div className="relative z-20 col-start-3 px-2 py-3 text-center sm:px-4">
+            <div className="relative z-20 col-start-3 border-b border-foreground/10 px-2 py-3 text-center sm:px-4">
               <span className="font-kangge text-2xl text-white sm:text-3xl">
                 {content.skaleLabel.endsWith(".") ? (
                   <>
@@ -561,8 +561,8 @@ function Comparatif() {
               const borderClass = isLast ? "" : "border-b border-foreground/10";
               return (
                 <div key={`${row.criterion}-${i}`} className="contents">
-                  <div className={`relative z-20 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
-                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                  <div className={`relative z-20 flex items-center px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
+                    <span className="text-base font-bold text-muted-foreground sm:text-lg">
                       {row.criterion}
                     </span>
                   </div>
@@ -570,15 +570,15 @@ function Comparatif() {
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-foreground/20 bg-foreground/10 backdrop-blur-md">
                       <AlertTriangle className="h-4 w-4 text-muted-foreground" aria-hidden />
                     </span>
-                    <span className="text-sm font-bold uppercase text-muted-foreground sm:text-base">
+                    <span className="text-sm font-bold text-muted-foreground sm:text-base">
                       {row.other}
                     </span>
                   </div>
-                  <div className={`relative z-20 flex items-start gap-3 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
+                  <div className={`relative z-20 flex items-center gap-3 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
                     <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-primary/40 bg-primary/20 backdrop-blur-md">
                       <Check className="h-4 w-4 text-primary" aria-hidden />
                     </span>
-                    <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold uppercase text-white sm:text-base">
+                    <span className="min-w-0 flex-1 overflow-hidden text-ellipsis whitespace-nowrap text-center text-sm font-bold text-white sm:text-base">
                       {row.skaleTitle}
                     </span>
                   </div>
