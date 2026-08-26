@@ -30,6 +30,7 @@ import { Route as CrmAdminClientsRouteImport } from './routes/crm.admin.clients'
 import { Route as CrmAdminCallsRouteImport } from './routes/crm.admin.calls'
 import { Route as CrmAdminAnalyticsRouteImport } from './routes/crm.admin.analytics'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
+import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 
 const CrmRoute = CrmRouteImport.update({
   id: '/crm',
@@ -136,6 +137,12 @@ const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   path: '/api/public/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LovableEmailTransactionalPreviewRoute =
+  LovableEmailTransactionalPreviewRouteImport.update({
+    id: '/lovable/email/transactional/preview',
+    path: '/lovable/email/transactional/preview',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -159,6 +166,7 @@ export interface FileRoutesByFullPath {
   '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
   '/crm/editor/': typeof CrmEditorIndexRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -179,6 +187,7 @@ export interface FileRoutesByTo {
   '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin': typeof CrmAdminIndexRoute
   '/crm/editor': typeof CrmEditorIndexRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -203,6 +212,7 @@ export interface FileRoutesById {
   '/crm/editor/settings': typeof CrmEditorSettingsRoute
   '/crm/admin/': typeof CrmAdminIndexRoute
   '/crm/editor/': typeof CrmEditorIndexRoute
+  '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/crm/editor/settings'
     | '/crm/admin/'
     | '/crm/editor/'
+    | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -248,6 +259,7 @@ export interface FileRouteTypes {
     | '/crm/editor/settings'
     | '/crm/admin'
     | '/crm/editor'
+    | '/lovable/email/transactional/preview'
   id:
     | '__root__'
     | '/'
@@ -271,6 +283,7 @@ export interface FileRouteTypes {
     | '/crm/editor/settings'
     | '/crm/admin/'
     | '/crm/editor/'
+    | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -280,6 +293,7 @@ export interface RootRouteChildren {
   BookacallRoute: typeof BookacallRoute
   CrmRoute: typeof CrmRouteWithChildren
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
+  LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -431,6 +445,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/lovable/email/transactional/preview': {
+      id: '/lovable/email/transactional/preview'
+      path: '/lovable/email/transactional/preview'
+      fullPath: '/lovable/email/transactional/preview'
+      preLoaderRoute: typeof LovableEmailTransactionalPreviewRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -499,6 +520,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookacallRoute: BookacallRoute,
   CrmRoute: CrmRouteWithChildren,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
+  LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
