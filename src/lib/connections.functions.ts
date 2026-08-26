@@ -65,13 +65,7 @@ export const listConnections = createServerFn({ method: "POST" })
       for (const e of editors ?? []) names.set(e.id, e.display_name);
     }
 
-    const since = new Date(Date.now() - 90_000).toISOString();
-    const { data: presence } = await supabaseAdmin
-      .from("site_presence")
-      .select("ip, last_seen_at")
-      .in("ip", list.map((r) => r.ip))
-      .gte("last_seen_at", since);
-    const online = new Set((presence ?? []).map((p) => p.ip));
+    const onlineThreshold = Date.now() - 90_000;
 
     return list.map((r) => ({
       id: r.id,
@@ -84,7 +78,7 @@ export const listConnections = createServerFn({ method: "POST" })
         r.owner_type === "editor" ? names.get(r.owner_id ?? "") ?? r.username : r.username,
       createdAt: r.created_at,
       lastSeenAt: r.last_seen_at,
-      online: online.has(r.ip),
+      online: new Date(r.last_seen_at).getTime() >= onlineThreshold,
     }));
   });
 
@@ -123,5 +117,33 @@ export const forgetConnection = createServerFn({ method: "POST" })
     const supabaseAdmin = await assertOwnership(data.id);
     const { error } = await supabaseAdmin.from("admin_remembered_ips").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
+    return { ok: true as const };
+  });
+
+export const pingConnection = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => sourceSchema.parse(d))
+  .handler(async ({ data }) => {
+    const caller = await resolveCaller();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { getRequestHeader } = await import("@tanstack/react-start/server");
+    const ip = (() => {
+      try {
+        const fwd = getRequestHeader("x-forwarded-for");
+        return fwd ? fwd.split(",")[0]!.trim() : getRequestHeader("cf-connecting-ip") ?? null;
+      } catch {
+        return null;
+      }
+    })();
+    if (!ip) return { ok: false as const };
+
+    let q = supabaseAdmin
+      .from("admin_remembered_ips")
+      .update({ last_seen_at: new Date().toISOString() })
+      .eq("ip", ip)
+      .eq("source", data.source);
+    q = caller.role === "editor"
+      ? q.eq("owner_type", "editor").eq("owner_id", caller.id)
+      : q.eq("owner_type", "admin").eq("username", caller.username);
+    await q;
     return { ok: true as const };
   });
