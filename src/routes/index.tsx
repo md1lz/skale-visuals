@@ -13,6 +13,8 @@ import {
   type HomeFolder,
   type HomeVideo,
 } from "@/lib/home-content.functions";
+import { getCompareContent } from "@/lib/compare-content.functions";
+import { DEFAULT_COMPARE, type CompareContent } from "@/lib/compare-content.shared";
 
 export const Route = createFileRoute("/")({
   head: () => ({
