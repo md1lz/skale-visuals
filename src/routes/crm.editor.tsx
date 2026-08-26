@@ -6,6 +6,7 @@ import { EditorProfileMenu } from "@/components/EditorProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { PushSetup } from "@/components/PushSetup";
+import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
 import { MessagePing } from "@/components/MessagePing";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
 
@@ -44,6 +45,7 @@ function EditorLayout() {
     <AdminPrefsProvider>
       <ThemeStyleInjector />
       <PushSetup />
+      <ConnectionHeartbeat />
       <MessagePing role="editor" />
       <EditorLayoutInner />
     </AdminPrefsProvider>
