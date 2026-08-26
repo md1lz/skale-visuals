@@ -220,11 +220,15 @@ function Hero({
                   theme === "light" ? "bg-white ring-black/10" : "bg-black ring-white/10"
                 }`}
               >
-                <img
-                  src={theme === "light" ? logoLight.url : logoDark.url}
-                  alt="Logo Skale Visuals"
-                  className="h-full w-full object-contain p-2"
-                />
+                {themeReady && (
+                  <img
+                    key={theme}
+                    src={theme === "light" ? logoLight.url : logoDark.url}
+                    alt="Logo Skale Visuals"
+                    decoding="async"
+                    className="h-full w-full object-contain p-2"
+                  />
+                )}
               </span>
               Skale Visuals
             </h1>
