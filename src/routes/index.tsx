@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useInView } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Sun, Moon, Mail, Instagram, Linkedin } from "lucide-react";
+import { Play, Sun, Moon, Mail, Instagram, Linkedin, AlertTriangle, Check } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import logoDark from "@/assets/skale-logo-dark.png.asset.json";
@@ -509,7 +509,7 @@ function Comparatif() {
   }, [load]);
 
   return (
-    <section id="comparatif" className="scroll-mt-24 px-1 pb-20 pt-4">
+    <section id="comparatif" className="scroll-mt-24 px-4 pb-20 pt-4">
       <FadeIn>
         <div className="text-center">
           <span className="site-surface inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
@@ -526,46 +526,67 @@ function Comparatif() {
       </FadeIn>
 
       <FadeIn delay={0.1}>
-        <div className="mx-auto mt-10 max-w-[1000px] overflow-hidden rounded-3xl border border-foreground/10">
+        <div className="relative mx-auto mt-10 max-w-[1000px]">
           {/* header */}
-          <div className="grid grid-cols-2 border-b border-foreground/10 sm:grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr]">
-            <div className="hidden px-5 py-4 sm:block" />
-            <div className="border-r border-foreground/10 bg-foreground/[0.03] px-4 py-4 text-center text-xs font-medium uppercase tracking-widest text-muted-foreground sm:px-5">
+          <div className="grid grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr] border-b border-foreground/10 pb-3 pt-1">
+            <div className="hidden sm:block" />
+            <div className="px-2 text-center text-xs font-bold uppercase tracking-widest text-muted-foreground sm:px-4">
               {content.otherLabel}
             </div>
-            <div className="site-corner-glow relative bg-primary/[0.08] px-4 py-4 text-center sm:px-5">
-              <span className="relative z-10 font-kangge text-2xl text-foreground">{content.skaleLabel}</span>
+            <div className="px-2 text-center sm:px-4">
+              <span className="font-kangge text-2xl text-foreground">{content.skaleLabel}</span>
             </div>
           </div>
 
-          {content.rows.map((row, i) => (
+          {/* rows */}
+          <div className="relative grid grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr]">
+            {/* floating Skale card shell */}
             <div
-              key={`${row.criterion}-${i}`}
-              className="grid grid-cols-2 border-b border-foreground/10 last:border-b-0 sm:grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr]"
-            >
-              <div className="col-span-2 px-4 pt-4 text-[10px] uppercase tracking-widest text-muted-foreground sm:col-span-1 sm:px-5 sm:py-6 sm:pt-6">
-                {row.criterion}
-              </div>
-              <div className="flex gap-2 border-r border-foreground/10 bg-foreground/[0.03] px-4 py-4 text-sm text-muted-foreground sm:px-5 sm:py-6">
-                <span aria-hidden className="shrink-0 opacity-70">⚠</span>
-                <span>{row.other}</span>
-              </div>
-              <div className="flex gap-2 bg-primary/[0.06] px-4 py-4 sm:px-5 sm:py-6">
-                <span aria-hidden className="shrink-0 text-primary">✓</span>
-                <span className="text-sm">
-                  <span className="font-semibold text-foreground">{row.skaleTitle}</span>
-                  {row.skaleText ? (
-                    <span className="block text-muted-foreground">{row.skaleText}</span>
-                  ) : null}
-                </span>
-              </div>
-            </div>
-          ))}
+              className="pointer-events-none absolute inset-y-[-14px] left-0 right-0 z-10 col-start-3 rounded-[26px] border border-primary/30 site-corner-glow bg-primary/[0.06]"
+              style={{
+                gridRow: `1 / span ${content.rows.length}`,
+                boxShadow: "0 20px 60px -20px color-mix(in oklab, var(--primary) 45%, transparent)",
+              }}
+            />
+
+            {content.rows.map((row, i) => {
+              const isLast = i === content.rows.length - 1;
+              const borderClass = isLast ? "" : "border-b border-foreground/10";
+              const skaleLine = `${row.skaleTitle}${row.skaleText ? ` — ${row.skaleText}` : ""}`;
+              return (
+                <div key={`${row.criterion}-${i}`} className="contents">
+                  <div className={`relative z-20 px-2 py-4 sm:px-4 sm:py-5 ${borderClass}`}>
+                    <span className="text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      {row.criterion}
+                    </span>
+                  </div>
+                  <div className={`relative z-20 flex items-start gap-3 px-2 py-4 sm:px-4 sm:py-5 ${borderClass}`}>
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-foreground/20 bg-foreground/10 backdrop-blur-md">
+                      <AlertTriangle className="h-4 w-4 text-muted-foreground" aria-hidden />
+                    </span>
+                    <span className="text-sm font-bold text-muted-foreground">{row.other}</span>
+                  </div>
+                  <div className={`relative z-20 flex items-start gap-3 px-2 py-4 sm:px-4 sm:py-5 ${borderClass}`}>
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-primary/40 bg-primary/20 backdrop-blur-md">
+                      <Check className="h-4 w-4 text-primary" aria-hidden />
+                    </span>
+                    <span
+                      className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold text-foreground"
+                      title={skaleLine}
+                    >
+                      {skaleLine}
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </FadeIn>
     </section>
   );
 }
+
 
 
 
