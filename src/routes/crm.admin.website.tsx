@@ -560,6 +560,8 @@ function SiteAdmin() {
 
       <AboutSection />
 
+      <CompareSection />
+
 
 
       {blocker.status === "blocked" && (
