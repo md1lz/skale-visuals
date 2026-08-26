@@ -700,7 +700,7 @@ function Home() {
     <div className="site-root relative min-h-screen">
       <Navbar theme={theme} toggle={toggle} />
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4">
-        <Hero settings={settings} theme={theme} />
+        <Hero settings={settings} theme={theme} themeReady={themeReady} />
         <FormatsTicker />
         <Trust settings={settings} />
         <Realisations folders={folders} videos={videos} />
