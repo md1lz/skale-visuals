@@ -19,6 +19,8 @@ import {
 import type { HomeFolder, HomeSettings, HomeVideo } from "@/lib/home-content.functions";
 import { getAboutAdminContent, saveAboutContent } from "@/lib/admin-about.functions";
 import type { AboutContent } from "@/lib/about-content.shared";
+import { getCompareAdminContent, saveCompareContent } from "@/lib/admin-compare.functions";
+import type { CompareContent, CompareRow } from "@/lib/compare-content.shared";
 
 export const Route = createFileRoute("/crm/admin/website")({
   head: () => ({
