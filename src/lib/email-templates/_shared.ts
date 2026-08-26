@@ -11,13 +11,18 @@ export const container = {
   padding: "40px 28px",
 } as const;
 
+/** Wordmark rendered in the brand font (Kangge), hosted on the site. */
+export const LOGO_URL = "https://skalevisuals.com/email/skale-logo.png";
+
 export const logo = {
-  fontSize: "26px",
-  fontWeight: 700,
-  letterSpacing: "-0.03em",
-  color: "#0a0a0a",
+  display: "block",
+  width: "118px",
+  height: "auto",
   margin: "0 0 32px",
 } as const;
+
+export const CONTACT_LINE =
+  "Une question ? Écrivez-nous à contact@skalevisuals.com en décrivant votre situation, ou envoyez-nous un DM Instagram @skalevisuals.";
 
 export const heading = {
   fontSize: "28px",
