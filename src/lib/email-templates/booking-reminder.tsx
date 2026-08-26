@@ -1,9 +1,10 @@
 import * as React from "react";
-import { Body, Button, Container, Head, Heading, Hr, Html, Preview, Section, Text } from "@react-email/components";
+import { Body, Button, Container, Head, Heading, Hr, Html, Img, Preview, Section, Text } from "@react-email/components";
 
 import type { TemplateEntry } from "./registry";
 import {
   button,
+  CONTACT_LINE,
   container,
   detail,
   detailBox,
@@ -11,6 +12,7 @@ import {
   footer,
   heading,
   hr,
+  LOGO_URL,
   logo,
   main,
   text,
@@ -29,9 +31,7 @@ const Email = ({ name, slotTime = "", meetLink = null, locationType = "meet" }: 
     <Preview>Votre appel avec Skale Visuals commence dans 1 heure.</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>
-          skale<span style={{ color: "#e11d48" }}>.</span>
-        </Text>
+        <Img src={LOGO_URL} alt="Skale Visuals" style={logo} />
         <Heading style={heading}>Dans 1 heure.</Heading>
         <Text style={text}>Bonjour{firstName(name) ? ` ${firstName(name)}` : ""},</Text>
         <Text style={text}>Petit rappel — votre appel avec Skale Visuals commence dans 1 heure.</Text>
@@ -50,7 +50,8 @@ const Email = ({ name, slotTime = "", meetLink = null, locationType = "meet" }: 
             Rejoindre l'appel
           </Button>
         ) : null}
-        <Text style={{ ...text, marginTop: "28px" }}>
+        <Text style={{ ...text, marginTop: "28px" }}>{CONTACT_LINE}</Text>
+        <Text style={text}>
           À tout à l'heure,
           <br />
           L'équipe Skale Visuals

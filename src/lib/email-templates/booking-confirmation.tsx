@@ -1,9 +1,9 @@
 import * as React from "react";
-import { Body, Container, Head, Heading, Hr, Html, Preview, Section, Text } from "@react-email/components";
+import { Body, Container, Head, Heading, Hr, Html, Img, Preview, Section, Text } from "@react-email/components";
 
 import type { TemplateEntry } from "./registry";
 import {
-
+  CONTACT_LINE,
   container,
   detail,
   detailBox,
@@ -12,6 +12,7 @@ import {
   formatFrDate,
   heading,
   hr,
+  LOGO_URL,
   logo,
   main,
   text,
@@ -30,9 +31,7 @@ const Email = ({ name, slotDate = "", slotTime = "", locationType = "meet" }: Pr
     <Preview>Votre appel avec Skale Visuals est confirmé.</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Text style={logo}>
-          skale<span style={{ color: "#e11d48" }}>.</span>
-        </Text>
+        <Img src={LOGO_URL} alt="Skale Visuals" style={logo} />
         <Heading style={heading}>C'est confirmé.</Heading>
         <Text style={text}>Bonjour{firstName(name) ? ` ${firstName(name)}` : ""},</Text>
         <Text style={text}>
@@ -46,16 +45,11 @@ const Email = ({ name, slotDate = "", slotTime = "", locationType = "meet" }: Pr
           <Text style={detail}>{locationType === "phone" ? "📞 Par téléphone" : "🎥 Google Meet"}</Text>
         </Section>
         {locationType === "meet" ? (
-          <Text style={text}>
-            Vous recevrez votre lien Google Meet dans les prochaines 24 heures. Si vous avez des questions
-            en attendant, répondez simplement à cet email.
-          </Text>
+          <Text style={text}>Vous recevrez votre lien Google Meet dans les prochaines 24 heures.</Text>
         ) : (
-          <Text style={text}>
-            Nous vous appellerons au numéro communiqué. Si vous avez des questions en attendant, répondez
-            simplement à cet email.
-          </Text>
+          <Text style={text}>Nous vous appellerons au numéro communiqué.</Text>
         )}
+        <Text style={text}>{CONTACT_LINE}</Text>
         <Text style={text}>
           À très vite,
           <br />
