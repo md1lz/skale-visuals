@@ -693,7 +693,7 @@ function SiteFooter() {
 /* ---------------- page ---------------- */
 
 function Home() {
-  const { theme, toggle } = useTheme();
+  const { theme, themeReady, toggle } = useTheme();
   const { settings, folders, videos } = useHomeContent();
 
   return (
