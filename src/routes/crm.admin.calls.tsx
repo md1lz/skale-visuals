@@ -228,15 +228,11 @@ function AppelsPage() {
                             <Phone className="h-3.5 w-3.5" /> {b.phone || "Téléphone"}
                           </span>
                         )}
-                        {b.meet_link && (
-                          <a
-                            href={b.meet_link}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="mt-1 block max-w-[180px] truncate text-xs text-red-400 hover:underline"
-                          >
-                            {b.meet_link}
-                          </a>
+                        {b.location_type === "meet" && <MeetLinkField booking={b} />}
+                        {b.meet_link_sent_at && (
+                          <span className="mt-1 block text-[11px] text-neutral-500">
+                            Lien envoyé le {new Date(b.meet_link_sent_at).toLocaleDateString("fr-FR")}
+                          </span>
                         )}
                       </td>
                       <td className="max-w-[220px] py-3 pr-3 text-xs text-neutral-400">{b.notes || "—"}</td>
