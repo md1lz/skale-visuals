@@ -80,11 +80,6 @@ export async function insertBooking(data: {
   }
   if (data.slot_date < new Date().toISOString().slice(0, 10)) throw new Error("Créneau passé");
 
-  const meetLink =
-    data.location_type === "meet"
-      ? `https://meet.google.com/lookup/skale-${Math.random().toString(36).slice(2, 10)}`
-      : null;
-
   const { data: inserted, error } = await supabaseAdmin
     .from("call_bookings")
     .insert({
@@ -96,7 +91,7 @@ export async function insertBooking(data: {
       location_type: data.location_type,
       phone: data.location_type === "phone" ? (data.phone ?? null) : null,
       notes: data.notes ?? null,
-      meet_link: meetLink,
+      meet_link: null,
     })
     .select("id, meet_link")
     .single();
