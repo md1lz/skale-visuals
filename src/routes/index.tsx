@@ -41,9 +41,11 @@ export const Route = createFileRoute("/")({
 
 function useTheme() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
+  const [themeReady, setThemeReady] = useState(false);
   useEffect(() => {
     const stored = window.localStorage.getItem("skale-theme");
     if (stored === "light" || stored === "dark") setTheme(stored);
+    setThemeReady(true);
   }, []);
   useEffect(() => {
     const root = document.documentElement;
@@ -51,7 +53,7 @@ function useTheme() {
     window.localStorage.setItem("skale-theme", theme);
     return () => root.classList.remove("site-light");
   }, [theme]);
-  return { theme, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
+  return { theme, themeReady, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
 }
 
 /* ---------------- data ---------------- */
