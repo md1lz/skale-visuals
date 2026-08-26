@@ -12,6 +12,7 @@ import {
   createHomeVideo,
   updateHomeVideo,
   deleteHomeVideo,
+  reorderHomeFolders,
   reorderHomeVideos,
   createHomeAssetUploadUrl,
   createHomeVideoUploadUrl,
@@ -200,6 +201,17 @@ function SiteAdmin() {
   async function removeVideo(id: string) {
     await deleteHomeVideo({ data: { id } });
     setVideos((v) => v.filter((x) => x.id !== id));
+  }
+
+  async function moveFolder(id: string, dir: -1 | 1) {
+    const list = [...folders].sort((a, b) => a.position - b.position);
+    const i = list.findIndex((f) => f.id === id);
+    const j = i + dir;
+    if (i < 0 || j < 0 || j >= list.length) return;
+    [list[i], list[j]] = [list[j], list[i]];
+    const ids = list.map((f) => f.id);
+    setFolders(list.map((f, idx) => ({ ...f, position: idx })));
+    await reorderHomeFolders({ data: { ids } });
   }
 
   async function move(id: string, dir: -1 | 1) {
