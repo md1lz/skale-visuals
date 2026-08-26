@@ -484,6 +484,89 @@ function CallCta() {
   );
 }
 
+/* ---------------- comparatif ---------------- */
+
+function Comparatif() {
+  const [content, setContent] = useState<CompareContent>(DEFAULT_COMPARE);
+
+  const load = useCallback(() => {
+    getCompareContent()
+      .then(setContent)
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    load();
+    const channel = supabase
+      .channel("home-compare")
+      .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, load)
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [load]);
+
+  return (
+    <section id="comparatif" className="scroll-mt-24 px-1 pb-20 pt-4">
+      <FadeIn>
+        <div className="text-center">
+          <span className="site-surface inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            {content.badge}
+          </span>
+          <h2 className="mx-auto mt-5 max-w-3xl text-balance text-2xl font-medium text-foreground sm:text-3xl">
+            {content.title}
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-balance text-sm text-muted-foreground sm:text-base">
+            {content.subtitle}
+          </p>
+        </div>
+      </FadeIn>
+
+      <FadeIn delay={0.1}>
+        <div className="mx-auto mt-10 max-w-[1000px] overflow-hidden rounded-3xl border border-foreground/10">
+          {/* header */}
+          <div className="grid grid-cols-2 border-b border-foreground/10 sm:grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr]">
+            <div className="hidden px-5 py-4 sm:block" />
+            <div className="border-r border-foreground/10 bg-foreground/[0.03] px-4 py-4 text-center text-xs font-medium uppercase tracking-widest text-muted-foreground sm:px-5">
+              {content.otherLabel}
+            </div>
+            <div className="site-corner-glow relative bg-primary/[0.08] px-4 py-4 text-center sm:px-5">
+              <span className="relative z-10 font-kangge text-2xl text-foreground">{content.skaleLabel}</span>
+            </div>
+          </div>
+
+          {content.rows.map((row, i) => (
+            <div
+              key={`${row.criterion}-${i}`}
+              className="grid grid-cols-2 border-b border-foreground/10 last:border-b-0 sm:grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr]"
+            >
+              <div className="col-span-2 px-4 pt-4 text-[10px] uppercase tracking-widest text-muted-foreground sm:col-span-1 sm:px-5 sm:py-6 sm:pt-6">
+                {row.criterion}
+              </div>
+              <div className="flex gap-2 border-r border-foreground/10 bg-foreground/[0.03] px-4 py-4 text-sm text-muted-foreground sm:px-5 sm:py-6">
+                <span aria-hidden className="shrink-0 opacity-70">⚠</span>
+                <span>{row.other}</span>
+              </div>
+              <div className="flex gap-2 bg-primary/[0.06] px-4 py-4 sm:px-5 sm:py-6">
+                <span aria-hidden className="shrink-0 text-primary">✓</span>
+                <span className="text-sm">
+                  <span className="font-semibold text-foreground">{row.skaleTitle}</span>
+                  {row.skaleText ? (
+                    <span className="block text-muted-foreground">{row.skaleText}</span>
+                  ) : null}
+                </span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </FadeIn>
+    </section>
+  );
+}
+
+
+
 
 /* ---------------- footer ---------------- */
 
