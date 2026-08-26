@@ -30,6 +30,8 @@ export type Booking = {
   notes: string | null;
   status: "Confirmé" | "Annulé" | "Effectué";
   meet_link: string | null;
+  meet_link_sent_at?: string | null;
+  reminder_sent_at?: string | null;
   created_at: string;
 };
 
