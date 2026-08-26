@@ -665,6 +665,7 @@ function Home() {
         <Trust settings={settings} />
         <Realisations folders={folders} videos={videos} />
         <CallCta />
+        <Comparatif />
       </main>
       <SiteFooter />
     </div>
