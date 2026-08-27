@@ -257,13 +257,15 @@ function AdminHome() {
         })}
       </div>
 
-      {/* Recent Activity */}
+      {/* Bloc 3 — Activité & notifications */}
+      <SectionTitle label="Activité & notifications" />
       <motion.div
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-4 md:p-5"
+        className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 md:p-5 backdrop-blur"
       >
+
         <div className="flex items-center gap-2 mb-4">
           <Clock className="h-4 w-4 text-red-400" />
           <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
