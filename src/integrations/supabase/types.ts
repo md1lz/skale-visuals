@@ -429,6 +429,7 @@ export type Database = {
           paid_amount: number | null
           paid_at: string | null
           quote_id: string | null
+          share_token: string
           status: string
           updated_at: string
         }
@@ -444,6 +445,7 @@ export type Database = {
           paid_amount?: number | null
           paid_at?: string | null
           quote_id?: string | null
+          share_token?: string
           status?: string
           updated_at?: string
         }
@@ -459,6 +461,7 @@ export type Database = {
           paid_amount?: number | null
           paid_at?: string | null
           quote_id?: string | null
+          share_token?: string
           status?: string
           updated_at?: string
         }
