@@ -70,9 +70,11 @@ function QuotesPage() {
   });
 
   const [editing, setEditing] = useState<Quote | "new" | null>(null);
+  const [preview, setPreview] = useState<Quote | null>(null);
   const [filter, setFilter] = useState<QuoteStatus | "Tous">("Tous");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
 
   const rows = quotes.data.filter((q) => filter === "Tous" || q.status === filter);
   const signedTotal = quotes.data
