@@ -2,8 +2,7 @@ import { Outlet, createFileRoute, redirect, Link, useRouterState } from "@tansta
 import { AnimatePresence, motion } from "framer-motion";
 
 import {
-  Home,
-  BarChart3,
+  LayoutDashboard,
   Users,
   FolderKanban,
   Settings,
@@ -11,6 +10,9 @@ import {
   Target,
   Globe,
   CalendarClock,
+  FileSignature,
+  Receipt,
+  Sparkles,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
@@ -22,14 +24,26 @@ import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
 import { MessagePing } from "@/components/MessagePing";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
+import { OfficeLogin } from "@/components/OfficeLogin";
 
 export const Route = createFileRoute("/office")({
+  head: () => ({
+    meta: [
+      { title: "Skale Office — Espace équipe" },
+      { name: "description", content: "Espace de pilotage interne de Skale Visuals." },
+      { property: "og:title", content: "Skale Office — Espace équipe" },
+      { property: "og:description", content: "Espace de pilotage interne de Skale Visuals." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   beforeLoad: async () => {
     const session = await getAdminSessionFn();
     if (!session) {
       const editor = await getEditorSessionFn();
       if (editor) throw redirect({ to: "/studio" });
-      throw redirect({ to: "/" });
+      return { session: null };
     }
     return { session };
   },
@@ -49,22 +63,27 @@ export const Route = createFileRoute("/office")({
 const NAV: {
   to: string;
   label: string;
-  icon: typeof BarChart3;
+  icon: typeof Users;
   exact?: boolean;
   desktopOnly?: boolean;
 }[] = [
-  { to: "/office", label: "Accueil", icon: Home, exact: true },
-  { to: "/office/analytics", label: "Analytiques", icon: BarChart3 },
-  { to: "/office/website", label: "Site web", icon: Globe, desktopOnly: true },
+  { to: "/office", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/office/prospects", label: "Prospection", icon: Target },
   { to: "/office/clients", label: "Clients", icon: Users },
+  { to: "/office/quotes", label: "Devis", icon: FileSignature },
+  { to: "/office/invoices", label: "Factures", icon: Receipt },
+  { to: "/office/services", label: "Prestations", icon: Sparkles },
   { to: "/office/projects", label: "Projets", icon: FolderKanban },
   { to: "/office/editors", label: "Monteurs", icon: Scissors },
   { to: "/office/calls", label: "Book a Call", icon: CalendarClock },
+  { to: "/office/website", label: "Site web", icon: Globe, desktopOnly: true },
   { to: "/office/settings", label: "Paramètres", icon: Settings },
 ];
 
 function AdminLayout() {
+  const session = Route.useRouteContext().session;
+  if (!session) return <OfficeLogin />;
+
   return (
     <AdminPrefsProvider>
       <ThemeStyleInjector />
@@ -87,6 +106,14 @@ function AdminLayoutInner() {
     <div
       className={`admin-themed mode-${mode} panel-zoom min-h-screen flex bg-neutral-950 text-white relative`}
     >
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-0 opacity-70"
+        style={{
+          background:
+            "radial-gradient(60rem 40rem at 12% -10%, rgba(226,75,74,0.14), transparent 60%), radial-gradient(50rem 35rem at 100% 0%, rgba(255,255,255,0.05), transparent 55%)",
+        }}
+      />
       {background && (
         <div
           aria-hidden
@@ -100,21 +127,21 @@ function AdminLayoutInner() {
         />
       )}
       <div className="relative z-10 flex w-full">
-        <aside className="hidden md:flex w-60 shrink-0 border-r border-white/10 bg-neutral-950/80 backdrop-blur flex flex-col">
-          <div className="px-5 py-5 flex items-center gap-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
-            <p className="text-sm font-semibold">Skale Admin</p>
+        <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-white/[0.07] bg-neutral-950/70 backdrop-blur-xl">
+          <div className="px-5 py-6 flex items-center gap-2.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_10px_rgba(226,75,74,0.9)] animate-pulse" />
+            <p className="text-[15px] font-semibold tracking-tight">Skale Office</p>
           </div>
 
-          <div className="px-5 pb-3">
+          <div className="px-5 pb-4">
             <BackToSiteLink />
           </div>
 
-          <div className="px-5 py-3 border-b border-white/10">
+          <div className="mx-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-2">
             {session?.user && <AdminProfileMenu initialUsername={session.user} />}
           </div>
 
-          <nav className="flex-1 px-3 py-4 space-y-0.5">
+          <nav className="flex-1 px-3 py-5 space-y-1">
             {NAV.map((item) => {
               const Icon = item.icon;
               const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
@@ -122,20 +149,22 @@ function AdminLayoutInner() {
                 <Link
                   key={item.to}
                   to={item.to as "/office"}
-                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
+                  className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition-all duration-200 ${
                     active
-                      ? "bg-red-600/15 text-white border border-red-600/30"
-                      : "text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent"
+                      ? "bg-white/[0.06] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                      : "text-neutral-400 hover:text-white hover:bg-white/[0.03]"
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
                   {active && (
                     <motion.span
-                      layoutId="admin-nav-dot"
-                      className="ml-auto h-1.5 w-1.5 rounded-full bg-red-500"
+                      layoutId="admin-nav-bar"
+                      className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(226,75,74,0.8)]"
                     />
                   )}
+                  <Icon
+                    className={`h-[17px] w-[17px] transition-colors ${active ? "text-red-400" : "text-neutral-500 group-hover:text-neutral-300"}`}
+                  />
+                  <span className="tracking-tight">{item.label}</span>
                 </Link>
               );
             })}
@@ -144,7 +173,7 @@ function AdminLayoutInner() {
 
         <main className="flex-1 min-w-0 overflow-x-hidden">
           <PanelMobileNav
-            title="Skale Admin"
+            title="Skale Office"
             items={NAV}
             profile={{
               name: profile?.firstName?.trim() || profile?.username || session?.user || "Admin",
