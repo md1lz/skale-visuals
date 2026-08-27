@@ -3,7 +3,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BadgeCheck, Ban, Download, Loader2, Mail, Pencil, Plus, Trash2 } from "lucide-react";
+import { BadgeCheck, Ban, Download, Eye, Loader2, Mail, Pencil, Plus, Trash2, X } from "lucide-react";
 import {
   deleteInvoice,
   invoiceDocument,
@@ -26,7 +26,8 @@ import {
   type InvoiceStatus,
 } from "@/lib/billing.shared";
 import { DocLinesEditor, emptyLine } from "@/components/DocLinesEditor";
-import { downloadDocumentPdf } from "@/components/DocumentPaper";
+import { DocumentPaper, downloadDocumentPdf } from "@/components/DocumentPaper";
+import { useAdminPrefs } from "@/components/admin-prefs";
 
 export const Route = createFileRoute("/office/invoices")({ component: InvoicesPage });
 
@@ -60,6 +61,7 @@ function InvoicesPage() {
 
   const [editing, setEditing] = useState<Invoice | "new" | null>(null);
   const [payFor, setPayFor] = useState<Invoice | null>(null);
+  const [preview, setPreview] = useState<Invoice | null>(null);
   const [filter, setFilter] = useState<InvoiceStatus | "Tous">("Tous");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
@@ -156,6 +158,7 @@ function InvoicesPage() {
               </div>
 
               <div className="mt-3 flex flex-wrap gap-1.5">
+                <Action icon={Eye} label="Aperçu" onClick={() => setPreview(inv)} />
                 <Action icon={Pencil} label="Modifier" onClick={() => setEditing(inv)} />
                 <Action
                   icon={Mail}
@@ -241,6 +244,25 @@ function InvoicesPage() {
       )}
 
       <AnimatePresence>
+        {preview && (
+          <InvoicePreview
+            invoice={preview}
+            onClose={() => setPreview(null)}
+            onEdit={() => {
+              setEditing(preview);
+              setPreview(null);
+            }}
+            onDelete={() => {
+              if (!confirm(`Supprimer la facture ${preview.number} ?`)) return;
+              const id = preview.id;
+              setPreview(null);
+              run(id, () => remove({ data: { id } }));
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
         {toast && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -253,6 +275,87 @@ function InvoicesPage() {
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function InvoicePreview({
+  invoice,
+  onClose,
+  onEdit,
+  onDelete,
+}: {
+  invoice: Invoice;
+  onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const loadDoc = useServerFn(invoiceDocument);
+  const { mode } = useAdminPrefs();
+  const [downloading, setDownloading] = useState(false);
+
+  const bundle = useQuery({
+    queryKey: ["office", "invoice-doc", invoice.id],
+    queryFn: () => loadDoc({ data: { id: invoice.id } }),
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      className="fixed inset-0 z-[125] overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
+    >
+      <motion.div
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 240, damping: 26 }}
+        className="mx-auto my-6 w-full max-w-3xl space-y-3"
+      >
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-neutral-900/80 p-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <span
+              className={`rounded-full px-2 py-0.5 text-[11px] ${INVOICE_STATUS_STYLE[invoice.status]}`}
+            >
+              {invoice.status}
+            </span>
+            <span className="truncate text-sm text-neutral-300">
+              {invoice.client_name ?? "Client non défini"}
+            </span>
+            <span className="text-sm font-semibold text-white">{formatEUR(invoice.total_ttc)}</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            <Action
+              icon={Download}
+              label="PDF"
+              busy={downloading || bundle.isLoading}
+              onClick={async () => {
+                if (!bundle.data) return;
+                setDownloading(true);
+                try {
+                  await downloadDocumentPdf(bundle.data.doc, bundle.data.settings);
+                } finally {
+                  setDownloading(false);
+                }
+              }}
+            />
+            <Action icon={Trash2} label="" danger onClick={onDelete} />
+            <Action icon={X} label="" onClick={onClose} />
+          </div>
+        </div>
+
+        {bundle.isLoading || !bundle.data ? (
+          <div className="grid h-64 place-items-center rounded-2xl border border-white/10 bg-neutral-900/50">
+            <Loader2 className="h-5 w-5 animate-spin text-neutral-500" />
+          </div>
+        ) : (
+          <DocumentPaper doc={bundle.data.doc} settings={bundle.data.settings} dark={mode === "dark"} />
+        )}
+      </motion.div>
+    </motion.div>
   );
 }
 

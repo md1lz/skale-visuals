@@ -51,7 +51,7 @@ export const signQuote = createServerFn({ method: "POST" })
     z
       .object({
         token: z.string().min(8).max(80),
-        signerName: z.string().trim().min(2).max(120),
+        signerName: z.string().trim().max(120).optional(),
         signature: z
           .string()
           .min(50)
@@ -70,12 +70,15 @@ export const signQuote = createServerFn({ method: "POST" })
     if (quote.valid_until && quote.valid_until < new Date().toISOString().slice(0, 10))
       return { ok: false as const, error: "Ce devis a expiré." };
 
+    const signerName =
+      (data.signerName ?? "").trim() || quote.client_name || "Client";
+
     const sb = await db();
     const { error } = await sb
       .from("quotes")
       .update({
         status: "Signé",
-        signer_name: data.signerName,
+        signer_name: signerName,
         signature_data_url: data.signature,
         signed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
