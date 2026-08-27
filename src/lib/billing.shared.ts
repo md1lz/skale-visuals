@@ -149,13 +149,17 @@ export const DEFAULT_BILLING: BillingSettings = {
 
 export function normalizeBilling(value: unknown): BillingSettings {
   const v = (value ?? {}) as Partial<BillingSettings>;
-  return {
+  const merged = {
     ...DEFAULT_BILLING,
     ...Object.fromEntries(
       Object.entries(v).filter(([, val]) => val !== null && val !== undefined),
     ),
   } as BillingSettings;
+  if (v.siretPending === undefined) merged.siretPending = !String(merged.siret ?? "").trim();
+  merged.siretPending = !!merged.siretPending;
+  return merged;
 }
+
 
 export function lineTotals(line: DocLine) {
   const ht = (Number(line.quantity) || 0) * (Number(line.unit_price_ht) || 0);
