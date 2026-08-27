@@ -18,6 +18,7 @@ import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as StudioIndexRouteImport } from './routes/studio.index'
 import { Route as OfficeIndexRouteImport } from './routes/office.index'
+import { Route as CrmIndexRouteImport } from './routes/crm.index'
 import { Route as StudioSettingsRouteImport } from './routes/studio.settings'
 import { Route as StudioProjectsRouteImport } from './routes/studio.projects'
 import { Route as OfficeWebsiteRouteImport } from './routes/office.website'
@@ -77,6 +78,11 @@ const OfficeIndexRoute = OfficeIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => OfficeRoute,
+} as any)
+const CrmIndexRoute = CrmIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => CrmRoute,
 } as any)
 const StudioSettingsRoute = StudioSettingsRouteImport.update({
   id: '/settings',
@@ -170,6 +176,7 @@ export interface FileRoutesByFullPath {
   '/office/website': typeof OfficeWebsiteRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
+  '/crm/': typeof CrmIndexRoute
   '/office/': typeof OfficeIndexRoute
   '/studio/': typeof StudioIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -181,7 +188,6 @@ export interface FileRoutesByTo {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRouteWithChildren
   '/crm/$': typeof CrmSplatRoute
   '/office/analytics': typeof OfficeAnalyticsRoute
   '/office/calls': typeof OfficeCallsRoute
@@ -193,6 +199,7 @@ export interface FileRoutesByTo {
   '/office/website': typeof OfficeWebsiteRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
+  '/crm': typeof CrmIndexRoute
   '/office': typeof OfficeIndexRoute
   '/studio': typeof StudioIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -219,6 +226,7 @@ export interface FileRoutesById {
   '/office/website': typeof OfficeWebsiteRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
+  '/crm/': typeof CrmIndexRoute
   '/office/': typeof OfficeIndexRoute
   '/studio/': typeof StudioIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -246,6 +254,7 @@ export interface FileRouteTypes {
     | '/office/website'
     | '/studio/projects'
     | '/studio/settings'
+    | '/crm/'
     | '/office/'
     | '/studio/'
     | '/api/public/track'
@@ -257,7 +266,6 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
-    | '/crm'
     | '/crm/$'
     | '/office/analytics'
     | '/office/calls'
@@ -269,6 +277,7 @@ export interface FileRouteTypes {
     | '/office/website'
     | '/studio/projects'
     | '/studio/settings'
+    | '/crm'
     | '/office'
     | '/studio'
     | '/api/public/track'
@@ -294,6 +303,7 @@ export interface FileRouteTypes {
     | '/office/website'
     | '/studio/projects'
     | '/studio/settings'
+    | '/crm/'
     | '/office/'
     | '/studio/'
     | '/api/public/track'
@@ -378,6 +388,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/office/'
       preLoaderRoute: typeof OfficeIndexRouteImport
       parentRoute: typeof OfficeRoute
+    }
+    '/crm/': {
+      id: '/crm/'
+      path: '/'
+      fullPath: '/crm/'
+      preLoaderRoute: typeof CrmIndexRouteImport
+      parentRoute: typeof CrmRoute
     }
     '/studio/settings': {
       id: '/studio/settings'
@@ -482,10 +499,12 @@ declare module '@tanstack/react-router' {
 
 interface CrmRouteChildren {
   CrmSplatRoute: typeof CrmSplatRoute
+  CrmIndexRoute: typeof CrmIndexRoute
 }
 
 const CrmRouteChildren: CrmRouteChildren = {
   CrmSplatRoute: CrmSplatRoute,
+  CrmIndexRoute: CrmIndexRoute,
 }
 
 const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
