@@ -31,6 +31,8 @@ import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.funct
 import { getAdminProfile } from "@/lib/admin-auth.functions";
 import { listFollowupsDue } from "@/lib/admin-prospects.functions";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
+import { getFinanceKpis } from "@/lib/billing.functions";
+import { formatEUR } from "@/lib/billing.shared";
 
 export const Route = createFileRoute("/office/")({
   component: AdminHome,
@@ -115,6 +117,8 @@ function AdminHome() {
     { label: "Devis soumis", value: dayQ.isLoading ? "…" : fmtNum(k?.devisSubmitted), icon: FileSignature },
   ];
 
+  const fetchFinance = useServerFn(getFinanceKpis);
+  const finance = useQuery({ queryKey: ["office", "finance-kpis"], queryFn: () => fetchFinance() });
   const k = finance.data;
   const financeCards = [
     {
