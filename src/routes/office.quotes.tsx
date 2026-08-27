@@ -168,6 +168,7 @@ function QuotesPage() {
               </div>
 
               <div className="mt-3 flex flex-wrap gap-1.5">
+                <Action icon={Eye} label="Aperçu" onClick={() => setPreview(q)} />
                 <Action icon={Pencil} label="Modifier" onClick={() => setEditing(q)} />
                 <Action
                   icon={Mail}
@@ -195,11 +196,12 @@ function QuotesPage() {
                   busy={busyId === q.id}
                   onClick={() =>
                     run(q.id, async () => {
-                      const res = await pdf({ data: { id: q.id } });
-                      downloadPdf(res.base64, res.filename);
+                      const bundle = await loadDoc({ data: { id: q.id } });
+                      await downloadDocumentPdf(bundle.doc, bundle.settings);
                     })
                   }
                 />
+
                 <Action
                   icon={Copy}
                   label="Dupliquer"
