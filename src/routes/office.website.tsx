@@ -26,9 +26,9 @@ import type { CompareContent, CompareRow } from "@/lib/compare-content.shared";
 export const Route = createFileRoute("/office/website")({
   head: () => ({
     meta: [
-      { title: "Site web — Skale Admin" },
+      { title: "Site web — Skale Office" },
       { name: "description", content: "Gérez les contenus de la page d'accueil du site Skale Visuals." },
-      { property: "og:title", content: "Site web — Skale Admin" },
+      { property: "og:title", content: "Site web — Skale Office" },
       { property: "og:description", content: "Stats, clients et réalisations de la page d'accueil." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },

@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { NotificationsSettings } from "@/components/NotificationsSettings";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -80,9 +79,7 @@ function ParametresPage() {
 
       <ThemeSection />
       <BackgroundSection />
-      <RememberedConnections source="web" />
-      <RememberedConnections source="app" />
-      <NotificationsSettings defaultUrl="/office" />
+      <RememberedConnections />
       <AccountsSection />
     </div>
   );

@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { NotificationsSettings } from "@/components/NotificationsSettings";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Palette, ImageIcon, Upload, Trash2, Check, Sun, Moon, MonitorSmartphone } from "lucide-react";
@@ -49,9 +48,7 @@ function EditorSettingsPage() {
       </div>
       <ThemeSection />
       <BackgroundSection />
-      <RememberedConnections source="web" />
-      <RememberedConnections source="app" />
-      <NotificationsSettings defaultUrl="/studio" />
+      <RememberedConnections />
     </div>
   );
 }

@@ -5,7 +5,6 @@ import { getEditorSessionFn } from "@/lib/editor.functions";
 import { EditorProfileMenu } from "@/components/EditorProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
-import { PushSetup } from "@/components/PushSetup";
 import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
 import { MessagePing } from "@/components/MessagePing";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
@@ -44,7 +43,6 @@ function EditorLayout() {
   return (
     <AdminPrefsProvider>
       <ThemeStyleInjector />
-      <PushSetup />
       <ConnectionHeartbeat />
       <MessagePing role="editor" />
       <EditorLayoutInner />
@@ -77,7 +75,7 @@ function EditorLayoutInner() {
         <aside className="hidden md:flex w-60 shrink-0 border-r border-white/10 bg-neutral-950/80 backdrop-blur flex flex-col">
           <div className="px-5 py-5 flex items-center gap-2.5">
             <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
-            <p className="text-sm font-semibold">Skale Edition</p>
+            <p className="text-sm font-semibold">Skale Studio</p>
           </div>
 
           <div className="px-5 pb-3">
@@ -124,7 +122,7 @@ function EditorLayoutInner() {
 
         <main className="flex-1 min-w-0 overflow-x-hidden">
           <PanelMobileNav
-            title="Skale Edition"
+            title="Skale Studio"
             items={NAV}
             profile={{
               name: editor.displayName || editor.username,
