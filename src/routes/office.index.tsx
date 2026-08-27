@@ -115,11 +115,41 @@ function AdminHome() {
     { label: "Devis soumis", value: dayQ.isLoading ? "…" : fmtNum(k?.devisSubmitted), icon: FileSignature },
   ];
 
+  const k = finance.data;
   const financeCards = [
-    { label: "CA du mois", icon: TrendingUp },
-    { label: "En attente de paiement", icon: Clock },
-    { label: "Devis à signer", icon: FileSignature },
-    { label: "Factures en retard", icon: AlertTriangle },
+    {
+      label: "CA du mois",
+      icon: TrendingUp,
+      value: k ? formatEUR(k.revenueMonth) : "—",
+      hint:
+        k && k.revenuePrevMonth > 0
+          ? `${k.revenueMonth >= k.revenuePrevMonth ? "+" : ""}${Math.round(
+              ((k.revenueMonth - k.revenuePrevMonth) / k.revenuePrevMonth) * 100,
+            )} % vs mois dernier`
+          : undefined,
+      to: "/office/invoices",
+    },
+    {
+      label: "En attente de paiement",
+      icon: Clock,
+      value: k ? formatEUR(k.pendingPayment) : "—",
+      to: "/office/invoices",
+    },
+    {
+      label: "Devis à signer",
+      icon: FileSignature,
+      value: k ? formatEUR(k.awaitingSignatureAmount) : "—",
+      hint: k ? `${k.awaitingSignatureCount} devis envoyés` : undefined,
+      to: "/office/quotes",
+    },
+    {
+      label: "Factures en retard",
+      icon: AlertTriangle,
+      value: k ? formatEUR(k.overdueAmount) : "—",
+      hint: k ? `${k.overdueCount} facture(s)` : undefined,
+      danger: !!k && k.overdueCount > 0,
+      to: "/office/invoices",
+    },
   ];
 
   return (
