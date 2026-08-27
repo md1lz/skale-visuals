@@ -62,6 +62,29 @@ export type Invoice = {
   total_ttc: number;
 };
 
+export type DocClient = {
+  name: string;
+  company?: string | null;
+  email?: string | null;
+  address?: string | null;
+};
+
+export type DocumentPayload = {
+  kind: "quote" | "invoice";
+  number: string;
+  createdAt: string;
+  issuedAt?: string | null;
+  dueAt?: string | null;
+  validUntil?: string | null;
+  client: DocClient;
+  lines: DocLine[];
+  notes?: string | null;
+  conditions?: string | null;
+  signature?: { dataUrl: string | null; name: string | null; signedAt: string | null } | null;
+};
+
+export type DocumentBundle = { doc: DocumentPayload; settings: BillingSettings };
+
 export type BillingSettings = {
   legalName: string;
   address: string;
