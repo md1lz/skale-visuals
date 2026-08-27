@@ -151,7 +151,7 @@ function AdminHome() {
       icon: AlertTriangle,
       value: fk ? formatEUR(fk.overdueAmount) : "—",
       hint: fk ? `${fk.overdueCount} facture(s)` : undefined,
-      danger: !!ffk && fk.overdueCount > 0,
+      danger: !!fk && fk.overdueCount > 0,
       to: "/office/invoices",
     },
   ];
