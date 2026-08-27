@@ -16,7 +16,7 @@ export const Route = createFileRoute("/studio")({
       const { getAdminSessionFn } = await import("@/lib/admin-auth.functions");
       const admin = await getAdminSessionFn();
       if (admin) throw redirect({ to: "/office" });
-      throw redirect({ to: "/" });
+      throw redirect({ to: "/office" });
     }
     return { editor: session };
   },
@@ -59,6 +59,14 @@ function EditorLayoutInner() {
     <div
       className={`admin-themed mode-${mode} panel-zoom min-h-screen flex bg-neutral-950 text-white relative`}
     >
+      <div
+        aria-hidden
+        className="pointer-events-none fixed inset-0 z-0 opacity-70"
+        style={{
+          background:
+            "radial-gradient(60rem 40rem at 12% -10%, rgba(226,75,74,0.14), transparent 60%), radial-gradient(50rem 35rem at 100% 0%, rgba(255,255,255,0.05), transparent 55%)",
+        }}
+      />
       {background && (
         <div
           aria-hidden
@@ -72,17 +80,17 @@ function EditorLayoutInner() {
         />
       )}
       <div className="relative z-10 flex w-full">
-        <aside className="hidden md:flex w-60 shrink-0 border-r border-white/10 bg-neutral-950/80 backdrop-blur flex flex-col">
-          <div className="px-5 py-5 flex items-center gap-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.8)] animate-pulse" />
-            <p className="text-sm font-semibold">Skale Studio</p>
+        <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-white/[0.07] bg-neutral-950/70 backdrop-blur-xl">
+          <div className="px-5 py-6 flex items-center gap-2.5">
+            <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_10px_rgba(226,75,74,0.9)] animate-pulse" />
+            <p className="text-[15px] font-semibold tracking-tight">Skale Studio</p>
           </div>
 
           <div className="px-5 pb-3">
             <BackToSiteLink />
           </div>
 
-          <div className="px-5 py-3 border-b border-white/10">
+          <div className="mx-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-2">
             <EditorProfileMenu
               initial={{
                 username: editor.username,
@@ -92,7 +100,7 @@ function EditorLayoutInner() {
             />
           </div>
 
-          <nav className="flex-1 px-3 py-4 space-y-0.5">
+          <nav className="flex-1 px-3 py-5 space-y-1">
             {NAV.map((item) => {
               const Icon = item.icon;
               const active = item.exact ? pathname === item.to : pathname.startsWith(item.to);
@@ -100,20 +108,22 @@ function EditorLayoutInner() {
                 <Link
                   key={item.to}
                   to={item.to as "/studio"}
-                  className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
+                  className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition-all duration-200 ${
                     active
-                      ? "bg-red-600/15 text-white border border-red-600/30"
-                      : "text-neutral-400 hover:text-white hover:bg-white/5 border border-transparent"
+                      ? "bg-white/[0.06] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
+                      : "text-neutral-400 hover:text-white hover:bg-white/[0.03]"
                   }`}
                 >
-                  <Icon className="h-4 w-4" />
-                  <span>{item.label}</span>
                   {active && (
                     <motion.span
-                      layoutId="editor-nav-dot"
-                      className="ml-auto h-1.5 w-1.5 rounded-full bg-red-500"
+                      layoutId="editor-nav-bar"
+                      className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(226,75,74,0.8)]"
                     />
                   )}
+                  <Icon
+                    className={`h-[17px] w-[17px] transition-colors ${active ? "text-red-400" : "text-neutral-500 group-hover:text-neutral-300"}`}
+                  />
+                  <span className="tracking-tight">{item.label}</span>
                 </Link>
               );
             })}
