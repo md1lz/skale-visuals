@@ -213,12 +213,14 @@ export async function fetchInvoice(id: string) {
 
 export function clientBlock(row: any) {
   return {
-    name: row.clients?.nom_complet ?? "Client",
-    company: row.clients?.entreprise ?? null,
-    email: row.clients?.email ?? null,
-    address: null,
+    name: row.client_name ?? row.clients?.nom_complet ?? "Client",
+    company: row.client_company ?? row.clients?.entreprise ?? null,
+    siret: row.client_siret ?? null,
+    email: row.client_email ?? row.clients?.email ?? null,
+    address: row.client_address ?? null,
   };
 }
+
 
 export async function documentBundleForQuote(row: any): Promise<DocumentBundle> {
   const settings = await getBillingSettings();
