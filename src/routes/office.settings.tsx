@@ -401,20 +401,33 @@ function BillingPanel({ section }: { section: "legal" | "documents" }) {
         description="Ces informations apparaissent sur les devis et factures PDF."
       >
         <div className="grid gap-3 sm:grid-cols-2">
-          <Field label="Nom légal" value={cfg.legalName} onChange={(v) => patch({ legalName: v })} />
+          <Field
+            label="Nom légal"
+            value={cfg.legalName}
+            onChange={(v) => patch({ legalName: v })}
+          />
           <Field label="SIRET" value={cfg.siret} onChange={(v) => patch({ siret: v })} />
           <Field
             label="TVA intracommunautaire"
             value={cfg.vatNumber}
             onChange={(v) => patch({ vatNumber: v })}
           />
-          <Field label="Email de facturation" value={cfg.email} onChange={(v) => patch({ email: v })} />
+          <Field
+            label="Email de facturation"
+            value={cfg.email}
+            onChange={(v) => patch({ email: v })}
+          />
           <Field label="Téléphone" value={cfg.phone} onChange={(v) => patch({ phone: v })} />
           <Field label="IBAN" value={cfg.iban} onChange={(v) => patch({ iban: v })} />
           <Field label="BIC" value={cfg.bic} onChange={(v) => patch({ bic: v })} />
         </div>
         <div className="mt-3 grid gap-3">
-          <Field label="Adresse" value={cfg.address} onChange={(v) => patch({ address: v })} textarea />
+          <Field
+            label="Adresse"
+            value={cfg.address}
+            onChange={(v) => patch({ address: v })}
+            textarea
+          />
           <Field
             label="Conditions de paiement"
             value={cfg.paymentTerms}
@@ -439,7 +452,11 @@ function BillingPanel({ section }: { section: "legal" | "documents" }) {
       description="Numérotation et conditions par défaut des devis et factures."
     >
       <div className="grid gap-3 sm:grid-cols-2">
-        <Field label="Préfixe devis" value={cfg.quotePrefix} onChange={(v) => patch({ quotePrefix: v })} />
+        <Field
+          label="Préfixe devis"
+          value={cfg.quotePrefix}
+          onChange={(v) => patch({ quotePrefix: v })}
+        />
         <Field
           label="Numéro de départ (devis)"
           type="number"
@@ -908,6 +925,3 @@ function CreateAccountModal({
     </ModalShell>
   );
 }
-
-/* eslint-disable-next-line no-unused-vars */
-export type { TabId };

@@ -80,7 +80,6 @@ function AppelsPage() {
     load();
   }, []);
 
-
   const changeStatus = async (id: string, status: (typeof STATUSES)[number]) => {
     setBookings((prev) => prev.map((b) => (b.id === id ? { ...b, status } : b)));
     await setBookingStatus({ data: { id, status } });
@@ -104,8 +103,7 @@ function AppelsPage() {
       <div>
         <h1 className="text-xl font-semibold">Book a Call</h1>
         <p className="text-sm text-neutral-400">
-          Réservations d'appels. Les disponibilités se configurent dans Paramètres →
-          Disponibilités.
+          Réservations d'appels. Les disponibilités se configurent dans Paramètres → Disponibilités.
         </p>
       </div>
 
@@ -136,11 +134,14 @@ function AppelsPage() {
                         <span className="block">{b.name}</span>
                         <span className="block text-xs text-neutral-400">{b.email}</span>
                         {b.guests.length > 0 && (
-                          <span className="block text-xs text-neutral-500">+ {b.guests.join(", ")}</span>
+                          <span className="block text-xs text-neutral-500">
+                            + {b.guests.join(", ")}
+                          </span>
                         )}
                       </td>
                       <td className="py-3 pr-3 whitespace-nowrap">
-                        {new Date(`${b.slot_date}T12:00:00`).toLocaleDateString("fr-FR")} · {b.slot_time}
+                        {new Date(`${b.slot_date}T12:00:00`).toLocaleDateString("fr-FR")} ·{" "}
+                        {b.slot_time}
                       </td>
                       <td className="py-3 pr-3">
                         {b.location_type === "meet" ? (
@@ -155,15 +156,20 @@ function AppelsPage() {
                         {b.location_type === "meet" && <MeetLinkField booking={b} />}
                         {b.meet_link_sent_at && (
                           <span className="mt-1 block text-[11px] text-neutral-500">
-                            Lien envoyé le {new Date(b.meet_link_sent_at).toLocaleDateString("fr-FR")}
+                            Lien envoyé le{" "}
+                            {new Date(b.meet_link_sent_at).toLocaleDateString("fr-FR")}
                           </span>
                         )}
                       </td>
-                      <td className="max-w-[220px] py-3 pr-3 text-xs text-neutral-400">{b.notes || "—"}</td>
+                      <td className="max-w-[220px] py-3 pr-3 text-xs text-neutral-400">
+                        {b.notes || "—"}
+                      </td>
                       <td className="py-3 pr-3">
                         <select
                           value={b.status}
-                          onChange={(e) => changeStatus(b.id, e.target.value as (typeof STATUSES)[number])}
+                          onChange={(e) =>
+                            changeStatus(b.id, e.target.value as (typeof STATUSES)[number])
+                          }
                           className="rounded-lg border border-white/10 bg-neutral-900 px-2 py-1 text-xs"
                         >
                           {STATUSES.map((s) => (
@@ -209,7 +215,8 @@ function AppelsPage() {
                   </div>
                   <p className="mt-2 flex items-center gap-1.5 text-xs text-neutral-300">
                     <CalendarDays className="h-3.5 w-3.5" />
-                    {new Date(`${b.slot_date}T12:00:00`).toLocaleDateString("fr-FR")} · {b.slot_time}
+                    {new Date(`${b.slot_date}T12:00:00`).toLocaleDateString("fr-FR")} ·{" "}
+                    {b.slot_time}
                   </p>
                   <p className="mt-1 text-xs text-neutral-400">
                     {b.location_type === "meet" ? "Google Meet" : `Téléphone · ${b.phone || "—"}`}
@@ -218,7 +225,9 @@ function AppelsPage() {
                   {b.notes && <p className="mt-1 text-xs text-neutral-500">{b.notes}</p>}
                   <select
                     value={b.status}
-                    onChange={(e) => changeStatus(b.id, e.target.value as (typeof STATUSES)[number])}
+                    onChange={(e) =>
+                      changeStatus(b.id, e.target.value as (typeof STATUSES)[number])
+                    }
                     className="mt-2 w-full rounded-lg border border-white/10 bg-neutral-900 px-2 py-1.5 text-xs"
                   >
                     {STATUSES.map((s) => (

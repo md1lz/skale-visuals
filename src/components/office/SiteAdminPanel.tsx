@@ -1,6 +1,16 @@
 import { useBlocker } from "@tanstack/react-router";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Plus, Trash2, Save, ArrowUp, ArrowDown, ImagePlus, Loader2, FolderPlus, Upload } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Save,
+  ArrowUp,
+  ArrowDown,
+  ImagePlus,
+  Loader2,
+  FolderPlus,
+  Upload,
+} from "lucide-react";
 import { toast } from "sonner";
 
 import {
@@ -24,13 +34,17 @@ import { getCompareAdminContent, saveCompareContent } from "@/lib/admin-compare.
 import type { CompareContent, CompareRow } from "@/lib/compare-content.shared";
 
 async function uploadVideoFile(file: File, onProgress?: (p: number) => void): Promise<string> {
-  const { uploadUrl, reference } = await createHomeVideoUploadUrl({ data: { filename: file.name } });
+  const { uploadUrl, reference } = await createHomeVideoUploadUrl({
+    data: { filename: file.name },
+  });
   await new Promise<void>((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("PUT", uploadUrl);
     xhr.setRequestHeader("content-type", file.type || "application/octet-stream");
-    xhr.upload.onprogress = (e) => e.lengthComputable && onProgress?.(Math.round((e.loaded / e.total) * 100));
-    xhr.onload = () => (xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error("Upload échoué")));
+    xhr.upload.onprogress = (e) =>
+      e.lengthComputable && onProgress?.(Math.round((e.loaded / e.total) * 100));
+    xhr.onload = () =>
+      xhr.status >= 200 && xhr.status < 300 ? resolve() : reject(new Error("Upload échoué"));
     xhr.onerror = () => reject(new Error("Upload échoué"));
     xhr.send(file);
   });
@@ -38,8 +52,14 @@ async function uploadVideoFile(file: File, onProgress?: (p: number) => void): Pr
 }
 
 async function uploadAsset(file: File): Promise<string> {
-  const { uploadUrl, reference } = await createHomeAssetUploadUrl({ data: { filename: file.name } });
-  const res = await fetch(uploadUrl, { method: "PUT", body: file, headers: { "content-type": file.type } });
+  const { uploadUrl, reference } = await createHomeAssetUploadUrl({
+    data: { filename: file.name },
+  });
+  const res = await fetch(uploadUrl, {
+    method: "PUT",
+    body: file,
+    headers: { "content-type": file.type },
+  });
   if (!res.ok) throw new Error("Upload échoué");
   return reference;
 }
@@ -71,7 +91,7 @@ export function SiteAdminPanel() {
       setTrustPreviews(res.trustPreviews ?? [null, null, null, null]);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
-      setActiveFolder((cur) => cur ?? (res.folders[0]?.id ?? null));
+      setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
       setDirty(false);
     } finally {
       setLoading(false);
@@ -94,7 +114,8 @@ export function SiteAdminPanel() {
   }, [dirty]);
 
   const folderVideos = useMemo(
-    () => videos.filter((v) => v.folder_id === activeFolder).sort((a, b) => a.position - b.position),
+    () =>
+      videos.filter((v) => v.folder_id === activeFolder).sort((a, b) => a.position - b.position),
     [videos, activeFolder],
   );
 
@@ -175,7 +196,12 @@ export function SiteAdminPanel() {
   async function addVideo() {
     if (!activeFolder) return;
     const row = (await createHomeVideo({
-      data: { folder_id: activeFolder, title: "Nouvelle vidéo", author: "Skale Visuals", source_url: "" },
+      data: {
+        folder_id: activeFolder,
+        title: "Nouvelle vidéo",
+        author: "Skale Visuals",
+        source_url: "",
+      },
     })) as HomeVideo;
     setVideos((v) => [...v, row]);
   }
@@ -256,7 +282,9 @@ export function SiteAdminPanel() {
 
       {/* Stats */}
       <section className={`${card} mb-6`}>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">Stats hero</h2>
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">
+          Stats hero
+        </h2>
         <div className="grid gap-4 sm:grid-cols-2">
           <label className="block">
             <span className="mb-1 block text-xs text-neutral-400">Vidéos montées</span>
@@ -280,10 +308,20 @@ export function SiteAdminPanel() {
         <div className="mt-5">
           <span className="mb-2 block text-xs text-neutral-400">Titre du site</span>
           <div className="grid gap-3 sm:grid-cols-2">
-            {([
-              { key: "skale", label: "skale.", hint: "Logo typographique Kangge avec point rouge" },
-              { key: "visuals", label: "Skale Visuals", hint: "Titre avec pastille ronde et logo" },
-            ] as const).map((opt) => (
+            {(
+              [
+                {
+                  key: "skale",
+                  label: "skale.",
+                  hint: "Logo typographique Kangge avec point rouge",
+                },
+                {
+                  key: "visuals",
+                  label: "Skale Visuals",
+                  hint: "Titre avec pastille ronde et logo",
+                },
+              ] as const
+            ).map((opt) => (
               <button
                 key={opt.key}
                 type="button"
@@ -336,7 +374,9 @@ export function SiteAdminPanel() {
                     try {
                       const ref = await uploadAsset(f);
                       patchTrust(i, { photo: ref });
-                      setTrustPreviews((p) => p.map((v, idx) => (idx === i ? URL.createObjectURL(f) : v)));
+                      setTrustPreviews((p) =>
+                        p.map((v, idx) => (idx === i ? URL.createObjectURL(f) : v)),
+                      );
                     } catch (err) {
                       toast.error(err instanceof Error ? err.message : "Upload échoué");
                     }
@@ -375,7 +415,9 @@ export function SiteAdminPanel() {
 
       {/* Réalisations */}
       <section className={card}>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">Réalisations</h2>
+        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">
+          Réalisations
+        </h2>
         <div className="grid gap-4 md:grid-cols-[240px_minmax(0,1fr)]">
           <div>
             <div className="space-y-1">
@@ -383,10 +425,15 @@ export function SiteAdminPanel() {
                 <div
                   key={f.id}
                   className={`flex items-center gap-1 rounded-lg border px-2 py-1.5 ${
-                    activeFolder === f.id ? "border-red-600/40 bg-red-600/10" : "border-white/10 bg-black/20"
+                    activeFolder === f.id
+                      ? "border-red-600/40 bg-red-600/10"
+                      : "border-white/10 bg-black/20"
                   }`}
                 >
-                  <button className="shrink-0 text-left text-xs text-neutral-500" onClick={() => setActiveFolder(f.id)}>
+                  <button
+                    className="shrink-0 text-left text-xs text-neutral-500"
+                    onClick={() => setActiveFolder(f.id)}
+                  >
                     ▸
                   </button>
                   <input
@@ -400,7 +447,10 @@ export function SiteAdminPanel() {
                       setDirty(true);
                     }}
                   />
-                  <button onClick={() => removeFolder(f.id)} className="text-neutral-500 hover:text-red-400">
+                  <button
+                    onClick={() => removeFolder(f.id)}
+                    className="text-neutral-500 hover:text-red-400"
+                  >
                     <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 </div>
@@ -414,7 +464,10 @@ export function SiteAdminPanel() {
                 onChange={(e) => setNewFolder(e.target.value)}
                 onKeyDown={(e) => e.key === "Enter" && addFolder()}
               />
-              <button onClick={addFolder} className={`${btn} border border-white/10 text-white hover:bg-white/10`}>
+              <button
+                onClick={addFolder}
+                className={`${btn} border border-white/10 text-white hover:bg-white/10`}
+              >
                 <FolderPlus className="h-4 w-4" />
               </button>
             </div>
@@ -451,7 +504,9 @@ export function SiteAdminPanel() {
                           className={`${input} sm:col-span-2`}
                           placeholder="Miniature (URL) — optionnel"
                           value={v.thumbnail_url ?? ""}
-                          onChange={(e) => patchVideo(v.id, { thumbnail_url: e.target.value || null })}
+                          onChange={(e) =>
+                            patchVideo(v.id, { thumbnail_url: e.target.value || null })
+                          }
                         />
                       </div>
                       <div
@@ -558,13 +613,13 @@ export function SiteAdminPanel() {
 
       <CompareSection />
 
-
-
       {blocker.status === "blocked" && (
         <div className="fixed inset-0 z-[100] grid place-items-center bg-black/70 p-4">
           <div className="w-full max-w-sm rounded-2xl border border-white/10 bg-neutral-900 p-5">
             <p className="text-sm font-semibold text-white">Modifications non enregistrées</p>
-            <p className="mt-1 text-sm text-neutral-400">Voulez-vous enregistrer avant de quitter ?</p>
+            <p className="mt-1 text-sm text-neutral-400">
+              Voulez-vous enregistrer avant de quitter ?
+            </p>
             <div className="mt-4 flex flex-wrap gap-2">
               <button
                 onClick={async () => {
@@ -632,7 +687,9 @@ function AboutSection() {
     );
   }
   function patchValue(i: number, p: Partial<AboutContent["values"][number]>) {
-    setAbout((a) => (a ? { ...a, values: a.values.map((v, idx) => (idx === i ? { ...v, ...p } : v)) } : a));
+    setAbout((a) =>
+      a ? { ...a, values: a.values.map((v, idx) => (idx === i ? { ...v, ...p } : v)) } : a,
+    );
   }
 
   async function save() {
@@ -653,8 +710,14 @@ function AboutSection() {
   return (
     <section className={`${card} mt-6`}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">About Us</h2>
-        <button onClick={save} disabled={saving} className={`${btn} bg-red-600 text-white hover:bg-red-500`}>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+          About Us
+        </h2>
+        <button
+          onClick={save}
+          disabled={saving}
+          className={`${btn} bg-red-600 text-white hover:bg-red-500`}
+        >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           Enregistrer
         </button>
@@ -663,7 +726,11 @@ function AboutSection() {
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="mb-1 block text-xs text-neutral-400">Titre intro</span>
-          <input className={input} value={about.introTitle} onChange={(e) => patch({ introTitle: e.target.value })} />
+          <input
+            className={input}
+            value={about.introTitle}
+            onChange={(e) => patch({ introTitle: e.target.value })}
+          />
         </label>
         <label className="block">
           <span className="mb-1 block text-xs text-neutral-400">Sous-titre intro</span>
@@ -707,7 +774,9 @@ function AboutSection() {
                     try {
                       const ref = await uploadAsset(file);
                       patchFounder(i, { photo: ref });
-                      setPreviews((p) => p.map((v, x) => (x === i ? URL.createObjectURL(file) : v)));
+                      setPreviews((p) =>
+                        p.map((v, x) => (x === i ? URL.createObjectURL(file) : v)),
+                      );
                     } catch (err) {
                       toast.error(err instanceof Error ? err.message : "Upload échoué");
                     }
@@ -750,15 +819,21 @@ function AboutSection() {
         })}
       </div>
 
-      {([
-        ["storyTitle", "storyText", "Histoire"],
-        ["visionTitle", "visionText", "Vision"],
-        ["teamTitle", "teamText", "Équipe"],
-      ] as const).map(([tk, bk, label]) => (
+      {(
+        [
+          ["storyTitle", "storyText", "Histoire"],
+          ["visionTitle", "visionText", "Vision"],
+          ["teamTitle", "teamText", "Équipe"],
+        ] as const
+      ).map(([tk, bk, label]) => (
         <div key={tk} className="mt-5 grid gap-4 sm:grid-cols-[minmax(0,260px)_minmax(0,1fr)]">
           <label className="block">
             <span className="mb-1 block text-xs text-neutral-400">Titre — {label}</span>
-            <input className={input} value={about[tk]} onChange={(e) => patch({ [tk]: e.target.value } as Partial<AboutContent>)} />
+            <input
+              className={input}
+              value={about[tk]}
+              onChange={(e) => patch({ [tk]: e.target.value } as Partial<AboutContent>)}
+            />
           </label>
           <label className="block">
             <span className="mb-1 block text-xs text-neutral-400">Paragraphe — {label}</span>
@@ -774,7 +849,11 @@ function AboutSection() {
       <div className="mt-5">
         <label className="block max-w-[320px]">
           <span className="mb-1 block text-xs text-neutral-400">Titre — Valeurs</span>
-          <input className={input} value={about.valuesTitle} onChange={(e) => patch({ valuesTitle: e.target.value })} />
+          <input
+            className={input}
+            value={about.valuesTitle}
+            onChange={(e) => patch({ valuesTitle: e.target.value })}
+          />
         </label>
         <div className="mt-3 grid gap-3 sm:grid-cols-3">
           {about.values.map((v, i) => (
@@ -785,7 +864,11 @@ function AboutSection() {
                   value={v.emoji}
                   onChange={(e) => patchValue(i, { emoji: e.target.value })}
                 />
-                <input className={input} value={v.title} onChange={(e) => patchValue(i, { title: e.target.value })} />
+                <input
+                  className={input}
+                  value={v.title}
+                  onChange={(e) => patchValue(i, { title: e.target.value })}
+                />
               </div>
               <textarea
                 className={`${input} min-h-[72px]`}
@@ -800,11 +883,19 @@ function AboutSection() {
       <div className="mt-5 grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="mb-1 block text-xs text-neutral-400">Titre CTA</span>
-          <input className={input} value={about.ctaTitle} onChange={(e) => patch({ ctaTitle: e.target.value })} />
+          <input
+            className={input}
+            value={about.ctaTitle}
+            onChange={(e) => patch({ ctaTitle: e.target.value })}
+          />
         </label>
         <label className="block">
           <span className="mb-1 block text-xs text-neutral-400">Texte du bouton CTA</span>
-          <input className={input} value={about.ctaButton} onChange={(e) => patch({ ctaButton: e.target.value })} />
+          <input
+            className={input}
+            value={about.ctaButton}
+            onChange={(e) => patch({ ctaButton: e.target.value })}
+          />
         </label>
       </div>
     </section>
@@ -830,7 +921,9 @@ function CompareSection() {
     setContent((c) => (c ? { ...c, ...p } : c));
   }
   function patchRow(i: number, p: Partial<CompareRow>) {
-    setContent((c) => (c ? { ...c, rows: c.rows.map((r, idx) => (idx === i ? { ...r, ...p } : r)) } : c));
+    setContent((c) =>
+      c ? { ...c, rows: c.rows.map((r, idx) => (idx === i ? { ...r, ...p } : r)) } : c,
+    );
   }
   function addRow() {
     setContent((c) => (c ? { ...c, rows: [...c.rows, { ...EMPTY_ROW }] } : c));
@@ -867,8 +960,14 @@ function CompareSection() {
   return (
     <section className={`${card} mt-6`}>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">Comparatif</h2>
-        <button onClick={save} disabled={saving} className={`${btn} bg-red-600 text-white hover:bg-red-500`}>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+          Comparatif
+        </h2>
+        <button
+          onClick={save}
+          disabled={saving}
+          className={`${btn} bg-red-600 text-white hover:bg-red-500`}
+        >
           {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
           Enregistrer
         </button>
@@ -877,11 +976,19 @@ function CompareSection() {
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="block">
           <span className="mb-1 block text-xs text-neutral-400">Badge</span>
-          <input className={input} value={content.badge} onChange={(e) => patch({ badge: e.target.value })} />
+          <input
+            className={input}
+            value={content.badge}
+            onChange={(e) => patch({ badge: e.target.value })}
+          />
         </label>
         <label className="block">
           <span className="mb-1 block text-xs text-neutral-400">Titre</span>
-          <input className={input} value={content.title} onChange={(e) => patch({ title: e.target.value })} />
+          <input
+            className={input}
+            value={content.title}
+            onChange={(e) => patch({ title: e.target.value })}
+          />
         </label>
         <label className="block sm:col-span-2">
           <span className="mb-1 block text-xs text-neutral-400">Sous-titre</span>
@@ -893,11 +1000,19 @@ function CompareSection() {
         </label>
         <label className="block">
           <span className="mb-1 block text-xs text-neutral-400">Libellé colonne concurrence</span>
-          <input className={input} value={content.otherLabel} onChange={(e) => patch({ otherLabel: e.target.value })} />
+          <input
+            className={input}
+            value={content.otherLabel}
+            onChange={(e) => patch({ otherLabel: e.target.value })}
+          />
         </label>
         <label className="block">
           <span className="mb-1 block text-xs text-neutral-400">Libellé colonne Skale</span>
-          <input className={input} value={content.skaleLabel} onChange={(e) => patch({ skaleLabel: e.target.value })} />
+          <input
+            className={input}
+            value={content.skaleLabel}
+            onChange={(e) => patch({ skaleLabel: e.target.value })}
+          />
         </label>
       </div>
 
@@ -944,26 +1059,47 @@ function CompareSection() {
             <div className="grid gap-3 sm:grid-cols-2">
               <label className="block">
                 <span className="mb-1 block text-xs text-neutral-400">Critère</span>
-                <input className={input} value={row.criterion} onChange={(e) => patchRow(i, { criterion: e.target.value })} />
+                <input
+                  className={input}
+                  value={row.criterion}
+                  onChange={(e) => patchRow(i, { criterion: e.target.value })}
+                />
               </label>
               <label className="block">
-                <span className="mb-1 block text-xs text-neutral-400">Texte Freelance / Agence</span>
-                <input className={input} value={row.other} onChange={(e) => patchRow(i, { other: e.target.value })} />
+                <span className="mb-1 block text-xs text-neutral-400">
+                  Texte Freelance / Agence
+                </span>
+                <input
+                  className={input}
+                  value={row.other}
+                  onChange={(e) => patchRow(i, { other: e.target.value })}
+                />
               </label>
               <label className="block">
                 <span className="mb-1 block text-xs text-neutral-400">Titre Skale</span>
-                <input className={input} value={row.skaleTitle} onChange={(e) => patchRow(i, { skaleTitle: e.target.value })} />
+                <input
+                  className={input}
+                  value={row.skaleTitle}
+                  onChange={(e) => patchRow(i, { skaleTitle: e.target.value })}
+                />
               </label>
               <label className="block">
                 <span className="mb-1 block text-xs text-neutral-400">Description Skale</span>
-                <input className={input} value={row.skaleText} onChange={(e) => patchRow(i, { skaleText: e.target.value })} />
+                <input
+                  className={input}
+                  value={row.skaleText}
+                  onChange={(e) => patchRow(i, { skaleText: e.target.value })}
+                />
               </label>
             </div>
           </div>
         ))}
       </div>
 
-      <button onClick={addRow} className={`${btn} mt-3 border border-white/10 text-white hover:bg-white/10`}>
+      <button
+        onClick={addRow}
+        className={`${btn} mt-3 border border-white/10 text-white hover:bg-white/10`}
+      >
         <Plus className="h-4 w-4" /> Ajouter une ligne
       </button>
     </section>
