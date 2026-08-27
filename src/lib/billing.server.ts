@@ -5,6 +5,7 @@ import {
   normalizeBilling,
   type BillingSettings,
   type DocLine,
+  type DocumentBundle,
   type Invoice,
   type InvoiceStatus,
   type Quote,
