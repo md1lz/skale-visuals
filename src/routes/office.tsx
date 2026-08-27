@@ -126,7 +126,7 @@ function AdminLayoutInner() {
       )}
       <div className="relative z-10 flex w-full">
         <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-white/[0.07] bg-neutral-950/70 backdrop-blur-xl">
-          <div className="flex items-baseline gap-1.5 px-5 py-6">
+          <div className="flex items-center gap-1.5 px-5 py-6">
             <span className="font-kangge text-[26px] leading-none text-white">skale.</span>
             <span className="text-[9px] font-medium uppercase tracking-[0.28em] text-neutral-500">
               Office
