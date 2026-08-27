@@ -1,0 +1,1 @@
+ALTER TABLE public.invoices ADD COLUMN share_token text NOT NULL UNIQUE DEFAULT replace(gen_random_uuid()::text,'-','');

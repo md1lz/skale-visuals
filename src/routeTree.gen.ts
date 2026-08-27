@@ -21,6 +21,7 @@ import { Route as OfficeIndexRouteImport } from './routes/office.index'
 import { Route as CrmIndexRouteImport } from './routes/crm.index'
 import { Route as StudioSettingsRouteImport } from './routes/studio.settings'
 import { Route as StudioProjectsRouteImport } from './routes/studio.projects'
+import { Route as SignTokenRouteImport } from './routes/sign.$token'
 import { Route as OfficeWebsiteRouteImport } from './routes/office.website'
 import { Route as OfficeSettingsRouteImport } from './routes/office.settings'
 import { Route as OfficeServicesRouteImport } from './routes/office.services'
@@ -36,6 +37,7 @@ import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
+import { Route as ApiPublicDocKindTokenRouteImport } from './routes/api/public/doc.$kind.$token'
 
 const StudioRoute = StudioRouteImport.update({
   id: '/studio',
@@ -96,6 +98,11 @@ const StudioProjectsRoute = StudioProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
   getParentRoute: () => StudioRoute,
+} as any)
+const SignTokenRoute = SignTokenRouteImport.update({
+  id: '/sign/$token',
+  path: '/sign/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const OfficeWebsiteRoute = OfficeWebsiteRouteImport.update({
   id: '/website',
@@ -174,6 +181,11 @@ const ApiPublicHooksBookingRemindersRoute =
     path: '/api/public/hooks/booking-reminders',
     getParentRoute: () => rootRouteImport,
   } as any)
+const ApiPublicDocKindTokenRoute = ApiPublicDocKindTokenRouteImport.update({
+  id: '/api/public/doc/$kind/$token',
+  path: '/api/public/doc/$kind/$token',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -195,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
+  '/sign/$token': typeof SignTokenRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
   '/crm/': typeof CrmIndexRoute
@@ -203,6 +216,7 @@ export interface FileRoutesByFullPath {
   '/api/public/track': typeof ApiPublicTrackRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/api/public/doc/$kind/$token': typeof ApiPublicDocKindTokenRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -221,6 +235,7 @@ export interface FileRoutesByTo {
   '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
+  '/sign/$token': typeof SignTokenRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
   '/crm': typeof CrmIndexRoute
@@ -229,6 +244,7 @@ export interface FileRoutesByTo {
   '/api/public/track': typeof ApiPublicTrackRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/api/public/doc/$kind/$token': typeof ApiPublicDocKindTokenRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -251,6 +267,7 @@ export interface FileRoutesById {
   '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
+  '/sign/$token': typeof SignTokenRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
   '/crm/': typeof CrmIndexRoute
@@ -259,6 +276,7 @@ export interface FileRoutesById {
   '/api/public/track': typeof ApiPublicTrackRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
+  '/api/public/doc/$kind/$token': typeof ApiPublicDocKindTokenRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -282,6 +300,7 @@ export interface FileRouteTypes {
     | '/office/services'
     | '/office/settings'
     | '/office/website'
+    | '/sign/$token'
     | '/studio/projects'
     | '/studio/settings'
     | '/crm/'
@@ -290,6 +309,7 @@ export interface FileRouteTypes {
     | '/api/public/track'
     | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
+    | '/api/public/doc/$kind/$token'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -308,6 +328,7 @@ export interface FileRouteTypes {
     | '/office/services'
     | '/office/settings'
     | '/office/website'
+    | '/sign/$token'
     | '/studio/projects'
     | '/studio/settings'
     | '/crm'
@@ -316,6 +337,7 @@ export interface FileRouteTypes {
     | '/api/public/track'
     | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
+    | '/api/public/doc/$kind/$token'
   id:
     | '__root__'
     | '/'
@@ -337,6 +359,7 @@ export interface FileRouteTypes {
     | '/office/services'
     | '/office/settings'
     | '/office/website'
+    | '/sign/$token'
     | '/studio/projects'
     | '/studio/settings'
     | '/crm/'
@@ -345,6 +368,7 @@ export interface FileRouteTypes {
     | '/api/public/track'
     | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
+    | '/api/public/doc/$kind/$token'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -355,9 +379,11 @@ export interface RootRouteChildren {
   CrmRoute: typeof CrmRouteWithChildren
   OfficeRoute: typeof OfficeRouteWithChildren
   StudioRoute: typeof StudioRouteWithChildren
+  SignTokenRoute: typeof SignTokenRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
+  ApiPublicDocKindTokenRoute: typeof ApiPublicDocKindTokenRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -445,6 +471,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/studio/projects'
       preLoaderRoute: typeof StudioProjectsRouteImport
       parentRoute: typeof StudioRoute
+    }
+    '/sign/$token': {
+      id: '/sign/$token'
+      path: '/sign/$token'
+      fullPath: '/sign/$token'
+      preLoaderRoute: typeof SignTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/office/website': {
       id: '/office/website'
@@ -551,6 +584,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicHooksBookingRemindersRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/doc/$kind/$token': {
+      id: '/api/public/doc/$kind/$token'
+      path: '/api/public/doc/$kind/$token'
+      fullPath: '/api/public/doc/$kind/$token'
+      preLoaderRoute: typeof ApiPublicDocKindTokenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -622,9 +662,11 @@ const rootRouteChildren: RootRouteChildren = {
   CrmRoute: CrmRouteWithChildren,
   OfficeRoute: OfficeRouteWithChildren,
   StudioRoute: StudioRouteWithChildren,
+  SignTokenRoute: SignTokenRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
+  ApiPublicDocKindTokenRoute: ApiPublicDocKindTokenRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

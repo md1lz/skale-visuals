@@ -4,6 +4,9 @@ import { template as bookingConfirmation } from './booking-confirmation'
 import { template as bookingMeetLink } from './booking-meet-link'
 import { template as bookingReminder } from './booking-reminder'
 import { template as bookingAdminAlert } from './booking-admin-alert'
+import { template as quoteSent } from './quote-sent'
+import { template as invoiceSent } from './invoice-sent'
+import { template as quoteSigned } from './quote-signed'
 
 export interface TemplateEntry {
   component: ComponentType<any>
@@ -27,4 +30,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'booking-meet-link': bookingMeetLink,
   'booking-reminder': bookingReminder,
   'booking-admin-alert': bookingAdminAlert,
+  'quote-sent': quoteSent,
+  'invoice-sent': invoiceSent,
+  'quote-signed': quoteSigned,
 }
