@@ -13,8 +13,8 @@ import {
   mapInvoice,
   mapQuote,
   nextNumber,
-  pdfBase64ForInvoice,
-  pdfBase64ForQuote,
+  documentBundleForInvoice,
+  documentBundleForQuote,
   requireAdmin,
   saveBillingSettings,
 } from "@/lib/billing.server";
@@ -295,12 +295,11 @@ export const convertQuoteToInvoice = createServerFn({ method: "POST" })
     return { ok: true as const, id: inv.id };
   });
 
-export const quotePdf = createServerFn({ method: "POST" })
+export const quoteDocument = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await requireAdmin();
-    const row = await fetchQuote(data.id);
-    return { base64: await pdfBase64ForQuote(row), filename: `${row.number}.pdf` };
+    return await documentBundleForQuote(await fetchQuote(data.id));
   });
 
 /* -------------------------------- Invoices -------------------------------- */
@@ -441,12 +440,11 @@ export const sendInvoice = createServerFn({ method: "POST" })
     return { ok: true as const };
   });
 
-export const invoicePdf = createServerFn({ method: "POST" })
+export const invoiceDocument = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
     await requireAdmin();
-    const row = await fetchInvoice(data.id);
-    return { base64: await pdfBase64ForInvoice(row), filename: `${row.number}.pdf` };
+    return await documentBundleForInvoice(await fetchInvoice(data.id));
   });
 
 /* ---------------------------------- KPIs ---------------------------------- */

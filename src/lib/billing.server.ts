@@ -326,7 +326,7 @@ export function signUrlFor(token: string) {
 }
 
 export function publicPdfUrl(kind: "quote" | "invoice", token: string) {
-  return `${SITE_ORIGIN}/api/public/doc/${kind}/${token}`;
+  return `${SITE_ORIGIN}/doc/${kind}/${token}`;
 }
 
 export async function emailQuote(row: any) {
