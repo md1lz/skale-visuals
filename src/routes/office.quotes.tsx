@@ -27,7 +27,6 @@ import {
   saveQuote,
   setQuoteStatus,
 } from "@/lib/billing.functions";
-import { listClients } from "@/lib/admin-clients.functions";
 import {
   QUOTE_STATUSES,
   QUOTE_STATUS_STYLE,
@@ -47,7 +46,6 @@ export const Route = createFileRoute("/office/quotes")({ component: QuotesPage }
 function QuotesPage() {
   const fetchQuotes = useServerFn(listQuotes);
   const fetchPrestations = useServerFn(listPrestations);
-  const fetchClients = useServerFn(listClients);
   const removeQuote = useServerFn(deleteQuote);
   const duplicate = useServerFn(duplicateQuote);
   const loadDoc = useServerFn(quoteDocument);
@@ -59,11 +57,6 @@ function QuotesPage() {
   const prestations = useQuery({
     queryKey: ["office", "prestations"],
     queryFn: () => fetchPrestations(),
-    initialData: [],
-  });
-  const clients = useQuery({
-    queryKey: ["office", "clients"],
-    queryFn: () => fetchClients(),
     initialData: [],
   });
 
