@@ -156,10 +156,11 @@ export function docTotals(lines: DocLine[]) {
 }
 
 export function formatEUR(n: number): string {
-  return `${(Math.round(n * 100) / 100).toLocaleString("fr-FR", {
-    minimumFractionDigits: 2,
-    maximumFractionDigits: 2,
-  })} €`;
+  // fr-FR uses narrow/no-break spaces that some PDF fonts render as "/" — normalize to a plain space.
+  const num = (Math.round(n * 100) / 100)
+    .toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })
+    .replace(/[\u202F\u00A0\u2009]/g, " ");
+  return `${num} €`;
 }
 
 export function formatDateFR(iso: string | null | undefined): string {
