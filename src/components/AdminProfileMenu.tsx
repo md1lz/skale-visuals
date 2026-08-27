@@ -9,7 +9,6 @@ import {
   updateAdminProfile,
   logoutAdminFn,
 } from "@/lib/admin-auth.functions";
-import { isStandaloneApp } from "@/lib/pwa";
 
 type Profile = {
   username: string;
