@@ -113,7 +113,11 @@ export function mapQuote(row: any): Quote {
   return {
     id: row.id,
     client_id: row.client_id,
-    client_name: row.clients?.nom_complet ?? null,
+    client_name: row.client_name ?? row.clients?.nom_complet ?? null,
+    client_company: row.client_company ?? row.clients?.entreprise ?? null,
+    client_siret: row.client_siret ?? null,
+    client_email: row.client_email ?? row.clients?.email ?? null,
+    client_address: row.client_address ?? null,
     number: row.number,
     status,
     notes: row.notes,
@@ -138,7 +142,11 @@ export function mapInvoice(row: any): Invoice {
   return {
     id: row.id,
     client_id: row.client_id,
-    client_name: row.clients?.nom_complet ?? null,
+    client_name: row.client_name ?? row.clients?.nom_complet ?? null,
+    client_company: row.client_company ?? row.clients?.entreprise ?? null,
+    client_siret: row.client_siret ?? null,
+    client_email: row.client_email ?? row.clients?.email ?? null,
+    client_address: row.client_address ?? null,
     quote_id: row.quote_id,
     number: row.number,
     status: (overdue ? "En retard" : row.status) as InvoiceStatus,
@@ -153,6 +161,7 @@ export function mapInvoice(row: any): Invoice {
     ...totals,
   };
 }
+
 
 const QUOTE_SELECT = "*, clients(nom_complet, entreprise, email), quote_lines(*)";
 const INVOICE_SELECT = "*, clients(nom_complet, entreprise, email), invoice_lines(*)";
