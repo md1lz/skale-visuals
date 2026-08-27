@@ -1118,6 +1118,7 @@ export type Database = {
           number: string
           sign_token: string
           signature_data: string | null
+          signature_data_url: string | null
           signed_at: string | null
           signed_pdf_url: string | null
           signer_ip: string | null
@@ -1135,6 +1136,7 @@ export type Database = {
           number: string
           sign_token?: string
           signature_data?: string | null
+          signature_data_url?: string | null
           signed_at?: string | null
           signed_pdf_url?: string | null
           signer_ip?: string | null
@@ -1152,6 +1154,7 @@ export type Database = {
           number?: string
           sign_token?: string
           signature_data?: string | null
+          signature_data_url?: string | null
           signed_at?: string | null
           signed_pdf_url?: string | null
           signer_ip?: string | null
