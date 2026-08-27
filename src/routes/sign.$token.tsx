@@ -292,7 +292,7 @@ function SignPage() {
               {busy ? "Signature en cours…" : "Signer le devis"}
             </button>
             <p className="mt-3 text-center text-[11px] text-neutral-400">
-              En signant, vous acceptez le devis et les conditions de {settings.companyName}.
+              En signant, vous acceptez le devis et les conditions de {settings.legalName}.
             </p>
           </motion.form>
         )}
