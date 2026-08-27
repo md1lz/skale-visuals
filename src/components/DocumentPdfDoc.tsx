@@ -1,4 +1,4 @@
-import { Document, Page, Text, View, StyleSheet, pdf } from "@react-pdf/renderer";
+import { Document, Page, Text, View, Image, StyleSheet, pdf, Font } from "@react-pdf/renderer";
 import {
   docTotals,
   formatDateFR,
@@ -7,6 +7,18 @@ import {
   type BillingSettings,
   type DocumentPayload,
 } from "@/lib/billing.shared";
+
+const KANGGE_URL = "/__l5e/assets-v1/221e7992-708e-450e-9c98-c171951fb7b4/Kangge.ttf";
+let kanggeReady = false;
+function registerKangge() {
+  if (kanggeReady) return;
+  try {
+    Font.register({ family: "Kangge", src: KANGGE_URL });
+    kanggeReady = true;
+  } catch {
+    kanggeReady = false;
+  }
+}
 
 const RED = "#dc2626";
 const INK = "#111113";
@@ -28,7 +40,7 @@ const s = StyleSheet.create({
   kicker: { fontSize: 8, letterSpacing: 1.6, color: MUTED, fontFamily: "Helvetica-Bold" },
   number: { fontSize: 22, fontFamily: "Helvetica-Bold", marginTop: 4 },
   meta: { fontSize: 8.5, color: MUTED, marginTop: 3 },
-  logo: { fontSize: 14, fontFamily: "Helvetica-Bold" },
+  logo: { fontSize: 16 },
   clientBox: {
     marginTop: 26,
     borderWidth: 1,
@@ -127,10 +139,11 @@ export function DocumentPdf({
             </Text>
           </View>
           <View style={{ alignItems: "flex-end" }}>
-            <Text style={s.logo}>skale visuals.</Text>
-            <Text style={s.meta}>{settings.email}</Text>
-            {!!settings.phone && <Text style={s.meta}>{settings.phone}</Text>}
-            {!!settings.siret && <Text style={s.meta}>SIRET {settings.siret}</Text>}
+            <Text style={[s.logo, kanggeReady ? { fontFamily: "Kangge" } : { fontFamily: "Helvetica-Bold" }]}>
+              skale visuals.
+            </Text>
+            <Text style={s.meta}>{settings.email || "contact@skalevisuals.com"}</Text>
+            {!!settings.siret && <Text style={s.meta}>SIRET : {settings.siret}</Text>}
           </View>
         </View>
 
@@ -198,9 +211,8 @@ export function DocumentPdf({
         {isQuote && (
           <View style={[s.block, s.row]} wrap={false}>
             <View style={{ maxWidth: 240 }}>
-              <Text style={s.sectionTitle}>BON POUR ACCORD</Text>
-              <Text style={s.body}>
-                Date et signature précédées de la mention « bon pour accord ».
+              <Text style={[s.body, { fontFamily: "Helvetica-Oblique", fontSize: 10, color: INK }]}>
+                Bon pour accord
               </Text>
               {!!doc.signature?.signedAt && (
                 <Text style={[s.body, { marginTop: 6, color: RED }]}>
@@ -211,20 +223,28 @@ export function DocumentPdf({
             </View>
             <View style={s.signBox}>
               <Text style={s.sectionTitle}>SIGNATURE DU CLIENT</Text>
-              {doc.signature?.name && (
+              {doc.signature?.dataUrl ? (
+                <Image
+                  src={doc.signature.dataUrl}
+                  style={{ marginTop: 4, height: 58, objectFit: "contain" }}
+                />
+              ) : doc.signature?.name ? (
                 <Text style={{ marginTop: 22, fontSize: 14, color: RED }}>
                   {doc.signature.name}
                 </Text>
-              )}
+              ) : null}
             </View>
           </View>
         )}
 
         <View style={s.footer} fixed>
-          <Text style={{ fontSize: 11, fontFamily: "Helvetica-Bold" }}>skale visuals.</Text>
-          <Text style={{ fontSize: 7.5, color: MUTED }}>
-            {settings.legalName || "Skale Visuals"}
-            {settings.siret ? ` · SIRET ${settings.siret}` : ""}
+          <Text
+            style={[
+              { fontSize: 12 },
+              kanggeReady ? { fontFamily: "Kangge" } : { fontFamily: "Helvetica-Bold" },
+            ]}
+          >
+            skale visuals.
           </Text>
         </View>
       </Page>
@@ -233,5 +253,6 @@ export function DocumentPdf({
 }
 
 export async function generateDocumentBlob(doc: DocumentPayload, settings: BillingSettings) {
+  registerKangge();
   return await pdf(<DocumentPdf doc={doc} settings={settings} />).toBlob();
 }
