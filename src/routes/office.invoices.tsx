@@ -3,7 +3,19 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { BadgeCheck, Ban, Download, Eye, Loader2, Mail, Pencil, Plus, Trash2, X } from "lucide-react";
+import {
+  BadgeCheck,
+  Ban,
+  ChevronDown,
+  CircleDot,
+  Download,
+  Eye,
+  Loader2,
+  Pencil,
+  Plus,
+  Trash2,
+  X,
+} from "lucide-react";
 import {
   deleteInvoice,
   invoiceDocument,
@@ -11,10 +23,8 @@ import {
   listPrestations,
   markInvoicePaid,
   saveInvoice,
-  sendInvoice,
   setInvoiceStatus,
 } from "@/lib/billing.functions";
-import { listClients } from "@/lib/admin-clients.functions";
 import {
   INVOICE_STATUSES,
   INVOICE_STATUS_STYLE,
@@ -26,6 +36,7 @@ import {
   type InvoiceStatus,
 } from "@/lib/billing.shared";
 import { DocLinesEditor, emptyLine } from "@/components/DocLinesEditor";
+import { Field } from "@/routes/office.quotes";
 import { DocumentPaper, downloadDocumentPdf } from "@/components/DocumentPaper";
 import { useAdminPrefs } from "@/components/admin-prefs";
 
@@ -36,9 +47,7 @@ const today = () => new Date().toISOString().slice(0, 10);
 function InvoicesPage() {
   const fetchInvoices = useServerFn(listInvoices);
   const fetchPrestations = useServerFn(listPrestations);
-  const fetchClients = useServerFn(listClients);
   const remove = useServerFn(deleteInvoice);
-  const send = useServerFn(sendInvoice);
   const loadDoc = useServerFn(invoiceDocument);
   const paid = useServerFn(markInvoicePaid);
   const changeStatus = useServerFn(setInvoiceStatus);
@@ -51,11 +60,6 @@ function InvoicesPage() {
   const prestations = useQuery({
     queryKey: ["office", "prestations"],
     queryFn: () => fetchPrestations(),
-    initialData: [],
-  });
-  const clients = useQuery({
-    queryKey: ["office", "clients"],
-    queryFn: () => fetchClients(),
     initialData: [],
   });
 
@@ -159,16 +163,14 @@ function InvoicesPage() {
 
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <Action icon={Eye} label="Aperçu" onClick={() => setPreview(inv)} />
-                <Action icon={Pencil} label="Modifier" onClick={() => setEditing(inv)} />
-                <Action
-                  icon={Mail}
-                  label="Envoyer"
-                  busy={busyId === inv.id}
-                  onClick={() =>
-                    run(inv.id, async () => {
-                      await send({ data: { id: inv.id } });
-                      flash(`Facture ${inv.number} envoyée par email.`);
-                    })
+                {inv.status === "Brouillon" && (
+                  <Action icon={Pencil} label="Modifier" onClick={() => setEditing(inv)} />
+                )}
+                <StatusSelect
+                  value={inv.status}
+                  options={INVOICE_STATUSES.filter((s) => s !== "En retard")}
+                  onChange={(next) =>
+                    run(inv.id, () => changeStatus({ data: { id: inv.id, status: next } }))
                   }
                 />
                 <Action
@@ -221,7 +223,6 @@ function InvoicesPage() {
       {editing && (
         <InvoiceModal
           value={editing === "new" ? null : editing}
-          clients={clients.data}
           prestations={prestations.data}
           onClose={() => setEditing(null)}
           onSaved={() => {
@@ -327,7 +328,9 @@ function InvoicePreview({
             <span className="text-sm font-semibold text-white">{formatEUR(invoice.total_ttc)}</span>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            {invoice.status === "Brouillon" && (
+              <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            )}
             <Action
               icon={Download}
               label="PDF"
@@ -342,7 +345,9 @@ function InvoicePreview({
                 }
               }}
             />
-            <Action icon={Trash2} label="" danger onClick={onDelete} />
+            {invoice.status === "Brouillon" && (
+              <Action icon={Trash2} label="" danger onClick={onDelete} />
+            )}
             <Action icon={X} label="" onClick={onClose} />
           </div>
         </div>
@@ -471,19 +476,21 @@ function PaymentModal({
 
 function InvoiceModal({
   value,
-  clients,
   prestations,
   onClose,
   onSaved,
 }: {
   value: Invoice | null;
-  clients: Array<{ id: string; nom_complet: string; entreprise: string | null }>;
   prestations: Array<any>;
   onClose: () => void;
   onSaved: () => void;
 }) {
   const save = useServerFn(saveInvoice);
-  const [clientId, setClientId] = useState(value?.client_id ?? "");
+  const [clientName, setClientName] = useState(value?.client_name ?? "");
+  const [clientCompany, setClientCompany] = useState(value?.client_company ?? "");
+  const [clientSiret, setClientSiret] = useState(value?.client_siret ?? "");
+  const [clientEmail, setClientEmail] = useState(value?.client_email ?? "");
+  const [clientAddress, setClientAddress] = useState(value?.client_address ?? "");
   const [status, setStatus] = useState<InvoiceStatus>(
     value && value.status !== "En retard" ? value.status : "Brouillon",
   );
@@ -504,7 +511,12 @@ function InvoiceModal({
       await save({
         data: {
           id: value?.id ?? null,
-          client_id: clientId || null,
+          client_id: value?.client_id ?? null,
+          client_name: clientName.trim() || null,
+          client_company: clientCompany.trim() || null,
+          client_siret: clientSiret.trim() || null,
+          client_email: clientEmail.trim() || null,
+          client_address: clientAddress.trim() || null,
           status,
           issued_at: issuedAt,
           due_at: dueAt || null,
@@ -540,38 +552,31 @@ function InvoiceModal({
           {value ? `Modifier ${value.number}` : "Nouvelle facture"}
         </h2>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          <label className="block sm:col-span-2">
-            <span className="mb-1 block text-[11px] text-neutral-400">Client</span>
-            <select
-              value={clientId}
-              onChange={(e) => setClientId(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
-            >
-              <option value="">— Sélectionner —</option>
-              {clients.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nom_complet}
-                  {c.entreprise ? ` · ${c.entreprise}` : ""}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-[11px] text-neutral-400">Statut</span>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as InvoiceStatus)}
-              className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
-            >
-              {INVOICE_STATUSES.filter((s) => s !== "En retard").map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </label>
+        <div className="space-y-3 rounded-xl border border-white/10 bg-neutral-900/40 p-3">
+          <p className="text-[11px] uppercase tracking-wider text-neutral-500">Client</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Nom du client" value={clientName} onChange={setClientName} placeholder="Jean Dupont" />
+            <Field label="Entreprise" value={clientCompany} onChange={setClientCompany} placeholder="Dupont SAS" />
+            <Field label="SIRET" value={clientSiret} onChange={setClientSiret} placeholder="123 456 789 00012" />
+            <Field label="Email" value={clientEmail} onChange={setClientEmail} placeholder="jean@exemple.com" />
+          </div>
+          <Field label="Adresse" value={clientAddress} onChange={setClientAddress} placeholder="12 rue…, 75000 Paris" />
         </div>
+
+        <label className="block">
+          <span className="mb-1 block text-[11px] text-neutral-400">Statut</span>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as InvoiceStatus)}
+            className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
+          >
+            {INVOICE_STATUSES.filter((s) => s !== "En retard").map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <label className="block">
@@ -634,5 +639,33 @@ function InvoiceModal({
         </div>
       </motion.form>
     </motion.div>
+  );
+}
+
+function StatusSelect<T extends string>({
+  value,
+  options,
+  onChange,
+}: {
+  value: T;
+  options: readonly T[];
+  onChange: (next: T) => void;
+}) {
+  return (
+    <div className="relative inline-flex items-center">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as T)}
+        className="appearance-none rounded-lg border border-white/10 bg-transparent py-1.5 pl-7 pr-6 text-xs text-neutral-300 transition hover:bg-white/5 focus:border-red-500 focus:outline-none"
+      >
+        {options.map((o) => (
+          <option key={o} value={o} className="bg-neutral-900 text-white">
+            {o}
+          </option>
+        ))}
+      </select>
+      <CircleDot className="pointer-events-none absolute left-2.5 h-3.5 w-3.5 text-neutral-400" />
+      <ChevronDown className="pointer-events-none absolute right-1.5 h-3 w-3 text-neutral-500" />
+    </div>
   );
 }
