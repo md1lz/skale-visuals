@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Copy,
   Download,
+  Eye,
   FileSignature,
   Link2,
   Loader2,
@@ -14,6 +15,7 @@ import {
   Plus,
   Receipt,
   Trash2,
+  X,
 } from "lucide-react";
 import {
   convertQuoteToInvoice,
@@ -21,7 +23,7 @@ import {
   duplicateQuote,
   listPrestations,
   listQuotes,
-  quotePdf,
+  quoteDocument,
   saveQuote,
   sendQuote,
   setQuoteStatus,
@@ -37,7 +39,9 @@ import {
   type Quote,
   type QuoteStatus,
 } from "@/lib/billing.shared";
-import { DocLinesEditor, downloadPdf, emptyLine } from "@/components/DocLinesEditor";
+import { DocLinesEditor, emptyLine } from "@/components/DocLinesEditor";
+import { DocumentPaper, downloadDocumentPdf } from "@/components/DocumentPaper";
+import { useAdminPrefs } from "@/components/admin-prefs";
 
 export const Route = createFileRoute("/office/quotes")({ component: QuotesPage });
 
@@ -48,11 +52,12 @@ function QuotesPage() {
   const removeQuote = useServerFn(deleteQuote);
   const duplicate = useServerFn(duplicateQuote);
   const send = useServerFn(sendQuote);
-  const pdf = useServerFn(quotePdf);
+  const loadDoc = useServerFn(quoteDocument);
   const convert = useServerFn(convertQuoteToInvoice);
   const changeStatus = useServerFn(setQuoteStatus);
 
   const quotes = useQuery({ queryKey: ["office", "quotes"], queryFn: () => fetchQuotes(), initialData: [] });
+
   const prestations = useQuery({
     queryKey: ["office", "prestations"],
     queryFn: () => fetchPrestations(),
