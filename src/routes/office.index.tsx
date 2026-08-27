@@ -192,15 +192,26 @@ function AdminHome() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.04 * i }}
-              className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] uppercase tracking-wider text-neutral-500">
-                  {c.label}
-                </span>
-                <Icon className="h-3.5 w-3.5 text-neutral-600" />
-              </div>
-              <p className="mt-3 text-2xl font-semibold text-neutral-500">—</p>
+              <Link
+                to={c.to}
+                className="block rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur transition hover:border-white/20"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] uppercase tracking-wider text-neutral-500">
+                    {c.label}
+                  </span>
+                  <Icon className="h-3.5 w-3.5 text-neutral-600" />
+                </div>
+                <p
+                  className={`mt-3 text-2xl font-semibold ${
+                    c.danger ? "text-red-400" : "text-white"
+                  }`}
+                >
+                  {c.value}
+                </p>
+                {c.hint && <p className="mt-0.5 text-[11px] text-neutral-500">{c.hint}</p>}
+              </Link>
             </motion.div>
           );
         })}
