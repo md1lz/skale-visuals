@@ -2,8 +2,6 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import {
   db,
-  emailInvoice,
-  emailQuote,
   fetchInvoice,
   fetchInvoices,
   fetchQuote,
@@ -131,6 +129,11 @@ export const saveQuote = createServerFn({ method: "POST" })
       .object({
         id: z.string().uuid().nullable().optional(),
         client_id: z.string().uuid().nullable(),
+        client_name: nullText,
+        client_company: nullText,
+        client_siret: nullText,
+        client_email: nullText,
+        client_address: nullText,
         status: z.enum(QUOTE_STATUSES),
         notes: nullText,
         conditions: nullText,
@@ -144,6 +147,11 @@ export const saveQuote = createServerFn({ method: "POST" })
     const sb = await db();
     const payload = {
       client_id: data.client_id,
+      client_name: data.client_name,
+      client_company: data.client_company,
+      client_siret: data.client_siret,
+      client_email: data.client_email,
+      client_address: data.client_address,
       status: data.status,
       notes: data.notes,
       conditions: data.conditions,
@@ -217,6 +225,11 @@ export const duplicateQuote = createServerFn({ method: "POST" })
       .from("quotes")
       .insert({
         client_id: q.client_id,
+        client_name: q.client_name,
+        client_company: q.client_company,
+        client_siret: q.client_siret,
+        client_email: q.client_email,
+        client_address: q.client_address,
         status: "Brouillon",
         notes: q.notes,
         conditions: q.conditions,
@@ -240,22 +253,6 @@ export const duplicateQuote = createServerFn({ method: "POST" })
     return { ok: true as const, id: created.id };
   });
 
-export const sendQuote = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
-  .handler(async ({ data }) => {
-    await requireAdmin();
-    const row = await fetchQuote(data.id);
-    await emailQuote(row);
-    const sb = await db();
-    if (row.status === "Brouillon") {
-      await sb
-        .from("quotes")
-        .update({ status: "Envoyé", updated_at: new Date().toISOString() })
-        .eq("id", data.id);
-    }
-    return { ok: true as const };
-  });
-
 export const convertQuoteToInvoice = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
   .handler(async ({ data }) => {
@@ -271,6 +268,11 @@ export const convertQuoteToInvoice = createServerFn({ method: "POST" })
       .from("invoices")
       .insert({
         client_id: q.client_id,
+        client_name: q.client_name,
+        client_company: q.client_company,
+        client_siret: q.client_siret,
+        client_email: q.client_email,
+        client_address: q.client_address,
         quote_id: q.id,
         number: await nextNumber("invoice"),
         status: "Brouillon",
@@ -317,6 +319,11 @@ export const saveInvoice = createServerFn({ method: "POST" })
       .object({
         id: z.string().uuid().nullable().optional(),
         client_id: z.string().uuid().nullable(),
+        client_name: nullText,
+        client_company: nullText,
+        client_siret: nullText,
+        client_email: nullText,
+        client_address: nullText,
         status: z.enum(INVOICE_STATUSES),
         notes: nullText,
         conditions: nullText,
@@ -332,6 +339,11 @@ export const saveInvoice = createServerFn({ method: "POST" })
     const status = data.status === "En retard" ? "Envoyée" : data.status;
     const payload = {
       client_id: data.client_id,
+      client_name: data.client_name,
+      client_company: data.client_company,
+      client_siret: data.client_siret,
+      client_email: data.client_email,
+      client_address: data.client_address,
       status,
       notes: data.notes,
       conditions: data.conditions,
@@ -421,22 +433,6 @@ export const deleteInvoice = createServerFn({ method: "POST" })
       throw new Error("Seuls les brouillons peuvent être supprimés.");
     const { error } = await sb.from("invoices").delete().eq("id", data.id);
     if (error) throw new Error(error.message);
-    return { ok: true as const };
-  });
-
-export const sendInvoice = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
-  .handler(async ({ data }) => {
-    await requireAdmin();
-    const row = await fetchInvoice(data.id);
-    await emailInvoice(row);
-    const sb = await db();
-    if (row.status === "Brouillon") {
-      await sb
-        .from("invoices")
-        .update({ status: "Envoyée", updated_at: new Date().toISOString() })
-        .eq("id", data.id);
-    }
     return { ok: true as const };
   });
 
