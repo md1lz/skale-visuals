@@ -304,6 +304,90 @@ function QuotesPage() {
   );
 }
 
+function QuotePreview({
+  quote,
+  onClose,
+  onEdit,
+  onDelete,
+  onCopyLink,
+}: {
+  quote: Quote;
+  onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onCopyLink: () => void;
+}) {
+  const loadDoc = useServerFn(quoteDocument);
+  const { mode } = useAdminPrefs();
+  const [downloading, setDownloading] = useState(false);
+
+  const bundle = useQuery({
+    queryKey: ["office", "quote-doc", quote.id],
+    queryFn: () => loadDoc({ data: { id: quote.id } }),
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      className="fixed inset-0 z-[125] overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
+    >
+      <motion.div
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 240, damping: 26 }}
+        className="mx-auto my-6 w-full max-w-3xl space-y-3"
+      >
+        {/* Action bar — outside the document */}
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-neutral-900/80 p-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <span className={`rounded-full px-2 py-0.5 text-[11px] ${QUOTE_STATUS_STYLE[quote.status]}`}>
+              {quote.status}
+            </span>
+            <span className="truncate text-sm text-neutral-300">
+              {quote.client_name ?? "Client non défini"}
+            </span>
+            <span className="text-sm font-semibold text-white">{formatEUR(quote.total_ttc)}</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            <Action
+              icon={Download}
+              label="PDF"
+              busy={downloading || bundle.isLoading}
+              onClick={async () => {
+                if (!bundle.data) return;
+                setDownloading(true);
+                try {
+                  await downloadDocumentPdf(bundle.data.doc, bundle.data.settings);
+                } finally {
+                  setDownloading(false);
+                }
+              }}
+            />
+            <Action icon={Link2} label="Lien de signature" onClick={onCopyLink} />
+            <Action icon={Trash2} label="" danger onClick={onDelete} />
+            <Action icon={X} label="" onClick={onClose} />
+          </div>
+        </div>
+
+        {bundle.isLoading || !bundle.data ? (
+          <div className="grid h-64 place-items-center rounded-2xl border border-white/10 bg-neutral-900/50">
+            <Loader2 className="h-5 w-5 animate-spin text-neutral-500" />
+          </div>
+        ) : (
+          <DocumentPaper doc={bundle.data.doc} settings={bundle.data.settings} dark={mode === "dark"} />
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
+
+
 function Kpi({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-neutral-900/40 p-4">
