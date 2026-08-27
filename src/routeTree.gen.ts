@@ -21,6 +21,7 @@ import { Route as OfficeIndexRouteImport } from './routes/office.index'
 import { Route as CrmIndexRouteImport } from './routes/crm.index'
 import { Route as StudioSettingsRouteImport } from './routes/studio.settings'
 import { Route as StudioProjectsRouteImport } from './routes/studio.projects'
+import { Route as SignTokenRouteImport } from './routes/sign.$token'
 import { Route as OfficeWebsiteRouteImport } from './routes/office.website'
 import { Route as OfficeSettingsRouteImport } from './routes/office.settings'
 import { Route as OfficeServicesRouteImport } from './routes/office.services'
@@ -97,6 +98,11 @@ const StudioProjectsRoute = StudioProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
   getParentRoute: () => StudioRoute,
+} as any)
+const SignTokenRoute = SignTokenRouteImport.update({
+  id: '/sign/$token',
+  path: '/sign/$token',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const OfficeWebsiteRoute = OfficeWebsiteRouteImport.update({
   id: '/website',
@@ -201,6 +207,7 @@ export interface FileRoutesByFullPath {
   '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
+  '/sign/$token': typeof SignTokenRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
   '/crm/': typeof CrmIndexRoute
@@ -228,6 +235,7 @@ export interface FileRoutesByTo {
   '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
+  '/sign/$token': typeof SignTokenRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
   '/crm': typeof CrmIndexRoute
@@ -259,6 +267,7 @@ export interface FileRoutesById {
   '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
+  '/sign/$token': typeof SignTokenRoute
   '/studio/projects': typeof StudioProjectsRoute
   '/studio/settings': typeof StudioSettingsRoute
   '/crm/': typeof CrmIndexRoute
@@ -291,6 +300,7 @@ export interface FileRouteTypes {
     | '/office/services'
     | '/office/settings'
     | '/office/website'
+    | '/sign/$token'
     | '/studio/projects'
     | '/studio/settings'
     | '/crm/'
@@ -318,6 +328,7 @@ export interface FileRouteTypes {
     | '/office/services'
     | '/office/settings'
     | '/office/website'
+    | '/sign/$token'
     | '/studio/projects'
     | '/studio/settings'
     | '/crm'
@@ -348,6 +359,7 @@ export interface FileRouteTypes {
     | '/office/services'
     | '/office/settings'
     | '/office/website'
+    | '/sign/$token'
     | '/studio/projects'
     | '/studio/settings'
     | '/crm/'
@@ -367,6 +379,7 @@ export interface RootRouteChildren {
   CrmRoute: typeof CrmRouteWithChildren
   OfficeRoute: typeof OfficeRouteWithChildren
   StudioRoute: typeof StudioRouteWithChildren
+  SignTokenRoute: typeof SignTokenRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -458,6 +471,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/studio/projects'
       preLoaderRoute: typeof StudioProjectsRouteImport
       parentRoute: typeof StudioRoute
+    }
+    '/sign/$token': {
+      id: '/sign/$token'
+      path: '/sign/$token'
+      fullPath: '/sign/$token'
+      preLoaderRoute: typeof SignTokenRouteImport
+      parentRoute: typeof rootRouteImport
     }
     '/office/website': {
       id: '/office/website'
@@ -642,6 +662,7 @@ const rootRouteChildren: RootRouteChildren = {
   CrmRoute: CrmRouteWithChildren,
   OfficeRoute: OfficeRouteWithChildren,
   StudioRoute: StudioRouteWithChildren,
+  SignTokenRoute: SignTokenRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,
