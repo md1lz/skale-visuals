@@ -28,6 +28,7 @@ import { Route as OfficeEditorsRouteImport } from './routes/office.editors'
 import { Route as OfficeClientsRouteImport } from './routes/office.clients'
 import { Route as OfficeCallsRouteImport } from './routes/office.calls'
 import { Route as OfficeAnalyticsRouteImport } from './routes/office.analytics'
+import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
@@ -127,6 +128,11 @@ const OfficeAnalyticsRoute = OfficeAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => OfficeRoute,
 } as any)
+const CrmSplatRoute = CrmSplatRouteImport.update({
+  id: '/$',
+  path: '/$',
+  getParentRoute: () => CrmRoute,
+} as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
   path: '/api/public/track',
@@ -150,9 +156,10 @@ export interface FileRoutesByFullPath {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRoute
+  '/crm': typeof CrmRouteWithChildren
   '/office': typeof OfficeRouteWithChildren
   '/studio': typeof StudioRouteWithChildren
+  '/crm/$': typeof CrmSplatRoute
   '/office/analytics': typeof OfficeAnalyticsRoute
   '/office/calls': typeof OfficeCallsRoute
   '/office/clients': typeof OfficeClientsRoute
@@ -174,7 +181,8 @@ export interface FileRoutesByTo {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRoute
+  '/crm': typeof CrmRouteWithChildren
+  '/crm/$': typeof CrmSplatRoute
   '/office/analytics': typeof OfficeAnalyticsRoute
   '/office/calls': typeof OfficeCallsRoute
   '/office/clients': typeof OfficeClientsRoute
@@ -197,9 +205,10 @@ export interface FileRoutesById {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRoute
+  '/crm': typeof CrmRouteWithChildren
   '/office': typeof OfficeRouteWithChildren
   '/studio': typeof StudioRouteWithChildren
+  '/crm/$': typeof CrmSplatRoute
   '/office/analytics': typeof OfficeAnalyticsRoute
   '/office/calls': typeof OfficeCallsRoute
   '/office/clients': typeof OfficeClientsRoute
@@ -226,6 +235,7 @@ export interface FileRouteTypes {
     | '/crm'
     | '/office'
     | '/studio'
+    | '/crm/$'
     | '/office/analytics'
     | '/office/calls'
     | '/office/clients'
@@ -248,6 +258,7 @@ export interface FileRouteTypes {
     | '/app'
     | '/bookacall'
     | '/crm'
+    | '/crm/$'
     | '/office/analytics'
     | '/office/calls'
     | '/office/clients'
@@ -272,6 +283,7 @@ export interface FileRouteTypes {
     | '/crm'
     | '/office'
     | '/studio'
+    | '/crm/$'
     | '/office/analytics'
     | '/office/calls'
     | '/office/clients'
@@ -294,7 +306,7 @@ export interface RootRouteChildren {
   AboutusRoute: typeof AboutusRoute
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
-  CrmRoute: typeof CrmRoute
+  CrmRoute: typeof CrmRouteWithChildren
   OfficeRoute: typeof OfficeRouteWithChildren
   StudioRoute: typeof StudioRouteWithChildren
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -437,6 +449,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfficeAnalyticsRouteImport
       parentRoute: typeof OfficeRoute
     }
+    '/crm/$': {
+      id: '/crm/$'
+      path: '/$'
+      fullPath: '/crm/$'
+      preLoaderRoute: typeof CrmSplatRouteImport
+      parentRoute: typeof CrmRoute
+    }
     '/api/public/track': {
       id: '/api/public/track'
       path: '/api/public/track'
@@ -460,6 +479,16 @@ declare module '@tanstack/react-router' {
     }
   }
 }
+
+interface CrmRouteChildren {
+  CrmSplatRoute: typeof CrmSplatRoute
+}
+
+const CrmRouteChildren: CrmRouteChildren = {
+  CrmSplatRoute: CrmSplatRoute,
+}
+
+const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
 
 interface OfficeRouteChildren {
   OfficeAnalyticsRoute: typeof OfficeAnalyticsRoute
@@ -508,7 +537,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutusRoute: AboutusRoute,
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
-  CrmRoute: CrmRoute,
+  CrmRoute: CrmRouteWithChildren,
   OfficeRoute: OfficeRouteWithChildren,
   StudioRoute: StudioRouteWithChildren,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
