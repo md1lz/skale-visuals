@@ -1,6 +1,7 @@
 import { useSession } from "@tanstack/react-start/server";
 import {
   DEFAULT_BILLING,
+  QUOTE_STATUSES,
   docTotals,
   normalizeBilling,
   type BillingSettings,
@@ -306,7 +307,13 @@ export async function financeKpis() {
   const awaitingSignature = quotes.filter((x) => x.status === "Envoyé");
   const overdue = invoices.filter((x) => x.status === "En retard");
 
+  const quoteStatusCounts = QUOTE_STATUSES.map((st) => ({
+    status: st,
+    count: quotes.filter((x) => x.status === st).length,
+  }));
+
   return {
+    quoteStatusCounts,
     revenueMonth: current,
     revenuePrevMonth: Math.round(previous * 100) / 100,
     pendingPayment: Math.round(pendingPayment * 100) / 100,
