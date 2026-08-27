@@ -27,6 +27,10 @@ export type Quote = {
   id: string;
   client_id: string | null;
   client_name: string | null;
+  client_company: string | null;
+  client_siret: string | null;
+  client_email: string | null;
+  client_address: string | null;
   number: string;
   status: QuoteStatus;
   notes: string | null;
@@ -46,6 +50,10 @@ export type Invoice = {
   id: string;
   client_id: string | null;
   client_name: string | null;
+  client_company: string | null;
+  client_siret: string | null;
+  client_email: string | null;
+  client_address: string | null;
   quote_id: string | null;
   number: string;
   status: InvoiceStatus;
@@ -65,9 +73,11 @@ export type Invoice = {
 export type DocClient = {
   name: string;
   company?: string | null;
+  siret?: string | null;
   email?: string | null;
   address?: string | null;
 };
+
 
 export type DocumentPayload = {
   kind: "quote" | "invoice";
