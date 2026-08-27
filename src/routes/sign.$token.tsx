@@ -2,10 +2,10 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
-import { Check, Eraser, FileSignature, Loader2, ShieldCheck } from "lucide-react";
-import { getQuoteForSigning, signQuote } from "@/lib/billing-public.functions";
-import { docTotals, formatDateFR, formatEUR, lineTotals } from "@/lib/billing.shared";
+import { motion, AnimatePresence } from "framer-motion";
+import { Check, Download, Eraser, Loader2, Share2, ShieldCheck } from "lucide-react";
+import { getPublicDocument, signQuote } from "@/lib/billing-public.functions";
+import { DocumentPaper, downloadDocumentPdf } from "@/components/DocumentPaper";
 
 export const Route = createFileRoute("/sign/$token")({
   head: () => ({
@@ -29,11 +29,7 @@ export const Route = createFileRoute("/sign/$token")({
   component: SignPage,
 });
 
-function SignaturePad({
-  onChange,
-}: {
-  onChange: (dataUrl: string | null) => void;
-}) {
+function SignaturePad({ onChange }: { onChange: (dataUrl: string | null) => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const drawing = useRef(false);
   const dirty = useRef(false);
@@ -117,23 +113,22 @@ function SignaturePad({
 
 function SignPage() {
   const { token } = Route.useParams();
-  const load = useServerFn(getQuoteForSigning);
+  const load = useServerFn(getPublicDocument);
   const submit = useServerFn(signQuote);
 
   const q = useQuery({
-    queryKey: ["sign", token],
-    queryFn: () => load({ data: { token } }),
+    queryKey: ["sign-doc", token],
+    queryFn: () => load({ data: { kind: "quote" as const, token } }),
   });
 
-  const [signerName, setSignerName] = useState("");
   const [signature, setSignature] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
+  const [downloading, setDownloading] = useState(false);
 
   if (q.isLoading) {
     return (
-      <div className="grid min-h-screen place-items-center bg-neutral-50 text-neutral-500">
+      <div className="grid min-h-screen place-items-center bg-neutral-100 text-neutral-500">
         <Loader2 className="h-6 w-6 animate-spin" />
       </div>
     );
@@ -141,32 +136,29 @@ function SignPage() {
 
   if (!q.data) {
     return (
-      <div className="grid min-h-screen place-items-center bg-neutral-50 px-6 text-center">
+      <main className="grid min-h-screen place-items-center bg-neutral-100 px-6 text-center">
         <div>
           <h1 className="text-2xl font-semibold text-neutral-900">Devis introuvable</h1>
           <p className="mt-2 text-sm text-neutral-500">
             Ce lien de signature n'est plus valide. Contactez-nous à contact@skalevisuals.com.
           </p>
         </div>
-      </div>
+      </main>
     );
   }
 
-  const { quote, settings } = q.data;
-  const totals = docTotals(quote.lines);
-  const alreadySigned = quote.status === "Signé" || done;
+  const { doc, settings } = q.data;
+  const signed = !!doc.signature?.signedAt;
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSign() {
     if (busy) return;
-    if (signerName.trim().length < 2) return setError("Indiquez votre nom complet.");
     if (!signature) return setError("Merci de signer dans le cadre prévu.");
     setBusy(true);
     setError(null);
     try {
-      const res = await submit({ data: { token, signerName: signerName.trim(), signature } });
+      const res = await submit({ data: { token, signature } });
       if (!res.ok) setError(res.error);
-      else setDone(true);
+      else await q.refetch();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur");
     } finally {
@@ -175,126 +167,97 @@ function SignPage() {
   }
 
   return (
-    <main className="min-h-screen bg-neutral-50 px-4 py-10 text-neutral-900 md:py-16">
-      <div className="mx-auto w-full max-w-3xl space-y-6">
-        <motion.header
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="text-center"
-        >
-          <p className="font-kangge text-3xl tracking-tight">Skale Visuals</p>
-          <h1 className="mt-4 text-2xl font-semibold tracking-tight md:text-3xl">
-            Devis {quote.number}
-          </h1>
-          <p className="mt-1 text-sm text-neutral-500">
-            {quote.client_name ?? "Client"} · émis le {formatDateFR(quote.created_at)}
-            {quote.valid_until ? ` · valable jusqu'au ${formatDateFR(quote.valid_until)}` : ""}
-          </p>
-        </motion.header>
-
-        <motion.section
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.05 }}
-          className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm md:p-7"
-        >
-          <div className="space-y-3">
-            {quote.lines.map((l, i) => {
-              const t = lineTotals(l);
-              return (
-                <div
-                  key={i}
-                  className="flex items-start justify-between gap-4 border-b border-neutral-100 pb-3 last:border-0 last:pb-0"
-                >
-                  <div>
-                    <p className="text-sm font-medium">{l.label}</p>
-                    <p className="text-xs text-neutral-500">
-                      {l.quantity} × {formatEUR(l.unit_price_ht)} HT · TVA {l.tva_rate}%
-                    </p>
-                  </div>
-                  <p className="shrink-0 text-sm font-semibold">{formatEUR(t.ht)}</p>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="mt-5 space-y-1.5 border-t border-neutral-200 pt-4 text-sm">
-            <div className="flex justify-between text-neutral-500">
-              <span>Total HT</span>
-              <span>{formatEUR(totals.total_ht)}</span>
-            </div>
-            <div className="flex justify-between text-neutral-500">
-              <span>TVA</span>
-              <span>{formatEUR(totals.total_tva)}</span>
-            </div>
-            <div className="flex justify-between text-base font-semibold">
-              <span>Total TTC</span>
-              <span>{formatEUR(totals.total_ttc)}</span>
-            </div>
-          </div>
-
-          {quote.conditions && (
-            <p className="mt-5 whitespace-pre-line rounded-2xl bg-neutral-50 p-4 text-xs leading-relaxed text-neutral-500">
-              {quote.conditions}
-            </p>
+    <main className="min-h-screen bg-neutral-100 px-3 py-6 text-neutral-900 md:py-12">
+      <div className="mx-auto w-full max-w-3xl space-y-4">
+        <AnimatePresence>
+          {signed && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              className="flex items-center justify-center"
+            >
+              <span className="inline-flex items-center gap-2 rounded-full bg-emerald-500 px-4 py-2 text-sm font-semibold text-white shadow-lg shadow-emerald-500/25">
+                <Check className="h-4 w-4" /> Signé
+              </span>
+            </motion.div>
           )}
-        </motion.section>
+        </AnimatePresence>
 
-        {alreadySigned ? (
+        <motion.div initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }}>
+          <DocumentPaper doc={doc} settings={settings} />
+        </motion.div>
+
+        {signed ? (
           <motion.div
-            initial={{ opacity: 0, scale: 0.97 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="rounded-3xl border border-emerald-200 bg-emerald-50 p-6 text-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex flex-wrap items-center justify-center gap-2 rounded-full border border-neutral-200 bg-white/80 px-3 py-2 backdrop-blur"
           >
-            <span className="mx-auto grid h-11 w-11 place-items-center rounded-full bg-emerald-500 text-white">
-              <Check className="h-5 w-5" />
-            </span>
-            <h2 className="mt-3 text-lg font-semibold text-emerald-900">Devis signé</h2>
-            <p className="mt-1 text-sm text-emerald-800/80">
-              Merci ! Une copie signée vous a été envoyée par email. Nous revenons vers vous très
-              vite.
-            </p>
+            <button
+              onClick={async () => {
+                setDownloading(true);
+                try {
+                  await downloadDocumentPdf(doc, settings);
+                } finally {
+                  setDownloading(false);
+                }
+              }}
+              disabled={downloading}
+              className="inline-flex items-center gap-2 rounded-full bg-neutral-900 px-4 py-2 text-sm font-medium text-white transition hover:bg-neutral-800 disabled:opacity-60"
+            >
+              {downloading ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4" />
+              )}
+              PDF
+            </button>
+            <button
+              onClick={async () => {
+                const url = window.location.href;
+                if (navigator.share) {
+                  await navigator.share({ title: `Devis ${doc.number}`, url }).catch(() => {});
+                } else {
+                  await navigator.clipboard?.writeText(url);
+                }
+              }}
+              className="inline-flex items-center gap-2 rounded-full border border-neutral-200 bg-white px-4 py-2 text-sm font-medium text-neutral-700 transition hover:bg-neutral-50"
+            >
+              <Share2 className="h-4 w-4" /> Partager
+            </button>
           </motion.div>
         ) : (
-          <motion.form
-            initial={{ opacity: 0, y: 12 }}
+          <motion.section
+            initial={{ opacity: 0, y: 14 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-            onSubmit={onSubmit}
+            transition={{ delay: 0.05 }}
             className="rounded-3xl border border-neutral-200 bg-white p-5 shadow-sm md:p-7"
           >
-            <div className="mb-4 flex items-center gap-2 text-sm font-semibold">
-              <FileSignature className="h-4 w-4 text-rose-500" />
-              Signature électronique
-            </div>
-            <label className="block">
-              <span className="mb-1 block text-xs text-neutral-500">Nom et prénom</span>
-              <input
-                value={signerName}
-                onChange={(e) => setSignerName(e.target.value)}
-                placeholder="Julie Martin"
-                className="w-full rounded-xl border border-neutral-200 px-3 py-2.5 text-sm outline-none transition focus:border-neutral-900"
-              />
-            </label>
+            <p className="text-base italic text-neutral-900">Bon pour accord</p>
+            <p className="mt-1 text-xs text-neutral-500">
+              Signez ci-dessous avec la souris ou le doigt.
+            </p>
             <div className="mt-4">
-              <span className="mb-1 block text-xs text-neutral-500">
-                Signez ci-dessous (souris ou doigt)
-              </span>
               <SignaturePad onChange={setSignature} />
             </div>
             {error && <p className="mt-3 text-xs text-rose-600">{error}</p>}
             <button
-              type="submit"
+              onClick={onSign}
               disabled={busy}
               className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-neutral-900 px-6 py-3 text-sm font-semibold text-white transition hover:bg-neutral-800 disabled:opacity-60"
             >
-              {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-              {busy ? "Signature en cours…" : "Signer le devis"}
+              {busy ? (
+                <Loader2 className="h-4 w-4 animate-spin" />
+              ) : (
+                <ShieldCheck className="h-4 w-4" />
+              )}
+              {busy ? "Signature en cours…" : "Signer"}
             </button>
             <p className="mt-3 text-center text-[11px] text-neutral-400">
-              En signant, vous acceptez le devis et les conditions de {settings.legalName}.
+              En signant, vous acceptez le devis et les conditions de{" "}
+              {settings.legalName || "Skale Visuals"}.
             </p>
-          </motion.form>
+          </motion.section>
         )}
       </div>
     </main>
