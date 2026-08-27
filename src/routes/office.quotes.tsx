@@ -264,6 +264,31 @@ function QuotesPage() {
       )}
 
       <AnimatePresence>
+        {preview && (
+          <QuotePreview
+            quote={preview}
+            onClose={() => setPreview(null)}
+            onEdit={() => {
+              setEditing(preview);
+              setPreview(null);
+            }}
+            onDelete={() => {
+              if (!confirm(`Supprimer le devis ${preview.number} ?`)) return;
+              const id = preview.id;
+              setPreview(null);
+              run(id, () => removeQuote({ data: { id } }));
+            }}
+            onCopyLink={() => {
+              navigator.clipboard?.writeText(`${window.location.origin}/sign/${preview.sign_token}`);
+              flash("Lien de signature copié.");
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+
+
+      <AnimatePresence>
         {toast && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
