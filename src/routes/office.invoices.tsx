@@ -525,7 +525,7 @@ function InvoiceModal({
             disabled={busy}
             className="flex-1 rounded-lg bg-red-600 px-3 py-2 text-sm font-medium text-white transition hover:bg-red-500 disabled:opacity-70"
           >
-            {busy ? "Enregistrement…" : `Enregistrer · ${formatEUR(docTotals(lines).ttc)}`}
+            {busy ? "Enregistrement…" : `Enregistrer · ${formatEUR(docTotals(lines).total_ttc)}`}
           </button>
         </div>
       </motion.form>

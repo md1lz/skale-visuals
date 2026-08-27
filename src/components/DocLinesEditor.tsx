@@ -133,15 +133,15 @@ export function DocLinesEditor({
       <div className="space-y-1 rounded-xl border border-white/10 bg-white/[0.02] p-3 text-sm">
         <div className="flex justify-between text-neutral-400">
           <span>Total HT</span>
-          <span>{formatEUR(totals.ht)}</span>
+          <span>{formatEUR(totals.total_ht)}</span>
         </div>
         <div className="flex justify-between text-neutral-400">
           <span>TVA</span>
-          <span>{formatEUR(totals.tva)}</span>
+          <span>{formatEUR(totals.total_tva)}</span>
         </div>
         <div className="flex justify-between font-semibold text-white">
           <span>Total TTC</span>
-          <span>{formatEUR(totals.ttc)}</span>
+          <span>{formatEUR(totals.total_ttc)}</span>
         </div>
       </div>
     </div>

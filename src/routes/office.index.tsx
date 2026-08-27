@@ -31,6 +31,8 @@ import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.funct
 import { getAdminProfile } from "@/lib/admin-auth.functions";
 import { listFollowupsDue } from "@/lib/admin-prospects.functions";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
+import { getFinanceKpis } from "@/lib/billing.functions";
+import { formatEUR } from "@/lib/billing.shared";
 
 export const Route = createFileRoute("/office/")({
   component: AdminHome,
@@ -115,11 +117,43 @@ function AdminHome() {
     { label: "Devis soumis", value: dayQ.isLoading ? "…" : fmtNum(k?.devisSubmitted), icon: FileSignature },
   ];
 
+  const fetchFinance = useServerFn(getFinanceKpis);
+  const finance = useQuery({ queryKey: ["office", "finance-kpis"], queryFn: () => fetchFinance() });
+  const fk = finance.data;
   const financeCards = [
-    { label: "CA du mois", icon: TrendingUp },
-    { label: "En attente de paiement", icon: Clock },
-    { label: "Devis à signer", icon: FileSignature },
-    { label: "Factures en retard", icon: AlertTriangle },
+    {
+      label: "CA du mois",
+      icon: TrendingUp,
+      value: fk ? formatEUR(fk.revenueMonth) : "—",
+      hint:
+        fk && fk.revenuePrevMonth > 0
+          ? `${fk.revenueMonth >= fk.revenuePrevMonth ? "+" : ""}${Math.round(
+              ((fk.revenueMonth - fk.revenuePrevMonth) / fk.revenuePrevMonth) * 100,
+            )} % vs mois dernier`
+          : undefined,
+      to: "/office/invoices",
+    },
+    {
+      label: "En attente de paiement",
+      icon: Clock,
+      value: fk ? formatEUR(fk.pendingPayment) : "—",
+      to: "/office/invoices",
+    },
+    {
+      label: "Devis à signer",
+      icon: FileSignature,
+      value: fk ? formatEUR(fk.awaitingSignatureAmount) : "—",
+      hint: fk ? `${fk.awaitingSignatureCount} devis envoyés` : undefined,
+      to: "/office/quotes",
+    },
+    {
+      label: "Factures en retard",
+      icon: AlertTriangle,
+      value: fk ? formatEUR(fk.overdueAmount) : "—",
+      hint: fk ? `${fk.overdueCount} facture(s)` : undefined,
+      danger: !!fk && fk.overdueCount > 0,
+      to: "/office/invoices",
+    },
   ];
 
   return (
@@ -162,15 +196,26 @@ function AdminHome() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: 0.04 * i }}
-              className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur"
             >
-              <div className="flex items-center justify-between">
-                <span className="text-[11px] uppercase tracking-wider text-neutral-500">
-                  {c.label}
-                </span>
-                <Icon className="h-3.5 w-3.5 text-neutral-600" />
-              </div>
-              <p className="mt-3 text-2xl font-semibold text-neutral-500">—</p>
+              <Link
+                to={c.to}
+                className="block rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur transition hover:border-white/20"
+              >
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] uppercase tracking-wider text-neutral-500">
+                    {c.label}
+                  </span>
+                  <Icon className="h-3.5 w-3.5 text-neutral-600" />
+                </div>
+                <p
+                  className={`mt-3 text-2xl font-semibold ${
+                    c.danger ? "text-red-400" : "text-white"
+                  }`}
+                >
+                  {c.value}
+                </p>
+                {c.hint && <p className="mt-0.5 text-[11px] text-neutral-500">{c.hint}</p>}
+              </Link>
             </motion.div>
           );
         })}

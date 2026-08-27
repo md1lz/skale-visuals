@@ -221,15 +221,15 @@ function SignPage() {
           <div className="mt-5 space-y-1.5 border-t border-neutral-200 pt-4 text-sm">
             <div className="flex justify-between text-neutral-500">
               <span>Total HT</span>
-              <span>{formatEUR(totals.ht)}</span>
+              <span>{formatEUR(totals.total_ht)}</span>
             </div>
             <div className="flex justify-between text-neutral-500">
               <span>TVA</span>
-              <span>{formatEUR(totals.tva)}</span>
+              <span>{formatEUR(totals.total_tva)}</span>
             </div>
             <div className="flex justify-between text-base font-semibold">
               <span>Total TTC</span>
-              <span>{formatEUR(totals.ttc)}</span>
+              <span>{formatEUR(totals.total_ttc)}</span>
             </div>
           </div>
 
