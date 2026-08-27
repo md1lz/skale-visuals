@@ -27,6 +27,10 @@ export type Quote = {
   id: string;
   client_id: string | null;
   client_name: string | null;
+  client_company: string | null;
+  client_siret: string | null;
+  client_email: string | null;
+  client_address: string | null;
   number: string;
   status: QuoteStatus;
   notes: string | null;
@@ -46,6 +50,10 @@ export type Invoice = {
   id: string;
   client_id: string | null;
   client_name: string | null;
+  client_company: string | null;
+  client_siret: string | null;
+  client_email: string | null;
+  client_address: string | null;
   quote_id: string | null;
   number: string;
   status: InvoiceStatus;
@@ -65,9 +73,11 @@ export type Invoice = {
 export type DocClient = {
   name: string;
   company?: string | null;
+  siret?: string | null;
   email?: string | null;
   address?: string | null;
 };
+
 
 export type DocumentPayload = {
   kind: "quote" | "invoice";
@@ -89,6 +99,8 @@ export type BillingSettings = {
   legalName: string;
   address: string;
   siret: string;
+  /** true = pas encore de SIRET (société en cours d'immatriculation). */
+  siretPending: boolean;
   vatNumber: string;
   iban: string;
   bic: string;
@@ -103,10 +115,21 @@ export type BillingSettings = {
   defaultConditions: string;
 };
 
+export const PENDING_SIRET_LABEL = "En attente d'immatriculation";
+export const PENDING_SIRET_MENTION =
+  "Entreprise en cours d'immatriculation — numéro SIRET en attente d'attribution par l'INSEE. Mention portée conformément à l'article R.123-237 du Code de commerce, la demande d'immatriculation ayant été déposée auprès du guichet unique des formalités des entreprises.";
+
+/** SIRET shown on documents (or the legal pending label). */
+export function siretLabel(s: BillingSettings): string {
+  if (s.siretPending || !s.siret.trim()) return PENDING_SIRET_LABEL;
+  return s.siret.trim();
+}
+
 export const DEFAULT_BILLING: BillingSettings = {
   legalName: "Skale Visuals",
   address: "",
   siret: "",
+  siretPending: true,
   vatNumber: "TVA non applicable, art. 293 B du CGI",
   iban: "",
   bic: "",
@@ -123,15 +146,20 @@ export const DEFAULT_BILLING: BillingSettings = {
     "Devis valable 30 jours. Acompte de 30 % à la signature, solde à la livraison.",
 };
 
+
 export function normalizeBilling(value: unknown): BillingSettings {
   const v = (value ?? {}) as Partial<BillingSettings>;
-  return {
+  const merged = {
     ...DEFAULT_BILLING,
     ...Object.fromEntries(
       Object.entries(v).filter(([, val]) => val !== null && val !== undefined),
     ),
   } as BillingSettings;
+  if (v.siretPending === undefined) merged.siretPending = !String(merged.siret ?? "").trim();
+  merged.siretPending = !!merged.siretPending;
+  return merged;
 }
+
 
 export function lineTotals(line: DocLine) {
   const ht = (Number(line.quantity) || 0) * (Number(line.unit_price_ht) || 0);

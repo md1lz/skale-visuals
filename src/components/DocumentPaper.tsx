@@ -3,6 +3,8 @@ import {
   formatDateFR,
   formatEUR,
   lineTotals,
+  siretLabel,
+  PENDING_SIRET_MENTION,
   type BillingSettings,
   type DocumentPayload,
 } from "@/lib/billing.shared";
@@ -112,9 +114,7 @@ export function DocumentPaper({
             <p style={{ fontSize: 12, color: muted, marginTop: 4 }}>
               {settings.email || "contact@skalevisuals.com"}
             </p>
-            {!!settings.siret && (
-              <p style={{ fontSize: 12, color: muted }}>SIRET : {settings.siret}</p>
-            )}
+            <p style={{ fontSize: 12, color: muted }}>SIRET : {siretLabel(settings)}</p>
           </div>
         </div>
 
@@ -135,7 +135,13 @@ export function DocumentPaper({
           {!!doc.client.company && (
             <p style={{ fontSize: 12, color: muted }}>{doc.client.company}</p>
           )}
+          {!!doc.client.siret && (
+            <p style={{ fontSize: 12, color: muted }}>SIRET : {doc.client.siret}</p>
+          )}
           {!!doc.client.email && <p style={{ fontSize: 12, color: muted }}>{doc.client.email}</p>}
+          {!!doc.client.address && (
+            <p style={{ fontSize: 12, color: muted, whiteSpace: "pre-line" }}>{doc.client.address}</p>
+          )}
         </div>
 
         {/* Lines */}
@@ -222,6 +228,12 @@ export function DocumentPaper({
           </p>
         )}
 
+        {(settings.siretPending || !settings.siret.trim()) && (
+          <p style={{ fontSize: 11, color: muted, marginTop: 8, lineHeight: 1.6 }}>
+            {PENDING_SIRET_MENTION}
+          </p>
+        )}
+
         {/* Footer */}
         <div
           style={{
@@ -242,7 +254,7 @@ export function DocumentPaper({
           </div>
 
           {isQuote && (
-            <div style={{ textAlign: "left" }}>
+            <div style={{ textAlign: "right" }}>
               <p style={{ fontSize: 13, fontStyle: "italic", color: ink }}>Bon pour accord</p>
               <div
                 style={{

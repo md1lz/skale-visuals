@@ -4,13 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  ChevronDown,
+  CircleDot,
   Copy,
   Download,
   Eye,
-  FileSignature,
   Link2,
   Loader2,
-  Mail,
   Pencil,
   Plus,
   Receipt,
@@ -25,10 +25,8 @@ import {
   listQuotes,
   quoteDocument,
   saveQuote,
-  sendQuote,
   setQuoteStatus,
 } from "@/lib/billing.functions";
-import { listClients } from "@/lib/admin-clients.functions";
 import {
   QUOTE_STATUSES,
   QUOTE_STATUS_STYLE,
@@ -48,10 +46,8 @@ export const Route = createFileRoute("/office/quotes")({ component: QuotesPage }
 function QuotesPage() {
   const fetchQuotes = useServerFn(listQuotes);
   const fetchPrestations = useServerFn(listPrestations);
-  const fetchClients = useServerFn(listClients);
   const removeQuote = useServerFn(deleteQuote);
   const duplicate = useServerFn(duplicateQuote);
-  const send = useServerFn(sendQuote);
   const loadDoc = useServerFn(quoteDocument);
   const convert = useServerFn(convertQuoteToInvoice);
   const changeStatus = useServerFn(setQuoteStatus);
@@ -61,11 +57,6 @@ function QuotesPage() {
   const prestations = useQuery({
     queryKey: ["office", "prestations"],
     queryFn: () => fetchPrestations(),
-    initialData: [],
-  });
-  const clients = useQuery({
-    queryKey: ["office", "clients"],
-    queryFn: () => fetchClients(),
     initialData: [],
   });
 
@@ -169,16 +160,14 @@ function QuotesPage() {
 
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <Action icon={Eye} label="Aperçu" onClick={() => setPreview(q)} />
-                <Action icon={Pencil} label="Modifier" onClick={() => setEditing(q)} />
-                <Action
-                  icon={Mail}
-                  label="Envoyer"
-                  busy={busyId === q.id}
-                  onClick={() =>
-                    run(q.id, async () => {
-                      await send({ data: { id: q.id } });
-                      flash(`Devis ${q.number} envoyé par email.`);
-                    })
+                {q.status === "Brouillon" && (
+                  <Action icon={Pencil} label="Modifier" onClick={() => setEditing(q)} />
+                )}
+                <StatusSelect
+                  value={q.status}
+                  options={QUOTE_STATUSES}
+                  onChange={(next) =>
+                    run(q.id, () => changeStatus({ data: { id: q.id, status: next } }))
                   }
                 />
                 <Action
@@ -201,7 +190,6 @@ function QuotesPage() {
                     })
                   }
                 />
-
                 <Action
                   icon={Copy}
                   label="Dupliquer"
@@ -217,13 +205,6 @@ function QuotesPage() {
                         flash("Facture créée depuis le devis.");
                       })
                     }
-                  />
-                )}
-                {q.status === "Envoyé" && (
-                  <Action
-                    icon={FileSignature}
-                    label="Marquer refusé"
-                    onClick={() => run(q.id, () => changeStatus({ data: { id: q.id, status: "Refusé" } }))}
                   />
                 )}
                 {q.status === "Brouillon" && (
@@ -253,7 +234,6 @@ function QuotesPage() {
       {editing && (
         <QuoteModal
           value={editing === "new" ? null : editing}
-          clients={clients.data}
           prestations={prestations.data}
           onClose={() => setEditing(null)}
           onSaved={() => {
@@ -354,7 +334,9 @@ function QuotePreview({
             <span className="text-sm font-semibold text-white">{formatEUR(quote.total_ttc)}</span>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            {quote.status === "Brouillon" && (
+              <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            )}
             <Action
               icon={Download}
               label="PDF"
@@ -370,7 +352,9 @@ function QuotePreview({
               }}
             />
             <Action icon={Link2} label="Lien de signature" onClick={onCopyLink} />
-            <Action icon={Trash2} label="" danger onClick={onDelete} />
+            {quote.status === "Brouillon" && (
+              <Action icon={Trash2} label="" danger onClick={onDelete} />
+            )}
             <Action icon={X} label="" onClick={onClose} />
           </div>
         </div>
@@ -425,21 +409,51 @@ function Action({
   );
 }
 
+function StatusSelect<T extends string>({
+  value,
+  options,
+  onChange,
+}: {
+  value: T;
+  options: readonly T[];
+  onChange: (next: T) => void;
+}) {
+  return (
+    <div className="relative inline-flex items-center">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as T)}
+        className="appearance-none rounded-lg border border-white/10 bg-transparent py-1.5 pl-7 pr-6 text-xs text-neutral-300 transition hover:bg-white/5 focus:border-red-500 focus:outline-none"
+      >
+        {options.map((o) => (
+          <option key={o} value={o} className="bg-neutral-900 text-white">
+            {o}
+          </option>
+        ))}
+      </select>
+      <CircleDot className="pointer-events-none absolute left-2.5 h-3.5 w-3.5 text-neutral-400" />
+      <ChevronDown className="pointer-events-none absolute right-1.5 h-3 w-3 text-neutral-500" />
+    </div>
+  );
+}
+
 function QuoteModal({
   value,
-  clients,
   prestations,
   onClose,
   onSaved,
 }: {
   value: Quote | null;
-  clients: Array<{ id: string; nom_complet: string; entreprise: string | null }>;
   prestations: Array<any>;
   onClose: () => void;
   onSaved: () => void;
 }) {
   const save = useServerFn(saveQuote);
-  const [clientId, setClientId] = useState(value?.client_id ?? "");
+  const [clientName, setClientName] = useState(value?.client_name ?? "");
+  const [clientCompany, setClientCompany] = useState(value?.client_company ?? "");
+  const [clientSiret, setClientSiret] = useState(value?.client_siret ?? "");
+  const [clientEmail, setClientEmail] = useState(value?.client_email ?? "");
+  const [clientAddress, setClientAddress] = useState(value?.client_address ?? "");
   const [status, setStatus] = useState<QuoteStatus>(value?.status ?? "Brouillon");
   const [validUntil, setValidUntil] = useState(value?.valid_until ?? "");
   const [notes, setNotes] = useState(value?.notes ?? "");
@@ -457,7 +471,12 @@ function QuoteModal({
       await save({
         data: {
           id: value?.id ?? null,
-          client_id: clientId || null,
+          client_id: value?.client_id ?? null,
+          client_name: clientName.trim() || null,
+          client_company: clientCompany.trim() || null,
+          client_siret: clientSiret.trim() || null,
+          client_email: clientEmail.trim() || null,
+          client_address: clientAddress.trim() || null,
           status,
           valid_until: validUntil || null,
           notes,
@@ -492,38 +511,31 @@ function QuoteModal({
           {value ? `Modifier ${value.number}` : "Nouveau devis"}
         </h2>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          <label className="block sm:col-span-2">
-            <span className="mb-1 block text-[11px] text-neutral-400">Client</span>
-            <select
-              value={clientId}
-              onChange={(e) => setClientId(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
-            >
-              <option value="">— Sélectionner —</option>
-              {clients.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nom_complet}
-                  {c.entreprise ? ` · ${c.entreprise}` : ""}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-[11px] text-neutral-400">Statut</span>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as QuoteStatus)}
-              className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
-            >
-              {QUOTE_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </label>
+        <div className="space-y-3 rounded-xl border border-white/10 bg-neutral-900/40 p-3">
+          <p className="text-[11px] uppercase tracking-wider text-neutral-500">Client</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Nom du client" value={clientName} onChange={setClientName} placeholder="Jean Dupont" />
+            <Field label="Entreprise" value={clientCompany} onChange={setClientCompany} placeholder="Dupont SAS" />
+            <Field label="SIRET" value={clientSiret} onChange={setClientSiret} placeholder="123 456 789 00012" />
+            <Field label="Email" value={clientEmail} onChange={setClientEmail} placeholder="jean@exemple.com" />
+          </div>
+          <Field label="Adresse" value={clientAddress} onChange={setClientAddress} placeholder="12 rue…, 75000 Paris" />
         </div>
+
+        <label className="block">
+          <span className="mb-1 block text-[11px] text-neutral-400">Statut</span>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as QuoteStatus)}
+            className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
+          >
+            {QUOTE_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <label className="block">
           <span className="mb-1 block text-[11px] text-neutral-400">Valable jusqu'au</span>
@@ -576,5 +588,29 @@ function QuoteModal({
         </div>
       </motion.form>
     </motion.div>
+  );
+}
+
+export function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-[11px] text-neutral-400">{label}</span>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
+      />
+    </label>
   );
 }

@@ -4,6 +4,8 @@ import {
   formatDateFR,
   formatEUR,
   lineTotals,
+  siretLabel,
+  PENDING_SIRET_MENTION,
   type BillingSettings,
   type DocumentPayload,
 } from "@/lib/billing.shared";
@@ -143,7 +145,7 @@ export function DocumentPdf({
               skale visuals.
             </Text>
             <Text style={s.meta}>{settings.email || "contact@skalevisuals.com"}</Text>
-            {!!settings.siret && <Text style={s.meta}>SIRET : {settings.siret}</Text>}
+            <Text style={s.meta}>SIRET : {siretLabel(settings)}</Text>
           </View>
         </View>
 
@@ -151,6 +153,7 @@ export function DocumentPdf({
           <Text style={s.sectionTitle}>CLIENT</Text>
           <Text style={{ fontFamily: "Helvetica-Bold", fontSize: 11 }}>{doc.client.name}</Text>
           {!!doc.client.company && <Text style={s.meta}>{doc.client.company}</Text>}
+          {!!doc.client.siret && <Text style={s.meta}>SIRET : {doc.client.siret}</Text>}
           {!!doc.client.email && <Text style={s.meta}>{doc.client.email}</Text>}
           {!!doc.client.address && <Text style={s.meta}>{doc.client.address}</Text>}
         </View>
@@ -208,32 +211,34 @@ export function DocumentPdf({
           </Text>
         )}
 
+        {(settings.siretPending || !settings.siret.trim()) && (
+          <Text style={[s.body, { marginTop: 6, color: MUTED, fontSize: 7.5 }]}>
+            {PENDING_SIRET_MENTION}
+          </Text>
+        )}
+
         {isQuote && (
-          <View style={[s.block, s.row]} wrap={false}>
-            <View style={{ maxWidth: 240 }}>
-              <Text style={[s.body, { fontFamily: "Helvetica-Oblique", fontSize: 10, color: INK }]}>
-                Bon pour accord
-              </Text>
-              {!!doc.signature?.signedAt && (
-                <Text style={[s.body, { marginTop: 6, color: RED }]}>
-                  Signé électroniquement par {doc.signature.name ?? ""} le{" "}
-                  {formatDateFR(doc.signature.signedAt)}
-                </Text>
-              )}
-            </View>
-            <View style={s.signBox}>
-              <Text style={s.sectionTitle}>SIGNATURE DU CLIENT</Text>
+          <View style={[s.block, { alignItems: "flex-end" }]} wrap={false}>
+            <Text
+              style={[s.body, { fontFamily: "Helvetica-Oblique", fontSize: 10, color: INK, textAlign: "right" }]}
+            >
+              Bon pour accord
+            </Text>
+            <View style={[s.signBox, { marginTop: 4 }]}>
               {doc.signature?.dataUrl ? (
-                <Image
-                  src={doc.signature.dataUrl}
-                  style={{ marginTop: 4, height: 58, objectFit: "contain" }}
-                />
+                <Image src={doc.signature.dataUrl} style={{ height: 62, objectFit: "contain" }} />
               ) : doc.signature?.name ? (
-                <Text style={{ marginTop: 22, fontSize: 14, color: RED }}>
+                <Text style={{ marginTop: 24, fontSize: 14, color: RED, textAlign: "center" }}>
                   {doc.signature.name}
                 </Text>
               ) : null}
             </View>
+            {!!doc.signature?.signedAt && (
+              <Text style={[s.body, { marginTop: 5, color: RED, textAlign: "right" }]}>
+                Signé électroniquement par {doc.signature.name ?? ""} le{" "}
+                {formatDateFR(doc.signature.signedAt)}
+              </Text>
+            )}
           </View>
         )}
 

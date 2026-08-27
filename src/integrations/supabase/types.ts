@@ -418,7 +418,12 @@ export type Database = {
       }
       invoices: {
         Row: {
+          client_address: string | null
+          client_company: string | null
+          client_email: string | null
           client_id: string | null
+          client_name: string | null
+          client_siret: string | null
           conditions: string | null
           created_at: string
           due_at: string | null
@@ -434,7 +439,12 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          client_address?: string | null
+          client_company?: string | null
+          client_email?: string | null
           client_id?: string | null
+          client_name?: string | null
+          client_siret?: string | null
           conditions?: string | null
           created_at?: string
           due_at?: string | null
@@ -450,7 +460,12 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          client_address?: string | null
+          client_company?: string | null
+          client_email?: string | null
           client_id?: string | null
+          client_name?: string | null
+          client_siret?: string | null
           conditions?: string | null
           created_at?: string
           due_at?: string | null
@@ -1110,7 +1125,12 @@ export type Database = {
       }
       quotes: {
         Row: {
+          client_address: string | null
+          client_company: string | null
+          client_email: string | null
           client_id: string | null
+          client_name: string | null
+          client_siret: string | null
           conditions: string | null
           created_at: string
           id: string
@@ -1128,7 +1148,12 @@ export type Database = {
           valid_until: string | null
         }
         Insert: {
+          client_address?: string | null
+          client_company?: string | null
+          client_email?: string | null
           client_id?: string | null
+          client_name?: string | null
+          client_siret?: string | null
           conditions?: string | null
           created_at?: string
           id?: string
@@ -1146,7 +1171,12 @@ export type Database = {
           valid_until?: string | null
         }
         Update: {
+          client_address?: string | null
+          client_company?: string | null
+          client_email?: string | null
           client_id?: string | null
+          client_name?: string | null
+          client_siret?: string | null
           conditions?: string | null
           created_at?: string
           id?: string
