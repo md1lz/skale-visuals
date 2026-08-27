@@ -198,7 +198,7 @@ function QuotesPage() {
                   label="Dupliquer"
                   onClick={() => run(q.id, () => duplicate({ data: { id: q.id } }))}
                 />
-                {q.status === "Signé" && !q.invoiced && (
+                {q.status === "Signé" && (
                   <Action
                     icon={Receipt}
                     label="Convertir en facture"
