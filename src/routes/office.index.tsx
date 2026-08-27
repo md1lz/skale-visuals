@@ -103,6 +103,12 @@ function AdminHome() {
     { label: "Devis soumis", value: dayQ.isLoading ? "…" : fmtNum(k?.devisSubmitted), icon: FileSignature },
   ];
 
+  const financeCards = [
+    { label: "CA du mois", icon: TrendingUp },
+    { label: "En attente de paiement", icon: Clock },
+    { label: "Devis à signer", icon: FileSignature },
+    { label: "Factures en retard", icon: AlertTriangle },
+  ];
 
   return (
     <div className="w-full max-w-6xl mx-auto overflow-x-hidden px-4 pt-6 pb-10 md:px-8 md:pt-10">
@@ -133,14 +139,42 @@ function AdminHome() {
         </div>
       </motion.div>
 
+      {/* Bloc 1 — Financier (placeholder) */}
+      <SectionTitle label="Financier" />
+      <div className="mb-10 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {financeCards.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <motion.div
+              key={c.label}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.04 * i }}
+              className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase tracking-wider text-neutral-500">
+                  {c.label}
+                </span>
+                <Icon className="h-3.5 w-3.5 text-neutral-600" />
+              </div>
+              <p className="mt-3 text-2xl font-semibold text-neutral-500">—</p>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Bloc 2 — Analytiques */}
+      <SectionTitle label="Analytiques" />
 
       {/* 24h chart */}
       <motion.div
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-4 md:p-5 mb-3"
+        className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 md:p-5 mb-3 backdrop-blur"
       >
+
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
           <div>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500">

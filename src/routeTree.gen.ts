@@ -23,8 +23,11 @@ import { Route as StudioSettingsRouteImport } from './routes/studio.settings'
 import { Route as StudioProjectsRouteImport } from './routes/studio.projects'
 import { Route as OfficeWebsiteRouteImport } from './routes/office.website'
 import { Route as OfficeSettingsRouteImport } from './routes/office.settings'
+import { Route as OfficeServicesRouteImport } from './routes/office.services'
+import { Route as OfficeQuotesRouteImport } from './routes/office.quotes'
 import { Route as OfficeProspectsRouteImport } from './routes/office.prospects'
 import { Route as OfficeProjectsRouteImport } from './routes/office.projects'
+import { Route as OfficeInvoicesRouteImport } from './routes/office.invoices'
 import { Route as OfficeEditorsRouteImport } from './routes/office.editors'
 import { Route as OfficeClientsRouteImport } from './routes/office.clients'
 import { Route as OfficeCallsRouteImport } from './routes/office.calls'
@@ -104,6 +107,16 @@ const OfficeSettingsRoute = OfficeSettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => OfficeRoute,
 } as any)
+const OfficeServicesRoute = OfficeServicesRouteImport.update({
+  id: '/services',
+  path: '/services',
+  getParentRoute: () => OfficeRoute,
+} as any)
+const OfficeQuotesRoute = OfficeQuotesRouteImport.update({
+  id: '/quotes',
+  path: '/quotes',
+  getParentRoute: () => OfficeRoute,
+} as any)
 const OfficeProspectsRoute = OfficeProspectsRouteImport.update({
   id: '/prospects',
   path: '/prospects',
@@ -112,6 +125,11 @@ const OfficeProspectsRoute = OfficeProspectsRouteImport.update({
 const OfficeProjectsRoute = OfficeProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
+  getParentRoute: () => OfficeRoute,
+} as any)
+const OfficeInvoicesRoute = OfficeInvoicesRouteImport.update({
+  id: '/invoices',
+  path: '/invoices',
   getParentRoute: () => OfficeRoute,
 } as any)
 const OfficeEditorsRoute = OfficeEditorsRouteImport.update({
@@ -170,8 +188,11 @@ export interface FileRoutesByFullPath {
   '/office/calls': typeof OfficeCallsRoute
   '/office/clients': typeof OfficeClientsRoute
   '/office/editors': typeof OfficeEditorsRoute
+  '/office/invoices': typeof OfficeInvoicesRoute
   '/office/projects': typeof OfficeProjectsRoute
   '/office/prospects': typeof OfficeProspectsRoute
+  '/office/quotes': typeof OfficeQuotesRoute
+  '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
   '/studio/projects': typeof StudioProjectsRoute
@@ -193,8 +214,11 @@ export interface FileRoutesByTo {
   '/office/calls': typeof OfficeCallsRoute
   '/office/clients': typeof OfficeClientsRoute
   '/office/editors': typeof OfficeEditorsRoute
+  '/office/invoices': typeof OfficeInvoicesRoute
   '/office/projects': typeof OfficeProjectsRoute
   '/office/prospects': typeof OfficeProspectsRoute
+  '/office/quotes': typeof OfficeQuotesRoute
+  '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
   '/studio/projects': typeof StudioProjectsRoute
@@ -220,8 +244,11 @@ export interface FileRoutesById {
   '/office/calls': typeof OfficeCallsRoute
   '/office/clients': typeof OfficeClientsRoute
   '/office/editors': typeof OfficeEditorsRoute
+  '/office/invoices': typeof OfficeInvoicesRoute
   '/office/projects': typeof OfficeProjectsRoute
   '/office/prospects': typeof OfficeProspectsRoute
+  '/office/quotes': typeof OfficeQuotesRoute
+  '/office/services': typeof OfficeServicesRoute
   '/office/settings': typeof OfficeSettingsRoute
   '/office/website': typeof OfficeWebsiteRoute
   '/studio/projects': typeof StudioProjectsRoute
@@ -248,8 +275,11 @@ export interface FileRouteTypes {
     | '/office/calls'
     | '/office/clients'
     | '/office/editors'
+    | '/office/invoices'
     | '/office/projects'
     | '/office/prospects'
+    | '/office/quotes'
+    | '/office/services'
     | '/office/settings'
     | '/office/website'
     | '/studio/projects'
@@ -271,8 +301,11 @@ export interface FileRouteTypes {
     | '/office/calls'
     | '/office/clients'
     | '/office/editors'
+    | '/office/invoices'
     | '/office/projects'
     | '/office/prospects'
+    | '/office/quotes'
+    | '/office/services'
     | '/office/settings'
     | '/office/website'
     | '/studio/projects'
@@ -297,8 +330,11 @@ export interface FileRouteTypes {
     | '/office/calls'
     | '/office/clients'
     | '/office/editors'
+    | '/office/invoices'
     | '/office/projects'
     | '/office/prospects'
+    | '/office/quotes'
+    | '/office/services'
     | '/office/settings'
     | '/office/website'
     | '/studio/projects'
@@ -424,6 +460,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfficeSettingsRouteImport
       parentRoute: typeof OfficeRoute
     }
+    '/office/services': {
+      id: '/office/services'
+      path: '/services'
+      fullPath: '/office/services'
+      preLoaderRoute: typeof OfficeServicesRouteImport
+      parentRoute: typeof OfficeRoute
+    }
+    '/office/quotes': {
+      id: '/office/quotes'
+      path: '/quotes'
+      fullPath: '/office/quotes'
+      preLoaderRoute: typeof OfficeQuotesRouteImport
+      parentRoute: typeof OfficeRoute
+    }
     '/office/prospects': {
       id: '/office/prospects'
       path: '/prospects'
@@ -436,6 +486,13 @@ declare module '@tanstack/react-router' {
       path: '/projects'
       fullPath: '/office/projects'
       preLoaderRoute: typeof OfficeProjectsRouteImport
+      parentRoute: typeof OfficeRoute
+    }
+    '/office/invoices': {
+      id: '/office/invoices'
+      path: '/invoices'
+      fullPath: '/office/invoices'
+      preLoaderRoute: typeof OfficeInvoicesRouteImport
       parentRoute: typeof OfficeRoute
     }
     '/office/editors': {
@@ -514,8 +571,11 @@ interface OfficeRouteChildren {
   OfficeCallsRoute: typeof OfficeCallsRoute
   OfficeClientsRoute: typeof OfficeClientsRoute
   OfficeEditorsRoute: typeof OfficeEditorsRoute
+  OfficeInvoicesRoute: typeof OfficeInvoicesRoute
   OfficeProjectsRoute: typeof OfficeProjectsRoute
   OfficeProspectsRoute: typeof OfficeProspectsRoute
+  OfficeQuotesRoute: typeof OfficeQuotesRoute
+  OfficeServicesRoute: typeof OfficeServicesRoute
   OfficeSettingsRoute: typeof OfficeSettingsRoute
   OfficeWebsiteRoute: typeof OfficeWebsiteRoute
   OfficeIndexRoute: typeof OfficeIndexRoute
@@ -526,8 +586,11 @@ const OfficeRouteChildren: OfficeRouteChildren = {
   OfficeCallsRoute: OfficeCallsRoute,
   OfficeClientsRoute: OfficeClientsRoute,
   OfficeEditorsRoute: OfficeEditorsRoute,
+  OfficeInvoicesRoute: OfficeInvoicesRoute,
   OfficeProjectsRoute: OfficeProjectsRoute,
   OfficeProspectsRoute: OfficeProspectsRoute,
+  OfficeQuotesRoute: OfficeQuotesRoute,
+  OfficeServicesRoute: OfficeServicesRoute,
   OfficeSettingsRoute: OfficeSettingsRoute,
   OfficeWebsiteRoute: OfficeWebsiteRoute,
   OfficeIndexRoute: OfficeIndexRoute,
