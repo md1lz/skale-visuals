@@ -106,13 +106,14 @@ export function DocumentPaper({
             </p>
           </div>
           <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: 20, fontWeight: 700, letterSpacing: "-0.02em" }}>
+            <p style={{ fontSize: 24, fontFamily: "Kangge, inherit", letterSpacing: "0.02em" }}>
               skale visuals.
             </p>
-            <p style={{ fontSize: 12, color: muted, marginTop: 4 }}>{settings.email}</p>
-            {!!settings.phone && <p style={{ fontSize: 12, color: muted }}>{settings.phone}</p>}
+            <p style={{ fontSize: 12, color: muted, marginTop: 4 }}>
+              {settings.email || "contact@skalevisuals.com"}
+            </p>
             {!!settings.siret && (
-              <p style={{ fontSize: 12, color: muted }}>SIRET {settings.siret}</p>
+              <p style={{ fontSize: 12, color: muted }}>SIRET : {settings.siret}</p>
             )}
           </div>
         </div>
@@ -235,18 +236,14 @@ export function DocumentPaper({
           }}
         >
           <div>
-            <p style={{ fontSize: 18, fontWeight: 700, letterSpacing: "-0.02em" }}>skale visuals.</p>
-            <p style={{ fontSize: 11, color: muted, marginTop: 2 }}>
-              {settings.legalName || "Skale Visuals"}
-              {settings.siret ? ` · SIRET ${settings.siret}` : ""}
+            <p style={{ fontSize: 20, fontFamily: "Kangge, inherit", letterSpacing: "0.02em" }}>
+              skale visuals.
             </p>
           </div>
 
           {isQuote && (
             <div style={{ textAlign: "left" }}>
-              <p style={{ fontSize: 10, letterSpacing: "0.14em", color: muted, fontWeight: 600 }}>
-                BON POUR ACCORD
-              </p>
+              <p style={{ fontSize: 13, fontStyle: "italic", color: ink }}>Bon pour accord</p>
               <div
                 style={{
                   marginTop: 6,
