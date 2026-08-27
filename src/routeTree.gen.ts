@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as OfficeRouteImport } from './routes/office'
+import { Route as CrmRouteImport } from './routes/crm'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutusRouteImport } from './routes/aboutus'
@@ -39,6 +40,11 @@ const StudioRoute = StudioRouteImport.update({
 const OfficeRoute = OfficeRouteImport.update({
   id: '/office',
   path: '/office',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CrmRoute = CrmRouteImport.update({
+  id: '/crm',
+  path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookacallRoute = BookacallRouteImport.update({
@@ -144,6 +150,7 @@ export interface FileRoutesByFullPath {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
+  '/crm': typeof CrmRoute
   '/office': typeof OfficeRouteWithChildren
   '/studio': typeof StudioRouteWithChildren
   '/office/analytics': typeof OfficeAnalyticsRoute
@@ -167,6 +174,7 @@ export interface FileRoutesByTo {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
+  '/crm': typeof CrmRoute
   '/office/analytics': typeof OfficeAnalyticsRoute
   '/office/calls': typeof OfficeCallsRoute
   '/office/clients': typeof OfficeClientsRoute
@@ -189,6 +197,7 @@ export interface FileRoutesById {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
+  '/crm': typeof CrmRoute
   '/office': typeof OfficeRouteWithChildren
   '/studio': typeof StudioRouteWithChildren
   '/office/analytics': typeof OfficeAnalyticsRoute
@@ -214,6 +223,7 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
+    | '/crm'
     | '/office'
     | '/studio'
     | '/office/analytics'
@@ -237,6 +247,7 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
+    | '/crm'
     | '/office/analytics'
     | '/office/calls'
     | '/office/clients'
@@ -258,6 +269,7 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
+    | '/crm'
     | '/office'
     | '/studio'
     | '/office/analytics'
@@ -282,6 +294,7 @@ export interface RootRouteChildren {
   AboutusRoute: typeof AboutusRoute
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
+  CrmRoute: typeof CrmRoute
   OfficeRoute: typeof OfficeRouteWithChildren
   StudioRoute: typeof StudioRouteWithChildren
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -303,6 +316,13 @@ declare module '@tanstack/react-router' {
       path: '/office'
       fullPath: '/office'
       preLoaderRoute: typeof OfficeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/crm': {
+      id: '/crm'
+      path: '/crm'
+      fullPath: '/crm'
+      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookacall': {
@@ -488,6 +508,7 @@ const rootRouteChildren: RootRouteChildren = {
   AboutusRoute: AboutusRoute,
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
+  CrmRoute: CrmRoute,
   OfficeRoute: OfficeRouteWithChildren,
   StudioRoute: StudioRouteWithChildren,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
