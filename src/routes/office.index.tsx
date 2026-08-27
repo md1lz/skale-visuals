@@ -221,6 +221,120 @@ function AdminHome() {
         })}
       </div>
 
+      {/* Graphiques financiers */}
+      <div className="mb-10 grid gap-3 lg:grid-cols-3">
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur md:p-5 lg:col-span-2"
+        >
+          <p className="text-[11px] uppercase tracking-wider text-neutral-500">
+            Évolution du CA — 6 derniers mois
+          </p>
+          <p className="mt-1 text-2xl font-semibold text-white">
+            {fk ? formatEUR(fk.series.reduce((s, x) => s + x.revenue, 0)) : "…"}
+            <span className="ml-2 text-xs font-normal text-neutral-500">cumulé HT</span>
+          </p>
+          <div className="mt-4 h-56 md:h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart
+                data={revenueSeries}
+                margin={{ top: 10, right: 10, left: -18, bottom: 0 }}
+              >
+                <defs>
+                  <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.55} />
+                    <stop offset="100%" stopColor="#ef4444" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
+                <XAxis dataKey="label" stroke="#737373" fontSize={11} tickLine={false} axisLine={false} />
+                <YAxis
+                  stroke="#737373"
+                  fontSize={11}
+                  tickLine={false}
+                  axisLine={false}
+                  tickFormatter={(v) => `${v} €`}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#0a0a0a",
+                    border: "1px solid rgba(255,255,255,0.1)",
+                    borderRadius: 12,
+                    fontSize: 12,
+                  }}
+                  formatter={(v: any) => [formatEUR(Number(v)), "CA HT"]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="revenue"
+                  stroke="#ef4444"
+                  strokeWidth={2}
+                  fill="url(#caGrad)"
+                />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
+          className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur md:p-5"
+        >
+          <p className="text-[11px] uppercase tracking-wider text-neutral-500">
+            Statuts des devis
+          </p>
+          <div className="mt-2 h-56 md:h-64">
+            {quoteStatusData.length === 0 ? (
+              <div className="grid h-full place-items-center text-xs text-neutral-500">
+                Aucun devis pour l'instant.
+              </div>
+            ) : (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={quoteStatusData}
+                    dataKey="count"
+                    nameKey="status"
+                    innerRadius="58%"
+                    outerRadius="82%"
+                    paddingAngle={3}
+                    stroke="none"
+                  >
+                    {quoteStatusData.map((entry) => (
+                      <Cell key={entry.status} fill={QUOTE_STATUS_COLORS[entry.status] ?? "#737373"} />
+                    ))}
+                  </Pie>
+                  <Legend
+                    layout="vertical"
+                    align="right"
+                    verticalAlign="middle"
+                    iconType="circle"
+                    formatter={(value) => (
+                      <span style={{ color: "#a3a3a3", fontSize: 11 }}>{value}</span>
+                    )}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      background: "#0a0a0a",
+                      border: "1px solid rgba(255,255,255,0.1)",
+                      borderRadius: 12,
+                      fontSize: 12,
+                    }}
+                    formatter={(v: any, n: any) => [`${v} devis`, n]}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            )}
+          </div>
+        </motion.div>
+      </div>
+
+
+
       {/* Bloc 2 — Analytiques */}
       <SectionTitle label="Analytiques" />
 
