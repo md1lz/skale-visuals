@@ -30,4 +30,7 @@ export const TEMPLATES: Record<string, TemplateEntry> = {
   'booking-meet-link': bookingMeetLink,
   'booking-reminder': bookingReminder,
   'booking-admin-alert': bookingAdminAlert,
+  'quote-sent': quoteSent,
+  'invoice-sent': invoiceSent,
+  'quote-signed': quoteSigned,
 }
