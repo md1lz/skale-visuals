@@ -119,16 +119,16 @@ function AdminHome() {
 
   const fetchFinance = useServerFn(getFinanceKpis);
   const finance = useQuery({ queryKey: ["office", "finance-kpis"], queryFn: () => fetchFinance() });
-  const k = finance.data;
+  const fk = finance.data;
   const financeCards = [
     {
       label: "CA du mois",
       icon: TrendingUp,
-      value: k ? formatEUR(k.revenueMonth) : "—",
+      value: fk ? formatEUR(fk.revenueMonth) : "—",
       hint:
-        k && k.revenuePrevMonth > 0
-          ? `${k.revenueMonth >= k.revenuePrevMonth ? "+" : ""}${Math.round(
-              ((k.revenueMonth - k.revenuePrevMonth) / k.revenuePrevMonth) * 100,
+        fk && fk.revenuePrevMonth > 0
+          ? `${fk.revenueMonth >= fk.revenuePrevMonth ? "+" : ""}${Math.round(
+              ((fk.revenueMonth - fk.revenuePrevMonth) / fk.revenuePrevMonth) * 100,
             )} % vs mois dernier`
           : undefined,
       to: "/office/invoices",
@@ -136,22 +136,22 @@ function AdminHome() {
     {
       label: "En attente de paiement",
       icon: Clock,
-      value: k ? formatEUR(k.pendingPayment) : "—",
+      value: fk ? formatEUR(fk.pendingPayment) : "—",
       to: "/office/invoices",
     },
     {
       label: "Devis à signer",
       icon: FileSignature,
-      value: k ? formatEUR(k.awaitingSignatureAmount) : "—",
-      hint: k ? `${k.awaitingSignatureCount} devis envoyés` : undefined,
+      value: fk ? formatEUR(fk.awaitingSignatureAmount) : "—",
+      hint: fk ? `${fk.awaitingSignatureCount} devis envoyés` : undefined,
       to: "/office/quotes",
     },
     {
       label: "Factures en retard",
       icon: AlertTriangle,
-      value: k ? formatEUR(k.overdueAmount) : "—",
-      hint: k ? `${k.overdueCount} facture(s)` : undefined,
-      danger: !!k && k.overdueCount > 0,
+      value: fk ? formatEUR(fk.overdueAmount) : "—",
+      hint: fk ? `${fk.overdueCount} facture(s)` : undefined,
+      danger: !!ffk && fk.overdueCount > 0,
       to: "/office/invoices",
     },
   ];
