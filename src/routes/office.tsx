@@ -8,7 +8,6 @@ import {
   Settings,
   Scissors,
   Target,
-  Globe,
   CalendarClock,
   FileSignature,
   Receipt,
@@ -76,7 +75,6 @@ const NAV: {
   { to: "/office/projects", label: "Projets", icon: FolderKanban },
   { to: "/office/editors", label: "Monteurs", icon: Scissors },
   { to: "/office/calls", label: "Book a Call", icon: CalendarClock },
-  { to: "/office/website", label: "Site web", icon: Globe, desktopOnly: true },
   { to: "/office/settings", label: "Paramètres", icon: Settings },
 ];
 
@@ -128,9 +126,11 @@ function AdminLayoutInner() {
       )}
       <div className="relative z-10 flex w-full">
         <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-white/[0.07] bg-neutral-950/70 backdrop-blur-xl">
-          <div className="px-5 py-6 flex items-center gap-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_10px_rgba(226,75,74,0.9)] animate-pulse" />
-            <p className="text-[15px] font-semibold tracking-tight">Skale Office</p>
+          <div className="flex items-center gap-1.5 px-5 py-6">
+            <span className="font-kangge text-[26px] leading-none text-white">skale.</span>
+            <span className="text-[9px] font-medium uppercase tracking-[0.28em] text-neutral-500">
+              Office
+            </span>
           </div>
 
           <div className="px-5 pb-4">
