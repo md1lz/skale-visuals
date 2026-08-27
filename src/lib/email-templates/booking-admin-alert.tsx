@@ -38,7 +38,7 @@ const Email = ({
   phone = null,
   notes = null,
   guests = [],
-  adminUrl = "https://skalevisuals.com/crm/admin/calls",
+  adminUrl = "https://skalevisuals.com/office/calls",
 }: Props) => (
   <Html lang="fr" dir="ltr">
     <Head />

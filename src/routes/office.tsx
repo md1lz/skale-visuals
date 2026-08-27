@@ -24,12 +24,12 @@ import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
 import { MessagePing } from "@/components/MessagePing";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
 
-export const Route = createFileRoute("/crm/admin")({
+export const Route = createFileRoute("/office")({
   beforeLoad: async () => {
     const session = await getAdminSessionFn();
     if (!session) {
       const editor = await getEditorSessionFn();
-      if (editor) throw redirect({ to: "/crm/editor" });
+      if (editor) throw redirect({ to: "/studio" });
       throw redirect({ to: "/" });
     }
     return { session };
@@ -54,15 +54,15 @@ const NAV: {
   exact?: boolean;
   desktopOnly?: boolean;
 }[] = [
-  { to: "/crm/admin", label: "Accueil", icon: Home, exact: true },
-  { to: "/crm/admin/analytics", label: "Analytiques", icon: BarChart3 },
-  { to: "/crm/admin/website", label: "Site web", icon: Globe, desktopOnly: true },
-  { to: "/crm/admin/prospects", label: "Prospection", icon: Target },
-  { to: "/crm/admin/clients", label: "Clients", icon: Users },
-  { to: "/crm/admin/projects", label: "Projets", icon: FolderKanban },
-  { to: "/crm/admin/editors", label: "Monteurs", icon: Scissors },
-  { to: "/crm/admin/calls", label: "Book a Call", icon: CalendarClock },
-  { to: "/crm/admin/settings", label: "Paramètres", icon: Settings },
+  { to: "/office", label: "Accueil", icon: Home, exact: true },
+  { to: "/office/analytics", label: "Analytiques", icon: BarChart3 },
+  { to: "/office/website", label: "Site web", icon: Globe, desktopOnly: true },
+  { to: "/office/prospects", label: "Prospection", icon: Target },
+  { to: "/office/clients", label: "Clients", icon: Users },
+  { to: "/office/projects", label: "Projets", icon: FolderKanban },
+  { to: "/office/editors", label: "Monteurs", icon: Scissors },
+  { to: "/office/calls", label: "Book a Call", icon: CalendarClock },
+  { to: "/office/settings", label: "Paramètres", icon: Settings },
 ];
 
 function AdminLayout() {
@@ -123,7 +123,7 @@ function AdminLayoutInner() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to as "/crm/admin"}
+                  to={item.to as "/office"}
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
                     active
                       ? "bg-red-600/15 text-white border border-red-600/30"

@@ -9,33 +9,36 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as CrmRouteImport } from './routes/crm'
+import { Route as StudioRouteImport } from './routes/studio'
+import { Route as OfficeRouteImport } from './routes/office'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as CrmIndexRouteImport } from './routes/crm.index'
-import { Route as CrmEditorRouteImport } from './routes/crm.editor'
-import { Route as CrmAdminRouteImport } from './routes/crm.admin'
-import { Route as CrmEditorIndexRouteImport } from './routes/crm.editor.index'
-import { Route as CrmAdminIndexRouteImport } from './routes/crm.admin.index'
-import { Route as CrmEditorSettingsRouteImport } from './routes/crm.editor.settings'
-import { Route as CrmEditorProjectsRouteImport } from './routes/crm.editor.projects'
-import { Route as CrmAdminWebsiteRouteImport } from './routes/crm.admin.website'
-import { Route as CrmAdminSettingsRouteImport } from './routes/crm.admin.settings'
-import { Route as CrmAdminProspectsRouteImport } from './routes/crm.admin.prospects'
-import { Route as CrmAdminProjectsRouteImport } from './routes/crm.admin.projects'
-import { Route as CrmAdminEditorsRouteImport } from './routes/crm.admin.editors'
-import { Route as CrmAdminClientsRouteImport } from './routes/crm.admin.clients'
-import { Route as CrmAdminCallsRouteImport } from './routes/crm.admin.calls'
-import { Route as CrmAdminAnalyticsRouteImport } from './routes/crm.admin.analytics'
+import { Route as StudioIndexRouteImport } from './routes/studio.index'
+import { Route as OfficeIndexRouteImport } from './routes/office.index'
+import { Route as StudioSettingsRouteImport } from './routes/studio.settings'
+import { Route as StudioProjectsRouteImport } from './routes/studio.projects'
+import { Route as OfficeWebsiteRouteImport } from './routes/office.website'
+import { Route as OfficeSettingsRouteImport } from './routes/office.settings'
+import { Route as OfficeProspectsRouteImport } from './routes/office.prospects'
+import { Route as OfficeProjectsRouteImport } from './routes/office.projects'
+import { Route as OfficeEditorsRouteImport } from './routes/office.editors'
+import { Route as OfficeClientsRouteImport } from './routes/office.clients'
+import { Route as OfficeCallsRouteImport } from './routes/office.calls'
+import { Route as OfficeAnalyticsRouteImport } from './routes/office.analytics'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 
-const CrmRoute = CrmRouteImport.update({
-  id: '/crm',
-  path: '/crm',
+const StudioRoute = StudioRouteImport.update({
+  id: '/studio',
+  path: '/studio',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OfficeRoute = OfficeRouteImport.update({
+  id: '/office',
+  path: '/office',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookacallRoute = BookacallRouteImport.update({
@@ -58,80 +61,65 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CrmIndexRoute = CrmIndexRouteImport.update({
+const StudioIndexRoute = StudioIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => CrmRoute,
+  getParentRoute: () => StudioRoute,
 } as any)
-const CrmEditorRoute = CrmEditorRouteImport.update({
-  id: '/editor',
-  path: '/editor',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmAdminRoute = CrmAdminRouteImport.update({
-  id: '/admin',
-  path: '/admin',
-  getParentRoute: () => CrmRoute,
-} as any)
-const CrmEditorIndexRoute = CrmEditorIndexRouteImport.update({
+const OfficeIndexRoute = OfficeIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => CrmEditorRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
-const CrmAdminIndexRoute = CrmAdminIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CrmAdminRoute,
-} as any)
-const CrmEditorSettingsRoute = CrmEditorSettingsRouteImport.update({
+const StudioSettingsRoute = StudioSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => CrmEditorRoute,
+  getParentRoute: () => StudioRoute,
 } as any)
-const CrmEditorProjectsRoute = CrmEditorProjectsRouteImport.update({
+const StudioProjectsRoute = StudioProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
-  getParentRoute: () => CrmEditorRoute,
+  getParentRoute: () => StudioRoute,
 } as any)
-const CrmAdminWebsiteRoute = CrmAdminWebsiteRouteImport.update({
+const OfficeWebsiteRoute = OfficeWebsiteRouteImport.update({
   id: '/website',
   path: '/website',
-  getParentRoute: () => CrmAdminRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
-const CrmAdminSettingsRoute = CrmAdminSettingsRouteImport.update({
+const OfficeSettingsRoute = OfficeSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => CrmAdminRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
-const CrmAdminProspectsRoute = CrmAdminProspectsRouteImport.update({
+const OfficeProspectsRoute = OfficeProspectsRouteImport.update({
   id: '/prospects',
   path: '/prospects',
-  getParentRoute: () => CrmAdminRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
-const CrmAdminProjectsRoute = CrmAdminProjectsRouteImport.update({
+const OfficeProjectsRoute = OfficeProjectsRouteImport.update({
   id: '/projects',
   path: '/projects',
-  getParentRoute: () => CrmAdminRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
-const CrmAdminEditorsRoute = CrmAdminEditorsRouteImport.update({
+const OfficeEditorsRoute = OfficeEditorsRouteImport.update({
   id: '/editors',
   path: '/editors',
-  getParentRoute: () => CrmAdminRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
-const CrmAdminClientsRoute = CrmAdminClientsRouteImport.update({
+const OfficeClientsRoute = OfficeClientsRouteImport.update({
   id: '/clients',
   path: '/clients',
-  getParentRoute: () => CrmAdminRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
-const CrmAdminCallsRoute = CrmAdminCallsRouteImport.update({
+const OfficeCallsRoute = OfficeCallsRouteImport.update({
   id: '/calls',
   path: '/calls',
-  getParentRoute: () => CrmAdminRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
-const CrmAdminAnalyticsRoute = CrmAdminAnalyticsRouteImport.update({
+const OfficeAnalyticsRoute = OfficeAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
-  getParentRoute: () => CrmAdminRoute,
+  getParentRoute: () => OfficeRoute,
 } as any)
 const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   id: '/api/public/track',
@@ -156,23 +144,21 @@ export interface FileRoutesByFullPath {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRouteWithChildren
-  '/crm/admin': typeof CrmAdminRouteWithChildren
-  '/crm/editor': typeof CrmEditorRouteWithChildren
-  '/crm/': typeof CrmIndexRoute
+  '/office': typeof OfficeRouteWithChildren
+  '/studio': typeof StudioRouteWithChildren
+  '/office/analytics': typeof OfficeAnalyticsRoute
+  '/office/calls': typeof OfficeCallsRoute
+  '/office/clients': typeof OfficeClientsRoute
+  '/office/editors': typeof OfficeEditorsRoute
+  '/office/projects': typeof OfficeProjectsRoute
+  '/office/prospects': typeof OfficeProspectsRoute
+  '/office/settings': typeof OfficeSettingsRoute
+  '/office/website': typeof OfficeWebsiteRoute
+  '/studio/projects': typeof StudioProjectsRoute
+  '/studio/settings': typeof StudioSettingsRoute
+  '/office/': typeof OfficeIndexRoute
+  '/studio/': typeof StudioIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/crm/admin/analytics': typeof CrmAdminAnalyticsRoute
-  '/crm/admin/calls': typeof CrmAdminCallsRoute
-  '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/editors': typeof CrmAdminEditorsRoute
-  '/crm/admin/projects': typeof CrmAdminProjectsRoute
-  '/crm/admin/prospects': typeof CrmAdminProspectsRoute
-  '/crm/admin/settings': typeof CrmAdminSettingsRoute
-  '/crm/admin/website': typeof CrmAdminWebsiteRoute
-  '/crm/editor/projects': typeof CrmEditorProjectsRoute
-  '/crm/editor/settings': typeof CrmEditorSettingsRoute
-  '/crm/admin/': typeof CrmAdminIndexRoute
-  '/crm/editor/': typeof CrmEditorIndexRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -181,20 +167,19 @@ export interface FileRoutesByTo {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmIndexRoute
+  '/office/analytics': typeof OfficeAnalyticsRoute
+  '/office/calls': typeof OfficeCallsRoute
+  '/office/clients': typeof OfficeClientsRoute
+  '/office/editors': typeof OfficeEditorsRoute
+  '/office/projects': typeof OfficeProjectsRoute
+  '/office/prospects': typeof OfficeProspectsRoute
+  '/office/settings': typeof OfficeSettingsRoute
+  '/office/website': typeof OfficeWebsiteRoute
+  '/studio/projects': typeof StudioProjectsRoute
+  '/studio/settings': typeof StudioSettingsRoute
+  '/office': typeof OfficeIndexRoute
+  '/studio': typeof StudioIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/crm/admin/analytics': typeof CrmAdminAnalyticsRoute
-  '/crm/admin/calls': typeof CrmAdminCallsRoute
-  '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/editors': typeof CrmAdminEditorsRoute
-  '/crm/admin/projects': typeof CrmAdminProjectsRoute
-  '/crm/admin/prospects': typeof CrmAdminProspectsRoute
-  '/crm/admin/settings': typeof CrmAdminSettingsRoute
-  '/crm/admin/website': typeof CrmAdminWebsiteRoute
-  '/crm/editor/projects': typeof CrmEditorProjectsRoute
-  '/crm/editor/settings': typeof CrmEditorSettingsRoute
-  '/crm/admin': typeof CrmAdminIndexRoute
-  '/crm/editor': typeof CrmEditorIndexRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -204,23 +189,21 @@ export interface FileRoutesById {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRouteWithChildren
-  '/crm/admin': typeof CrmAdminRouteWithChildren
-  '/crm/editor': typeof CrmEditorRouteWithChildren
-  '/crm/': typeof CrmIndexRoute
+  '/office': typeof OfficeRouteWithChildren
+  '/studio': typeof StudioRouteWithChildren
+  '/office/analytics': typeof OfficeAnalyticsRoute
+  '/office/calls': typeof OfficeCallsRoute
+  '/office/clients': typeof OfficeClientsRoute
+  '/office/editors': typeof OfficeEditorsRoute
+  '/office/projects': typeof OfficeProjectsRoute
+  '/office/prospects': typeof OfficeProspectsRoute
+  '/office/settings': typeof OfficeSettingsRoute
+  '/office/website': typeof OfficeWebsiteRoute
+  '/studio/projects': typeof StudioProjectsRoute
+  '/studio/settings': typeof StudioSettingsRoute
+  '/office/': typeof OfficeIndexRoute
+  '/studio/': typeof StudioIndexRoute
   '/api/public/track': typeof ApiPublicTrackRoute
-  '/crm/admin/analytics': typeof CrmAdminAnalyticsRoute
-  '/crm/admin/calls': typeof CrmAdminCallsRoute
-  '/crm/admin/clients': typeof CrmAdminClientsRoute
-  '/crm/admin/editors': typeof CrmAdminEditorsRoute
-  '/crm/admin/projects': typeof CrmAdminProjectsRoute
-  '/crm/admin/prospects': typeof CrmAdminProspectsRoute
-  '/crm/admin/settings': typeof CrmAdminSettingsRoute
-  '/crm/admin/website': typeof CrmAdminWebsiteRoute
-  '/crm/editor/projects': typeof CrmEditorProjectsRoute
-  '/crm/editor/settings': typeof CrmEditorSettingsRoute
-  '/crm/admin/': typeof CrmAdminIndexRoute
-  '/crm/editor/': typeof CrmEditorIndexRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
   '/lovable/email/transactional/preview': typeof LovableEmailTransactionalPreviewRoute
 }
@@ -231,23 +214,21 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
-    | '/crm'
-    | '/crm/admin'
-    | '/crm/editor'
-    | '/crm/'
+    | '/office'
+    | '/studio'
+    | '/office/analytics'
+    | '/office/calls'
+    | '/office/clients'
+    | '/office/editors'
+    | '/office/projects'
+    | '/office/prospects'
+    | '/office/settings'
+    | '/office/website'
+    | '/studio/projects'
+    | '/studio/settings'
+    | '/office/'
+    | '/studio/'
     | '/api/public/track'
-    | '/crm/admin/analytics'
-    | '/crm/admin/calls'
-    | '/crm/admin/clients'
-    | '/crm/admin/editors'
-    | '/crm/admin/projects'
-    | '/crm/admin/prospects'
-    | '/crm/admin/settings'
-    | '/crm/admin/website'
-    | '/crm/editor/projects'
-    | '/crm/editor/settings'
-    | '/crm/admin/'
-    | '/crm/editor/'
     | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
   fileRoutesByTo: FileRoutesByTo
@@ -256,20 +237,19 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
-    | '/crm'
+    | '/office/analytics'
+    | '/office/calls'
+    | '/office/clients'
+    | '/office/editors'
+    | '/office/projects'
+    | '/office/prospects'
+    | '/office/settings'
+    | '/office/website'
+    | '/studio/projects'
+    | '/studio/settings'
+    | '/office'
+    | '/studio'
     | '/api/public/track'
-    | '/crm/admin/analytics'
-    | '/crm/admin/calls'
-    | '/crm/admin/clients'
-    | '/crm/admin/editors'
-    | '/crm/admin/projects'
-    | '/crm/admin/prospects'
-    | '/crm/admin/settings'
-    | '/crm/admin/website'
-    | '/crm/editor/projects'
-    | '/crm/editor/settings'
-    | '/crm/admin'
-    | '/crm/editor'
     | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
   id:
@@ -278,23 +258,21 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
-    | '/crm'
-    | '/crm/admin'
-    | '/crm/editor'
-    | '/crm/'
+    | '/office'
+    | '/studio'
+    | '/office/analytics'
+    | '/office/calls'
+    | '/office/clients'
+    | '/office/editors'
+    | '/office/projects'
+    | '/office/prospects'
+    | '/office/settings'
+    | '/office/website'
+    | '/studio/projects'
+    | '/studio/settings'
+    | '/office/'
+    | '/studio/'
     | '/api/public/track'
-    | '/crm/admin/analytics'
-    | '/crm/admin/calls'
-    | '/crm/admin/clients'
-    | '/crm/admin/editors'
-    | '/crm/admin/projects'
-    | '/crm/admin/prospects'
-    | '/crm/admin/settings'
-    | '/crm/admin/website'
-    | '/crm/editor/projects'
-    | '/crm/editor/settings'
-    | '/crm/admin/'
-    | '/crm/editor/'
     | '/api/public/hooks/booking-reminders'
     | '/lovable/email/transactional/preview'
   fileRoutesById: FileRoutesById
@@ -304,7 +282,8 @@ export interface RootRouteChildren {
   AboutusRoute: typeof AboutusRoute
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
-  CrmRoute: typeof CrmRouteWithChildren
+  OfficeRoute: typeof OfficeRouteWithChildren
+  StudioRoute: typeof StudioRouteWithChildren
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
   LovableEmailTransactionalPreviewRoute: typeof LovableEmailTransactionalPreviewRoute
@@ -312,11 +291,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/crm': {
-      id: '/crm'
-      path: '/crm'
-      fullPath: '/crm'
-      preLoaderRoute: typeof CrmRouteImport
+    '/studio': {
+      id: '/studio'
+      path: '/studio'
+      fullPath: '/studio'
+      preLoaderRoute: typeof StudioRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/office': {
+      id: '/office'
+      path: '/office'
+      fullPath: '/office'
+      preLoaderRoute: typeof OfficeRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookacall': {
@@ -347,110 +333,89 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/crm/': {
-      id: '/crm/'
+    '/studio/': {
+      id: '/studio/'
       path: '/'
-      fullPath: '/crm/'
-      preLoaderRoute: typeof CrmIndexRouteImport
-      parentRoute: typeof CrmRoute
+      fullPath: '/studio/'
+      preLoaderRoute: typeof StudioIndexRouteImport
+      parentRoute: typeof StudioRoute
     }
-    '/crm/editor': {
-      id: '/crm/editor'
-      path: '/editor'
-      fullPath: '/crm/editor'
-      preLoaderRoute: typeof CrmEditorRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/admin': {
-      id: '/crm/admin'
-      path: '/admin'
-      fullPath: '/crm/admin'
-      preLoaderRoute: typeof CrmAdminRouteImport
-      parentRoute: typeof CrmRoute
-    }
-    '/crm/editor/': {
-      id: '/crm/editor/'
+    '/office/': {
+      id: '/office/'
       path: '/'
-      fullPath: '/crm/editor/'
-      preLoaderRoute: typeof CrmEditorIndexRouteImport
-      parentRoute: typeof CrmEditorRoute
+      fullPath: '/office/'
+      preLoaderRoute: typeof OfficeIndexRouteImport
+      parentRoute: typeof OfficeRoute
     }
-    '/crm/admin/': {
-      id: '/crm/admin/'
-      path: '/'
-      fullPath: '/crm/admin/'
-      preLoaderRoute: typeof CrmAdminIndexRouteImport
-      parentRoute: typeof CrmAdminRoute
-    }
-    '/crm/editor/settings': {
-      id: '/crm/editor/settings'
+    '/studio/settings': {
+      id: '/studio/settings'
       path: '/settings'
-      fullPath: '/crm/editor/settings'
-      preLoaderRoute: typeof CrmEditorSettingsRouteImport
-      parentRoute: typeof CrmEditorRoute
+      fullPath: '/studio/settings'
+      preLoaderRoute: typeof StudioSettingsRouteImport
+      parentRoute: typeof StudioRoute
     }
-    '/crm/editor/projects': {
-      id: '/crm/editor/projects'
+    '/studio/projects': {
+      id: '/studio/projects'
       path: '/projects'
-      fullPath: '/crm/editor/projects'
-      preLoaderRoute: typeof CrmEditorProjectsRouteImport
-      parentRoute: typeof CrmEditorRoute
+      fullPath: '/studio/projects'
+      preLoaderRoute: typeof StudioProjectsRouteImport
+      parentRoute: typeof StudioRoute
     }
-    '/crm/admin/website': {
-      id: '/crm/admin/website'
+    '/office/website': {
+      id: '/office/website'
       path: '/website'
-      fullPath: '/crm/admin/website'
-      preLoaderRoute: typeof CrmAdminWebsiteRouteImport
-      parentRoute: typeof CrmAdminRoute
+      fullPath: '/office/website'
+      preLoaderRoute: typeof OfficeWebsiteRouteImport
+      parentRoute: typeof OfficeRoute
     }
-    '/crm/admin/settings': {
-      id: '/crm/admin/settings'
+    '/office/settings': {
+      id: '/office/settings'
       path: '/settings'
-      fullPath: '/crm/admin/settings'
-      preLoaderRoute: typeof CrmAdminSettingsRouteImport
-      parentRoute: typeof CrmAdminRoute
+      fullPath: '/office/settings'
+      preLoaderRoute: typeof OfficeSettingsRouteImport
+      parentRoute: typeof OfficeRoute
     }
-    '/crm/admin/prospects': {
-      id: '/crm/admin/prospects'
+    '/office/prospects': {
+      id: '/office/prospects'
       path: '/prospects'
-      fullPath: '/crm/admin/prospects'
-      preLoaderRoute: typeof CrmAdminProspectsRouteImport
-      parentRoute: typeof CrmAdminRoute
+      fullPath: '/office/prospects'
+      preLoaderRoute: typeof OfficeProspectsRouteImport
+      parentRoute: typeof OfficeRoute
     }
-    '/crm/admin/projects': {
-      id: '/crm/admin/projects'
+    '/office/projects': {
+      id: '/office/projects'
       path: '/projects'
-      fullPath: '/crm/admin/projects'
-      preLoaderRoute: typeof CrmAdminProjectsRouteImport
-      parentRoute: typeof CrmAdminRoute
+      fullPath: '/office/projects'
+      preLoaderRoute: typeof OfficeProjectsRouteImport
+      parentRoute: typeof OfficeRoute
     }
-    '/crm/admin/editors': {
-      id: '/crm/admin/editors'
+    '/office/editors': {
+      id: '/office/editors'
       path: '/editors'
-      fullPath: '/crm/admin/editors'
-      preLoaderRoute: typeof CrmAdminEditorsRouteImport
-      parentRoute: typeof CrmAdminRoute
+      fullPath: '/office/editors'
+      preLoaderRoute: typeof OfficeEditorsRouteImport
+      parentRoute: typeof OfficeRoute
     }
-    '/crm/admin/clients': {
-      id: '/crm/admin/clients'
+    '/office/clients': {
+      id: '/office/clients'
       path: '/clients'
-      fullPath: '/crm/admin/clients'
-      preLoaderRoute: typeof CrmAdminClientsRouteImport
-      parentRoute: typeof CrmAdminRoute
+      fullPath: '/office/clients'
+      preLoaderRoute: typeof OfficeClientsRouteImport
+      parentRoute: typeof OfficeRoute
     }
-    '/crm/admin/calls': {
-      id: '/crm/admin/calls'
+    '/office/calls': {
+      id: '/office/calls'
       path: '/calls'
-      fullPath: '/crm/admin/calls'
-      preLoaderRoute: typeof CrmAdminCallsRouteImport
-      parentRoute: typeof CrmAdminRoute
+      fullPath: '/office/calls'
+      preLoaderRoute: typeof OfficeCallsRouteImport
+      parentRoute: typeof OfficeRoute
     }
-    '/crm/admin/analytics': {
-      id: '/crm/admin/analytics'
+    '/office/analytics': {
+      id: '/office/analytics'
       path: '/analytics'
-      fullPath: '/crm/admin/analytics'
-      preLoaderRoute: typeof CrmAdminAnalyticsRouteImport
-      parentRoute: typeof CrmAdminRoute
+      fullPath: '/office/analytics'
+      preLoaderRoute: typeof OfficeAnalyticsRouteImport
+      parentRoute: typeof OfficeRoute
     }
     '/api/public/track': {
       id: '/api/public/track'
@@ -476,70 +441,55 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface CrmAdminRouteChildren {
-  CrmAdminAnalyticsRoute: typeof CrmAdminAnalyticsRoute
-  CrmAdminCallsRoute: typeof CrmAdminCallsRoute
-  CrmAdminClientsRoute: typeof CrmAdminClientsRoute
-  CrmAdminEditorsRoute: typeof CrmAdminEditorsRoute
-  CrmAdminProjectsRoute: typeof CrmAdminProjectsRoute
-  CrmAdminProspectsRoute: typeof CrmAdminProspectsRoute
-  CrmAdminSettingsRoute: typeof CrmAdminSettingsRoute
-  CrmAdminWebsiteRoute: typeof CrmAdminWebsiteRoute
-  CrmAdminIndexRoute: typeof CrmAdminIndexRoute
+interface OfficeRouteChildren {
+  OfficeAnalyticsRoute: typeof OfficeAnalyticsRoute
+  OfficeCallsRoute: typeof OfficeCallsRoute
+  OfficeClientsRoute: typeof OfficeClientsRoute
+  OfficeEditorsRoute: typeof OfficeEditorsRoute
+  OfficeProjectsRoute: typeof OfficeProjectsRoute
+  OfficeProspectsRoute: typeof OfficeProspectsRoute
+  OfficeSettingsRoute: typeof OfficeSettingsRoute
+  OfficeWebsiteRoute: typeof OfficeWebsiteRoute
+  OfficeIndexRoute: typeof OfficeIndexRoute
 }
 
-const CrmAdminRouteChildren: CrmAdminRouteChildren = {
-  CrmAdminAnalyticsRoute: CrmAdminAnalyticsRoute,
-  CrmAdminCallsRoute: CrmAdminCallsRoute,
-  CrmAdminClientsRoute: CrmAdminClientsRoute,
-  CrmAdminEditorsRoute: CrmAdminEditorsRoute,
-  CrmAdminProjectsRoute: CrmAdminProjectsRoute,
-  CrmAdminProspectsRoute: CrmAdminProspectsRoute,
-  CrmAdminSettingsRoute: CrmAdminSettingsRoute,
-  CrmAdminWebsiteRoute: CrmAdminWebsiteRoute,
-  CrmAdminIndexRoute: CrmAdminIndexRoute,
+const OfficeRouteChildren: OfficeRouteChildren = {
+  OfficeAnalyticsRoute: OfficeAnalyticsRoute,
+  OfficeCallsRoute: OfficeCallsRoute,
+  OfficeClientsRoute: OfficeClientsRoute,
+  OfficeEditorsRoute: OfficeEditorsRoute,
+  OfficeProjectsRoute: OfficeProjectsRoute,
+  OfficeProspectsRoute: OfficeProspectsRoute,
+  OfficeSettingsRoute: OfficeSettingsRoute,
+  OfficeWebsiteRoute: OfficeWebsiteRoute,
+  OfficeIndexRoute: OfficeIndexRoute,
 }
 
-const CrmAdminRouteWithChildren = CrmAdminRoute._addFileChildren(
-  CrmAdminRouteChildren,
-)
+const OfficeRouteWithChildren =
+  OfficeRoute._addFileChildren(OfficeRouteChildren)
 
-interface CrmEditorRouteChildren {
-  CrmEditorProjectsRoute: typeof CrmEditorProjectsRoute
-  CrmEditorSettingsRoute: typeof CrmEditorSettingsRoute
-  CrmEditorIndexRoute: typeof CrmEditorIndexRoute
+interface StudioRouteChildren {
+  StudioProjectsRoute: typeof StudioProjectsRoute
+  StudioSettingsRoute: typeof StudioSettingsRoute
+  StudioIndexRoute: typeof StudioIndexRoute
 }
 
-const CrmEditorRouteChildren: CrmEditorRouteChildren = {
-  CrmEditorProjectsRoute: CrmEditorProjectsRoute,
-  CrmEditorSettingsRoute: CrmEditorSettingsRoute,
-  CrmEditorIndexRoute: CrmEditorIndexRoute,
+const StudioRouteChildren: StudioRouteChildren = {
+  StudioProjectsRoute: StudioProjectsRoute,
+  StudioSettingsRoute: StudioSettingsRoute,
+  StudioIndexRoute: StudioIndexRoute,
 }
 
-const CrmEditorRouteWithChildren = CrmEditorRoute._addFileChildren(
-  CrmEditorRouteChildren,
-)
-
-interface CrmRouteChildren {
-  CrmAdminRoute: typeof CrmAdminRouteWithChildren
-  CrmEditorRoute: typeof CrmEditorRouteWithChildren
-  CrmIndexRoute: typeof CrmIndexRoute
-}
-
-const CrmRouteChildren: CrmRouteChildren = {
-  CrmAdminRoute: CrmAdminRouteWithChildren,
-  CrmEditorRoute: CrmEditorRouteWithChildren,
-  CrmIndexRoute: CrmIndexRoute,
-}
-
-const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
+const StudioRouteWithChildren =
+  StudioRoute._addFileChildren(StudioRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutusRoute: AboutusRoute,
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
-  CrmRoute: CrmRouteWithChildren,
+  OfficeRoute: OfficeRouteWithChildren,
+  StudioRoute: StudioRouteWithChildren,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
   LovableEmailTransactionalPreviewRoute: LovableEmailTransactionalPreviewRoute,

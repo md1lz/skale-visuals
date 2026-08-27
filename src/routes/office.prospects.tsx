@@ -38,7 +38,7 @@ import {
   type Interested,
 } from "@/lib/admin-prospects.functions";
 
-export const Route = createFileRoute("/crm/admin/prospects")({
+export const Route = createFileRoute("/office/prospects")({
   validateSearch: (s: Record<string, unknown>) => ({ p: typeof s.p === "string" ? s.p : undefined }),
   component: AdminProspectionPage,
 });
@@ -189,7 +189,7 @@ function AdminProspectionPage() {
   const closePanel = () => {
     setSelectedId(null);
     setCreating(false);
-    if (initialId) navigate({ to: "/crm/admin/prospects", search: { p: undefined } });
+    if (initialId) navigate({ to: "/office/prospects", search: { p: undefined } });
   };
 
   const kpiCards = [

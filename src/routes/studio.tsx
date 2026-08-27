@@ -10,13 +10,13 @@ import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
 import { MessagePing } from "@/components/MessagePing";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
 
-export const Route = createFileRoute("/crm/editor")({
+export const Route = createFileRoute("/studio")({
   beforeLoad: async () => {
     const session = await getEditorSessionFn();
     if (!session) {
       const { getAdminSessionFn } = await import("@/lib/admin-auth.functions");
       const admin = await getAdminSessionFn();
-      if (admin) throw redirect({ to: "/crm/admin" });
+      if (admin) throw redirect({ to: "/office" });
       throw redirect({ to: "/" });
     }
     return { editor: session };
@@ -35,9 +35,9 @@ export const Route = createFileRoute("/crm/editor")({
 });
 
 const NAV: { to: string; label: string; icon: typeof Home; exact?: boolean }[] = [
-  { to: "/crm/editor", label: "Accueil", icon: Home, exact: true },
-  { to: "/crm/editor/projects", label: "Mes projets", icon: FolderKanban },
-  { to: "/crm/editor/settings", label: "Paramètres", icon: Settings },
+  { to: "/studio", label: "Accueil", icon: Home, exact: true },
+  { to: "/studio/projects", label: "Mes projets", icon: FolderKanban },
+  { to: "/studio/settings", label: "Paramètres", icon: Settings },
 ];
 
 function EditorLayout() {
@@ -101,7 +101,7 @@ function EditorLayoutInner() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to as "/crm/editor"}
+                  to={item.to as "/studio"}
                   className={`flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
                     active
                       ? "bg-red-600/15 text-white border border-red-600/30"

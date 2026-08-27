@@ -111,7 +111,7 @@ export async function insertBooking(data: {
   });
   try {
     const { pushTo } = await import("./notifications.server");
-    await pushTo({ type: "admin" }, { body: message, url: "/crm/admin/calls", tag: "call-booked" });
+    await pushTo({ type: "admin" }, { body: message, url: "/office/calls", tag: "call-booked" });
   } catch {
     /* push is best-effort */
   }
@@ -122,7 +122,7 @@ export async function insertBooking(data: {
 }
 
 const ADMIN_EMAILS = ["skalevisuals086@gmail.com"];
-const ADMIN_CALLS_URL = "https://skalevisuals.com/crm/admin/calls";
+const ADMIN_CALLS_URL = "https://skalevisuals.com/office/calls";
 
 async function safeSend(
   templateName: string,

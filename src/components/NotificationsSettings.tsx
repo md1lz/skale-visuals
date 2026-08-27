@@ -168,7 +168,7 @@ export function NotificationsSettings({ defaultUrl }: { defaultUrl: string }) {
         </label>
         <label className="space-y-1.5">
           <span className="text-xs text-neutral-400">Redirection</span>
-          <input className={input} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="/crm/admin" />
+          <input className={input} value={url} onChange={(e) => setUrl(e.target.value)} placeholder="/office" />
         </label>
       </div>
 

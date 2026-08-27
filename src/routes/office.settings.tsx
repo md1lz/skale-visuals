@@ -32,7 +32,7 @@ import {
 import { RememberedConnections } from "@/components/RememberedConnections";
 
 
-export const Route = createFileRoute("/crm/admin/settings")({
+export const Route = createFileRoute("/office/settings")({
   component: ParametresPage,
 });
 
@@ -82,7 +82,7 @@ function ParametresPage() {
       <BackgroundSection />
       <RememberedConnections source="web" />
       <RememberedConnections source="app" />
-      <NotificationsSettings defaultUrl="/crm/admin" />
+      <NotificationsSettings defaultUrl="/office" />
       <AccountsSection />
     </div>
   );

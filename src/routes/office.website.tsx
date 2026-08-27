@@ -23,7 +23,7 @@ import type { AboutContent } from "@/lib/about-content.shared";
 import { getCompareAdminContent, saveCompareContent } from "@/lib/admin-compare.functions";
 import type { CompareContent, CompareRow } from "@/lib/compare-content.shared";
 
-export const Route = createFileRoute("/crm/admin/website")({
+export const Route = createFileRoute("/office/website")({
   head: () => ({
     meta: [
       { title: "Site web — Skale Admin" },

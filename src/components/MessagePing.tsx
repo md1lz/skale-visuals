@@ -36,7 +36,7 @@ export function MessagePing({ role }: { role: "admin" | "editor" }) {
           transition={{ type: "spring", stiffness: 320, damping: 28 }}
           onClick={() => {
             setDismissed(msg.id);
-            const base = role === "admin" ? "/crm/admin/projects" : "/crm/editor/projects";
+            const base = role === "admin" ? "/office/projects" : "/studio/projects";
             void navigate({
               to: base,
               search: { p: msg.project_id, ...(msg.video_id ? { v: msg.video_id } : {}) },
