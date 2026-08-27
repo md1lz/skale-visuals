@@ -406,7 +406,36 @@ function BillingPanel({ section }: { section: "legal" | "documents" }) {
             value={cfg.legalName}
             onChange={(v) => patch({ legalName: v })}
           />
-          <Field label="SIRET" value={cfg.siret} onChange={(v) => patch({ siret: v })} />
+          <div className="space-y-2 sm:col-span-2">
+            <span className="block text-[11px] text-neutral-400">SIRET</span>
+            <div className="flex flex-wrap gap-2">
+              {[
+                { key: true, label: "Pas encore de SIRET" },
+                { key: false, label: "Renseigner le SIRET" },
+              ].map((o) => (
+                <button
+                  key={String(o.key)}
+                  type="button"
+                  onClick={() => patch({ siretPending: o.key })}
+                  className={`rounded-full px-3 py-1.5 text-xs transition ${
+                    !!cfg.siretPending === o.key
+                      ? "bg-red-600 text-white"
+                      : "border border-white/10 text-neutral-400 hover:text-white"
+                  }`}
+                >
+                  {o.label}
+                </button>
+              ))}
+            </div>
+            {cfg.siretPending ? (
+              <p className="text-[11px] text-neutral-500">
+                Les documents afficheront « en attente d'immatriculation » avec la mention légale.
+              </p>
+            ) : (
+              <Field label="Numéro SIRET" value={cfg.siret} onChange={(v) => patch({ siret: v })} />
+            )}
+          </div>
+
           <Field
             label="TVA intracommunautaire"
             value={cfg.vatNumber}
