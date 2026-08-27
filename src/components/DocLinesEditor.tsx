@@ -1,16 +1,6 @@
 import { Plus, Trash2 } from "lucide-react";
 import { docTotals, formatEUR, lineTotals, type DocLine, type Prestation } from "@/lib/billing.shared";
 
-export function downloadPdf(base64: string, filename: string) {
-  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0));
-  const url = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = filename;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 4000);
-}
-
 export const emptyLine = (): DocLine => ({
   prestation_id: null,
   label: "",
