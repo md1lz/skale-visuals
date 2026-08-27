@@ -241,7 +241,6 @@ function QuotesPage() {
       {editing && (
         <QuoteModal
           value={editing === "new" ? null : editing}
-          clients={clients.data}
           prestations={prestations.data}
           onClose={() => setEditing(null)}
           onSaved={() => {
@@ -447,19 +446,21 @@ function StatusSelect<T extends string>({
 
 function QuoteModal({
   value,
-  clients,
   prestations,
   onClose,
   onSaved,
 }: {
   value: Quote | null;
-  clients: Array<{ id: string; nom_complet: string; entreprise: string | null }>;
   prestations: Array<any>;
   onClose: () => void;
   onSaved: () => void;
 }) {
   const save = useServerFn(saveQuote);
-  const [clientId, setClientId] = useState(value?.client_id ?? "");
+  const [clientName, setClientName] = useState(value?.client_name ?? "");
+  const [clientCompany, setClientCompany] = useState(value?.client_company ?? "");
+  const [clientSiret, setClientSiret] = useState(value?.client_siret ?? "");
+  const [clientEmail, setClientEmail] = useState(value?.client_email ?? "");
+  const [clientAddress, setClientAddress] = useState(value?.client_address ?? "");
   const [status, setStatus] = useState<QuoteStatus>(value?.status ?? "Brouillon");
   const [validUntil, setValidUntil] = useState(value?.valid_until ?? "");
   const [notes, setNotes] = useState(value?.notes ?? "");
@@ -477,7 +478,12 @@ function QuoteModal({
       await save({
         data: {
           id: value?.id ?? null,
-          client_id: clientId || null,
+          client_id: value?.client_id ?? null,
+          client_name: clientName.trim() || null,
+          client_company: clientCompany.trim() || null,
+          client_siret: clientSiret.trim() || null,
+          client_email: clientEmail.trim() || null,
+          client_address: clientAddress.trim() || null,
           status,
           valid_until: validUntil || null,
           notes,
@@ -512,38 +518,31 @@ function QuoteModal({
           {value ? `Modifier ${value.number}` : "Nouveau devis"}
         </h2>
 
-        <div className="grid gap-3 sm:grid-cols-3">
-          <label className="block sm:col-span-2">
-            <span className="mb-1 block text-[11px] text-neutral-400">Client</span>
-            <select
-              value={clientId}
-              onChange={(e) => setClientId(e.target.value)}
-              className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
-            >
-              <option value="">— Sélectionner —</option>
-              {clients.map((c) => (
-                <option key={c.id} value={c.id}>
-                  {c.nom_complet}
-                  {c.entreprise ? ` · ${c.entreprise}` : ""}
-                </option>
-              ))}
-            </select>
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-[11px] text-neutral-400">Statut</span>
-            <select
-              value={status}
-              onChange={(e) => setStatus(e.target.value as QuoteStatus)}
-              className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
-            >
-              {QUOTE_STATUSES.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </label>
+        <div className="space-y-3 rounded-xl border border-white/10 bg-neutral-900/40 p-3">
+          <p className="text-[11px] uppercase tracking-wider text-neutral-500">Client</p>
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Field label="Nom du client" value={clientName} onChange={setClientName} placeholder="Jean Dupont" />
+            <Field label="Entreprise" value={clientCompany} onChange={setClientCompany} placeholder="Dupont SAS" />
+            <Field label="SIRET" value={clientSiret} onChange={setClientSiret} placeholder="123 456 789 00012" />
+            <Field label="Email" value={clientEmail} onChange={setClientEmail} placeholder="jean@exemple.com" />
+          </div>
+          <Field label="Adresse" value={clientAddress} onChange={setClientAddress} placeholder="12 rue…, 75000 Paris" />
         </div>
+
+        <label className="block">
+          <span className="mb-1 block text-[11px] text-neutral-400">Statut</span>
+          <select
+            value={status}
+            onChange={(e) => setStatus(e.target.value as QuoteStatus)}
+            className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white focus:border-red-500 focus:outline-none"
+          >
+            {QUOTE_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+        </label>
 
         <label className="block">
           <span className="mb-1 block text-[11px] text-neutral-400">Valable jusqu'au</span>
@@ -596,5 +595,29 @@ function QuoteModal({
         </div>
       </motion.form>
     </motion.div>
+  );
+}
+
+export function Field({
+  label,
+  value,
+  onChange,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+}) {
+  return (
+    <label className="block">
+      <span className="mb-1 block text-[11px] text-neutral-400">{label}</span>
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className="w-full rounded-lg border border-white/10 bg-neutral-900 px-3 py-2 text-sm text-white placeholder:text-neutral-600 focus:border-red-500 focus:outline-none"
+      />
+    </label>
   );
 }
