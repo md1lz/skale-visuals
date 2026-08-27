@@ -6,6 +6,10 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Cell,
+  Legend,
+  Pie,
+  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -37,6 +41,17 @@ import { formatEUR } from "@/lib/billing.shared";
 export const Route = createFileRoute("/office/")({
   component: AdminHome,
 });
+
+const QUOTE_STATUS_COLORS: Record<string, string> = {
+  Brouillon: "#737373",
+  "Envoyé": "#3b82f6",
+  "Signé": "#10b981",
+  "Refusé": "#ef4444",
+  "Expiré": "#52525b",
+};
+
+const MONTH_LABEL = (m: string) =>
+  new Date(`${m}-01T12:00:00Z`).toLocaleDateString("fr-FR", { month: "short" });
 
 function SectionTitle({ label }: { label: string }) {
   return (
@@ -120,6 +135,12 @@ function AdminHome() {
   const fetchFinance = useServerFn(getFinanceKpis);
   const finance = useQuery({ queryKey: ["office", "finance-kpis"], queryFn: () => fetchFinance() });
   const fk = finance.data;
+  const revenueSeries = (fk?.series ?? []).map((x) => ({
+    label: MONTH_LABEL(x.month),
+    revenue: x.revenue,
+  }));
+  const quoteStatusData = (fk?.quoteStatusCounts ?? []).filter((x) => x.count > 0);
+
   const financeCards = [
     {
       label: "CA du mois",
