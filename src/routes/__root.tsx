@@ -159,13 +159,15 @@ function RootInner() {
   }, [pathname]);
 
   useEffect(() => {
-    // Safety: the PWA manifest must only be present on /app. Remove any stale
-    // manifest link that could leak onto the public site or other routes.
-    const manifestLink = document.querySelector("link[rel='manifest']");
-    if (manifestLink && !pathname.startsWith("/app")) {
-      manifestLink.remove();
-    }
+    // PWA désactivée : aucun manifest ne doit être présent, aucune invite
+    // d'installation ne doit s'afficher et les service workers sont retirés.
+    document.querySelectorAll("link[rel='manifest']").forEach((el) => el.remove());
+    const block = (e: Event) => e.preventDefault();
+    window.addEventListener("beforeinstallprompt", block);
+    void registerPushWorker();
+    return () => window.removeEventListener("beforeinstallprompt", block);
   }, [pathname]);
+
 
   const fetchMaintenance = useServerFn(getMaintenanceStatus);
   const fetchSession = useServerFn(getAdminSessionFn);
