@@ -2,7 +2,7 @@ import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Wifi, Smartphone, Trash2, Pencil, Check, X } from "lucide-react";
+import { Wifi, Trash2, Pencil, Check, X } from "lucide-react";
 import {
   listConnections,
   forgetConnection,
@@ -23,7 +23,8 @@ function formatLastSeen(iso: string) {
   return `vu ${d.toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" })} à ${time}`;
 }
 
-export function RememberedConnections({ source }: { source: "web" | "app" }) {
+export function RememberedConnections() {
+  const source = "web" as const;
   const fetchList = useServerFn(listConnections);
   const forget = useServerFn(forgetConnection);
   const rename = useServerFn(renameConnection);
@@ -38,12 +39,9 @@ export function RememberedConnections({ source }: { source: "web" | "app" }) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState("");
 
-  const Icon = source === "app" ? Smartphone : Wifi;
-  const title = source === "app" ? "Connexion via l'app" : "Connexion via site web";
-  const description =
-    source === "app"
-      ? "Appareils enregistrés depuis l'application."
-      : 'Appareils enregistrés depuis le site web avec "se souvenir de moi".';
+  const Icon = Wifi;
+  const title = "Connexions enregistrées";
+  const description = 'Appareils enregistrés avec "se souvenir de moi".';
 
   async function onForget(id: string) {
     await forget({ data: { id } });

@@ -32,11 +32,23 @@ import { getAdminProfile } from "@/lib/admin-auth.functions";
 import { listFollowupsDue } from "@/lib/admin-prospects.functions";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 
-export const Route = createFileRoute("/crm/admin/")({
+export const Route = createFileRoute("/office/")({
   component: AdminHome,
 });
 
+function SectionTitle({ label }: { label: string }) {
+  return (
+    <div className="mb-3 flex items-center gap-3">
+      <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400">
+        {label}
+      </h2>
+      <span className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+    </div>
+  );
+}
+
 function Initials({ name }: { name: string }) {
+
   const letters = name
     .split(/\s+/)
     .map((w) => w[0])
@@ -103,6 +115,12 @@ function AdminHome() {
     { label: "Devis soumis", value: dayQ.isLoading ? "…" : fmtNum(k?.devisSubmitted), icon: FileSignature },
   ];
 
+  const financeCards = [
+    { label: "CA du mois", icon: TrendingUp },
+    { label: "En attente de paiement", icon: Clock },
+    { label: "Devis à signer", icon: FileSignature },
+    { label: "Factures en retard", icon: AlertTriangle },
+  ];
 
   return (
     <div className="w-full max-w-6xl mx-auto overflow-x-hidden px-4 pt-6 pb-10 md:px-8 md:pt-10">
@@ -133,14 +151,42 @@ function AdminHome() {
         </div>
       </motion.div>
 
+      {/* Bloc 1 — Financier (placeholder) */}
+      <SectionTitle label="Financier" />
+      <div className="mb-10 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        {financeCards.map((c, i) => {
+          const Icon = c.icon;
+          return (
+            <motion.div
+              key={c.label}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: 0.04 * i }}
+              className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] uppercase tracking-wider text-neutral-500">
+                  {c.label}
+                </span>
+                <Icon className="h-3.5 w-3.5 text-neutral-600" />
+              </div>
+              <p className="mt-3 text-2xl font-semibold text-neutral-500">—</p>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Bloc 2 — Analytiques */}
+      <SectionTitle label="Analytiques" />
 
       {/* 24h chart */}
       <motion.div
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-4 md:p-5 mb-3"
+        className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 md:p-5 mb-3 backdrop-blur"
       >
+
         <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
           <div>
             <p className="text-[11px] uppercase tracking-wider text-neutral-500">
@@ -223,13 +269,15 @@ function AdminHome() {
         })}
       </div>
 
-      {/* Recent Activity */}
+      {/* Bloc 3 — Activité & notifications */}
+      <SectionTitle label="Activité & notifications" />
       <motion.div
         initial={{ opacity: 0, y: 6 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3, delay: 0.1 }}
-        className="rounded-2xl border border-white/10 bg-neutral-900/40 p-4 md:p-5"
+        className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 md:p-5 backdrop-blur"
       >
+
         <div className="flex items-center gap-2 mb-4">
           <Clock className="h-4 w-4 text-red-400" />
           <h2 className="text-sm font-semibold text-white uppercase tracking-wider">
@@ -255,7 +303,7 @@ function AdminHome() {
                 return (
                   <Link
                     key={f.id}
-                    to="/crm/admin/prospects"
+                    to="/office/prospects"
                     search={{ p: f.id }}
                     className="flex min-h-[44px] flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 hover:bg-white/[0.05] transition"
                   >

@@ -5,7 +5,6 @@ import { useServerFn } from "@tanstack/react-start";
 import { useNavigate, useRouter } from "@tanstack/react-router";
 import { ChevronDown, LogOut, UserPen, X, Upload, Trash2 } from "lucide-react";
 import { updateEditorProfileFn, logoutEditorFn, getEditorSessionFn } from "@/lib/editor.functions";
-import { isStandaloneApp } from "@/lib/pwa";
 
 type Profile = { username: string; displayName: string; avatarUrl: string | null };
 
@@ -60,7 +59,7 @@ export function EditorProfileMenu({ initial }: { initial: Profile }) {
     }
     await logout();
     await router.invalidate();
-    if (typeof window !== "undefined") window.location.replace(isStandaloneApp() ? "/crm" : "/");
+    if (typeof window !== "undefined") window.location.replace("/office");
     else navigate({ to: "/" });
   }
 

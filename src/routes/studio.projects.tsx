@@ -9,7 +9,7 @@ import { ProjectVideosBoard, RushLink, useWorkspace } from "@/components/VideoWo
 import { ProjectProgress } from "@/components/ProjectProgress";
 import { statusBadgeClass, deadlineTone, fmtDateFR } from "@/lib/project-display";
 
-export const Route = createFileRoute("/crm/editor/projects")({
+export const Route = createFileRoute("/studio/projects")({
   validateSearch: (s: Record<string, unknown>) => ({
     p: typeof s.p === "string" ? s.p : undefined,
     v: typeof s.v === "string" ? s.v : undefined,
@@ -59,7 +59,7 @@ function EditorProjectsPage() {
               {(q.data ?? []).map((p) => (
                 <tr
                   key={p.id}
-                  onClick={() => navigate({ to: "/crm/editor/projects", search: { p: p.id, v: undefined } })}
+                  onClick={() => navigate({ to: "/studio/projects", search: { p: p.id, v: undefined } })}
                   className="border-t border-white/5 hover:bg-white/[0.03] cursor-pointer transition"
                 >
                   <td className="px-4 py-3 text-white">{p.title}</td>
@@ -87,7 +87,7 @@ function EditorProjectsPage() {
           <ProjectFullscreen
             id={selected}
             focusVideo={focusVideo ?? null}
-            onClose={() => navigate({ to: "/crm/editor/projects", search: { p: undefined, v: undefined } })}
+            onClose={() => navigate({ to: "/studio/projects", search: { p: undefined, v: undefined } })}
           />
         )}
       </AnimatePresence>

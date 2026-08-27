@@ -1,95 +1,27 @@
-const SW_URL = "/sw.js";
+/**
+ * PWA désactivée (phase 1) : le manifest n'est plus injecté, le service worker
+ * n'est plus enregistré et les notifications push VAPID sont hors service.
+ * Le code d'origine reste disponible dans l'historique Git si on réactive l'app.
+ */
 
-/** True when the page runs inside the installed PWA (standalone display). */
+/** Toujours false : l'application installée n'est plus supportée. */
 export function isStandaloneApp() {
-  if (typeof window === "undefined") return false;
-  return (
-    window.matchMedia?.("(display-mode: standalone)").matches ||
-    window.matchMedia?.("(display-mode: fullscreen)").matches ||
-    window.matchMedia?.("(display-mode: minimal-ui)").matches ||
-    (window.navigator as unknown as { standalone?: boolean }).standalone === true
-  );
-}
-
-function isBlockedContext() {
-  if (typeof window === "undefined") return true;
-  if (!("serviceWorker" in navigator)) return true;
-  const host = window.location.hostname;
-  if (new URLSearchParams(window.location.search).get("sw") === "off") return true;
-  if (window.top !== window.self) return true;
-  if (host.startsWith("id-preview--") || host.startsWith("preview--")) return true;
-  if (host === "lovableproject.com" || host.endsWith(".lovableproject.com")) return true;
-  if (host === "lovableproject-dev.com" || host.endsWith(".lovableproject-dev.com")) return true;
-  if (host === "beta.lovable.dev" || host.endsWith(".beta.lovable.dev")) return true;
   return false;
 }
 
-/** Registers the push messaging worker (never in dev/preview/iframe). */
+/** No-op : désenregistre tout service worker restant. */
 export async function registerPushWorker(): Promise<ServiceWorkerRegistration | null> {
-  if (isBlockedContext()) {
-    try {
-      const regs = await navigator.serviceWorker?.getRegistrations?.();
-      for (const r of regs ?? []) {
-        if (r.active?.scriptURL.endsWith(SW_URL)) await r.unregister();
-      }
-    } catch {
-      /* noop */
-    }
-    return null;
-  }
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) return null;
   try {
-    return await navigator.serviceWorker.register(SW_URL);
+    const regs = await navigator.serviceWorker.getRegistrations();
+    for (const r of regs) await r.unregister();
   } catch {
-    return null;
+    /* noop */
   }
+  return null;
 }
 
-function urlBase64ToUint8Array(base64String: string) {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = window.atob(base64);
-  const out = new Uint8Array(raw.length);
-  for (let i = 0; i < raw.length; i++) out[i] = raw.charCodeAt(i);
-  return out;
-}
-
-/** Asks for permission and returns a push subscription payload (or null). */
-export async function subscribeToPush(vapidPublicKey?: string | null) {
-  if (typeof window === "undefined" || !("Notification" in window)) return null;
-  const permission = await Notification.requestPermission();
-  if (permission !== "granted") return { permission } as const;
-
-  const reg = await registerPushWorker();
-  if (!reg || !vapidPublicKey) return { permission } as const;
-
-  const appKey = urlBase64ToUint8Array(vapidPublicKey);
-  try {
-    // Drop any subscription created with a different (or rotated) server key,
-    // otherwise subscribe() throws InvalidStateError and push silently dies.
-    const existing = await reg.pushManager.getSubscription();
-    if (existing) {
-      const current = existing.options?.applicationServerKey
-        ? new Uint8Array(existing.options.applicationServerKey as ArrayBuffer)
-        : null;
-      const same =
-        current && current.length === appKey.length && current.every((b, i) => b === appKey[i]);
-      if (!same) await existing.unsubscribe();
-    }
-    const sub = await reg.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: appKey as BufferSource,
-    });
-    const json = sub.toJSON();
-    return {
-      permission,
-      subscription: {
-        endpoint: json.endpoint!,
-        p256dh: json.keys?.p256dh ?? "",
-        auth: json.keys?.auth ?? "",
-        userAgent: navigator.userAgent.slice(0, 400),
-      },
-    } as const;
-  } catch {
-    return { permission } as const;
-  }
+/** No-op : les notifications push sont désactivées. */
+export async function subscribeToPush(_vapidPublicKey?: string | null) {
+  return null;
 }

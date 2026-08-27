@@ -124,7 +124,7 @@ export function PanelMobileNav({
                 return (
                   <Link
                     key={item.to}
-                    to={item.to as "/crm/admin"}
+                    to={item.to as "/office"}
                     className={`flex min-h-[56px] items-center gap-4 rounded-2xl px-4 py-3.5 text-base transition ${
                       active
                         ? "border border-red-600/30 bg-red-600/15 text-white"

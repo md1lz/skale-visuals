@@ -9,21 +9,21 @@ self.addEventListener("push", (event) => {
   } catch {
     payload = { body: event.data ? event.data.text() : "" };
   }
-  const title = payload.title || "Skale CRM";
+  const title = payload.title || "Skale Office";
   event.waitUntil(
     self.registration.showNotification(title, {
       body: payload.body || "",
       icon: "/icons/icon-192.png",
       badge: "/icons/icon-192.png",
       tag: payload.tag || "skale",
-      data: { url: payload.url || "/app" },
+      data: { url: payload.url || "/office" },
     }),
   );
 });
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const url = (event.notification.data && event.notification.data.url) || "/app";
+  const url = (event.notification.data && event.notification.data.url) || "/office";
   event.waitUntil(
     self.clients.matchAll({ type: "window", includeUncontrolled: true }).then((list) => {
       for (const client of list) {

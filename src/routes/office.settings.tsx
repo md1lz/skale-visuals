@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { NotificationsSettings } from "@/components/NotificationsSettings";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useRef, useState } from "react";
@@ -32,7 +31,7 @@ import {
 import { RememberedConnections } from "@/components/RememberedConnections";
 
 
-export const Route = createFileRoute("/crm/admin/settings")({
+export const Route = createFileRoute("/office/settings")({
   component: ParametresPage,
 });
 
@@ -80,9 +79,7 @@ function ParametresPage() {
 
       <ThemeSection />
       <BackgroundSection />
-      <RememberedConnections source="web" />
-      <RememberedConnections source="app" />
-      <NotificationsSettings defaultUrl="/crm/admin" />
+      <RememberedConnections />
       <AccountsSection />
     </div>
   );

@@ -1,12 +1,11 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { NotificationsSettings } from "@/components/NotificationsSettings";
 import { useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { Palette, ImageIcon, Upload, Trash2, Check, Sun, Moon, MonitorSmartphone } from "lucide-react";
 import { RememberedConnections } from "@/components/RememberedConnections";
 import { ADMIN_THEMES, useAdminPrefs, type AdminTheme } from "@/components/admin-prefs";
 
-export const Route = createFileRoute("/crm/editor/settings")({ component: EditorSettingsPage });
+export const Route = createFileRoute("/studio/settings")({ component: EditorSettingsPage });
 
 function Section({
   icon: Icon,
@@ -49,9 +48,7 @@ function EditorSettingsPage() {
       </div>
       <ThemeSection />
       <BackgroundSection />
-      <RememberedConnections source="web" />
-      <RememberedConnections source="app" />
-      <NotificationsSettings defaultUrl="/crm/editor" />
+      <RememberedConnections />
     </div>
   );
 }
