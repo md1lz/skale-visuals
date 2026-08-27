@@ -130,15 +130,20 @@ async function encryptPayload(p256dh: string, auth: string, plaintext: string) {
 
 export type PushPayload = { title?: string; body: string; url?: string; tag?: string };
 
+/** Push VAPID désactivé (phase 1) — la logique d'envoi reste en place ci-dessous. */
+const PUSH_ENABLED = false;
+
 /** Sends one push message. Returns the HTTP status (0 when not configured/failed locally). */
 export async function sendWebPush(
   sub: { endpoint: string; p256dh: string; auth: string },
   payload: PushPayload,
 ): Promise<number> {
+  if (!PUSH_ENABLED) return 0;
   try {
     const auth = await vapidHeader(sub.endpoint);
     if (!auth) return 0;
     const body = await encryptPayload(sub.p256dh, sub.auth, JSON.stringify(payload));
+
     const res = await fetch(sub.endpoint, {
       method: "POST",
       headers: {
