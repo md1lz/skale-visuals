@@ -8,11 +8,7 @@ import { pingConnection } from "@/lib/connections.functions";
  */
 export function ConnectionHeartbeat() {
   useEffect(() => {
-    const isStandalone =
-      window.matchMedia?.("(display-mode: standalone)").matches ||
-      // iOS Safari
-      (window.navigator as unknown as { standalone?: boolean }).standalone === true;
-    const source: "web" | "app" = isStandalone ? "app" : "web";
+    const source = "web" as const;
 
     let stopped = false;
     const ping = () => {
