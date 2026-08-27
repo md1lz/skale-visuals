@@ -347,40 +347,7 @@ export function publicPdfUrl(kind: "quote" | "invoice", token: string) {
   return `${SITE_ORIGIN}/doc/${kind}/${token}`;
 }
 
-export async function emailQuote(row: any) {
-  const email = row.clients?.email as string | undefined;
-  if (!email) throw new Error("Ce client n'a pas d'adresse email.");
-  const q = mapQuote(row);
-  const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-  await sendTemplateEmail("quote-sent", email, {
-    templateData: {
-      name: q.client_name ?? "",
-      number: q.number,
-      amount: `${q.total_ttc.toFixed(2).replace(".", ",")} €`,
-      validUntil: q.valid_until
-        ? new Date(`${q.valid_until}T12:00:00Z`).toLocaleDateString("fr-FR")
-        : "",
-      signUrl: signUrlFor(q.sign_token),
-    },
-  });
-}
-
-export async function emailInvoice(row: any) {
-  const email = row.clients?.email as string | undefined;
-  if (!email) throw new Error("Ce client n'a pas d'adresse email.");
-  const inv = mapInvoice(row);
-  const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-  await sendTemplateEmail("invoice-sent", email, {
-    templateData: {
-      name: inv.client_name ?? "",
-      number: inv.number,
-      amount: `${inv.total_ttc.toFixed(2).replace(".", ",")} €`,
-      dueAt: inv.due_at ? new Date(`${inv.due_at}T12:00:00Z`).toLocaleDateString("fr-FR") : "",
-      pdfUrl: publicPdfUrl("invoice", row.share_token),
-    },
-  });
-}
-
+/** Signature d'un devis : notification interne uniquement (aucun envoi d'email). */
 export async function notifyQuoteSigned(row: any) {
   const q = mapQuote(row);
   const sb = await db();
@@ -395,17 +362,5 @@ export async function notifyQuoteSigned(row: any) {
     kind: "quote_signed",
     message: `Devis ${q.number} signé (${q.total_ttc.toFixed(2)} € TTC)`,
   });
-  const email = row.clients?.email as string | undefined;
-  if (email) {
-    const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
-    await sendTemplateEmail("quote-signed", email, {
-      templateData: {
-        name: q.client_name ?? "",
-        number: q.number,
-        amount: `${q.total_ttc.toFixed(2).replace(".", ",")} €`,
-        signedAt: q.signed_at ? new Date(q.signed_at).toLocaleString("fr-FR") : "",
-        pdfUrl: publicPdfUrl("quote", q.sign_token),
-      },
-    });
-  }
 }
+
