@@ -22,7 +22,10 @@ export const Route = createFileRoute("/api/public/doc/$kind/$token")({
         const table = kind === "quote" ? "quotes" : "invoices";
         const column = kind === "quote" ? "sign_token" : "share_token";
 
-        const { data, error } = await sb.from(table).select(select).eq(column, token).maybeSingle();
+        const { data, error } = await (sb.from(table) as any)
+          .select(select)
+          .eq(column, token)
+          .maybeSingle();
         if (error || !data) return new Response("Not found", { status: 404 });
 
         const base64 =

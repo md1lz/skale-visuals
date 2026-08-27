@@ -52,7 +52,7 @@ export const signQuote = createServerFn({ method: "POST" })
         signature_data_url: data.signature,
         signed_at: new Date().toISOString(),
         updated_at: new Date().toISOString(),
-      })
+      } as never)
       .eq("id", quote.id);
     if (error) return { ok: false as const, error: error.message };
 
