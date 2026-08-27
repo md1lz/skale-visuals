@@ -53,7 +53,7 @@ export const pingAppDevice = createServerFn({ method: "POST" })
 
 const testSchema = z.object({
   body: z.string().trim().min(1).max(300),
-  url: z.string().trim().max(500).optional().default("/crm"),
+  url: z.string().trim().max(500).optional().default("/office"),
   target: z
     .object({ type: z.enum(["admin", "editor"]), id: z.string().min(1) })
     .nullable()
@@ -191,7 +191,7 @@ export const sendTestPush = createServerFn({ method: "POST" })
     const { pushTo } = await import("./notifications.server");
     const res = await pushTo(
       target,
-      { title: "from Skale CRM", body: data.body, url: data.url || "/crm", tag: `test-${Date.now()}` },
+      { title: "from Skale Office", body: data.body, url: data.url || "/office", tag: `test-${Date.now()}` },
     );
     if (!res || res.devices === 0)
       throw new Error("Aucun appareil enregistré pour ce destinataire.");

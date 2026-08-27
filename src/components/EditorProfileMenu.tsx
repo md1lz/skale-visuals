@@ -60,7 +60,7 @@ export function EditorProfileMenu({ initial }: { initial: Profile }) {
     }
     await logout();
     await router.invalidate();
-    if (typeof window !== "undefined") window.location.replace(isStandaloneApp() ? "/crm" : "/");
+    if (typeof window !== "undefined") window.location.replace("/office");
     else navigate({ to: "/" });
   }
 
