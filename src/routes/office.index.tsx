@@ -36,7 +36,19 @@ export const Route = createFileRoute("/office/")({
   component: AdminHome,
 });
 
+function SectionTitle({ label }: { label: string }) {
+  return (
+    <div className="mb-3 flex items-center gap-3">
+      <h2 className="text-[11px] font-medium uppercase tracking-[0.18em] text-neutral-400">
+        {label}
+      </h2>
+      <span className="h-px flex-1 bg-gradient-to-r from-white/10 to-transparent" />
+    </div>
+  );
+}
+
 function Initials({ name }: { name: string }) {
+
   const letters = name
     .split(/\s+/)
     .map((w) => w[0])
