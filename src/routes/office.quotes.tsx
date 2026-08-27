@@ -4,13 +4,13 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
+  ChevronDown,
+  CircleDot,
   Copy,
   Download,
   Eye,
-  FileSignature,
   Link2,
   Loader2,
-  Mail,
   Pencil,
   Plus,
   Receipt,
@@ -25,7 +25,6 @@ import {
   listQuotes,
   quoteDocument,
   saveQuote,
-  sendQuote,
   setQuoteStatus,
 } from "@/lib/billing.functions";
 import { listClients } from "@/lib/admin-clients.functions";
@@ -51,7 +50,6 @@ function QuotesPage() {
   const fetchClients = useServerFn(listClients);
   const removeQuote = useServerFn(deleteQuote);
   const duplicate = useServerFn(duplicateQuote);
-  const send = useServerFn(sendQuote);
   const loadDoc = useServerFn(quoteDocument);
   const convert = useServerFn(convertQuoteToInvoice);
   const changeStatus = useServerFn(setQuoteStatus);
@@ -169,16 +167,14 @@ function QuotesPage() {
 
               <div className="mt-3 flex flex-wrap gap-1.5">
                 <Action icon={Eye} label="Aperçu" onClick={() => setPreview(q)} />
-                <Action icon={Pencil} label="Modifier" onClick={() => setEditing(q)} />
-                <Action
-                  icon={Mail}
-                  label="Envoyer"
-                  busy={busyId === q.id}
-                  onClick={() =>
-                    run(q.id, async () => {
-                      await send({ data: { id: q.id } });
-                      flash(`Devis ${q.number} envoyé par email.`);
-                    })
+                {q.status === "Brouillon" && (
+                  <Action icon={Pencil} label="Modifier" onClick={() => setEditing(q)} />
+                )}
+                <StatusSelect
+                  value={q.status}
+                  options={QUOTE_STATUSES}
+                  onChange={(next) =>
+                    run(q.id, () => changeStatus({ data: { id: q.id, status: next } }))
                   }
                 />
                 <Action
@@ -201,7 +197,6 @@ function QuotesPage() {
                     })
                   }
                 />
-
                 <Action
                   icon={Copy}
                   label="Dupliquer"
@@ -217,13 +212,6 @@ function QuotesPage() {
                         flash("Facture créée depuis le devis.");
                       })
                     }
-                  />
-                )}
-                {q.status === "Envoyé" && (
-                  <Action
-                    icon={FileSignature}
-                    label="Marquer refusé"
-                    onClick={() => run(q.id, () => changeStatus({ data: { id: q.id, status: "Refusé" } }))}
                   />
                 )}
                 {q.status === "Brouillon" && (
@@ -354,7 +342,9 @@ function QuotePreview({
             <span className="text-sm font-semibold text-white">{formatEUR(quote.total_ttc)}</span>
           </div>
           <div className="flex flex-wrap items-center gap-1.5">
-            <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            {quote.status === "Brouillon" && (
+              <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            )}
             <Action
               icon={Download}
               label="PDF"
@@ -370,7 +360,9 @@ function QuotePreview({
               }}
             />
             <Action icon={Link2} label="Lien de signature" onClick={onCopyLink} />
-            <Action icon={Trash2} label="" danger onClick={onDelete} />
+            {quote.status === "Brouillon" && (
+              <Action icon={Trash2} label="" danger onClick={onDelete} />
+            )}
             <Action icon={X} label="" onClick={onClose} />
           </div>
         </div>
@@ -422,6 +414,34 @@ function Action({
       {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : <Icon className="h-3.5 w-3.5" />}
       {label}
     </button>
+  );
+}
+
+function StatusSelect<T extends string>({
+  value,
+  options,
+  onChange,
+}: {
+  value: T;
+  options: readonly T[];
+  onChange: (next: T) => void;
+}) {
+  return (
+    <div className="relative inline-flex items-center">
+      <select
+        value={value}
+        onChange={(e) => onChange(e.target.value as T)}
+        className="appearance-none rounded-lg border border-white/10 bg-transparent py-1.5 pl-7 pr-6 text-xs text-neutral-300 transition hover:bg-white/5 focus:border-red-500 focus:outline-none"
+      >
+        {options.map((o) => (
+          <option key={o} value={o} className="bg-neutral-900 text-white">
+            {o}
+          </option>
+        ))}
+      </select>
+      <CircleDot className="pointer-events-none absolute left-2.5 h-3.5 w-3.5 text-neutral-400" />
+      <ChevronDown className="pointer-events-none absolute right-1.5 h-3 w-3 text-neutral-500" />
+    </div>
   );
 }
 
