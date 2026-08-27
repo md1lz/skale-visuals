@@ -6,7 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { BadgeCheck, Ban, Download, Loader2, Mail, Pencil, Plus, Trash2 } from "lucide-react";
 import {
   deleteInvoice,
-  invoicePdf,
+  invoiceDocument,
   listInvoices,
   listPrestations,
   markInvoicePaid,
@@ -25,7 +25,8 @@ import {
   type Invoice,
   type InvoiceStatus,
 } from "@/lib/billing.shared";
-import { DocLinesEditor, downloadPdf, emptyLine } from "@/components/DocLinesEditor";
+import { DocLinesEditor, emptyLine } from "@/components/DocLinesEditor";
+import { downloadDocumentPdf } from "@/components/DocumentPaper";
 
 export const Route = createFileRoute("/office/invoices")({ component: InvoicesPage });
 
@@ -37,7 +38,7 @@ function InvoicesPage() {
   const fetchClients = useServerFn(listClients);
   const remove = useServerFn(deleteInvoice);
   const send = useServerFn(sendInvoice);
-  const pdf = useServerFn(invoicePdf);
+  const loadDoc = useServerFn(invoiceDocument);
   const paid = useServerFn(markInvoicePaid);
   const changeStatus = useServerFn(setInvoiceStatus);
 
@@ -173,8 +174,8 @@ function InvoicesPage() {
                   busy={busyId === inv.id}
                   onClick={() =>
                     run(inv.id, async () => {
-                      const res = await pdf({ data: { id: inv.id } });
-                      downloadPdf(res.base64, res.filename);
+                      const bundle = await loadDoc({ data: { id: inv.id } });
+                      await downloadDocumentPdf(bundle.doc, bundle.settings);
                     })
                   }
                 />

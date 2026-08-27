@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Copy,
   Download,
+  Eye,
   FileSignature,
   Link2,
   Loader2,
@@ -14,6 +15,7 @@ import {
   Plus,
   Receipt,
   Trash2,
+  X,
 } from "lucide-react";
 import {
   convertQuoteToInvoice,
@@ -21,7 +23,7 @@ import {
   duplicateQuote,
   listPrestations,
   listQuotes,
-  quotePdf,
+  quoteDocument,
   saveQuote,
   sendQuote,
   setQuoteStatus,
@@ -37,7 +39,9 @@ import {
   type Quote,
   type QuoteStatus,
 } from "@/lib/billing.shared";
-import { DocLinesEditor, downloadPdf, emptyLine } from "@/components/DocLinesEditor";
+import { DocLinesEditor, emptyLine } from "@/components/DocLinesEditor";
+import { DocumentPaper, downloadDocumentPdf } from "@/components/DocumentPaper";
+import { useAdminPrefs } from "@/components/admin-prefs";
 
 export const Route = createFileRoute("/office/quotes")({ component: QuotesPage });
 
@@ -48,11 +52,12 @@ function QuotesPage() {
   const removeQuote = useServerFn(deleteQuote);
   const duplicate = useServerFn(duplicateQuote);
   const send = useServerFn(sendQuote);
-  const pdf = useServerFn(quotePdf);
+  const loadDoc = useServerFn(quoteDocument);
   const convert = useServerFn(convertQuoteToInvoice);
   const changeStatus = useServerFn(setQuoteStatus);
 
   const quotes = useQuery({ queryKey: ["office", "quotes"], queryFn: () => fetchQuotes(), initialData: [] });
+
   const prestations = useQuery({
     queryKey: ["office", "prestations"],
     queryFn: () => fetchPrestations(),
@@ -65,9 +70,11 @@ function QuotesPage() {
   });
 
   const [editing, setEditing] = useState<Quote | "new" | null>(null);
+  const [preview, setPreview] = useState<Quote | null>(null);
   const [filter, setFilter] = useState<QuoteStatus | "Tous">("Tous");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+
 
   const rows = quotes.data.filter((q) => filter === "Tous" || q.status === filter);
   const signedTotal = quotes.data
@@ -161,6 +168,7 @@ function QuotesPage() {
               </div>
 
               <div className="mt-3 flex flex-wrap gap-1.5">
+                <Action icon={Eye} label="Aperçu" onClick={() => setPreview(q)} />
                 <Action icon={Pencil} label="Modifier" onClick={() => setEditing(q)} />
                 <Action
                   icon={Mail}
@@ -188,11 +196,12 @@ function QuotesPage() {
                   busy={busyId === q.id}
                   onClick={() =>
                     run(q.id, async () => {
-                      const res = await pdf({ data: { id: q.id } });
-                      downloadPdf(res.base64, res.filename);
+                      const bundle = await loadDoc({ data: { id: q.id } });
+                      await downloadDocumentPdf(bundle.doc, bundle.settings);
                     })
                   }
                 />
+
                 <Action
                   icon={Copy}
                   label="Dupliquer"
@@ -255,6 +264,31 @@ function QuotesPage() {
       )}
 
       <AnimatePresence>
+        {preview && (
+          <QuotePreview
+            quote={preview}
+            onClose={() => setPreview(null)}
+            onEdit={() => {
+              setEditing(preview);
+              setPreview(null);
+            }}
+            onDelete={() => {
+              if (!confirm(`Supprimer le devis ${preview.number} ?`)) return;
+              const id = preview.id;
+              setPreview(null);
+              run(id, () => removeQuote({ data: { id } }));
+            }}
+            onCopyLink={() => {
+              navigator.clipboard?.writeText(`${window.location.origin}/sign/${preview.sign_token}`);
+              flash("Lien de signature copié.");
+            }}
+          />
+        )}
+      </AnimatePresence>
+
+
+
+      <AnimatePresence>
         {toast && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
@@ -269,6 +303,90 @@ function QuotesPage() {
     </div>
   );
 }
+
+function QuotePreview({
+  quote,
+  onClose,
+  onEdit,
+  onDelete,
+  onCopyLink,
+}: {
+  quote: Quote;
+  onClose: () => void;
+  onEdit: () => void;
+  onDelete: () => void;
+  onCopyLink: () => void;
+}) {
+  const loadDoc = useServerFn(quoteDocument);
+  const { mode } = useAdminPrefs();
+  const [downloading, setDownloading] = useState(false);
+
+  const bundle = useQuery({
+    queryKey: ["office", "quote-doc", quote.id],
+    queryFn: () => loadDoc({ data: { id: quote.id } }),
+  });
+
+  return (
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      onClick={onClose}
+      className="fixed inset-0 z-[125] overflow-y-auto bg-black/70 p-4 backdrop-blur-sm"
+    >
+      <motion.div
+        onClick={(e) => e.stopPropagation()}
+        initial={{ opacity: 0, y: 20, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        exit={{ opacity: 0, y: 10, scale: 0.98 }}
+        transition={{ type: "spring", stiffness: 240, damping: 26 }}
+        className="mx-auto my-6 w-full max-w-3xl space-y-3"
+      >
+        {/* Action bar — outside the document */}
+        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-neutral-900/80 p-3">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
+            <span className={`rounded-full px-2 py-0.5 text-[11px] ${QUOTE_STATUS_STYLE[quote.status]}`}>
+              {quote.status}
+            </span>
+            <span className="truncate text-sm text-neutral-300">
+              {quote.client_name ?? "Client non défini"}
+            </span>
+            <span className="text-sm font-semibold text-white">{formatEUR(quote.total_ttc)}</span>
+          </div>
+          <div className="flex flex-wrap items-center gap-1.5">
+            <Action icon={Pencil} label="Modifier" onClick={onEdit} />
+            <Action
+              icon={Download}
+              label="PDF"
+              busy={downloading || bundle.isLoading}
+              onClick={async () => {
+                if (!bundle.data) return;
+                setDownloading(true);
+                try {
+                  await downloadDocumentPdf(bundle.data.doc, bundle.data.settings);
+                } finally {
+                  setDownloading(false);
+                }
+              }}
+            />
+            <Action icon={Link2} label="Lien de signature" onClick={onCopyLink} />
+            <Action icon={Trash2} label="" danger onClick={onDelete} />
+            <Action icon={X} label="" onClick={onClose} />
+          </div>
+        </div>
+
+        {bundle.isLoading || !bundle.data ? (
+          <div className="grid h-64 place-items-center rounded-2xl border border-white/10 bg-neutral-900/50">
+            <Loader2 className="h-5 w-5 animate-spin text-neutral-500" />
+          </div>
+        ) : (
+          <DocumentPaper doc={bundle.data.doc} settings={bundle.data.settings} dark={mode === "dark"} />
+        )}
+      </motion.div>
+    </motion.div>
+  );
+}
+
 
 function Kpi({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (

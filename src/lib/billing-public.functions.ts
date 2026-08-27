@@ -2,13 +2,15 @@ import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 import {
   db,
+  documentBundleForInvoice,
+  documentBundleForQuote,
   fetchQuote,
   fetchQuoteByToken,
   mapQuote,
   notifyQuoteSigned,
 } from "@/lib/billing.server";
 import { getBillingSettings } from "@/lib/billing.server";
-import type { BillingSettings, Quote } from "@/lib/billing.shared";
+import type { BillingSettings, DocumentBundle, Quote } from "@/lib/billing.shared";
 
 export const getQuoteForSigning = createServerFn({ method: "GET" })
   .inputValidator((d: unknown) => z.object({ token: z.string().min(8).max(80) }).parse(d))
@@ -18,6 +20,31 @@ export const getQuoteForSigning = createServerFn({ method: "GET" })
     const settings = await getBillingSettings();
     return { quote: mapQuote(row), settings };
   });
+
+export const getPublicDocument = createServerFn({ method: "GET" })
+  .inputValidator((d: unknown) =>
+    z
+      .object({
+        kind: z.enum(["quote", "invoice"]),
+        token: z.string().regex(/^[A-Za-z0-9_-]{8,80}$/),
+      })
+      .parse(d),
+  )
+  .handler(async ({ data }): Promise<DocumentBundle | null> => {
+    const sb = await db();
+    const isQuote = data.kind === "quote";
+    const { data: row } = await (sb.from(isQuote ? "quotes" : "invoices") as any)
+      .select(
+        isQuote
+          ? "*, clients(nom_complet, entreprise, email), quote_lines(*)"
+          : "*, clients(nom_complet, entreprise, email), invoice_lines(*)",
+      )
+      .eq(isQuote ? "sign_token" : "share_token", data.token)
+      .maybeSingle();
+    if (!row) return null;
+    return isQuote ? await documentBundleForQuote(row) : await documentBundleForInvoice(row);
+  });
+
 
 export const signQuote = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>

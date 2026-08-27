@@ -1,10 +1,12 @@
 import { useSession } from "@tanstack/react-start/server";
 import {
   DEFAULT_BILLING,
+  QUOTE_STATUSES,
   docTotals,
   normalizeBilling,
   type BillingSettings,
   type DocLine,
+  type DocumentBundle,
   type Invoice,
   type InvoiceStatus,
   type Quote,
@@ -209,12 +211,12 @@ export function clientBlock(row: any) {
   };
 }
 
-export async function pdfBase64ForQuote(row: any): Promise<string> {
-  const { renderDocumentPdf } = await import("@/lib/billing-pdf.server");
+export async function documentBundleForQuote(row: any): Promise<DocumentBundle> {
   const settings = await getBillingSettings();
   const q = mapQuote(row);
-  const bytes = await renderDocumentPdf(
-    {
+  return {
+    settings,
+    doc: {
       kind: "quote",
       number: q.number,
       createdAt: q.created_at,
@@ -224,20 +226,22 @@ export async function pdfBase64ForQuote(row: any): Promise<string> {
       notes: q.notes,
       conditions: q.conditions ?? settings.defaultConditions,
       signature: q.signed_at
-        ? { dataUrl: row.signature_data ?? null, name: q.signer_name, signedAt: q.signed_at }
+        ? {
+            dataUrl: row.signature_data_url ?? row.signature_data ?? null,
+            name: q.signer_name,
+            signedAt: q.signed_at,
+          }
         : null,
     },
-    settings,
-  );
-  return base64(bytes);
+  };
 }
 
-export async function pdfBase64ForInvoice(row: any): Promise<string> {
-  const { renderDocumentPdf } = await import("@/lib/billing-pdf.server");
+export async function documentBundleForInvoice(row: any): Promise<DocumentBundle> {
   const settings = await getBillingSettings();
   const inv = mapInvoice(row);
-  const bytes = await renderDocumentPdf(
-    {
+  return {
+    settings,
+    doc: {
       kind: "invoice",
       number: inv.number,
       createdAt: inv.created_at,
@@ -247,11 +251,11 @@ export async function pdfBase64ForInvoice(row: any): Promise<string> {
       lines: inv.lines,
       notes: inv.notes,
       conditions: inv.conditions ?? settings.paymentTerms,
+      signature: null,
     },
-    settings,
-  );
-  return base64(bytes);
+  };
 }
+
 
 export function base64(bytes: Uint8Array): string {
   let binary = "";
@@ -303,7 +307,13 @@ export async function financeKpis() {
   const awaitingSignature = quotes.filter((x) => x.status === "Envoyé");
   const overdue = invoices.filter((x) => x.status === "En retard");
 
+  const quoteStatusCounts = QUOTE_STATUSES.map((st) => ({
+    status: st,
+    count: quotes.filter((x) => x.status === st).length,
+  }));
+
   return {
+    quoteStatusCounts,
     revenueMonth: current,
     revenuePrevMonth: Math.round(previous * 100) / 100,
     pendingPayment: Math.round(pendingPayment * 100) / 100,
@@ -323,7 +333,7 @@ export function signUrlFor(token: string) {
 }
 
 export function publicPdfUrl(kind: "quote" | "invoice", token: string) {
-  return `${SITE_ORIGIN}/api/public/doc/${kind}/${token}`;
+  return `${SITE_ORIGIN}/doc/${kind}/${token}`;
 }
 
 export async function emailQuote(row: any) {
