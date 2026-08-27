@@ -378,6 +378,107 @@ export type Database = {
           },
         ]
       }
+      invoice_lines: {
+        Row: {
+          id: string
+          invoice_id: string
+          label: string
+          position: number
+          quantity: number
+          tva_rate: number
+          unit_price_ht: number
+        }
+        Insert: {
+          id?: string
+          invoice_id: string
+          label: string
+          position?: number
+          quantity?: number
+          tva_rate?: number
+          unit_price_ht?: number
+        }
+        Update: {
+          id?: string
+          invoice_id?: string
+          label?: string
+          position?: number
+          quantity?: number
+          tva_rate?: number
+          unit_price_ht?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoice_lines_invoice_id_fkey"
+            columns: ["invoice_id"]
+            isOneToOne: false
+            referencedRelation: "invoices"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      invoices: {
+        Row: {
+          client_id: string | null
+          conditions: string | null
+          created_at: string
+          due_at: string | null
+          id: string
+          issued_at: string
+          notes: string | null
+          number: string
+          paid_amount: number | null
+          paid_at: string | null
+          quote_id: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          client_id?: string | null
+          conditions?: string | null
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          issued_at?: string
+          notes?: string | null
+          number: string
+          paid_amount?: number | null
+          paid_at?: string | null
+          quote_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string | null
+          conditions?: string | null
+          created_at?: string
+          due_at?: string | null
+          id?: string
+          issued_at?: string
+          notes?: string | null
+          number?: string
+          paid_amount?: number | null
+          paid_at?: string | null
+          quote_id?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "invoices_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "invoices_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       notifications: {
         Row: {
           created_at: string
@@ -418,6 +519,36 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      prestations: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          label: string
+          position: number
+          price_ht: number
+          tva_rate: number
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          label: string
+          position?: number
+          price_ht?: number
+          tva_rate?: number
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          label?: string
+          position?: number
+          price_ht?: number
+          tva_rate?: number
+        }
+        Relationships: []
       }
       project_comment_reactions: {
         Row: {
@@ -925,6 +1056,116 @@ export type Database = {
           user_agent?: string | null
         }
         Relationships: []
+      }
+      quote_lines: {
+        Row: {
+          id: string
+          label: string
+          position: number
+          prestation_id: string | null
+          quantity: number
+          quote_id: string
+          tva_rate: number
+          unit_price_ht: number
+        }
+        Insert: {
+          id?: string
+          label: string
+          position?: number
+          prestation_id?: string | null
+          quantity?: number
+          quote_id: string
+          tva_rate?: number
+          unit_price_ht?: number
+        }
+        Update: {
+          id?: string
+          label?: string
+          position?: number
+          prestation_id?: string | null
+          quantity?: number
+          quote_id?: string
+          tva_rate?: number
+          unit_price_ht?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quote_lines_prestation_id_fkey"
+            columns: ["prestation_id"]
+            isOneToOne: false
+            referencedRelation: "prestations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "quote_lines_quote_id_fkey"
+            columns: ["quote_id"]
+            isOneToOne: false
+            referencedRelation: "quotes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      quotes: {
+        Row: {
+          client_id: string | null
+          conditions: string | null
+          created_at: string
+          id: string
+          notes: string | null
+          number: string
+          sign_token: string
+          signature_data: string | null
+          signed_at: string | null
+          signed_pdf_url: string | null
+          signer_ip: string | null
+          signer_name: string | null
+          status: string
+          updated_at: string
+          valid_until: string | null
+        }
+        Insert: {
+          client_id?: string | null
+          conditions?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          number: string
+          sign_token?: string
+          signature_data?: string | null
+          signed_at?: string | null
+          signed_pdf_url?: string | null
+          signer_ip?: string | null
+          signer_name?: string | null
+          status?: string
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Update: {
+          client_id?: string | null
+          conditions?: string | null
+          created_at?: string
+          id?: string
+          notes?: string | null
+          number?: string
+          sign_token?: string
+          signature_data?: string | null
+          signed_at?: string | null
+          signed_pdf_url?: string | null
+          signer_ip?: string | null
+          signer_name?: string | null
+          status?: string
+          updated_at?: string
+          valid_until?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quotes_client_id_fkey"
+            columns: ["client_id"]
+            isOneToOne: false
+            referencedRelation: "clients"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       site_carousels: {
         Row: {
