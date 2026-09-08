@@ -29,8 +29,7 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-  --font-sans: "Instrument Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-script: "Instrument Serif", serif;
+  --font-sans: "Codec Pro", ui-sans-serif, system-ui, sans-serif;
 }
 
 :root {
@@ -67,6 +66,7 @@
     background-color: #080810;
     color: var(--color-foreground);
     font-family: var(--font-sans);
+    font-weight: 300;
     -webkit-font-smoothing: antialiased;
     position: relative;
   }
@@ -119,21 +119,6 @@
   text-wrap: balance;
 }
 
-@utility font-script {
-  font-family: var(--font-script);
-  font-weight: 400;
-  font-style: italic;
-  letter-spacing: 0;
-}
-
-@font-face {
-  font-family: "Kangge";
-  src: url("/__l5e/assets-v1/221e7992-708e-450e-9c98-c171951fb7b4/Kangge.ttf") format("truetype");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 @font-face {
   font-family: "Codec Pro";
   src: url("/__l5e/assets-v1/88839754-a714-4108-9fe8-4db4ac4b3ccc/CodecPro-Light.ttf") format("truetype");
@@ -151,22 +136,15 @@
 }
 
 @utility font-codec {
-  font-family: "Codec Pro", var(--font-sans);
+  font-family: "Codec Pro", ui-sans-serif, system-ui, sans-serif;
   font-weight: 300;
   letter-spacing: 0;
 }
 
 @utility font-codec-bold {
-  font-family: "Codec Pro", var(--font-sans);
+  font-family: "Codec Pro", ui-sans-serif, system-ui, sans-serif;
   font-weight: 700;
   letter-spacing: 0;
-}
-
-@utility font-kangge {
-  font-family: "Kangge", var(--font-sans);
-  font-weight: 400;
-  font-style: normal;
-  letter-spacing: 0.02em;
 }
 
 @utility liquid-glass {

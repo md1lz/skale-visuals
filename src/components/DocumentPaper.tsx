@@ -108,7 +108,7 @@ export function DocumentPaper({
             </p>
           </div>
           <div style={{ textAlign: "right" }}>
-            <p style={{ fontSize: 24, fontFamily: "Kangge, inherit", letterSpacing: "0.02em" }}>
+            <p style={{ fontSize: 24, fontFamily: "Codec Pro, ui-sans-serif, system-ui, sans-serif", fontWeight: 700, letterSpacing: "0.02em" }}>
               skale visuals.
             </p>
             <p style={{ fontSize: 12, color: muted, marginTop: 4 }}>
@@ -248,7 +248,7 @@ export function DocumentPaper({
           }}
         >
           <div>
-            <p style={{ fontSize: 20, fontFamily: "Kangge, inherit", letterSpacing: "0.02em" }}>
+            <p style={{ fontSize: 20, fontFamily: "Codec Pro, ui-sans-serif, system-ui, sans-serif", fontWeight: 700, letterSpacing: "0.02em" }}>
               skale visuals.
             </p>
           </div>

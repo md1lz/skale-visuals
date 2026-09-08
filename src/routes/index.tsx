@@ -300,7 +300,7 @@ function Hero() {
               <span className="inline-block text-primary">préférées</span>
             </span>
           </h1>
-          <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed tracking-[-0.02em] text-muted-foreground sm:text-base sm:leading-relaxed">
+          <p className="font-codec mx-auto mt-6 max-w-xl text-sm leading-relaxed tracking-[-0.02em] text-muted-foreground sm:text-base sm:leading-relaxed">
             Skale Visuals, l'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but :{" "}
             <span className="font-codec-bold text-foreground">convertir</span>.
           </p>
@@ -569,7 +569,7 @@ function Comparatif() {
               {content.otherLabel}
             </div>
             <div className="relative z-20 col-start-3 border-b border-foreground/10 px-2 py-3 text-center sm:px-4">
-              <span className="font-kangge text-2xl text-white sm:text-3xl">
+              <span className="font-codec-bold text-2xl text-white sm:text-3xl">
                 {content.skaleLabel.endsWith(".") ? (
                   <>
                     {content.skaleLabel.slice(0, -1)}
@@ -633,7 +633,7 @@ function SiteFooter() {
       <div className="mx-auto w-full max-w-4xl px-4 py-12">
         <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="font-kangge text-3xl text-foreground">
+            <p className="font-codec-bold text-3xl text-foreground">
               skale<span className="text-primary">.</span>
             </p>
             <div className="mt-4 space-y-2.5">

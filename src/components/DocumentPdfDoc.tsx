@@ -10,15 +10,15 @@ import {
   type DocumentPayload,
 } from "@/lib/billing.shared";
 
-const KANGGE_URL = "/__l5e/assets-v1/221e7992-708e-450e-9c98-c171951fb7b4/Kangge.ttf";
-let kanggeReady = false;
-function registerKangge() {
-  if (kanggeReady) return;
+const CODEC_PRO_BOLD_URL = "/__l5e/assets-v1/f8435723-11c4-4108-bc08-6cf77d827483/CodecPro-Bold.ttf";
+let codecReady = false;
+function registerCodecPro() {
+  if (codecReady) return;
   try {
-    Font.register({ family: "Kangge", src: KANGGE_URL });
-    kanggeReady = true;
+    Font.register({ family: "Codec Pro", src: CODEC_PRO_BOLD_URL });
+    codecReady = true;
   } catch {
-    kanggeReady = false;
+    codecReady = false;
   }
 }
 
@@ -141,7 +141,7 @@ export function DocumentPdf({
             </Text>
           </View>
           <View style={{ alignItems: "flex-end" }}>
-            <Text style={[s.logo, kanggeReady ? { fontFamily: "Kangge" } : { fontFamily: "Helvetica-Bold" }]}>
+            <Text style={[s.logo, codecReady ? { fontFamily: "Codec Pro" } : { fontFamily: "Helvetica-Bold" }]}>
               skale visuals.
             </Text>
             <Text style={s.meta}>{settings.email || "contact@skalevisuals.com"}</Text>
@@ -246,7 +246,7 @@ export function DocumentPdf({
           <Text
             style={[
               { fontSize: 12 },
-              kanggeReady ? { fontFamily: "Kangge" } : { fontFamily: "Helvetica-Bold" },
+              codecReady ? { fontFamily: "Codec Pro" } : { fontFamily: "Helvetica-Bold" },
             ]}
           >
             skale visuals.
@@ -258,6 +258,6 @@ export function DocumentPdf({
 }
 
 export async function generateDocumentBlob(doc: DocumentPayload, settings: BillingSettings) {
-  registerKangge();
+  registerCodecPro();
   return await pdf(<DocumentPdf doc={doc} settings={settings} />).toBlob();
 }
