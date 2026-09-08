@@ -173,11 +173,10 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <header className="sticky top-0 z-40 w-full py-4">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-4">
       <div className="relative flex w-full items-start justify-between px-4 sm:px-6">
         <motion.div
-          layout
-          className="site-glass-borderless flex flex-col rounded-xl p-1 shadow-lg shadow-background/15"
+          className="site-glass-borderless pointer-events-auto flex flex-col rounded-xl p-1"
         >
           <div className="flex items-center">
             <Link
@@ -188,7 +187,7 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
                 src={skaleSymbol.url}
                 alt=""
                 aria-hidden="true"
-                className="h-8 w-8 rounded-md object-cover shadow-[0_6px_18px_-3px_rgba(0,0,0,0.4)] transition-transform duration-500 ease-out group-hover:rotate-[-10deg]"
+                className="h-8 w-8 rounded-md object-cover drop-shadow-md transition-transform duration-500 ease-out group-hover:rotate-[-10deg]"
               />
               <span className="font-codec-bold text-[1.55rem] leading-none text-foreground">skale</span>
             </Link>
@@ -216,19 +215,23 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
                 transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                 className="overflow-hidden"
               >
-                <Link
-                  to="/studio"
-                  onClick={() => setMenuOpen(false)}
-                  className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.045] hover:bg-foreground/[0.06]"
+                <button
+                  type="button"
+                  onClick={() => undefined}
+                  aria-label="Skale Studio, bientôt disponible"
+                  className="group relative flex h-11 w-full cursor-pointer items-center gap-2.5 rounded-lg bg-foreground/[0.055] px-2.5 text-left transition-transform duration-300 ease-out hover:scale-[1.025] hover:bg-foreground/[0.055]"
                 >
                   <img
                     src={skaleSymbol.url}
                     alt=""
                     aria-hidden="true"
-                    className="h-8 w-8 rounded-md object-cover shadow-[0_6px_18px_-3px_rgba(0,0,0,0.4)] transition-transform duration-500 ease-out group-hover:rotate-[10deg]"
+                    className="h-8 w-8 rounded-md object-cover opacity-60 drop-shadow-md transition-transform duration-500 ease-out group-hover:rotate-[10deg]"
                   />
-                  <span className="font-codec-bold text-[1.55rem] leading-none text-foreground">studio</span>
-                </Link>
+                  <span className="font-codec-bold text-[1.55rem] leading-none text-muted-foreground">studio</span>
+                  <span className="absolute right-1.5 top-1 rounded-full bg-primary px-1.5 py-0.5 text-[8px] font-semibold uppercase leading-none text-primary-foreground">
+                    bientôt
+                  </span>
+                </button>
               </motion.div>
             )}
           </AnimatePresence>
@@ -241,7 +244,7 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
           aria-checked={theme === "light"}
           aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
           variant="ghost"
-          className="site-glass relative flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
+          className="site-glass pointer-events-auto relative flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
         >
           <motion.span
             animate={{ x: theme === "dark" ? 0 : 30 }}
