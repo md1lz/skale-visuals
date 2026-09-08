@@ -166,14 +166,6 @@ function CenteredTopMenu() {
   const items = ["TEST", "TEST", "TEST", "TEST"];
   return (
     <nav className="pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 sm:gap-8 md:flex">
-      <button
-        type="button"
-        onClick={() => undefined}
-        className="font-codec-bold flex items-center gap-1.5 text-sm tracking-[-0.04em] text-foreground transition-colors duration-200 hover:text-foreground/80"
-      >
-        <User className="h-3.5 w-3.5" strokeWidth={2.5} />
-        espace client
-      </button>
       {items.map((label, i) => (
         <button
           key={i}
