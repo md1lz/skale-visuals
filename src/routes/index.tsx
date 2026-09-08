@@ -304,6 +304,22 @@ function Hero() {
             Skale Visuals, l'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but :{" "}
             <span className="font-codec-bold tracking-[-0.06em] text-black">convertir</span>.
           </p>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+            <Link
+              to="/bookacall"
+              className="inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-medium tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98]"
+            >
+              Réserver un appel
+            </Link>
+            <button
+              type="button"
+              onClick={() => undefined}
+              className="inline-flex cursor-pointer items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98]"
+            >
+              Découvrir
+            </button>
+          </div>
         </FadeIn>
       </div>
     </section>
