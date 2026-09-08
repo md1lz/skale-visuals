@@ -329,7 +329,7 @@ function Hero() {
             <span className="relative block">On optimise le contenu de tes</span>
             <span className="relative inline-flex items-start gap-2 sm:gap-3">
               <RotatingWord words={ROTATING_WORDS} />
-              <span className="inline-block text-primary">préférées</span>
+              <span className="inline-block text-primary">préféré(e)s</span>
             </span>
           </h1>
           <p className="font-codec mx-auto mt-2 max-w-5xl text-balance text-base leading-[1.15] tracking-[-0.06em] text-black sm:mt-3 sm:text-xl lg:text-2xl line-clamp-3 sm:line-clamp-2 lg:line-clamp-2">
