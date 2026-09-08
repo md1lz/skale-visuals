@@ -96,31 +96,6 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
   );
 }
 
-/** Counts from 1 to `to`, one unit at a time. */
-function StepCounter({ to }: { to: number }) {
-  const ref = useRef<HTMLSpanElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-40px" });
-  const [value, setValue] = useState(to > 0 ? 1 : 0);
-
-  useEffect(() => {
-    if (!inView || to <= 1) {
-      setValue(to);
-      return;
-    }
-    setValue(1);
-    const totalMs = 1600;
-    const stepMs = Math.max(12, totalMs / to);
-    let current = 1;
-    const id = window.setInterval(() => {
-      current += 1;
-      setValue(current);
-      if (current >= to) window.clearInterval(id);
-    }, stepMs);
-    return () => window.clearInterval(id);
-  }, [inView, to]);
-
-  return <span ref={ref}>{value.toLocaleString("fr-FR")}</span>;
-}
 
 function embedFor(url: string): { kind: "iframe" | "video" | "none"; src: string } {
   if (!url) return { kind: "none", src: "" };
