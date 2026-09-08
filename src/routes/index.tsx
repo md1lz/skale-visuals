@@ -302,9 +302,9 @@ function SlotMachineText({ text, active }: { text: string; active: boolean }) {
             animate={{ y: active ? "-50%" : "0%" }}
             transition={{
               type: "spring",
-              stiffness: 280,
-              damping: 22,
-              delay: i * 0.028,
+              stiffness: 420,
+              damping: 14,
+              delay: i * 0.018,
             }}
           >
             <span className="block">{char === " " ? "\u00A0" : char}</span>
