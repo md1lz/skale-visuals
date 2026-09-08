@@ -171,6 +171,8 @@ function scrollTo(target: string) {
 
 function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [skaleHover, setSkaleHover] = useState(false);
+  const [studioHover, setStudioHover] = useState(false);
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-4">
@@ -178,22 +180,34 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
         <motion.div
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 400, damping: 22 }}
-          className="site-glass-borderless pointer-events-auto flex flex-col rounded-xl p-1"
+          className={`pointer-events-auto flex flex-col p-1 transition-colors duration-300 ${
+            menuOpen
+              ? "rounded-xl bg-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)]"
+              : "bg-transparent"
+          }`}
         >
           <div className="flex items-center">
             <Link
               to="/"
+              onMouseEnter={() => setSkaleHover(true)}
+              onMouseLeave={() => setSkaleHover(false)}
               className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.055]"
             >
               <motion.img
                 src={skaleSymbol.url}
                 alt=""
                 aria-hidden="true"
-                className="h-8 w-8 rounded-md object-cover drop-shadow-[0_6px_18px_-3px_rgba(0,0,0,0.45)]"
-                whileHover={{ rotate: -18, scale: 1.12 }}
-                transition={{ type: "spring", stiffness: 260, damping: 14 }}
+                className="h-8 w-8 rounded-md object-cover drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
+                animate={skaleHover ? { rotate: -18, scale: 1.12 } : { rotate: 0, scale: 1 }}
+                transition={{ type: "spring", stiffness: 260, damping: 10, mass: 0.85 }}
               />
-              <span className="font-codec-bold text-[1.55rem] leading-none tracking-[-0.06em] text-foreground">skale</span>
+              <span
+                className={`font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] ${
+                  menuOpen ? "text-slate-900" : "text-foreground"
+                }`}
+              >
+                skale
+              </span>
             </Link>
             <Button
               type="button"
@@ -202,7 +216,9 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
               aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}
-              className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+              className={`h-9 w-9 rounded-lg hover:bg-foreground/10 ${
+                menuOpen ? "text-slate-500 hover:text-slate-900" : "text-muted-foreground hover:text-foreground"
+              }`}
             >
               <motion.span
                 animate={{ rotate: menuOpen ? 180 : 0, y: menuOpen ? 1 : 0 }}
@@ -220,11 +236,13 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
                 transition={{ type: "spring", stiffness: 380, damping: 26 }}
-                className="overflow-hidden"
+                className="overflow-hidden pt-1 pb-2"
               >
                 <motion.button
                   type="button"
                   onClick={() => undefined}
+                  onMouseEnter={() => setStudioHover(true)}
+                  onMouseLeave={() => setStudioHover(false)}
                   aria-label="Skale Studio, bientôt disponible"
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
@@ -235,11 +253,17 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
                     src={skaleSymbol.url}
                     alt=""
                     aria-hidden="true"
-                    className="h-8 w-8 rounded-md object-cover drop-shadow-[0_6px_18px_-3px_rgba(0,0,0,0.45)]"
-                    whileHover={{ rotate: 14, scale: 1.12 }}
-                    transition={{ type: "spring", stiffness: 260, damping: 14 }}
+                    className="h-8 w-8 rounded-md object-cover drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
+                    animate={studioHover ? { rotate: 14, scale: 1.12 } : { rotate: 0, scale: 1 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 10, mass: 0.85 }}
                   />
-                  <span className="font-codec-bold text-[1.55rem] leading-none tracking-[-0.06em] text-muted-foreground">studio</span>
+                  <span
+                    className={`font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] ${
+                      menuOpen ? "text-slate-400" : "text-muted-foreground"
+                    }`}
+                  >
+                    studio
+                  </span>
                   <span className="absolute right-1.5 top-1 rounded-full bg-primary px-1.5 py-0.5 text-[8px] font-semibold uppercase leading-none text-primary-foreground">
                     bientôt
                   </span>
