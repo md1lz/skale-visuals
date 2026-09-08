@@ -119,12 +119,6 @@
   text-wrap: balance;
 }
 
-/* Rounded-capsule dashed frame: fixed pitch so wider words gain dashes, not stretched gaps. */
-@utility slot-dashed-frame {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none' width='100%25' height='100%25'%3E%3Cdefs%3E%3Cpattern id='caps' width='24' height='5' patternUnits='userSpaceOnUse'%3E%3Cline x1='0' y1='2.5' x2='14' y2='2.5' stroke='%23E24B4A' stroke-width='5' stroke-linecap='round'/%3E%3C/pattern%3E%3C/defs%3E%3Crect x='2.5' y='2.5' width='95' height='95' rx='14' ry='14' fill='none' stroke='url(%23caps)' stroke-width='5'/%3E%3C/svg%3E");
-  background-size: 100% 100%;
-}
-
 @utility font-script {
   font-family: var(--font-script);
   font-weight: 400;
