@@ -294,7 +294,7 @@ function Hero() {
       <div className="relative mx-auto max-w-4xl text-center">
         <FadeIn delay={0.1}>
           <h1 className="flex flex-col items-center font-codec-bold text-balance text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
-            <span className="relative z-10 -mb-[14px] block">On optimise le contenu de tes</span>
+            <span className="relative z-10 -mb-[10px] block">On optimise le contenu de tes</span>
             <span className="relative z-0 inline-flex items-start gap-2 sm:gap-3">
               <RotatingWord words={ROTATING_WORDS} />
               <span className="inline-block text-primary">préférées</span>
