@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowRight } from "lucide-react";
+import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowUpRight } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
@@ -347,7 +347,7 @@ function Hero() {
               className="group font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-gray-600 bg-black px-4 py-2 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
             >
               <SlotMachineText text="RÉSERVER UN APPEL" active={hoverBook} />
-              <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
             </Link>
             <button
               type="button"
@@ -359,7 +359,7 @@ function Hero() {
               className="group font-codec-bold inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-gray-300 bg-white px-4 py-2 text-xs uppercase tracking-wide text-black transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-white/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.18)] active:scale-[0.97] sm:text-sm"
             >
               <SlotMachineText text="DÉCOUVRIR" active={hoverDiscover} />
-              <ArrowRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
             </button>
 
           </div>
