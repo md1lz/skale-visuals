@@ -290,7 +290,7 @@ function Navbar() {
             <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
           </Link>
         </motion.div>
-      </div>
+      </motion.div>
     </header>
   );
 }
