@@ -128,7 +128,6 @@ export function SiteAdminPanel() {
           videosCount: Number(settings.videosCount) || 0,
           clientsCount: Number(settings.clientsCount) || 0,
           plusLabel: settings.plusLabel,
-          titleStyle: settings.titleStyle,
           trust: settings.trust.map((t) => ({ name: t.name, photo: t.photo })),
         },
       });
@@ -304,39 +303,6 @@ export function SiteAdminPanel() {
               onChange={(e) => patchSettings({ clientsCount: Number(e.target.value) })}
             />
           </label>
-        </div>
-        <div className="mt-5">
-          <span className="mb-2 block text-xs text-neutral-400">Titre du site</span>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {(
-              [
-                {
-                  key: "skale",
-                  label: "skale.",
-                  hint: "Logo typographique Kangge avec point rouge",
-                },
-                {
-                  key: "visuals",
-                  label: "Skale Visuals",
-                  hint: "Titre avec pastille ronde et logo",
-                },
-              ] as const
-            ).map((opt) => (
-              <button
-                key={opt.key}
-                type="button"
-                onClick={() => patchSettings({ titleStyle: opt.key })}
-                className={`rounded-xl border p-4 text-left transition ${
-                  settings.titleStyle === opt.key
-                    ? "border-red-600/50 bg-red-600/10"
-                    : "border-white/10 bg-black/20 hover:bg-white/5"
-                }`}
-              >
-                <span className="block text-lg text-white">{opt.label}</span>
-                <span className="mt-1 block text-xs text-neutral-400">{opt.hint}</span>
-              </button>
-            ))}
-          </div>
         </div>
       </section>
 

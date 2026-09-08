@@ -9,7 +9,6 @@ export type HomeSettings = {
   clientsCount: number;
   trust: TrustClient[];
   plusLabel: string;
-  titleStyle: "skale" | "visuals";
 };
 
 export type HomeFolder = { id: string; label: string; position: number };
@@ -34,7 +33,6 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     { name: "Client 4", photo: null },
   ],
   plusLabel: "+50",
-  titleStyle: "skale",
 };
 
 export function normalizeHomeSettings(raw: unknown): HomeSettings {
@@ -48,7 +46,6 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
       : DEFAULT_HOME_SETTINGS.clientsCount,
     trust: trust.map((t) => ({ name: (t?.name ?? "").toString(), photo: t?.photo ?? null })),
     plusLabel: (v.plusLabel ?? DEFAULT_HOME_SETTINGS.plusLabel).toString(),
-    titleStyle: v.titleStyle === "visuals" ? "visuals" : "skale",
   };
 }
 

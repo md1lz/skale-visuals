@@ -1,11 +1,11 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { motion, useInView } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Sun, Moon, Mail, Instagram, Linkedin, AlertTriangle, Check } from "lucide-react";
+import { Play, Sun, Moon, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-import logoDark from "@/assets/skale-logo-dark.png.asset.json";
-import logoLight from "@/assets/skale-logo-light.png.asset.json";
+import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
+import { Button } from "@/components/ui/button";
 import {
   DEFAULT_HOME_SETTINGS,
   getHomeContent,
@@ -41,19 +41,19 @@ export const Route = createFileRoute("/")({
 
 function useTheme() {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [themeReady, setThemeReady] = useState(false);
   useEffect(() => {
-    const stored = window.localStorage.getItem("skale-theme");
-    if (stored === "light" || stored === "dark") setTheme(stored);
-    setThemeReady(true);
+    const media = window.matchMedia("(prefers-color-scheme: light)");
+    const syncWithDevice = () => setTheme(media.matches ? "light" : "dark");
+    syncWithDevice();
+    media.addEventListener("change", syncWithDevice);
+    return () => media.removeEventListener("change", syncWithDevice);
   }, []);
   useEffect(() => {
     const root = document.documentElement;
     root.classList.toggle("site-light", theme === "light");
-    window.localStorage.setItem("skale-theme", theme);
     return () => root.classList.remove("site-light");
   }, [theme]);
-  return { theme, themeReady, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
+  return { theme, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
 }
 
 /* ---------------- data ---------------- */
@@ -170,15 +170,74 @@ function scrollTo(target: string) {
 }
 
 function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void }) {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <header className="sticky top-0 z-40 w-full py-4">
-      <div className="relative flex w-full items-center justify-end px-4">
-        <button
+      <div className="relative flex w-full items-start justify-between px-4 sm:px-6">
+        <div className="relative">
+          <div className="site-glass flex items-center rounded-xl p-1 shadow-lg shadow-background/15">
+            <Link
+              to="/"
+              className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.045]"
+            >
+              <img
+                src={skaleSymbol.url}
+                alt=""
+                aria-hidden="true"
+                className="h-8 w-8 rounded-md object-cover transition-transform duration-500 ease-out group-hover:rotate-[-10deg]"
+              />
+              <span className="font-codec text-[1.55rem] leading-none text-foreground">skale</span>
+            </Link>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+              aria-expanded={menuOpen}
+              onClick={() => setMenuOpen((open) => !open)}
+              className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
+            >
+              <motion.span animate={{ rotate: menuOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
+                <ChevronDown className="h-4 w-4" />
+              </motion.span>
+            </Button>
+          </div>
+
+          <AnimatePresence>
+            {menuOpen && (
+              <motion.div
+                initial={{ opacity: 0, y: -8, scale: 0.96 }}
+                animate={{ opacity: 1, y: 8, scale: 1 }}
+                exit={{ opacity: 0, y: -5, scale: 0.97 }}
+                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                className="site-glass absolute left-0 top-full w-full min-w-[174px] rounded-xl p-1 shadow-xl shadow-background/25"
+              >
+                <Link
+                  to="/studio"
+                  onClick={() => setMenuOpen(false)}
+                  className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.045] hover:bg-foreground/[0.06]"
+                >
+                  <img
+                    src={skaleSymbol.url}
+                    alt=""
+                    aria-hidden="true"
+                    className="h-8 w-8 rounded-md object-cover transition-transform duration-500 ease-out group-hover:rotate-[10deg]"
+                  />
+                  <span className="font-codec text-[1.55rem] leading-none text-foreground">studio</span>
+                </Link>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
+        <Button
           type="button"
           onClick={toggle}
           role="switch"
           aria-checked={theme === "light"}
           aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
+          variant="ghost"
           className="site-glass relative flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
         >
           <motion.span
@@ -192,7 +251,7 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
           <span className="relative z-10 grid h-8 w-8 place-items-center">
             <Sun className={`h-4 w-4 transition-colors ${theme === "light" ? "text-background" : "text-foreground/60"}`} />
           </span>
-        </button>
+        </Button>
       </div>
     </header>
   );
@@ -200,44 +259,11 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
 
 /* ---------------- hero ---------------- */
 
-function Hero({
-  settings,
-  theme,
-  themeReady,
-}: {
-  settings: HomeContent["settings"];
-  theme: "dark" | "light";
-  themeReady: boolean;
-}) {
+function Hero({ settings }: { settings: HomeContent["settings"] }) {
   return (
-    <section className="relative overflow-hidden pb-6 pt-10 lg:pt-16">
+    <section className="relative overflow-hidden pb-6 pt-4 lg:pt-8">
       <div className="relative mx-auto max-w-3xl px-5 text-center">
-        <FadeIn>
-          {settings.titleStyle === "visuals" ? (
-            <h1 className="flex select-none items-center justify-center gap-3 text-5xl font-semibold leading-none tracking-tighter text-foreground sm:gap-4 sm:text-6xl lg:text-7xl">
-              <span
-                className={`grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full ring-1 sm:h-16 sm:w-16 lg:h-20 lg:w-20 ${
-                  theme === "light" ? "bg-white ring-black/10" : "bg-black ring-white/10"
-                }`}
-              >
-                {themeReady && (
-                  <img
-                    key={theme}
-                    src={theme === "light" ? logoLight.url : logoDark.url}
-                    alt="Logo Skale Visuals"
-                    decoding="async"
-                    className="h-full w-full object-contain p-2"
-                  />
-                )}
-              </span>
-              Skale Visuals
-            </h1>
-          ) : (
-            <h1 className="font-kangge select-none text-6xl leading-none text-foreground sm:text-7xl lg:text-8xl">
-              skale<span className="text-primary">.</span>
-            </h1>
-          )}
-        </FadeIn>
+        <h1 className="sr-only">Skale Visuals — agence de montage vidéo</h1>
         <FadeIn delay={0.12}>
           <p className="mx-auto mt-3 max-w-2xl text-balance text-base text-muted-foreground sm:mt-4 sm:text-lg">
             Montage vidéo conçu pour performer : stratégies pensées pour augmenter ton watchtime, convertir et
@@ -693,14 +719,14 @@ function SiteFooter() {
 /* ---------------- page ---------------- */
 
 function Home() {
-  const { theme, themeReady, toggle } = useTheme();
+  const { theme, toggle } = useTheme();
   const { settings, folders, videos } = useHomeContent();
 
   return (
     <div className="site-root relative min-h-screen">
       <Navbar theme={theme} toggle={toggle} />
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4">
-        <Hero settings={settings} theme={theme} themeReady={themeReady} />
+        <Hero settings={settings} />
         <FormatsTicker />
         <Trust settings={settings} />
         <Realisations folders={folders} videos={videos} />
