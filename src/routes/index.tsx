@@ -278,7 +278,7 @@ function RotatingWord({ words }: { words: string[] }) {
             animate={{ y: "0%" }}
             exit={{ y: "-110%" }}
             transition={{ type: "spring", stiffness: 260, damping: 24, mass: 0.9 }}
-            className="block whitespace-nowrap font-codec-bold text-foreground"
+            className="block whitespace-nowrap font-codec-bold tracking-[-0.06em] text-foreground"
           >
             {words[index]}
           </motion.span>
