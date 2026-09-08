@@ -267,11 +267,11 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
 
 function Hero({ settings }: { settings: HomeContent["settings"] }) {
   return (
-    <section className="relative overflow-hidden pb-6 pt-4 lg:pt-8">
+    <section className="relative overflow-hidden pb-6 pt-14 sm:pt-20 lg:pt-24">
       <div className="relative mx-auto max-w-3xl px-5 text-center">
         <h1 className="sr-only">Skale Visuals — agence de montage vidéo</h1>
         <FadeIn delay={0.12}>
-          <p className="mx-auto mt-3 max-w-2xl text-balance text-base text-muted-foreground sm:mt-4 sm:text-lg">
+          <p className="mx-auto mt-6 max-w-2xl text-balance text-base leading-relaxed text-muted-foreground sm:mt-8 sm:text-lg">
             Montage vidéo conçu pour performer : stratégies pensées pour augmenter ton watchtime, convertir et
             faire grossir ton audience. Pas d'intermédiaire, pas de prise de tête. On s'occupe de tout.
           </p>
