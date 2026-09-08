@@ -65,6 +65,49 @@ export async function assertVideoAccess(videoId: string, viewer: Viewer) {
   return { video, project };
 }
 
+/**
+ * Signs private site-videos paths, but only those the viewer is allowed to see.
+ * Project-scoped paths look like `montages/<project_id>/...` or `chat/<project_id>/...`.
+ * Anything else is refused (admins included) to avoid unscoped signing.
+ */
+export async function signOwnedStoragePaths(paths: string[], viewer: Viewer) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+  const allowed = new Map<string, boolean>();
+  const out: Record<string, string> = {};
+
+  for (const p of paths) {
+    const m = p.match(/^storage:\/\/site-videos\/(.+)$/);
+    if (!m) continue;
+    const objectPath = decodeURIComponent(m[1]!);
+    if (objectPath.includes("..")) continue;
+    const seg = objectPath.split("/");
+    if (seg.length < 3 || (seg[0] !== "montages" && seg[0] !== "chat")) continue;
+    const projectId = seg[1]!;
+    if (!UUID.test(projectId)) continue;
+
+    let ok = allowed.get(projectId);
+    if (ok === undefined) {
+      try {
+        await assertProjectAccess(projectId, viewer);
+        ok = true;
+      } catch {
+        ok = false;
+      }
+      allowed.set(projectId, ok);
+    }
+    if (!ok) continue;
+
+    const { data: s } = await supabaseAdmin.storage
+      .from("site-videos")
+      .createSignedUrl(objectPath, 60 * 60 * 24);
+    if (s?.signedUrl) out[p] = s.signedUrl;
+  }
+  return out;
+}
+
+
+
 export async function notifyAdmins(input: {
   type: string;
   project_id: string;
