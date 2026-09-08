@@ -308,18 +308,18 @@ function Hero() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <Link
               to="/bookacall"
-              className="font-codec-bold inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 bg-black px-7 py-3.5 text-sm uppercase tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98]"
+              className="font-codec-bold inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-600 bg-black px-5 py-2.5 text-base uppercase tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98] sm:px-6 sm:py-3 sm:text-xl lg:text-2xl"
             >
               Réserver un appel
-              <ArrowUpRight className="h-4 w-4 shrink-0" />
+              <ArrowUpRight className="h-[1em] w-[1em] shrink-0" />
             </Link>
             <button
               type="button"
               onClick={() => undefined}
-              className="font-codec-bold inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 bg-white px-7 py-3.5 text-sm uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98]"
+              className="font-codec-bold inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 bg-white px-5 py-2.5 text-base uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98] sm:px-6 sm:py-3 sm:text-xl lg:text-2xl"
             >
               Découvrir
-              <ArrowUpRight className="h-4 w-4 shrink-0" />
+              <ArrowUpRight className="h-[1em] w-[1em] shrink-0" />
             </button>
           </div>
         </FadeIn>
