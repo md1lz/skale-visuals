@@ -271,72 +271,60 @@ function Navbar() {
 
 /* ---------------- hero ---------------- */
 
-function Hero({ settings }: { settings: HomeContent["settings"] }) {
+const ROTATING_WORDS = ["créateurs", "entrepreneurs", "agences", "startups", "médias", "boîtes"];
+const WORD_INTERVAL_MS = 2600;
+
+function RotatingWord({ words }: { words: string[] }) {
+  const [index, setIndex] = useState(0);
+
+  useEffect(() => {
+    if (words.length <= 1) return;
+    const id = window.setInterval(() => {
+      setIndex((i) => (i + 1) % words.length);
+    }, WORD_INTERVAL_MS);
+    return () => window.clearInterval(id);
+  }, [words.length]);
+
   return (
-    <section className="relative overflow-hidden pb-6 pt-14 sm:pt-20 lg:pt-24">
-      <div className="relative mx-auto max-w-3xl px-5 text-center">
-        <h1 className="sr-only">Skale Visuals — agence de montage vidéo</h1>
-        <FadeIn delay={0.12}>
-          <p className="mx-auto mt-6 max-w-2xl text-balance text-base leading-relaxed text-muted-foreground sm:mt-8 sm:text-lg">
-            Montage vidéo conçu pour performer : stratégies pensées pour augmenter ton watchtime, convertir et
-            faire grossir ton audience. Pas d'intermédiaire, pas de prise de tête. On s'occupe de tout.
-          </p>
-        </FadeIn>
-
-        <FadeIn delay={0.24}>
-          <div className="mt-12 flex flex-col items-stretch justify-center gap-4 sm:flex-row">
-            {[
-              { value: settings.videosCount, label: "vidéos montées" },
-              { value: settings.clientsCount, label: "clients accompagnés" },
-            ].map((s) => (
-              <div
-                key={s.label}
-                className="site-pill site-corner-glow rounded-2xl px-12 py-6 sm:min-w-[300px] lg:min-w-[340px]"
-              >
-                <div className="relative z-10">
-                  <div className="text-3xl font-medium text-foreground sm:text-4xl">
-                    <span>+</span>
-                    <StepCounter to={s.value} />
-                  </div>
-                  <div className="mt-3 text-[11px] uppercase tracking-widest text-muted-foreground">{s.label}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </FadeIn>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- formats ticker ---------------- */
-
-const FORMATS = [
-  "⚡ Short",
-  "✨ Motion Design",
-  "🎬 VSL",
-  "📢 Ads",
-  "🎥 Face Cam",
-  "🎙️ Podcast",
-  "🌎 Vlog",
-];
-
-function FormatsTicker() {
-  return (
-    <section className="ticker-fade relative mx-auto max-w-5xl overflow-hidden py-8">
-      <div className="flex w-max gap-3 ticker-track">
-        {[...FORMATS, ...FORMATS, ...FORMATS].map((f, i) => (
-          <span
-            key={`${f}-${i}`}
-            className="site-surface shrink-0 rounded-full px-5 py-2.5 text-sm text-foreground/90"
+    <span
+      className="relative inline-block align-middle"
+      style={{ transform: "rotate(-2deg)", transformOrigin: "center center" }}
+    >
+      <span className="absolute inset-0 -z-10 rounded-xl bg-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)]" />
+      <span className="relative block rounded-xl border-[3px] border-dashed border-primary bg-white px-3 py-1 sm:px-4 sm:py-1.5">
+        <AnimatePresence mode="wait">
+          <motion.span
+            key={words[index]}
+            initial={{ opacity: 0, y: 14, rotate: -4 }}
+            animate={{ opacity: 1, y: 0, rotate: 0 }}
+            exit={{ opacity: 0, y: -14, rotate: 4 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+            className="block font-codec-bold text-foreground"
           >
-            {f}
-          </span>
-        ))}
+            {words[index]}
+          </motion.span>
+        </AnimatePresence>
+      </span>
+    </span>
+  );
+}
+
+function Hero() {
+  return (
+    <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-28 sm:min-h-[65vh] sm:pt-32 lg:pt-36">
+      <div className="relative mx-auto max-w-4xl text-center">
+        <FadeIn delay={0.1}>
+          <h1 className="font-codec-bold text-balance text-[2.1rem] leading-[1.15] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
+            On optimise le contenu de tes{" "}
+            <RotatingWord words={ROTATING_WORDS} />{" "}
+            <span className="inline-block">préférées</span>
+          </h1>
+        </FadeIn>
       </div>
     </section>
   );
 }
+
 
 /* ---------------- trust ---------------- */
 
