@@ -196,7 +196,7 @@ function AdminHome() {
         <div className="min-w-0 flex-1">
           <h1 className="text-2xl md:text-4xl font-semibold tracking-tight break-words">
             Bonjour,{" "}
-            <span className="font-script text-red-500 text-2xl md:text-4xl leading-none align-middle">
+            <span className="font-codec-bold italic text-red-500 text-2xl md:text-4xl leading-none align-middle">
               {greetingName}
             </span>
           </h1>

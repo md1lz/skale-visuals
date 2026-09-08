@@ -16,7 +16,7 @@ export function MaintenancePage({ message }: { message: string }) {
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="font-kangge text-5xl sm:text-6xl leading-none mb-8"
+          className="font-codec-bold text-5xl sm:text-6xl leading-none mb-8"
         >
           Skale
         </motion.p>
@@ -28,7 +28,7 @@ export function MaintenancePage({ message }: { message: string }) {
           className="text-4xl md:text-5xl font-semibold tracking-tight leading-tight"
         >
           Site en{" "}
-          <span className="font-script text-red-500">maintenance</span>
+          <span className="font-codec-bold italic text-red-500">maintenance</span>
         </motion.h1>
 
         <motion.p

@@ -11,7 +11,7 @@ export const container = {
   padding: "40px 28px",
 } as const;
 
-/** Wordmark rendered in the brand font (Kangge), hosted on the site. */
+/** Wordmark image (Codec Pro brand font), hosted on the site. */
 export const LOGO_URL = "https://skalevisuals.com/email/skale-logo.png";
 
 export const logo = {
