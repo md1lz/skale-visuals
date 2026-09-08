@@ -139,6 +139,7 @@ function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [skaleHover, setSkaleHover] = useState(false);
   const [studioHover, setStudioHover] = useState(false);
+  const [ctaHover, setCtaHover] = useState(false);
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-4">
