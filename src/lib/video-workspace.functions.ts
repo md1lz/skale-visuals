@@ -748,22 +748,11 @@ export const validateProjectRevision = createServerFn({ method: "POST" })
 export const signWorkspaceUrls = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ paths: z.array(z.string().max(500)).max(60) }).parse(d))
   .handler(async ({ data }) => {
-    const { resolveViewer } = await import("./video-workspace.server");
-    await resolveViewer();
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const out: Record<string, string> = {};
-    await Promise.all(
-      data.paths.map(async (p) => {
-        const m = p.match(/^storage:\/\/site-videos\/(.+)$/);
-        if (!m) return;
-        const { data: s } = await supabaseAdmin.storage
-          .from("site-videos")
-          .createSignedUrl(decodeURIComponent(m[1]!), 60 * 60 * 24);
-        if (s?.signedUrl) out[p] = s.signedUrl;
-      }),
-    );
-    return out;
+    const { resolveViewer, signOwnedStoragePaths } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    return signOwnedStoragePaths(data.paths, viewer);
   });
+
 /** Signed upload URL for a chat attachment (image or voice note). */
 export const createChatUploadUrl = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
