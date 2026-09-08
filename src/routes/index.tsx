@@ -262,24 +262,21 @@ function RotatingWord({ words }: { words: string[] }) {
 
   return (
     <span
-      className="relative inline-block align-middle"
-      style={{ transform: "rotate(-2deg)", transformOrigin: "center center" }}
+      className="relative inline-block align-middle rounded-xl border-[3px] border-dashed border-primary bg-white px-3 py-1 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-4 sm:py-1.5"
+      style={{ transform: "rotate(-2.5deg)", transformOrigin: "center center" }}
     >
-      <span className="absolute inset-0 -z-10 rounded-xl bg-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)]" />
-      <span className="relative block rounded-xl border-[3px] border-dashed border-primary bg-white px-3 py-1 sm:px-4 sm:py-1.5">
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={words[index]}
-            initial={{ opacity: 0, y: 14, rotate: -4 }}
-            animate={{ opacity: 1, y: 0, rotate: 0 }}
-            exit={{ opacity: 0, y: -14, rotate: 4 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="block font-codec-bold text-foreground"
-          >
-            {words[index]}
-          </motion.span>
-        </AnimatePresence>
-      </span>
+      <AnimatePresence mode="wait">
+        <motion.span
+          key={words[index]}
+          initial={{ opacity: 0, y: 14, rotate: -4 }}
+          animate={{ opacity: 1, y: 0, rotate: 0 }}
+          exit={{ opacity: 0, y: -14, rotate: 4 }}
+          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+          className="block font-codec-bold text-foreground"
+        >
+          {words[index]}
+        </motion.span>
+      </AnimatePresence>
     </span>
   );
 }
@@ -299,6 +296,7 @@ function Hero() {
     </section>
   );
 }
+
 
 
 /* ---------------- trust ---------------- */
