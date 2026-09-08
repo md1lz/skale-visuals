@@ -291,7 +291,7 @@ function RotatingWord({ words }: { words: string[] }) {
 function Hero() {
   return (
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-28 sm:min-h-[65vh] sm:pt-32 lg:pt-36">
-      <div className="relative mx-auto max-w-4xl text-center">
+      <div className="relative mx-auto max-w-5xl text-center">
         <FadeIn delay={0.1}>
           <h1 className="flex flex-col items-center gap-2 font-codec-bold text-balance text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
             <span className="relative block">On optimise le contenu de tes</span>
@@ -300,9 +300,9 @@ function Hero() {
               <span className="inline-block text-primary">préférées</span>
             </span>
           </h1>
-          <p className="font-codec mx-auto mt-2 max-w-xl line-clamp-2 text-xl leading-snug tracking-[-0.06em] text-muted-foreground sm:mt-3 sm:text-2xl sm:leading-snug">
+          <p className="font-codec mx-auto mt-2 max-w-5xl text-balance text-2xl leading-[1.15] tracking-[-0.06em] text-black sm:mt-3 sm:text-3xl lg:text-4xl line-clamp-4 sm:line-clamp-3 lg:line-clamp-2">
             Skale Visuals, l'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but :{" "}
-            <span className="font-codec-bold tracking-[-0.06em] text-foreground">convertir</span>.
+            <span className="font-codec-bold tracking-[-0.06em] text-black">convertir</span>.
           </p>
         </FadeIn>
       </div>
