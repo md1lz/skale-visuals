@@ -261,23 +261,44 @@ function RotatingWord({ words }: { words: string[] }) {
   }, [words.length]);
 
   return (
-    <span
-      className="relative inline-block align-middle rounded-xl border-[3px] border-dashed border-primary bg-white px-3 py-1 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-4 sm:py-1.5"
+    <motion.span
+      layout
+      transition={{ type: "spring", stiffness: 320, damping: 26 }}
+      className="relative inline-block overflow-hidden rounded-xl bg-white px-4 py-1 align-middle shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-5 sm:py-1.5"
       style={{ transform: "rotate(-2.5deg)", transformOrigin: "center center" }}
     >
-      <AnimatePresence mode="wait">
+      <svg
+        className="pointer-events-none absolute inset-0 h-full w-full"
+        aria-hidden
+        preserveAspectRatio="none"
+      >
+        <rect
+          x="3"
+          y="3"
+          width="calc(100% - 6px)"
+          height="calc(100% - 6px)"
+          rx="10"
+          fill="none"
+          stroke="hsl(var(--primary))"
+          strokeWidth="4"
+          strokeDasharray="14 10"
+          strokeLinecap="round"
+        />
+      </svg>
+      <AnimatePresence mode="popLayout" initial={false}>
         <motion.span
           key={words[index]}
-          initial={{ opacity: 0, y: 14, rotate: -4 }}
-          animate={{ opacity: 1, y: 0, rotate: 0 }}
-          exit={{ opacity: 0, y: -14, rotate: 4 }}
-          transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-          className="block font-codec-bold text-foreground"
+          layout
+          initial={{ y: "110%" }}
+          animate={{ y: "0%" }}
+          exit={{ y: "-110%" }}
+          transition={{ type: "spring", stiffness: 260, damping: 24, mass: 0.9 }}
+          className="block whitespace-nowrap font-codec-bold text-foreground"
         >
           {words[index]}
         </motion.span>
       </AnimatePresence>
-    </span>
+    </motion.span>
   );
 }
 
@@ -287,9 +308,11 @@ function Hero() {
       <div className="relative mx-auto max-w-4xl text-center">
         <FadeIn delay={0.1}>
           <h1 className="font-codec-bold text-balance text-[2.1rem] leading-[1.15] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
-            On optimise le contenu de tes{" "}
-            <RotatingWord words={ROTATING_WORDS} />{" "}
-            <span className="inline-block">préférées</span>
+            <span className="block">On optimise le contenu de tes</span>
+            <span className="mt-3 inline-flex items-center gap-3 sm:mt-4 sm:gap-4">
+              <RotatingWord words={ROTATING_WORDS} />
+              <span className="inline-block text-primary">préférées</span>
+            </span>
           </h1>
         </FadeIn>
       </div>
