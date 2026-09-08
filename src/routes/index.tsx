@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Sun, Moon, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown } from "lucide-react";
+import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
@@ -37,23 +37,14 @@ export const Route = createFileRoute("/")({
   component: Home,
 });
 
-/* ---------------- theme ---------------- */
+/* ---------------- theme (clair uniquement) ---------------- */
 
-function useTheme() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  useEffect(() => {
-    const media = window.matchMedia("(prefers-color-scheme: light)");
-    const syncWithDevice = () => setTheme(media.matches ? "light" : "dark");
-    syncWithDevice();
-    media.addEventListener("change", syncWithDevice);
-    return () => media.removeEventListener("change", syncWithDevice);
-  }, []);
+function useLightTheme() {
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle("site-light", theme === "light");
+    root.classList.add("site-light");
     return () => root.classList.remove("site-light");
-  }, [theme]);
-  return { theme, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
+  }, []);
 }
 
 /* ---------------- data ---------------- */
@@ -169,7 +160,7 @@ function scrollTo(target: string) {
   document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
-function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void }) {
+function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [skaleHover, setSkaleHover] = useState(false);
   const [studioHover, setStudioHover] = useState(false);
@@ -273,27 +264,6 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
           </AnimatePresence>
         </motion.div>
 
-        <Button
-          type="button"
-          onClick={toggle}
-          role="switch"
-          aria-checked={theme === "light"}
-          aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
-          variant="ghost"
-          className="site-glass pointer-events-auto relative flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
-        >
-          <motion.span
-            animate={{ x: theme === "dark" ? 0 : 30 }}
-            transition={{ type: "spring", stiffness: 500, damping: 34 }}
-            className="absolute left-1 h-8 w-8 rounded-full bg-foreground/90"
-          />
-          <span className="relative z-10 grid h-8 w-8 place-items-center">
-            <Moon className={`h-4 w-4 transition-colors ${theme === "dark" ? "text-background" : "text-foreground/60"}`} />
-          </span>
-          <span className="relative z-10 grid h-8 w-8 place-items-center">
-            <Sun className={`h-4 w-4 transition-colors ${theme === "light" ? "text-background" : "text-foreground/60"}`} />
-          </span>
-        </Button>
       </div>
     </header>
   );
@@ -761,12 +731,12 @@ function SiteFooter() {
 /* ---------------- page ---------------- */
 
 function Home() {
-  const { theme, toggle } = useTheme();
+  useLightTheme();
   const { settings, folders, videos } = useHomeContent();
 
   return (
     <div className="site-root relative min-h-screen">
-      <Navbar theme={theme} toggle={toggle} />
+      <Navbar />
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4">
         <Hero settings={settings} />
         <FormatsTicker />
