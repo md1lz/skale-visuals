@@ -446,9 +446,15 @@ function Hero() {
           </div>
         </FadeIn>
       </div>
+
+      {/* Grande bulle noire — transition vers la rubrique suivante */}
+      <div className="relative mt-8 w-screen left-1/2 -translate-x-1/2">
+        <div className="min-h-[75vh] w-full rounded-t-[3rem] bg-[#030303] sm:rounded-t-[4rem] lg:rounded-t-[5rem]" />
+      </div>
     </section>
   );
 }
+
 
 
 
