@@ -163,7 +163,7 @@ function useScrollHeader() {
 }
 
 function CenteredTopMenu() {
-  const items = ["test", "test", "test", "test"];
+  const items = ["TEST", "TEST", "TEST", "TEST"];
   return (
     <nav className="pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 sm:gap-8 md:flex">
       {items.map((label, i) => (
@@ -171,7 +171,7 @@ function CenteredTopMenu() {
           key={i}
           type="button"
           onClick={() => undefined}
-          className="font-codec text-sm tracking-[-0.04em] text-foreground/80 transition-colors duration-200 hover:text-foreground"
+          className="font-codec text-sm tracking-[-0.04em] text-foreground/80 transition-colors duration-200 hover:text-foreground uppercase"
         >
           {label}
         </button>
