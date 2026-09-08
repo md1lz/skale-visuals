@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Play, Sun, Moon, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown } from "lucide-react";
 
