@@ -268,7 +268,7 @@ function RotatingWord({ words }: { words: string[] }) {
       <motion.span
         layout
         transition={{ type: "spring", stiffness: 320, damping: 26 }}
-        className="relative inline-block overflow-hidden rounded-xl border-[5px] border-dashed border-primary bg-white px-2.5 py-0.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-3.5 sm:py-1"
+        className="slot-dashed-frame relative inline-block overflow-hidden rounded-xl bg-white px-[15px] py-[7px] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-[19px] sm:py-[9px]"
       >
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
