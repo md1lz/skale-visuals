@@ -216,7 +216,7 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
               aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
               aria-expanded={menuOpen}
               onClick={() => setMenuOpen((open) => !open)}
-              className={`h-9 w-9 rounded-lg ${
+              className={`h-9 w-9 rounded-lg bg-transparent hover:bg-transparent ${
                 menuOpen ? "text-slate-500 hover:text-slate-900" : "text-muted-foreground hover:text-foreground"
               }`}
             >
