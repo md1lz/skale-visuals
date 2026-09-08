@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useMemo, useState } from "react";
-import { ArrowLeft, CalendarDays, Clock, Globe, Moon, Phone, Plus, Sun, Video, X } from "lucide-react";
+import { ArrowLeft, CalendarDays, Clock, Globe, Phone, Plus, Video, X } from "lucide-react";
 
 import {
   DEFAULT_AVAILABILITY,
@@ -32,21 +32,14 @@ export const Route = createFileRoute("/bookacall")({
   component: BookACall,
 });
 
-/* ---------------- theme (shared with the site) ---------------- */
+/* ---------------- theme (clair uniquement) ---------------- */
 
-function useTheme() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  useEffect(() => {
-    const stored = window.localStorage.getItem("skale-theme");
-    if (stored === "light" || stored === "dark") setTheme(stored);
-  }, []);
+function useLightTheme() {
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle("site-light", theme === "light");
-    window.localStorage.setItem("skale-theme", theme);
+    root.classList.add("site-light");
     return () => root.classList.remove("site-light");
-  }, [theme]);
-  return { theme, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
+  }, []);
 }
 
 /* ---------------- date helpers ---------------- */
@@ -68,7 +61,7 @@ function prettyDate(isoDate: string) {
 /* ---------------- page ---------------- */
 
 function BookACall() {
-  const { theme, toggle } = useTheme();
+  useLightTheme();
   const [availability, setAvailability] = useState<Availability>(DEFAULT_AVAILABILITY);
   const [taken, setTaken] = useState<string[]>([]);
   const [date, setDate] = useState<string | null>(null);
@@ -94,26 +87,7 @@ function BookACall() {
         >
           <ArrowLeft className="h-3.5 w-3.5" /> Retour
         </Link>
-        <button
-          type="button"
-          onClick={toggle}
-          role="switch"
-          aria-checked={theme === "light"}
-          aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
-          className="site-glass relative flex h-10 w-[74px] cursor-pointer items-center rounded-full p-1 transition-colors duration-300"
-        >
-          <motion.span
-            animate={{ x: theme === "dark" ? 0 : 30 }}
-            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute left-1 h-8 w-8 rounded-full bg-foreground/90"
-          />
-          <span className="relative z-10 grid h-8 w-8 place-items-center">
-            <Moon className={`h-4 w-4 transition-colors ${theme === "dark" ? "text-background" : "text-foreground/60"}`} />
-          </span>
-          <span className="relative z-10 grid h-8 w-8 place-items-center">
-            <Sun className={`h-4 w-4 transition-colors ${theme === "light" ? "text-background" : "text-foreground/60"}`} />
-          </span>
-        </button>
+        <span />
       </header>
 
       <main className={`relative z-10 mx-auto mt-8 w-full pb-16 transition-[max-width] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] ${date ? "max-w-5xl" : "max-w-3xl"}`}>

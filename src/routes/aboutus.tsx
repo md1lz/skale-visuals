@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { motion, useInView } from "framer-motion";
-import { ArrowLeft, Moon, Sun } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { getAboutContent } from "@/lib/about-content.functions";
@@ -51,46 +51,14 @@ export const Route = createFileRoute("/aboutus")({
   component: AboutUsPage,
 });
 
-/* ---------------- theme (same as home) ---------------- */
+/* ---------------- theme (clair uniquement) ---------------- */
 
-function useTheme() {
-  const [theme, setTheme] = useState<"dark" | "light">("dark");
-  useEffect(() => {
-    const stored = window.localStorage.getItem("skale-theme");
-    if (stored === "light" || stored === "dark") setTheme(stored);
-  }, []);
+function useLightTheme() {
   useEffect(() => {
     const root = document.documentElement;
-    root.classList.toggle("site-light", theme === "light");
-    window.localStorage.setItem("skale-theme", theme);
+    root.classList.add("site-light");
     return () => root.classList.remove("site-light");
-  }, [theme]);
-  return { theme, toggle: () => setTheme((t) => (t === "dark" ? "light" : "dark")) };
-}
-
-function ThemeToggle({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={toggle}
-      role="switch"
-      aria-checked={theme === "light"}
-      aria-label={theme === "dark" ? "Passer en mode clair" : "Passer en mode sombre"}
-      className="site-glass relative flex h-10 w-[74px] items-center rounded-full p-1 transition hover:scale-[1.03]"
-    >
-      <motion.span
-        animate={{ x: theme === "dark" ? 0 : 30 }}
-        transition={{ type: "spring", stiffness: 500, damping: 34 }}
-        className="absolute left-1 h-8 w-8 rounded-full bg-foreground/90"
-      />
-      <span className="relative z-10 grid h-8 w-8 place-items-center">
-        <Moon className={`h-4 w-4 transition-colors ${theme === "dark" ? "text-background" : "text-foreground/60"}`} />
-      </span>
-      <span className="relative z-10 grid h-8 w-8 place-items-center">
-        <Sun className={`h-4 w-4 transition-colors ${theme === "light" ? "text-background" : "text-foreground/60"}`} />
-      </span>
-    </button>
-  );
+  }, []);
 }
 
 /* ---------------- helpers ---------------- */
@@ -157,7 +125,7 @@ function useAboutContent() {
 /* ---------------- page ---------------- */
 
 function AboutUsPage() {
-  const { theme, toggle } = useTheme();
+  useLightTheme();
   const about = useAboutContent();
 
   return (
@@ -171,7 +139,7 @@ function AboutUsPage() {
             <ArrowLeft className="h-4 w-4" />
             Retour à l'accueil
           </Link>
-          <ThemeToggle theme={theme} toggle={toggle} />
+          
         </div>
       </header>
 
