@@ -302,6 +302,11 @@ html.site-light body::after { opacity: 0; }
   backdrop-filter: blur(20px) saturate(160%);
 }
 
+@utility site-glass-borderless {
+  background: var(--site-surface);
+  backdrop-filter: blur(20px) saturate(160%);
+}
+
 @keyframes ticker {
   from { transform: translateX(0); }
   to { transform: translateX(-33.3333%); }

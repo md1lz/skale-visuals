@@ -175,8 +175,11 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
   return (
     <header className="sticky top-0 z-40 w-full py-4">
       <div className="relative flex w-full items-start justify-between px-4 sm:px-6">
-        <div className="relative">
-          <div className="site-glass flex items-center rounded-xl p-1 shadow-lg shadow-background/15">
+        <motion.div
+          layout
+          className="site-glass-borderless flex flex-col rounded-xl p-1 shadow-lg shadow-background/15"
+        >
+          <div className="flex items-center">
             <Link
               to="/"
               className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.045]"
@@ -185,9 +188,9 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
                 src={skaleSymbol.url}
                 alt=""
                 aria-hidden="true"
-                className="h-8 w-8 rounded-md object-cover transition-transform duration-500 ease-out group-hover:rotate-[-10deg]"
+                className="h-8 w-8 rounded-md object-cover shadow-[0_6px_18px_-3px_rgba(0,0,0,0.4)] transition-transform duration-500 ease-out group-hover:rotate-[-10deg]"
               />
-              <span className="font-codec text-[1.55rem] leading-none text-foreground">skale</span>
+              <span className="font-codec-bold text-[1.55rem] leading-none text-foreground">skale</span>
             </Link>
             <Button
               type="button"
@@ -204,14 +207,14 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
             </Button>
           </div>
 
-          <AnimatePresence>
+          <AnimatePresence initial={false}>
             {menuOpen && (
               <motion.div
-                initial={{ opacity: 0, y: -8, scale: 0.96 }}
-                animate={{ opacity: 1, y: 8, scale: 1 }}
-                exit={{ opacity: 0, y: -5, scale: 0.97 }}
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
                 transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-                className="site-glass absolute left-0 top-full w-full min-w-[174px] rounded-xl p-1 shadow-xl shadow-background/25"
+                className="overflow-hidden"
               >
                 <Link
                   to="/studio"
@@ -222,14 +225,14 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
                     src={skaleSymbol.url}
                     alt=""
                     aria-hidden="true"
-                    className="h-8 w-8 rounded-md object-cover transition-transform duration-500 ease-out group-hover:rotate-[10deg]"
+                    className="h-8 w-8 rounded-md object-cover shadow-[0_6px_18px_-3px_rgba(0,0,0,0.4)] transition-transform duration-500 ease-out group-hover:rotate-[10deg]"
                   />
-                  <span className="font-codec text-[1.55rem] leading-none text-foreground">studio</span>
+                  <span className="font-codec-bold text-[1.55rem] leading-none text-foreground">studio</span>
                 </Link>
               </motion.div>
             )}
           </AnimatePresence>
-        </div>
+        </motion.div>
 
         <Button
           type="button"
