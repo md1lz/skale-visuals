@@ -337,17 +337,17 @@ function Hero() {
             <span className="font-codec-bold tracking-[-0.06em] text-black">convertir</span>.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
             <Link
               to="/bookacall"
               onMouseEnter={() => setHoverBook(true)}
               onMouseLeave={() => setHoverBook(false)}
               onFocus={() => setHoverBook(true)}
               onBlur={() => setHoverBook(false)}
-              className="group font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-gray-600 bg-black px-4 py-2 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
+              className="group font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-gray-600 bg-black px-4 py-2 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
             >
               <SlotMachineText text="RÉSERVER UN APPEL" active={hoverBook} />
-              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:translate-y-1" />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-[-45deg]" />
             </Link>
             <button
               type="button"
@@ -356,10 +356,10 @@ function Hero() {
               onMouseLeave={() => setHoverDiscover(false)}
               onFocus={() => setHoverDiscover(true)}
               onBlur={() => setHoverDiscover(false)}
-              className="group font-codec-bold inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-lg border-2 border-dashed border-gray-300 bg-white px-4 py-2 text-xs uppercase tracking-wide text-black transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-white/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.18)] active:scale-[0.97] sm:text-sm"
+              className="group font-codec-bold inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-gray-300 bg-white px-4 py-2 text-xs uppercase tracking-wide text-black transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-white/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.18)] active:scale-[0.97] sm:text-sm"
             >
               <SlotMachineText text="DÉCOUVRIR" active={hoverDiscover} />
-              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:translate-y-1" />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-[-45deg]" />
             </button>
 
           </div>
