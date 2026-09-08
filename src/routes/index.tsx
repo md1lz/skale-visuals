@@ -302,8 +302,8 @@ function SlotMachineText({ text, active }: { text: string; active: boolean }) {
             animate={{ y: active ? "-50%" : "0%" }}
             transition={{
               type: "spring",
-              stiffness: 420,
-              damping: 14,
+              stiffness: 400,
+              damping: 30,
               delay: i * 0.018,
             }}
           >
