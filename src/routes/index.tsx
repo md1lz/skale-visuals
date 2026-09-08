@@ -446,14 +446,10 @@ function Hero() {
           </div>
         </FadeIn>
       </div>
-
-      {/* Grande bulle noire — transition vers la rubrique suivante */}
-      <div className="relative mt-8 w-screen left-1/2 -translate-x-1/2">
-        <div className="min-h-[75vh] w-full rounded-t-[3rem] bg-[#030303] sm:rounded-t-[4rem] lg:rounded-t-[5rem]" />
-      </div>
     </section>
   );
 }
+
 
 
 
@@ -858,14 +854,25 @@ function Home() {
   return (
     <div className="site-root relative min-h-screen">
       <Navbar />
-      <main className="relative z-10 mx-auto w-full max-w-6xl px-4">
-        <Hero />
-        <Trust settings={settings} />
-        <Realisations folders={folders} videos={videos} />
-        <CallCta />
-        <Comparatif />
+      <main className="relative z-10 w-full">
+        <div className="mx-auto w-full max-w-6xl px-4">
+          <Hero />
+        </div>
+
+        {/* Grande bulle noire — transition vers la rubrique suivante */}
+        <section className="relative w-full">
+          <div className="min-h-[75vh] w-full rounded-t-[3rem] bg-[#030303] sm:rounded-t-[4rem] lg:rounded-t-[5rem]" />
+        </section>
+
+        <div className="mx-auto w-full max-w-6xl px-4">
+          <Trust settings={settings} />
+          <Realisations folders={folders} videos={videos} />
+          <CallCta />
+          <Comparatif />
+        </div>
       </main>
       <SiteFooter />
     </div>
   );
 }
+
