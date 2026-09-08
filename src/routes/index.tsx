@@ -295,7 +295,7 @@ function SlotMachineText({ text, active }: { text: string; active: boolean }) {
         <span
           key={i}
           className="relative inline-block overflow-hidden"
-          style={{ height: "1em", lineHeight: "1em" }}
+          style={{ height: "1.25em", lineHeight: "1.25em" }}
         >
           <motion.span
             className="flex flex-col"
@@ -315,6 +315,7 @@ function SlotMachineText({ text, active }: { text: string; active: boolean }) {
     </span>
   );
 }
+
 
 function Hero() {
   const [hoverBook, setHoverBook] = useState(false);
