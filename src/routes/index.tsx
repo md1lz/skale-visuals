@@ -300,7 +300,7 @@ function Hero() {
               <span className="inline-block text-primary">préférées</span>
             </span>
           </h1>
-          <p className="font-codec mx-auto mt-2 max-w-5xl text-balance text-lg leading-[1.15] tracking-[-0.06em] text-black sm:mt-3 sm:text-2xl lg:text-3xl line-clamp-3 sm:line-clamp-2 lg:line-clamp-2">
+          <p className="font-codec mx-auto mt-2 max-w-5xl text-balance text-base leading-[1.15] tracking-[-0.06em] text-black sm:mt-3 sm:text-xl lg:text-2xl line-clamp-3 sm:line-clamp-2 lg:line-clamp-2">
             Skale Visuals, l'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but :{" "}
             <span className="font-codec-bold tracking-[-0.06em] text-black">convertir</span>.
           </p>
