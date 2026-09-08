@@ -167,10 +167,16 @@ function Navbar() {
   const [skaleHover, setSkaleHover] = useState(false);
   const [studioHover, setStudioHover] = useState(false);
   const [ctaHover, setCtaHover] = useState(false);
+  const scrollHidden = useScrollHeader();
+  const headerHidden = scrollHidden && !menuOpen;
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-4">
-      <div className="relative flex w-full items-start justify-between px-4 sm:px-6">
+      <motion.div
+        animate={{ y: headerHidden ? "-120%" : "0%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 26 }}
+        className="relative flex w-full items-start justify-between px-4 sm:px-6"
+      >
         <motion.div
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 400, damping: 22 }}
