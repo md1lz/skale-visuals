@@ -262,7 +262,7 @@ function RotatingWord({ words }: { words: string[] }) {
 
   return (
     <span
-      className="mt-4 inline-block align-middle"
+      className="mt-[18px] inline-block align-middle"
       style={{ transform: "rotate(-2.5deg)", transformOrigin: "center center" }}
     >
       <motion.span
