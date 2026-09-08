@@ -261,44 +261,30 @@ function RotatingWord({ words }: { words: string[] }) {
   }, [words.length]);
 
   return (
-    <motion.span
-      layout
-      transition={{ type: "spring", stiffness: 320, damping: 26 }}
-      className="relative inline-block overflow-hidden rounded-xl bg-white px-4 py-1 align-middle shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-5 sm:py-1.5"
+    <span
+      className="inline-block align-middle"
       style={{ transform: "rotate(-2.5deg)", transformOrigin: "center center" }}
     >
-      <svg
-        className="pointer-events-none absolute inset-0 h-full w-full"
-        aria-hidden
-        preserveAspectRatio="none"
+      <motion.span
+        layout
+        transition={{ type: "spring", stiffness: 320, damping: 26 }}
+        className="relative inline-block overflow-hidden rounded-xl border-[4px] border-dashed border-primary bg-white px-4 py-1 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-5 sm:py-1.5"
       >
-        <rect
-          x="3"
-          y="3"
-          width="calc(100% - 6px)"
-          height="calc(100% - 6px)"
-          rx="10"
-          fill="none"
-          stroke="hsl(var(--primary))"
-          strokeWidth="4"
-          strokeDasharray="14 10"
-          strokeLinecap="round"
-        />
-      </svg>
-      <AnimatePresence mode="popLayout" initial={false}>
-        <motion.span
-          key={words[index]}
-          layout
-          initial={{ y: "110%" }}
-          animate={{ y: "0%" }}
-          exit={{ y: "-110%" }}
-          transition={{ type: "spring", stiffness: 260, damping: 24, mass: 0.9 }}
-          className="block whitespace-nowrap font-codec-bold text-foreground"
-        >
-          {words[index]}
-        </motion.span>
-      </AnimatePresence>
-    </motion.span>
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.span
+            key={words[index]}
+            layout
+            initial={{ y: "110%" }}
+            animate={{ y: "0%" }}
+            exit={{ y: "-110%" }}
+            transition={{ type: "spring", stiffness: 260, damping: 24, mass: 0.9 }}
+            className="block whitespace-nowrap font-codec-bold text-foreground"
+          >
+            {words[index]}
+          </motion.span>
+        </AnimatePresence>
+      </motion.span>
+    </span>
   );
 }
 
