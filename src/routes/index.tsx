@@ -268,7 +268,7 @@ function RotatingWord({ words }: { words: string[] }) {
       <motion.span
         layout
         transition={{ type: "spring", stiffness: 320, damping: 26 }}
-        className="relative inline-block overflow-hidden rounded-xl border-[4px] border-dashed border-primary bg-white px-4 py-1 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-5 sm:py-1.5"
+        className="relative inline-block overflow-hidden rounded-xl border-[5px] border-dashed border-primary bg-white px-2.5 py-0.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-3.5 sm:py-1"
       >
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
@@ -293,9 +293,9 @@ function Hero() {
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-28 sm:min-h-[65vh] sm:pt-32 lg:pt-36">
       <div className="relative mx-auto max-w-4xl text-center">
         <FadeIn delay={0.1}>
-          <h1 className="font-codec-bold text-balance text-[2.1rem] leading-[1.15] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
-            <span className="block">On optimise le contenu de tes</span>
-            <span className="mt-1 inline-flex items-center gap-3 sm:mt-2 sm:gap-4">
+          <h1 className="flex flex-col items-center font-codec-bold text-balance text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
+            <span className="relative z-10 -mb-[0.45em] block">On optimise le contenu de tes</span>
+            <span className="relative z-0 inline-flex items-baseline gap-1 sm:gap-2">
               <RotatingWord words={ROTATING_WORDS} />
               <span className="inline-block text-primary">préférées</span>
             </span>
