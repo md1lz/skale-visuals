@@ -162,6 +162,24 @@ function useScrollHeader() {
   return hidden;
 }
 
+function CenteredTopMenu() {
+  const items = ["test", "test", "test", "test"];
+  return (
+    <nav className="pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 sm:gap-8 md:flex">
+      {items.map((label, i) => (
+        <button
+          key={i}
+          type="button"
+          onClick={() => undefined}
+          className="font-codec text-sm tracking-[-0.04em] text-foreground/80 transition-colors duration-200 hover:text-foreground"
+        >
+          {label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [skaleHover, setSkaleHover] = useState(false);
@@ -273,6 +291,8 @@ function Navbar() {
           </AnimatePresence>
         </motion.div>
 
+        <CenteredTopMenu />
+
         <motion.div
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 400, damping: 22 }}
@@ -373,7 +393,7 @@ function Hero() {
   const [hoverDiscover, setHoverDiscover] = useState(false);
 
   return (
-    <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-28 sm:min-h-[65vh] sm:pt-32 lg:pt-36">
+    <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-36 sm:min-h-[65vh] sm:pt-40 lg:pt-44">
       <div className="relative mx-auto max-w-5xl text-center">
         <FadeIn delay={0.1}>
           <h1 className="flex flex-col items-center gap-2 font-codec-bold text-balance text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
