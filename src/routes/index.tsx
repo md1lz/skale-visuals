@@ -288,7 +288,38 @@ function RotatingWord({ words }: { words: string[] }) {
   );
 }
 
+function SlotMachineText({ text, active }: { text: string; active: boolean }) {
+  return (
+    <span className="inline-flex items-center leading-none" aria-label={text}>
+      {text.split("").map((char, i) => (
+        <span
+          key={i}
+          className="relative inline-block overflow-hidden"
+          style={{ height: "1em", lineHeight: "1em" }}
+        >
+          <motion.span
+            className="flex flex-col"
+            animate={{ y: active ? "-50%" : "0%" }}
+            transition={{
+              type: "spring",
+              stiffness: 280,
+              damping: 22,
+              delay: i * 0.028,
+            }}
+          >
+            <span className="block">{char === " " ? "\u00A0" : char}</span>
+            <span className="block">{char === " " ? "\u00A0" : char}</span>
+          </motion.span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
 function Hero() {
+  const [hoverBook, setHoverBook] = useState(false);
+  const [hoverDiscover, setHoverDiscover] = useState(false);
+
   return (
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-28 sm:min-h-[65vh] sm:pt-32 lg:pt-36">
       <div className="relative mx-auto max-w-5xl text-center">
@@ -308,18 +339,26 @@ function Hero() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <Link
               to="/bookacall"
+              onMouseEnter={() => setHoverBook(true)}
+              onMouseLeave={() => setHoverBook(false)}
+              onFocus={() => setHoverBook(true)}
+              onBlur={() => setHoverBook(false)}
               className="font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-gray-600 bg-black px-4 py-2 text-xs uppercase tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98] sm:text-sm"
             >
-              Réserver un appel
-              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+              <SlotMachineText text="RÉSERVER UN APPEL" active={hoverBook} />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </Link>
             <button
               type="button"
               onClick={() => undefined}
+              onMouseEnter={() => setHoverDiscover(true)}
+              onMouseLeave={() => setHoverDiscover(false)}
+              onFocus={() => setHoverDiscover(true)}
+              onBlur={() => setHoverDiscover(false)}
               className="font-codec-bold inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-gray-300 bg-white px-4 py-2 text-xs uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98] sm:text-sm"
             >
-              Découvrir
-              <ArrowUpRight className="h-3.5 w-3.5 shrink-0" />
+              <SlotMachineText text="DÉCOUVRIR" active={hoverDiscover} />
+              <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
           </div>
         </FadeIn>
@@ -327,6 +366,7 @@ function Hero() {
     </section>
   );
 }
+
 
 
 
