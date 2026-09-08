@@ -268,7 +268,7 @@ function RotatingWord({ words }: { words: string[] }) {
       <motion.span
         layout
         transition={{ type: "spring", stiffness: 320, damping: 26 }}
-        className="relative inline-block overflow-hidden rounded-xl border-[5px] border-dashed border-primary bg-white px-2.5 py-0.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-3.5 sm:py-1"
+        className="relative inline-block overflow-hidden rounded-xl border-[5px] border-dashed border-primary bg-white px-2.5 py-0.5 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.18),0_4px_12px_-4px_rgba(226,75,74,0.12)] sm:px-3.5 sm:py-1"
       >
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.span
@@ -300,6 +300,10 @@ function Hero() {
               <span className="inline-block text-primary">préférées</span>
             </span>
           </h1>
+          <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed tracking-[-0.02em] text-muted-foreground sm:text-base sm:leading-relaxed">
+            Skale Visuals, l'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but :{" "}
+            <span className="font-codec-bold text-foreground">convertir</span>.
+          </p>
         </FadeIn>
       </div>
     </section>
