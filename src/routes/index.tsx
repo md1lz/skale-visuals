@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown } from "lucide-react";
+import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowUpRight } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
@@ -308,16 +308,18 @@ function Hero() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <Link
               to="/bookacall"
-              className="font-codec-bold inline-flex items-center justify-center rounded-2xl bg-black px-7 py-3.5 text-sm uppercase tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98]"
+              className="font-codec-bold inline-flex items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 bg-black px-7 py-3.5 text-sm uppercase tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98]"
             >
               Réserver un appel
+              <ArrowUpRight className="h-4 w-4 shrink-0" />
             </Link>
             <button
               type="button"
               onClick={() => undefined}
-              className="font-codec-bold inline-flex cursor-pointer items-center justify-center rounded-2xl bg-white px-7 py-3.5 text-sm uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98]"
+              className="font-codec-bold inline-flex cursor-pointer items-center justify-center gap-2 rounded-2xl border-2 border-dashed border-gray-300 bg-white px-7 py-3.5 text-sm uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98]"
             >
               Découvrir
+              <ArrowUpRight className="h-4 w-4 shrink-0" />
             </button>
           </div>
         </FadeIn>
