@@ -726,8 +726,7 @@ function Home() {
     <div className="site-root relative min-h-screen">
       <Navbar />
       <main className="relative z-10 mx-auto w-full max-w-6xl px-4">
-        <Hero settings={settings} />
-        <FormatsTicker />
+        <Hero />
         <Trust settings={settings} />
         <Realisations folders={folders} videos={videos} />
         <CallCta />
