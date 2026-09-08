@@ -176,20 +176,24 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-4">
       <div className="relative flex w-full items-start justify-between px-4 sm:px-6">
         <motion.div
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 400, damping: 22 }}
           className="site-glass-borderless pointer-events-auto flex flex-col rounded-xl p-1"
         >
           <div className="flex items-center">
             <Link
               to="/"
-              className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.045]"
+              className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.055]"
             >
-              <img
+              <motion.img
                 src={skaleSymbol.url}
                 alt=""
                 aria-hidden="true"
-                className="h-8 w-8 rounded-md object-cover drop-shadow-md transition-transform duration-500 ease-out group-hover:rotate-[-10deg]"
+                className="h-8 w-8 rounded-md object-cover drop-shadow-[0_6px_18px_-3px_rgba(0,0,0,0.45)]"
+                whileHover={{ rotate: -18, scale: 1.12 }}
+                transition={{ type: "spring", stiffness: 260, damping: 14 }}
               />
-              <span className="font-codec-bold text-[1.55rem] leading-none text-foreground">skale</span>
+              <span className="font-codec-bold text-[1.55rem] leading-none tracking-[-0.06em] text-foreground">skale</span>
             </Link>
             <Button
               type="button"
@@ -200,7 +204,10 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
               onClick={() => setMenuOpen((open) => !open)}
               className="h-9 w-9 rounded-lg text-muted-foreground hover:bg-foreground/10 hover:text-foreground"
             >
-              <motion.span animate={{ rotate: menuOpen ? 180 : 0 }} transition={{ duration: 0.25 }}>
+              <motion.span
+                animate={{ rotate: menuOpen ? 180 : 0, y: menuOpen ? 1 : 0 }}
+                transition={{ type: "spring", stiffness: 350, damping: 16 }}
+              >
                 <ChevronDown className="h-4 w-4" />
               </motion.span>
             </Button>
@@ -212,26 +219,31 @@ function Navbar({ theme, toggle }: { theme: "dark" | "light"; toggle: () => void
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                transition={{ type: "spring", stiffness: 380, damping: 26 }}
                 className="overflow-hidden"
               >
-                <button
+                <motion.button
                   type="button"
                   onClick={() => undefined}
                   aria-label="Skale Studio, bientôt disponible"
-                  className="group relative flex h-11 w-full cursor-pointer items-center gap-2.5 rounded-lg bg-foreground/[0.055] px-2.5 text-left transition-transform duration-300 ease-out hover:scale-[1.025] hover:bg-foreground/[0.055]"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.06, type: "spring", stiffness: 300, damping: 20 }}
+                  className="group relative flex h-11 w-full cursor-default items-center gap-2.5 rounded-lg px-2.5 text-left transition-transform duration-300 ease-out hover:scale-[1.035]"
                 >
-                  <img
+                  <motion.img
                     src={skaleSymbol.url}
                     alt=""
                     aria-hidden="true"
-                    className="h-8 w-8 rounded-md object-cover opacity-60 drop-shadow-md transition-transform duration-500 ease-out group-hover:rotate-[10deg]"
+                    className="h-8 w-8 rounded-md object-cover drop-shadow-[0_6px_18px_-3px_rgba(0,0,0,0.45)]"
+                    whileHover={{ rotate: 14, scale: 1.12 }}
+                    transition={{ type: "spring", stiffness: 260, damping: 14 }}
                   />
-                  <span className="font-codec-bold text-[1.55rem] leading-none text-muted-foreground">studio</span>
+                  <span className="font-codec-bold text-[1.55rem] leading-none tracking-[-0.06em] text-muted-foreground">studio</span>
                   <span className="absolute right-1.5 top-1 rounded-full bg-primary px-1.5 py-0.5 text-[8px] font-semibold uppercase leading-none text-primary-foreground">
                     bientôt
                   </span>
-                </button>
+                </motion.button>
               </motion.div>
             )}
           </AnimatePresence>
