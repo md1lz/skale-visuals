@@ -343,7 +343,7 @@ function Hero() {
               onMouseLeave={() => setHoverBook(false)}
               onFocus={() => setHoverBook(true)}
               onBlur={() => setHoverBook(false)}
-              className="font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-gray-600 bg-black px-4 py-2 text-xs uppercase tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98] sm:text-sm"
+              className="group font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-gray-600 bg-black px-4 py-2 text-xs uppercase tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98] sm:text-sm"
             >
               <SlotMachineText text="RÉSERVER UN APPEL" active={hoverBook} />
               <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -355,11 +355,12 @@ function Hero() {
               onMouseLeave={() => setHoverDiscover(false)}
               onFocus={() => setHoverDiscover(true)}
               onBlur={() => setHoverDiscover(false)}
-              className="font-codec-bold inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-gray-300 bg-white px-4 py-2 text-xs uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98] sm:text-sm"
+              className="group font-codec-bold inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-2xl border-2 border-dashed border-gray-300 bg-white px-4 py-2 text-xs uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98] sm:text-sm"
             >
               <SlotMachineText text="DÉCOUVRIR" active={hoverDiscover} />
               <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
+
           </div>
         </FadeIn>
       </div>
