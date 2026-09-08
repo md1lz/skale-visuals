@@ -300,6 +300,10 @@ function Hero() {
               <span className="inline-block text-primary">préférées</span>
             </span>
           </h1>
+          <p className="mx-auto mt-6 max-w-xl text-sm leading-relaxed tracking-[-0.02em] text-muted-foreground sm:text-base sm:leading-relaxed">
+            Skale Visuals, l'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but :{" "}
+            <span className="font-codec-bold text-foreground">convertir</span>.
+          </p>
         </FadeIn>
       </div>
     </section>
