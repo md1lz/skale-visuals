@@ -393,7 +393,7 @@ function Hero() {
   const [hoverDiscover, setHoverDiscover] = useState(false);
 
   return (
-    <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-28 sm:min-h-[65vh] sm:pt-32 lg:pt-36">
+    <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-36 sm:min-h-[65vh] sm:pt-40 lg:pt-44">
       <div className="relative mx-auto max-w-5xl text-center">
         <FadeIn delay={0.1}>
           <h1 className="flex flex-col items-center gap-2 font-codec-bold text-balance text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
