@@ -135,15 +135,48 @@ function scrollTo(target: string) {
   document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function useScrollHeader() {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (y < 20) {
+          setHidden(false);
+        } else if (y > lastY) {
+          setHidden(true);
+        } else {
+          setHidden(false);
+        }
+        lastY = y;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return hidden;
+}
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [skaleHover, setSkaleHover] = useState(false);
   const [studioHover, setStudioHover] = useState(false);
   const [ctaHover, setCtaHover] = useState(false);
+  const scrollHidden = useScrollHeader();
+  const headerHidden = scrollHidden && !menuOpen;
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-4">
-      <div className="relative flex w-full items-start justify-between px-4 sm:px-6">
+      <motion.div
+        animate={{ y: headerHidden ? "-120%" : "0%" }}
+        transition={{ type: "spring", stiffness: 300, damping: 26 }}
+        className="relative flex w-full items-start justify-between px-4 sm:px-6"
+      >
         <motion.div
           whileHover={{ scale: 1.02 }}
           transition={{ type: "spring", stiffness: 400, damping: 22 }}
@@ -257,7 +290,7 @@ function Navbar() {
             <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
           </Link>
         </motion.div>
-      </div>
+      </motion.div>
     </header>
   );
 }
