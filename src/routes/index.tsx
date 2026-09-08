@@ -268,7 +268,7 @@ function RotatingWord({ words }: { words: string[] }) {
       <motion.span
         layout
         transition={{ type: "spring", stiffness: 320, damping: 26 }}
-        className="relative inline-block px-2.5 py-0.5 sm:px-3.5 sm:py-1"
+        className="relative inline-block"
       >
         {/* thick dashed red border */}
         <span
@@ -281,7 +281,7 @@ function RotatingWord({ words }: { words: string[] }) {
             backgroundRepeat: "repeat-x, repeat-x, repeat-y, repeat-y",
           }}
         />
-        <span className="relative block overflow-hidden rounded-xl bg-white shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)]">
+        <span className="relative block overflow-hidden rounded-xl bg-white px-2.5 py-0.5 shadow-[0_10px_30px_-10px_rgba(0,0,0,0.15)] sm:px-3.5 sm:py-1">
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.span
               key={words[index]}
