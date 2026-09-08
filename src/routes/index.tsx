@@ -135,6 +135,33 @@ function scrollTo(target: string) {
   document.getElementById(target)?.scrollIntoView({ behavior: "smooth", block: "start" });
 }
 
+function useScrollHeader() {
+  const [hidden, setHidden] = useState(false);
+  useEffect(() => {
+    let lastY = window.scrollY;
+    let ticking = false;
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        const y = window.scrollY;
+        if (y < 20) {
+          setHidden(false);
+        } else if (y > lastY) {
+          setHidden(true);
+        } else {
+          setHidden(false);
+        }
+        lastY = y;
+        ticking = false;
+      });
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+  return hidden;
+}
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [skaleHover, setSkaleHover] = useState(false);
