@@ -162,6 +162,24 @@ function useScrollHeader() {
   return hidden;
 }
 
+function CenteredTopMenu() {
+  const items = ["test", "test", "test", "test"];
+  return (
+    <nav className="pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 sm:gap-8 md:flex">
+      {items.map((label, i) => (
+        <button
+          key={i}
+          type="button"
+          onClick={() => undefined}
+          className="font-codec text-sm tracking-[-0.04em] text-foreground/80 transition-colors duration-200 hover:text-foreground"
+        >
+          {label}
+        </button>
+      ))}
+    </nav>
+  );
+}
+
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [skaleHover, setSkaleHover] = useState(false);
@@ -272,6 +290,8 @@ function Navbar() {
             )}
           </AnimatePresence>
         </motion.div>
+
+        <CenteredTopMenu />
 
         <motion.div
           whileHover={{ scale: 1.02 }}
