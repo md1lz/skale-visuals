@@ -308,14 +308,14 @@ function Hero() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-3 sm:gap-4">
             <Link
               to="/bookacall"
-              className="inline-flex items-center justify-center rounded-full bg-black px-6 py-3 text-sm font-medium tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98]"
+              className="font-codec-bold inline-flex items-center justify-center rounded-2xl bg-black px-7 py-3.5 text-sm uppercase tracking-wide text-white transition hover:scale-[1.03] hover:bg-black/90 active:scale-[0.98]"
             >
               Réserver un appel
             </Link>
             <button
               type="button"
               onClick={() => undefined}
-              className="inline-flex cursor-pointer items-center justify-center rounded-full bg-white px-6 py-3 text-sm font-medium uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98]"
+              className="font-codec-bold inline-flex cursor-pointer items-center justify-center rounded-2xl bg-white px-7 py-3.5 text-sm uppercase tracking-wide text-black transition hover:scale-[1.03] hover:bg-white/90 active:scale-[0.98]"
             >
               Découvrir
             </button>
