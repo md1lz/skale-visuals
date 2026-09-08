@@ -316,20 +316,8 @@ export const markMyNotificationsRead = createServerFn({ method: "POST" }).handle
 export const signVersionUrls = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => z.object({ paths: z.array(z.string().max(500)).max(50) }).parse(d))
   .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const { readEditorSession, requireAdminUser } = await import("./auth-sessions.server");
-    const editor = await readEditorSession();
-    if (!editor) await requireAdminUser();
-    const out: Record<string, string> = {};
-    await Promise.all(
-      data.paths.map(async (p) => {
-        const m = p.match(/^storage:\/\/site-videos\/(.+)$/);
-        if (!m) return;
-        const { data: s } = await supabaseAdmin.storage
-          .from("site-videos")
-          .createSignedUrl(decodeURIComponent(m[1]!), 60 * 60 * 24);
-        if (s?.signedUrl) out[p] = s.signedUrl;
-      }),
-    );
-    return out;
+    const { resolveViewer, signOwnedStoragePaths } = await import("./video-workspace.server");
+    const viewer = await resolveViewer();
+    return signOwnedStoragePaths(data.paths, viewer);
   });
+
