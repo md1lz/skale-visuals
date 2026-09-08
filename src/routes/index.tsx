@@ -240,6 +240,23 @@ function Navbar() {
           </AnimatePresence>
         </motion.div>
 
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 400, damping: 22 }}
+          className="pointer-events-auto"
+        >
+          <Link
+            to="/bookacall"
+            onMouseEnter={() => setCtaHover(true)}
+            onMouseLeave={() => setCtaHover(false)}
+            onFocus={() => setCtaHover(true)}
+            onBlur={() => setCtaHover(false)}
+            className="group font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-gray-600 bg-black px-4 py-2 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
+          >
+            <SlotMachineText text="RÉSERVER UN APPEL" active={ctaHover} />
+            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
+          </Link>
+        </motion.div>
       </div>
     </header>
   );
