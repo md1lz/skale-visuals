@@ -293,9 +293,9 @@ function Hero() {
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-28 sm:min-h-[65vh] sm:pt-32 lg:pt-36">
       <div className="relative mx-auto max-w-4xl text-center">
         <FadeIn delay={0.1}>
-          <h1 className="flex flex-col items-center font-codec-bold text-balance text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
-            <span className="relative z-10 -mb-[6px] block">On optimise le contenu de tes</span>
-            <span className="relative z-0 inline-flex items-start gap-2 sm:gap-3">
+          <h1 className="flex flex-col items-center gap-2 font-codec-bold text-balance text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
+            <span className="relative block">On optimise le contenu de tes</span>
+            <span className="relative inline-flex items-start gap-2 sm:gap-3">
               <RotatingWord words={ROTATING_WORDS} />
               <span className="inline-block text-primary">préférées</span>
             </span>
