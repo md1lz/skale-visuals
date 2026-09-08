@@ -51,7 +51,6 @@ const settingsSchema = z.object({
   videosCount: z.number().int().min(0).max(1_000_000),
   clientsCount: z.number().int().min(0).max(1_000_000),
   plusLabel: z.string().trim().max(16),
-  titleStyle: z.enum(["skale", "visuals"]).default("skale"),
   trust: z
     .array(z.object({ name: z.string().trim().max(80), photo: z.string().trim().max(500).nullable() }))
     .max(4),

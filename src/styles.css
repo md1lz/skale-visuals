@@ -134,6 +134,34 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Codec Pro";
+  src: url("/__l5e/assets-v1/88839754-a714-4108-9fe8-4db4ac4b3ccc/CodecPro-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Codec Pro";
+  src: url("/__l5e/assets-v1/f8435723-11c4-4108-bc08-6cf77d827483/CodecPro-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@utility font-codec {
+  font-family: "Codec Pro", var(--font-sans);
+  font-weight: 300;
+  letter-spacing: 0;
+}
+
+@utility font-codec-bold {
+  font-family: "Codec Pro", var(--font-sans);
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
 @utility font-kangge {
   font-family: "Kangge", var(--font-sans);
   font-weight: 400;
