@@ -726,7 +726,12 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
       <div className="flex-1">
         <StarsRow className="mb-3 h-4 w-24" />
         <p className="font-codec-bold text-2xl leading-[1.15] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
-          “{t.quote}”
+          “{t.quote.split("\n").map((line, i) => (
+            <span key={i}>
+              {line}
+              {i < t.quote.split("\n").length - 1 && <br />}
+            </span>
+          ))}”
         </p>
       </div>
     </motion.div>

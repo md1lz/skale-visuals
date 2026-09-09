@@ -44,7 +44,7 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     name: "",
     role: "",
     photo: null,
-    quote: "J'ai adoré l'approche de Skale Visuals pour notre deal",
+    quote: "J'ai adoré l'approche de Skale Visuals\npour notre deal",
   },
   plusLabel: "+50",
 };
