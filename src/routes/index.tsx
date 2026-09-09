@@ -691,6 +691,23 @@ function StarsRow({ className }: { className?: string }) {
   );
 }
 
+function TestimonialCta() {
+  const [hover, setHover] = useState(false);
+  return (
+    <button
+      type="button"
+      onClick={() => undefined}
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      onFocus={() => setHover(true)}
+      onBlur={() => setHover(false)}
+      className="group font-codec-bold inline-flex items-center justify-center rounded-md px-0 py-0 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] active:scale-[0.97] sm:text-sm"
+    >
+      <SlotMachineText text="VOIR L'AVIS ENTIER" active={hover} />
+    </button>
+  );
+}
+
 function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.3 });
@@ -733,6 +750,9 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
             </span>
           ))}”
         </p>
+        <div className="mt-5">
+          <TestimonialCta />
+        </div>
       </div>
     </motion.div>
   );
