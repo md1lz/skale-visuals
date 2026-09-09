@@ -595,7 +595,7 @@ function ServiceCards() {
                 } backdrop-blur-md`}
               />
 
-              <div className="relative mt-auto flex flex-col items-start p-6 sm:p-8">
+              <div className="relative mt-auto flex flex-col items-start p-6 text-left sm:p-8">
                 <h3
                   className={`max-w-lg text-2xl leading-[1.05] tracking-[-0.06em] sm:text-3xl lg:text-4xl ${
                     isDark ? "text-white" : "text-black"
