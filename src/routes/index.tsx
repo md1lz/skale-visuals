@@ -590,7 +590,7 @@ function ServiceCards() {
               width={1024}
               height={640}
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover object-center"
+              className="absolute inset-0 h-full w-full object-cover object-bottom"
             />
 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/80 via-[25%] via-black/30 via-[58%] to-transparent to-[100%]" />
