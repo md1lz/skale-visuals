@@ -5,7 +5,7 @@ import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, Arr
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
-import cardMontage from "@/assets/card-montage.jpg";
+import cardMontage from "@/assets/card-montage.png.asset.json";
 import cardDesign from "@/assets/card-design.jpg";
 import { Button } from "@/components/ui/button";
 import {
@@ -585,7 +585,7 @@ function ServiceCards() {
             className="relative flex min-h-[300px] flex-col overflow-hidden rounded-3xl border border-neutral-600/60 bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] sm:min-h-[340px] md:min-h-[380px]"
           >
             <img
-              src={card.image}
+              src={typeof card.image === "string" ? card.image : card.image.url}
               alt={card.alt}
               width={1024}
               height={640}
