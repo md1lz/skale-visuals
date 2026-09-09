@@ -703,9 +703,9 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto mt-12 flex w-full max-w-5xl flex-col items-center gap-6 px-4 text-left sm:mt-16 sm:flex-row sm:items-stretch sm:gap-10"
+      className="mx-auto mt-12 flex w-full max-w-5xl flex-col items-center gap-6 px-4 text-left sm:mt-16 sm:flex-row sm:items-stretch sm:gap-5"
     >
-      <div className="flex shrink-0 items-center gap-3 sm:w-56 sm:flex-col sm:items-start sm:justify-center sm:gap-3">
+      <div className="flex shrink-0 items-center gap-3 sm:w-48 sm:flex-col sm:items-center sm:justify-center sm:gap-3">
         <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-16 sm:w-16">
           {t.photo ? (
             <img src={t.photo} alt={t.name} className="h-full w-full object-cover" />
@@ -713,7 +713,7 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
             <span className="font-codec-bold text-lg text-white">{(t.name || "?").charAt(0).toUpperCase()}</span>
           )}
         </div>
-        <div className="min-w-0">
+        <div className="min-w-0 text-center">
           <p className="font-codec-bold text-base tracking-[-0.06em] text-white sm:text-lg">{t.name}</p>
           {t.role ? (
             <p className="font-codec text-sm tracking-[-0.06em] text-white/50">{t.role}</p>
