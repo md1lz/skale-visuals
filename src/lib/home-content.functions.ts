@@ -5,6 +5,7 @@ import type { Database } from "@/integrations/supabase/types";
 export type TrustClient = { name: string; photo: string | null };
 export type CompanyLogo = { name: string; logo: string | null };
 export type CreatorProfile = { name: string; audience: string; photo: string | null };
+export type HomeTestimonial = { name: string; role: string; photo: string | null; quote: string };
 
 export type HomeSettings = {
   videosCount: number;
@@ -12,6 +13,7 @@ export type HomeSettings = {
   trust: TrustClient[];
   companies: CompanyLogo[];
   creators: CreatorProfile[];
+  testimonial: HomeTestimonial;
   plusLabel: string;
 };
 
@@ -38,6 +40,12 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
   ],
   companies: [],
   creators: [],
+  testimonial: {
+    name: "",
+    role: "",
+    photo: null,
+    quote: "J'ai adoré l'approche de Skale pour notre deal",
+  },
   plusLabel: "+50",
 };
 
@@ -64,6 +72,14 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
         "").toString(),
       photo: creator?.photo ?? null,
     })),
+    testimonial: {
+      name: ((v.testimonial as HomeTestimonial | undefined)?.name ?? "").toString(),
+      role: ((v.testimonial as HomeTestimonial | undefined)?.role ?? "").toString(),
+      photo: (v.testimonial as HomeTestimonial | undefined)?.photo ?? null,
+      quote: (
+        (v.testimonial as HomeTestimonial | undefined)?.quote ?? DEFAULT_HOME_SETTINGS.testimonial.quote
+      ).toString(),
+    },
     plusLabel: (v.plusLabel ?? DEFAULT_HOME_SETTINGS.plusLabel).toString(),
   };
 }
@@ -112,6 +128,11 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
   settings.creators = await Promise.all(
     settings.creators.map(async (creator) => ({ ...creator, photo: await signAsset(creator.photo) })),
   );
+
+  settings.testimonial = {
+    ...settings.testimonial,
+    photo: await signAsset(settings.testimonial.photo),
+  };
 
   return { settings, folders: (foldersRes.data ?? []) as HomeFolder[], videos };
 });
