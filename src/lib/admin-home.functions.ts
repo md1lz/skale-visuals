@@ -38,15 +38,13 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
   const settings = normalizeHomeSettings(settingsRes.data?.value);
   const { signAsset } = await import("@/lib/home-assets.server");
   const trustPreviews = await Promise.all(settings.trust.map((t) => signAsset(t.photo)));
-  const creatorPreviews = await Promise.all(settings.creators.map((c) => signAsset(c.photo)));
 
   return {
     settings,
     trustPreviews,
-    creatorPreviews,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
-  } as HomeContent & { trustPreviews: (string | null)[]; creatorPreviews: (string | null)[] };
+  } as HomeContent & { trustPreviews: (string | null)[] };
 });
 
 const settingsSchema = z.object({
