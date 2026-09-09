@@ -654,7 +654,6 @@ function ServiceBenefits() {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="mx-auto mt-10 flex w-full max-w-6xl flex-col items-center px-4 sm:mt-12 lg:mt-16"
     >
-      <Separator />
       <div className="grid w-full grid-cols-1 gap-10 text-left sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
         {benefits.map((b, i) => {
           const Icon = b.icon;
