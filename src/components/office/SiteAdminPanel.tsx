@@ -75,6 +75,7 @@ export function SiteAdminPanel() {
   const [settings, setSettings] = useState<HomeSettings | null>(null);
   const [companyPreviews, setCompanyPreviews] = useState<(string | null)[]>([]);
   const [creatorPreviews, setCreatorPreviews] = useState<(string | null)[]>([]);
+  const [testimonialPreview, setTestimonialPreview] = useState<string | null>(null);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
   const [videos, setVideos] = useState<HomeVideo[]>([]);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
@@ -91,6 +92,7 @@ export function SiteAdminPanel() {
       setSettings(res.settings);
       setCompanyPreviews(res.companyPreviews ?? []);
       setCreatorPreviews(res.creatorPreviews ?? []);
+      setTestimonialPreview(res.testimonialPreview ?? null);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
@@ -137,6 +139,12 @@ export function SiteAdminPanel() {
             audience: creator.audience,
             photo: creator.photo,
           })),
+          testimonial: {
+            name: settings.testimonial.name,
+            role: settings.testimonial.role,
+            photo: settings.testimonial.photo,
+            quote: settings.testimonial.quote,
+          },
         },
       });
       await Promise.all(
@@ -451,6 +459,64 @@ export function SiteAdminPanel() {
               ><Trash2 className="h-4 w-4" /></button>
             </div>
           ))}
+        </div>
+      </section>
+
+      {/* Témoignage client */}
+      <section className={`${card} mb-6`}>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">Témoignage client</h2>
+        <p className="mt-1 text-xs text-neutral-500">Affiché dans la partie noire de la page d’accueil.</p>
+        <div className="mt-4 flex items-start gap-3 rounded-xl border border-white/10 bg-black/20 p-3">
+          <button
+            type="button"
+            aria-label="Photo du client"
+            onClick={() => fileRefs.current["testimonial"]?.click()}
+            className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+          >
+            {testimonialPreview ? (
+              <img src={testimonialPreview} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <ImagePlus className="h-5 w-5" />
+            )}
+          </button>
+          <input
+            ref={(el) => { fileRefs.current["testimonial"] = el; }}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (!file) return;
+              try {
+                const reference = await uploadAsset(file);
+                patchSettings({ testimonial: { ...settings.testimonial, photo: reference } });
+                setTestimonialPreview(URL.createObjectURL(file));
+              } catch (error) {
+                toast.error(error instanceof Error ? error.message : "Upload échoué");
+              }
+            }}
+          />
+          <div className="min-w-0 flex-1 space-y-2">
+            <input
+              className={input}
+              placeholder="Nom du client"
+              value={settings.testimonial.name}
+              onChange={(e) => patchSettings({ testimonial: { ...settings.testimonial, name: e.target.value } })}
+            />
+            <input
+              className={input}
+              placeholder="Rôle / entreprise"
+              value={settings.testimonial.role}
+              onChange={(e) => patchSettings({ testimonial: { ...settings.testimonial, role: e.target.value } })}
+            />
+            <textarea
+              className={`${input} min-h-[70px]`}
+              placeholder="Citation"
+              value={settings.testimonial.quote}
+              onChange={(e) => patchSettings({ testimonial: { ...settings.testimonial, quote: e.target.value } })}
+            />
+          </div>
         </div>
       </section>
 
