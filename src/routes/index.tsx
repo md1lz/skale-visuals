@@ -541,11 +541,11 @@ function ServiceCards() {
       alt: "Montage vidéo stratégique",
       title: (
         <>
-          <span className="font-codec">Le </span>
-          <span className="font-codec-bold">montage stratégique</span>
-          <span className="font-codec">, conçu pour </span>
-          <span className="font-codec-bold">convertir</span>
-          <span className="font-codec">.</span>
+          <span className="font-codec tracking-[-0.06em]">Le </span>
+          <span className="font-codec-bold tracking-[-0.06em]">montage stratégique</span>
+          <span className="font-codec tracking-[-0.06em]">, conçu pour </span>
+          <span className="font-codec-bold tracking-[-0.06em]">convertir</span>
+          <span className="font-codec tracking-[-0.06em]">.</span>
         </>
       ),
       description:
@@ -556,13 +556,13 @@ function ServiceCards() {
       alt: "Design visuel",
       title: (
         <>
-          <span className="font-codec">Le </span>
-          <span className="font-codec-bold">design visuel</span>
-          <span className="font-codec">, conçu pour </span>
-          <span className="font-codec-bold">captiver</span>
-          <span className="font-codec"> et </span>
-          <span className="font-codec-bold">convaincre</span>
-          <span className="font-codec">.</span>
+          <span className="font-codec tracking-[-0.06em]">Le </span>
+          <span className="font-codec-bold tracking-[-0.06em]">design visuel</span>
+          <span className="font-codec tracking-[-0.06em]">, conçu pour </span>
+          <span className="font-codec-bold tracking-[-0.06em]">captiver</span>
+          <span className="font-codec tracking-[-0.06em]"> et </span>
+          <span className="font-codec-bold tracking-[-0.06em]">convaincre</span>
+          <span className="font-codec tracking-[-0.06em]">.</span>
         </>
       ),
       description:
