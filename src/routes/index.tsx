@@ -1061,6 +1061,7 @@ function Home() {
               <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">convertir & vendre</span>
               <span className="font-codec-bold tracking-[-0.06em]">.</span>
             </h2>
+            <div className="my-10 h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 sm:my-12" />
             <ServiceCards />
             <ServiceBenefits />
           </div>
