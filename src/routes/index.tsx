@@ -652,7 +652,7 @@ function ServiceBenefits() {
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto mt-10 flex w-full max-w-6xl flex-col items-center px-4 sm:mt-12 lg:mt-16"
+      className="mx-auto mt-4 flex w-full max-w-6xl flex-col items-center px-4 sm:mt-6 lg:mt-8"
     >
       <div className="grid w-full grid-cols-1 gap-10 text-left sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
         {benefits.map((b, i) => {
@@ -675,6 +675,59 @@ function ServiceBenefits() {
             </motion.div>
           );
         })}
+      </div>
+    </motion.div>
+  );
+}
+
+function StarsRow({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 96 16" width="96" height="16" fill="none" className={className} aria-hidden="true">
+      <path
+        fill="#E6B919"
+        d="M7.18 1.178a1 1 0 0 1 1.64 0L10.647 3.8a1 1 0 0 0 .531.385l3.058.927a1 1 0 0 1 .507 1.56l-1.93 2.547a1 1 0 0 0-.202.624l.064 3.194a1 1 0 0 1-1.328.964l-3.018-1.047a1 1 0 0 0-.656 0L4.654 14a1 1 0 0 1-1.328-.964l.064-3.194a1 1 0 0 0-.203-.624L1.258 6.672a1 1 0 0 1 .508-1.56l3.057-.927a1 1 0 0 0 .53-.385zm20 0a1 1 0 0 1 1.64 0L30.647 3.8a1 1 0 0 0 .531.385l3.057.927a1 1 0 0 1 .508 1.56l-1.93 2.547a1 1 0 0 0-.202.624l.064 3.194a1 1 0 0 1-1.328.964l-3.018-1.047a1 1 0 0 0-.656 0L24.654 14a1 1 0 0 1-1.328-.964l.064-3.194a1 1 0 0 0-.203-.624l-1.929-2.547a1 1 0 0 1 .508-1.56l3.057-.927a1 1 0 0 0 .53-.385l1.826-2.622Zm20 0a1 1 0 0 1 1.64 0L50.648 3.8a1 1 0 0 0 .53.385l3.057.927a1 1 0 0 1 .508 1.56l-1.93 2.547a1 1 0 0 0-.202.624l.064 3.194a1 1 0 0 1-1.328.964l-3.018-1.047a1 1 0 0 0-.656 0L44.654 14a1 1 0 0 1-1.328-.964l.064-3.194a1 1 0 0 0-.203-.624l-1.929-2.547a1 1 0 0 1 .508-1.56l3.057-.927a1 1 0 0 0 .53-.385l1.826-2.622Zm20 0a1 1 0 0 1 1.64 0L70.648 3.8a1 1 0 0 0 .53.385l3.057.927a1 1 0 0 1 .508 1.56l-1.93 2.547a1 1 0 0 0-.202.624l.064 3.194a1 1 0 0 1-1.328.964l-3.018-1.047a1 1 0 0 0-.656 0L64.654 14a1 1 0 0 1-1.328-.964l.064-3.194a1 1 0 0 0-.203-.624l-1.929-2.547a1 1 0 0 1 .508-1.56l3.057-.927a1 1 0 0 0 .53-.385l1.826-2.622Zm20 0a1 1 0 0 1 1.64 0L90.648 3.8a1 1 0 0 0 .53.385l3.057.927a1 1 0 0 1 .508 1.56l-1.93 2.547a1 1 0 0 0-.202.624l.064 3.194a1 1 0 0 1-1.328.964l-3.018-1.047a1 1 0 0 0-.656 0L84.654 14a1 1 0 0 1-1.328-.964l.064-3.194a1 1 0 0 0-.203-.624l-1.929-2.547a1 1 0 0 1 .508-1.56l3.057-.927a1 1 0 0 0 .53-.385l1.826-2.622Z"
+      />
+    </svg>
+  );
+}
+
+function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.3 });
+  const t = settings.testimonial;
+  if (!t.name && !t.photo && !t.quote) return null;
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className="mx-auto mt-12 flex w-full max-w-5xl flex-col items-center gap-6 px-4 text-left sm:mt-16 sm:flex-row sm:items-stretch sm:gap-10"
+    >
+      <div className="flex shrink-0 items-center gap-3 sm:w-56 sm:flex-col sm:items-start sm:justify-center sm:gap-3">
+        <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-16 sm:w-16">
+          {t.photo ? (
+            <img src={t.photo} alt={t.name} className="h-full w-full object-cover" />
+          ) : (
+            <span className="font-codec-bold text-lg text-white">{(t.name || "?").charAt(0).toUpperCase()}</span>
+          )}
+        </div>
+        <div className="min-w-0">
+          <p className="font-codec-bold text-base tracking-[-0.06em] text-white sm:text-lg">{t.name}</p>
+          {t.role ? (
+            <p className="font-codec text-sm tracking-[-0.06em] text-white/50">{t.role}</p>
+          ) : null}
+        </div>
+      </div>
+
+      <div className="hidden w-px shrink-0 bg-white/15 sm:block" />
+
+      <div className="flex-1">
+        <StarsRow className="mb-3 h-4 w-24" />
+        <p className="font-codec-bold text-2xl leading-[1.15] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
+          “{t.quote}”
+        </p>
       </div>
     </motion.div>
   );
@@ -1061,8 +1114,9 @@ function Home() {
               <span className="font-codec-bold tracking-[-0.06em]">.</span>
             </h2>
             <ServiceCards />
-            <div className="my-10 h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 sm:my-12" />
+            <div className="my-8 h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 sm:my-9" />
             <ServiceBenefits />
+            <ClientTestimonial settings={settings} />
           </div>
         </section>
 
