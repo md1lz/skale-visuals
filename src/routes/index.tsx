@@ -184,6 +184,7 @@ function CenteredTopMenu() {
 
 function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [skaleHover, setSkaleHover] = useState(false);
   const [studioHover, setStudioHover] = useState(false);
   const [ctaHover, setCtaHover] = useState(false);
@@ -191,11 +192,11 @@ function Navbar() {
   const headerHidden = scrollHidden && !menuOpen;
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-4">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-3 md:py-4">
       <motion.div
         animate={{ y: headerHidden ? "-120%" : "0%" }}
         transition={{ type: "spring", stiffness: 300, damping: 26 }}
-        className="relative flex w-full items-start justify-between px-4 sm:px-6"
+        className="relative mx-4 flex h-[60px] items-start justify-between rounded-2xl border border-black/[0.06] bg-white px-1 shadow-[0_14px_35px_-12px_rgba(0,0,0,0.28)] sm:mx-6 md:mx-0 md:h-auto md:w-full md:rounded-none md:border-0 md:bg-transparent md:px-6 md:shadow-none"
       >
         <motion.div
           whileHover={menuOpen ? undefined : { scale: 1.02 }}
@@ -298,6 +299,60 @@ function Navbar() {
         </motion.div>
 
         <CenteredTopMenu />
+
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          aria-label={mobileNavOpen ? "Fermer la navigation" : "Ouvrir la navigation"}
+          aria-expanded={mobileNavOpen}
+          onClick={() => setMobileNavOpen((open) => !open)}
+          className="pointer-events-auto mr-1 mt-2 grid h-10 w-10 place-items-center rounded-xl bg-transparent text-foreground hover:bg-foreground/5 md:hidden"
+        >
+          <span className="flex w-5 flex-col items-end gap-1.5" aria-hidden="true">
+            <motion.span
+              animate={mobileNavOpen ? { rotate: 45, y: 4 } : { rotate: 0, y: 0 }}
+              className="block h-0.5 w-5 rounded-full bg-current"
+            />
+            <motion.span
+              animate={mobileNavOpen ? { rotate: -45, y: -4, width: 20 } : { rotate: 0, y: 0, width: 14 }}
+              className="block h-0.5 rounded-full bg-current"
+            />
+          </span>
+        </Button>
+
+        <AnimatePresence>
+          {mobileNavOpen && (
+            <motion.nav
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              className="pointer-events-auto absolute inset-x-0 top-[68px] overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-2 shadow-[0_18px_45px_-14px_rgba(0,0,0,0.3)] md:hidden"
+            >
+              {NAV_LINKS.map((item) => (
+                <Button
+                  key={item.label}
+                  type="button"
+                  variant="ghost"
+                  onClick={() => {
+                    scrollTo(item.target);
+                    setMobileNavOpen(false);
+                  }}
+                  className="font-codec-bold h-12 w-full justify-start rounded-xl px-4 text-sm uppercase text-foreground hover:bg-foreground/5"
+                >
+                  {item.label}
+                </Button>
+              ))}
+              <Button asChild variant="ghost" className="font-codec-bold h-12 w-full justify-start rounded-xl px-4 text-sm uppercase text-foreground hover:bg-foreground/5">
+                <Link to="/aboutus">À propos</Link>
+              </Button>
+              <Button asChild className="font-codec-bold mt-1 h-12 w-full rounded-xl bg-black text-sm uppercase text-white hover:bg-black/90">
+                <Link to="/bookacall">Réserver un appel</Link>
+              </Button>
+            </motion.nav>
+          )}
+        </AnimatePresence>
 
         <div className="pointer-events-auto hidden items-center gap-3 md:flex">
           <button
@@ -409,22 +464,24 @@ function Hero() {
   const [hoverDiscover, setHoverDiscover] = useState(false);
 
   return (
-    <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-36 sm:min-h-[65vh] sm:pt-40 lg:pt-44">
-      <div className="relative mx-auto max-w-5xl text-center">
+    <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-32 sm:min-h-[65vh] sm:pt-40 lg:pt-44">
+      <div className="relative mx-auto w-full max-w-5xl text-left sm:text-center">
         <FadeIn delay={0.1}>
-          <h1 className="flex flex-col items-center gap-2 font-codec-bold text-balance text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:text-5xl lg:text-6xl">
-            <span className="relative block">On optimise le contenu de tes</span>
-            <span className="relative inline-flex items-start gap-2 sm:gap-3">
+          <h1 className="flex flex-col items-start gap-2 font-codec-bold text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:items-center sm:text-balance sm:text-5xl lg:text-6xl">
+            <span className="relative block whitespace-nowrap text-[1.45rem] sm:text-inherit">On optimise le contenu de tes</span>
+            <span className="relative block sm:hidden"><RotatingWord words={ROTATING_WORDS} /></span>
+            <span className="relative block text-primary sm:hidden">préféré(e)s</span>
+            <span className="relative hidden items-start gap-3 sm:inline-flex">
               <RotatingWord words={ROTATING_WORDS} />
               <span className="inline-block text-primary">préféré(e)s</span>
             </span>
           </h1>
-          <p className="font-codec mx-auto mt-2 max-w-5xl text-balance text-base leading-[1.15] tracking-[-0.06em] text-black sm:mt-3 sm:text-xl lg:text-2xl line-clamp-3 sm:line-clamp-2 lg:line-clamp-2">
+          <p className="font-codec mt-5 max-w-[22rem] text-left text-lg leading-[1.18] tracking-[-0.06em] text-black sm:mx-auto sm:mt-3 sm:max-w-5xl sm:text-center sm:text-xl lg:text-2xl sm:line-clamp-2 lg:line-clamp-2">
             Skale Visuals, l'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but :{" "}
             <span className="font-codec-bold tracking-[-0.06em] text-black">convertir</span>.
           </p>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+          <div className="mt-8 flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center sm:justify-center">
             <Link
               to="/bookacall"
               onMouseEnter={() => setHoverBook(true)}
@@ -656,9 +713,9 @@ function ServiceBenefits() {
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto mt-4 flex w-full max-w-6xl flex-col items-center px-4 sm:mt-6 lg:mt-8"
+      className="mx-auto mt-4 flex w-full max-w-6xl flex-col items-center px-7 sm:mt-6 sm:px-4 lg:mt-8"
     >
-      <div className="grid w-full grid-cols-1 gap-10 text-left sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
+      <div className="grid w-full grid-cols-1 gap-12 text-center sm:grid-cols-2 sm:gap-10 sm:text-left lg:grid-cols-3 lg:gap-12">
         {benefits.map((b, i) => {
           const Icon = b.icon;
           return (
@@ -667,7 +724,7 @@ function ServiceBenefits() {
               initial={{ opacity: 0, y: 16 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
               transition={{ duration: 0.6, delay: 0.08 * (i + 1), ease: [0.22, 1, 0.36, 1] }}
-              className="flex flex-col items-start gap-3"
+              className="flex flex-col items-center gap-3 sm:items-start"
             >
               <Icon className="h-6 w-6 text-primary" strokeWidth={1.8} />
               <h3 className="font-codec-bold text-xl leading-tight tracking-[-0.06em] text-white sm:text-2xl">
@@ -724,7 +781,7 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto mt-20 flex w-full max-w-5xl flex-col items-center gap-6 px-4 text-left sm:mt-24 sm:flex-row sm:items-center sm:justify-center sm:gap-0"
+       className="mx-auto mt-20 flex w-full max-w-5xl flex-col items-center gap-6 px-6 text-center sm:mt-24 sm:flex-row sm:items-center sm:justify-center sm:gap-0 sm:px-4 sm:text-left"
     >
       <div className="flex shrink-0 flex-col items-center justify-center gap-3">
         <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-16 sm:w-16">
@@ -744,9 +801,9 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
 
       <div className="hidden w-px shrink-0 self-stretch bg-white/15 sm:mx-14 sm:block" />
 
-      <div className="flex max-w-2xl flex-col items-start">
+       <div className="flex max-w-2xl flex-col items-center sm:items-start">
         <StarsRow className="mb-3 h-4 w-24" />
-        <p className="font-codec-bold text-2xl leading-[1.15] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
+         <p className="font-codec-bold text-center text-2xl leading-[1.15] tracking-[-0.06em] text-white sm:text-left sm:text-3xl lg:text-4xl">
           “{t.quote.split("\n").map((line, i) => (
             <span key={i}>
               {line}
@@ -1136,7 +1193,7 @@ function Home() {
             <div className="mb-8 w-full sm:mb-10">
               <TrustCarousels settings={settings} />
             </div>
-            <h2 className="max-w-4xl text-3xl leading-[1.1] text-white sm:text-4xl md:text-5xl lg:text-6xl">
+            <h2 className="max-w-[19rem] px-2 text-3xl leading-[1.1] text-white sm:max-w-4xl sm:px-0 sm:text-4xl md:text-5xl lg:text-6xl">
               <span className="font-codec tracking-[-0.06em]">On transforme ton image de marque en contenu </span>
               <span className="font-codec-bold tracking-[-0.06em]">vidéo et visuel pensé pour </span>
               <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">convertir & vendre</span>
