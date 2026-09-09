@@ -479,7 +479,7 @@ function Hero() {
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-32 sm:min-h-[65vh] sm:pt-40 lg:pt-44">
       <div className="relative mx-auto w-full max-w-5xl text-left sm:text-center">
         <FadeIn delay={0.1}>
-          <h1 className="flex flex-col items-start gap-2 font-codec-bold text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:items-center sm:text-balance sm:text-5xl lg:text-6xl">
+          <h1 className="flex flex-col items-start gap-0 font-codec-bold text-[2.1rem] leading-[1.05] tracking-[-0.06em] text-foreground sm:gap-2 sm:items-center sm:text-balance sm:leading-[1.1] sm:text-5xl lg:text-6xl">
             <span className="relative block sm:hidden">On optimise</span>
             <span className="relative block sm:hidden">le contenu de tes</span>
             <span className="relative hidden sm:block">On optimise le contenu de tes</span>
