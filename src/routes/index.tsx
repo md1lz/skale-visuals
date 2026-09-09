@@ -189,7 +189,7 @@ function Navbar() {
   const [studioHover, setStudioHover] = useState(false);
   const [ctaHover, setCtaHover] = useState(false);
   const scrollHidden = useScrollHeader();
-  const headerHidden = scrollHidden && !menuOpen;
+  const headerHidden = scrollHidden && !menuOpen && !mobileNavOpen;
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-3 md:py-4">
@@ -324,31 +324,43 @@ function Navbar() {
         <AnimatePresence>
           {mobileNavOpen && (
             <motion.nav
-              initial={{ opacity: 0, y: -8, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -8, scale: 0.98 }}
-              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-              className="pointer-events-auto absolute inset-x-0 top-[68px] overflow-hidden rounded-2xl border border-black/[0.06] bg-white p-2 shadow-[0_18px_45px_-14px_rgba(0,0,0,0.3)] md:hidden"
+              initial={{ opacity: 0, height: 60 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 60 }}
+              transition={{ type: "spring", stiffness: 320, damping: 28 }}
+              className="pointer-events-auto absolute inset-x-0 top-0 -z-10 overflow-hidden rounded-2xl border border-black/[0.06] bg-white px-2 pb-2 pt-[66px] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.3)] md:hidden"
             >
-              {NAV_LINKS.map((item) => (
+              {["TEST", "TEST", "TEST", "TEST"].map((label, index) => (
                 <Button
-                  key={item.label}
+                  key={`${label}-${index}`}
                   type="button"
                   variant="ghost"
-                  onClick={() => {
-                    scrollTo(item.target);
-                    setMobileNavOpen(false);
-                  }}
+                  onClick={() => setMobileNavOpen(false)}
                   className="font-codec-bold h-12 w-full justify-start rounded-xl px-4 text-sm uppercase text-foreground hover:bg-foreground/5"
                 >
-                  {item.label}
+                  {label}
                 </Button>
               ))}
-              <Button asChild variant="ghost" className="font-codec-bold h-12 w-full justify-start rounded-xl px-4 text-sm uppercase text-foreground hover:bg-foreground/5">
-                <Link to="/aboutus">À propos</Link>
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={() => setMobileNavOpen(false)}
+                className="font-codec-bold h-12 w-full justify-start gap-2 rounded-xl px-4 text-sm uppercase text-foreground hover:bg-foreground/5"
+              >
+                ESPACE CLIENT
+                <User className="h-4 w-4" strokeWidth={2.5} />
               </Button>
-              <Button asChild className="font-codec-bold mt-1 h-12 w-full rounded-xl bg-black text-sm uppercase text-white hover:bg-black/90">
-                <Link to="/bookacall">Réserver un appel</Link>
+              <Button asChild className="font-codec-bold mt-1 h-12 w-full rounded-xl border-2 border-dashed border-gray-600 bg-black text-sm uppercase text-white hover:bg-black/90">
+                <Link
+                  to="/bookacall"
+                  onMouseEnter={() => setCtaHover(true)}
+                  onMouseLeave={() => setCtaHover(false)}
+                  onFocus={() => setCtaHover(true)}
+                  onBlur={() => setCtaHover(false)}
+                >
+                  <SlotMachineText text="RÉSERVER UN APPEL" active={ctaHover} />
+                  <ArrowUpRight className="h-4 w-4 shrink-0" />
+                </Link>
               </Button>
             </motion.nav>
           )}
@@ -468,7 +480,9 @@ function Hero() {
       <div className="relative mx-auto w-full max-w-5xl text-left sm:text-center">
         <FadeIn delay={0.1}>
           <h1 className="flex flex-col items-start gap-2 font-codec-bold text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:items-center sm:text-balance sm:text-5xl lg:text-6xl">
-            <span className="relative block whitespace-nowrap text-[1.45rem] sm:text-inherit">On optimise le contenu de tes</span>
+            <span className="relative block sm:hidden">On optimise</span>
+            <span className="relative block sm:hidden">le contenu de tes</span>
+            <span className="relative hidden sm:block">On optimise le contenu de tes</span>
             <span className="relative block sm:hidden"><RotatingWord words={ROTATING_WORDS} /></span>
             <span className="relative block text-primary sm:hidden">préféré(e)s</span>
             <span className="relative hidden items-start gap-3 sm:inline-flex">
