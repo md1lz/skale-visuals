@@ -350,8 +350,17 @@ function Navbar() {
                 ESPACE CLIENT
                 <User className="h-4 w-4" strokeWidth={2.5} />
               </Button>
-              <Button asChild className="font-codec-bold mt-1 h-12 w-full rounded-xl bg-black text-sm uppercase text-white hover:bg-black/90">
-                <Link to="/bookacall">RÉSERVER UN APPEL</Link>
+              <Button asChild className="font-codec-bold mt-1 h-12 w-full rounded-xl border-2 border-dashed border-gray-600 bg-black text-sm uppercase text-white hover:bg-black/90">
+                <Link
+                  to="/bookacall"
+                  onMouseEnter={() => setCtaHover(true)}
+                  onMouseLeave={() => setCtaHover(false)}
+                  onFocus={() => setCtaHover(true)}
+                  onBlur={() => setCtaHover(false)}
+                >
+                  <SlotMachineText text="RÉSERVER UN APPEL" active={ctaHover} />
+                  <ArrowUpRight className="h-4 w-4 shrink-0" />
+                </Link>
               </Button>
             </motion.nav>
           )}
