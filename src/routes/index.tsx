@@ -990,7 +990,9 @@ function Home() {
             </div>
             <h2 className="max-w-4xl text-3xl leading-[1.1] text-white sm:text-4xl md:text-5xl lg:text-6xl">
               <span className="font-codec tracking-[-0.06em]">On transforme ton image de marque en contenu </span>
-              <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">vidéo et visuel pensé pour convertir & vendre.</span>
+              <span className="font-codec-bold tracking-[-0.06em]">vidéo et visuel pensé pour </span>
+              <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">convertir & vendre</span>
+              <span className="font-codec-bold tracking-[-0.06em]">.</span>
             </h2>
             <ServiceCards />
           </div>
