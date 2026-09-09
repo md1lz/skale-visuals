@@ -131,6 +131,11 @@ export function SiteAdminPanel() {
           clientsCount: Number(settings.clientsCount) || 0,
           plusLabel: settings.plusLabel,
           trust: settings.trust.map((t) => ({ name: t.name, photo: t.photo })),
+          creators: (settings.creators ?? []).map((c) => ({
+            name: c.name,
+            followers: c.followers,
+            photo: c.photo,
+          })),
         },
       });
       await Promise.all(
