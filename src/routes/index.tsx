@@ -239,7 +239,7 @@ function Navbar() {
                 aria-label={menuOpen ? "Fermer le menu" : "Ouvrir le menu"}
                 aria-expanded={menuOpen}
                 onClick={() => setMenuOpen((open) => !open)}
-                className={`ml-1.5 h-9 w-9 rounded-lg bg-transparent hover:bg-transparent ${
+                className={`ml-3 h-9 w-9 rounded-lg bg-transparent hover:bg-transparent ${
                   menuOpen ? "text-slate-500 hover:text-slate-900" : "text-muted-foreground hover:text-foreground"
                 }`}
               >
