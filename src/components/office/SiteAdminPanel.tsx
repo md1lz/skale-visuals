@@ -74,7 +74,8 @@ export function SiteAdminPanel() {
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<HomeSettings | null>(null);
   const [trustPreviews, setTrustPreviews] = useState<(string | null)[]>([null, null, null, null]);
-  
+  const [companyPreviews, setCompanyPreviews] = useState<(string | null)[]>([]);
+  const [creatorPreviews, setCreatorPreviews] = useState<(string | null)[]>([]);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
   const [videos, setVideos] = useState<HomeVideo[]>([]);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
@@ -90,6 +91,8 @@ export function SiteAdminPanel() {
       const res = await getHomeAdminContent();
       setSettings(res.settings);
       setTrustPreviews(res.trustPreviews ?? [null, null, null, null]);
+      setCompanyPreviews(res.companyPreviews ?? []);
+      setCreatorPreviews(res.creatorPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
@@ -130,6 +133,12 @@ export function SiteAdminPanel() {
           clientsCount: Number(settings.clientsCount) || 0,
           plusLabel: settings.plusLabel,
           trust: settings.trust.map((t) => ({ name: t.name, photo: t.photo })),
+          companies: settings.companies.map((company) => ({ name: company.name, logo: company.logo })),
+          creators: settings.creators.map((creator) => ({
+            name: creator.name,
+            audience: creator.audience,
+            photo: creator.photo,
+          })),
         },
       });
       await Promise.all(
@@ -166,6 +175,40 @@ export function SiteAdminPanel() {
       s ? { ...s, trust: s.trust.map((t, idx) => (idx === i ? { ...t, ...patch } : t)) } : s,
     );
     setDirty(true);
+  }
+  function patchCompany(i: number, patch: Partial<HomeSettings["companies"][number]>) {
+    setSettings((s) =>
+      s
+        ? { ...s, companies: s.companies.map((company, idx) => (idx === i ? { ...company, ...patch } : company)) }
+        : s,
+    );
+    setDirty(true);
+  }
+  function patchCreator(i: number, patch: Partial<HomeSettings["creators"][number]>) {
+    setSettings((s) =>
+      s
+        ? { ...s, creators: s.creators.map((creator, idx) => (idx === i ? { ...creator, ...patch } : creator)) }
+        : s,
+    );
+    setDirty(true);
+  }
+  function moveSettingItem(kind: "companies" | "creators", index: number, direction: -1 | 1) {
+    const target = index + direction;
+    setSettings((s) => {
+      if (!s || target < 0 || target >= s[kind].length) return s;
+      const items = [...s[kind]];
+      [items[index], items[target]] = [items[target], items[index]];
+      return { ...s, [kind]: items };
+    });
+    if (target >= 0 && settings && target < settings[kind].length) {
+      const setPreviews = kind === "companies" ? setCompanyPreviews : setCreatorPreviews;
+      setPreviews((current) => {
+        const next = [...current];
+        [next[index], next[target]] = [next[target], next[index]];
+        return next;
+      });
+      setDirty(true);
+    }
   }
   function patchVideo(id: string, patch: Partial<HomeVideo>) {
     setVideos((arr) => arr.map((v) => (v.id === id ? { ...v, ...patch } : v)));
@@ -279,6 +322,145 @@ export function SiteAdminPanel() {
           Enregistrer
         </button>
       </header>
+
+      {/* Carrousels de confiance */}
+      <section className={`${card} mb-6`}>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+          Carrousels de confiance
+        </h2>
+        <p className="mt-1 text-xs text-neutral-500">Logos d’entreprises puis profils de créateurs dans la partie noire.</p>
+
+        <div className="mt-5 flex items-center justify-between gap-3">
+          <h3 className="text-sm font-medium text-white">Entreprises</h3>
+          <button
+            type="button"
+            onClick={() => {
+              patchSettings({ companies: [...settings.companies, { name: "", logo: null }] });
+              setCompanyPreviews((items) => [...items, null]);
+            }}
+            className={`${btn} border border-white/10 text-white hover:bg-white/10`}
+          >
+            <Plus className="h-4 w-4" /> Ajouter
+          </button>
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {settings.companies.map((company, i) => (
+            <div key={`company-${i}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-3">
+              <button
+                type="button"
+                aria-label={`Ajouter le logo de ${company.name || "l’entreprise"}`}
+                onClick={() => fileRefs.current[`company-${i}`]?.click()}
+                className="grid h-12 w-16 shrink-0 place-items-center overflow-hidden rounded-md border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+              >
+                {companyPreviews[i] ? (
+                  <img src={companyPreviews[i] ?? ""} alt="" className="max-h-full max-w-full object-contain" />
+                ) : (
+                  <ImagePlus className="h-5 w-5" />
+                )}
+              </button>
+              <input
+                ref={(el) => { fileRefs.current[`company-${i}`] = el; }}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  try {
+                    const reference = await uploadAsset(file);
+                    patchCompany(i, { logo: reference });
+                    setCompanyPreviews((items) => items.map((item, idx) => idx === i ? URL.createObjectURL(file) : item));
+                  } catch (error) {
+                    toast.error(error instanceof Error ? error.message : "Upload échoué");
+                  }
+                }}
+              />
+              <input className={input} placeholder="Nom de l’entreprise" value={company.name} onChange={(e) => patchCompany(i, { name: e.target.value })} />
+              <div className="flex shrink-0 flex-col gap-1">
+                <button type="button" aria-label="Monter" onClick={() => moveSettingItem("companies", i, -1)} className="text-neutral-500 hover:text-white"><ArrowUp className="h-3.5 w-3.5" /></button>
+                <button type="button" aria-label="Descendre" onClick={() => moveSettingItem("companies", i, 1)} className="text-neutral-500 hover:text-white"><ArrowDown className="h-3.5 w-3.5" /></button>
+              </div>
+              <button
+                type="button"
+                aria-label="Supprimer"
+                onClick={() => {
+                  patchSettings({ companies: settings.companies.filter((_, idx) => idx !== i) });
+                  setCompanyPreviews((items) => items.filter((_, idx) => idx !== i));
+                }}
+                className="text-neutral-500 hover:text-red-400"
+              ><Trash2 className="h-4 w-4" /></button>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-7 flex items-center justify-between gap-3 border-t border-white/10 pt-5">
+          <h3 className="text-sm font-medium text-white">Créateurs</h3>
+          <button
+            type="button"
+            onClick={() => {
+              patchSettings({ creators: [...settings.creators, { name: "", audience: "", photo: null }] });
+              setCreatorPreviews((items) => [...items, null]);
+            }}
+            className={`${btn} border border-white/10 text-white hover:bg-white/10`}
+          >
+            <Plus className="h-4 w-4" /> Ajouter
+          </button>
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {settings.creators.map((creator, i) => (
+            <div key={`creator-${i}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-3">
+              <button
+                type="button"
+                aria-label={`Ajouter la photo de ${creator.name || "ce créateur"}`}
+                onClick={() => fileRefs.current[`creator-${i}`]?.click()}
+                className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+              >
+                {creatorPreviews[i] ? (
+                  <img src={creatorPreviews[i] ?? ""} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  <ImagePlus className="h-5 w-5" />
+                )}
+              </button>
+              <input
+                ref={(el) => { fileRefs.current[`creator-${i}`] = el; }}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  try {
+                    const reference = await uploadAsset(file);
+                    patchCreator(i, { photo: reference });
+                    setCreatorPreviews((items) => items.map((item, idx) => idx === i ? URL.createObjectURL(file) : item));
+                  } catch (error) {
+                    toast.error(error instanceof Error ? error.message : "Upload échoué");
+                  }
+                }}
+              />
+              <div className="min-w-0 flex-1 space-y-2">
+                <input className={input} placeholder="Nom" value={creator.name} onChange={(e) => patchCreator(i, { name: e.target.value })} />
+                <input className={input} placeholder="Audience, ex. 120K abonnés" value={creator.audience} onChange={(e) => patchCreator(i, { audience: e.target.value })} />
+              </div>
+              <div className="flex shrink-0 flex-col gap-1">
+                <button type="button" aria-label="Monter" onClick={() => moveSettingItem("creators", i, -1)} className="text-neutral-500 hover:text-white"><ArrowUp className="h-3.5 w-3.5" /></button>
+                <button type="button" aria-label="Descendre" onClick={() => moveSettingItem("creators", i, 1)} className="text-neutral-500 hover:text-white"><ArrowDown className="h-3.5 w-3.5" /></button>
+              </div>
+              <button
+                type="button"
+                aria-label="Supprimer"
+                onClick={() => {
+                  patchSettings({ creators: settings.creators.filter((_, idx) => idx !== i) });
+                  setCreatorPreviews((items) => items.filter((_, idx) => idx !== i));
+                }}
+                className="text-neutral-500 hover:text-red-400"
+              ><Trash2 className="h-4 w-4" /></button>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Trust */}
       <section className={`${card} mb-6`}>
