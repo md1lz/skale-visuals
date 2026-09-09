@@ -862,9 +862,9 @@ function Home() {
         {/* Grande bulle noire — transition vers la rubrique suivante */}
         <section className="relative w-full">
           <div className="flex min-h-[75vh] w-full flex-col items-center justify-center rounded-t-[3rem] bg-[#030303] px-6 py-24 text-center sm:rounded-t-[4rem] lg:rounded-t-[5rem]">
-            <h2 className="max-w-4xl text-3xl leading-[1.1] tracking-[-0.06em] text-white sm:text-4xl md:text-5xl lg:text-6xl">
-              <span className="font-codec">On transforme ton image de marque en contenu </span>
-              <span className="font-codec-bold">vidéo et visuel pensé pour convertir & vendre.</span>
+            <h2 className="max-w-4xl text-3xl leading-[1.1] text-white sm:text-4xl md:text-5xl lg:text-6xl">
+              <span className="font-codec tracking-[-0.06em]">On transforme ton image de marque en contenu </span>
+              <span className="font-codec-bold tracking-[-0.06em]">vidéo et visuel pensé pour convertir & vendre.</span>
             </h2>
           </div>
         </section>
