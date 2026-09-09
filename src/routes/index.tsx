@@ -467,8 +467,8 @@ function Hero() {
     <section className="relative flex min-h-[60vh] flex-col items-center justify-center overflow-hidden px-5 pb-12 pt-32 sm:min-h-[65vh] sm:pt-40 lg:pt-44">
       <div className="relative mx-auto w-full max-w-5xl text-left sm:text-center">
         <FadeIn delay={0.1}>
-          <h1 className="flex flex-col items-start gap-2 font-codec-bold text-[1.72rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:items-center sm:text-balance sm:text-5xl lg:text-6xl">
-            <span className="relative block whitespace-nowrap">On optimise le contenu de tes</span>
+          <h1 className="flex flex-col items-start gap-2 font-codec-bold text-[2.1rem] leading-[1.1] tracking-[-0.06em] text-foreground sm:items-center sm:text-balance sm:text-5xl lg:text-6xl">
+            <span className="relative block whitespace-nowrap text-[1.45rem] sm:text-inherit">On optimise le contenu de tes</span>
             <span className="relative block sm:hidden"><RotatingWord words={ROTATING_WORDS} /></span>
             <span className="relative block text-primary sm:hidden">préféré(e)s</span>
             <span className="relative hidden items-start gap-3 sm:inline-flex">
