@@ -646,10 +646,6 @@ function ServiceBenefits() {
     },
   ];
 
-  const Separator = () => (
-    <div className="my-12 h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 sm:my-14" />
-  );
-
   return (
     <motion.div
       ref={ref}
