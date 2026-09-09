@@ -6,7 +6,7 @@ import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, Arr
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
 import cardMontage from "@/assets/card-montage.png.asset.json";
-import cardDesign from "@/assets/card-design.jpg";
+import cardDesign from "@/assets/card-design.png.asset.json";
 import { Button } from "@/components/ui/button";
 import {
   DEFAULT_HOME_SETTINGS,
