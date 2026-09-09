@@ -681,7 +681,6 @@ function ServiceBenefits() {
           );
         })}
       </div>
-      <Separator />
     </motion.div>
   );
 }
