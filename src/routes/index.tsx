@@ -703,7 +703,7 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto mt-12 flex w-full max-w-5xl flex-col items-center gap-6 px-4 text-left sm:mt-16 sm:flex-row sm:items-stretch sm:gap-5"
+      className="mx-auto mt-16 flex w-full max-w-5xl flex-col items-center gap-6 px-4 text-left sm:mt-20 sm:flex-row sm:items-stretch sm:gap-5"
     >
       <div className="flex shrink-0 items-center gap-3 sm:w-48 sm:flex-col sm:items-center sm:justify-center sm:gap-3">
         <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-16 sm:w-16">
