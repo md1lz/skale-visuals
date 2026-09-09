@@ -582,7 +582,7 @@ function ServiceCards() {
         {cards.map((card) => (
           <div
             key={card.alt}
-            className="group relative flex min-h-[380px] flex-col overflow-hidden rounded-[2rem] border border-white/[0.08] bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] transition-shadow duration-300 hover:shadow-[0_28px_70px_-18px_rgba(255,255,255,0.14)] sm:min-h-[420px] md:min-h-[460px]"
+            className="group relative flex min-h-[380px] flex-col overflow-hidden rounded-3xl border border-neutral-600/60 bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] transition-shadow duration-300 hover:shadow-[0_28px_70px_-18px_rgba(255,255,255,0.14)] sm:min-h-[420px] md:min-h-[460px]"
           >
             <img
               src={card.image}
