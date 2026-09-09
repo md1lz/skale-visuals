@@ -594,7 +594,6 @@ function ServiceCards() {
             />
 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/80 via-[25%] via-black/30 via-[58%] to-transparent to-[100%]" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[80%] bg-gradient-to-t from-black/10 via-black/3 via-[78%] to-transparent to-[100%] backdrop-blur-[2px]" />
 
             <div className="relative mt-auto flex flex-col items-start p-5 text-left sm:p-6 lg:p-8">
               <h3 className="max-w-lg text-2xl leading-[1.05] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
