@@ -740,7 +740,7 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
 
       <div className="hidden w-px shrink-0 self-stretch bg-white/15 sm:block" />
 
-      <div className="max-w-2xl">
+      <div className="flex max-w-2xl flex-col items-start">
         <StarsRow className="mb-3 h-4 w-24" />
         <p className="font-codec-bold text-2xl leading-[1.15] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
           “{t.quote.split("\n").map((line, i) => (
