@@ -90,6 +90,7 @@ export function SiteAdminPanel() {
       const res = await getHomeAdminContent();
       setSettings(res.settings);
       setTrustPreviews(res.trustPreviews ?? [null, null, null, null]);
+      setCreatorPreviews(res.creatorPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
