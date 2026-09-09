@@ -74,6 +74,7 @@ export function SiteAdminPanel() {
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<HomeSettings | null>(null);
   const [trustPreviews, setTrustPreviews] = useState<(string | null)[]>([null, null, null, null]);
+  const [creatorPreviews, setCreatorPreviews] = useState<(string | null)[]>([]);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
   const [videos, setVideos] = useState<HomeVideo[]>([]);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
@@ -89,6 +90,7 @@ export function SiteAdminPanel() {
       const res = await getHomeAdminContent();
       setSettings(res.settings);
       setTrustPreviews(res.trustPreviews ?? [null, null, null, null]);
+      setCreatorPreviews(res.creatorPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
@@ -129,6 +131,11 @@ export function SiteAdminPanel() {
           clientsCount: Number(settings.clientsCount) || 0,
           plusLabel: settings.plusLabel,
           trust: settings.trust.map((t) => ({ name: t.name, photo: t.photo })),
+          creators: (settings.creators ?? []).map((c) => ({
+            name: c.name,
+            followers: c.followers,
+            photo: c.photo,
+          })),
         },
       });
       await Promise.all(
@@ -164,6 +171,45 @@ export function SiteAdminPanel() {
     setSettings((s) =>
       s ? { ...s, trust: s.trust.map((t, idx) => (idx === i ? { ...t, ...patch } : t)) } : s,
     );
+    setDirty(true);
+  }
+  function patchCreator(i: number, patch: Partial<HomeSettings["creators"][number]>) {
+    setSettings((s) =>
+      s
+        ? { ...s, creators: (s.creators ?? []).map((c, idx) => (idx === i ? { ...c, ...patch } : c)) }
+        : s,
+    );
+    setDirty(true);
+  }
+  function addCreator() {
+    setSettings((s) =>
+      s ? { ...s, creators: [...(s.creators ?? []), { name: "", followers: "", photo: null }] } : s,
+    );
+    setCreatorPreviews((p) => [...p, null]);
+    setDirty(true);
+  }
+  function removeCreator(i: number) {
+    setSettings((s) =>
+      s ? { ...s, creators: (s.creators ?? []).filter((_, idx) => idx !== i) } : s,
+    );
+    setCreatorPreviews((p) => p.filter((_, idx) => idx !== i));
+    setDirty(true);
+  }
+  function moveCreator(i: number, dir: -1 | 1) {
+    const j = i + dir;
+    setSettings((s) => {
+      if (!s) return s;
+      const arr = [...(s.creators ?? [])];
+      if (j < 0 || j >= arr.length) return s;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+      return { ...s, creators: arr };
+    });
+    setCreatorPreviews((p) => {
+      const arr = [...p];
+      if (j < 0 || j >= arr.length) return p;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+      return arr;
+    });
     setDirty(true);
   }
   function patchVideo(id: string, patch: Partial<HomeVideo>) {
@@ -377,6 +423,95 @@ export function SiteAdminPanel() {
             onChange={(e) => patchSettings({ plusLabel: e.target.value })}
           />
         </label>
+      </section>
+
+      {/* Créateurs (carrousel section noire) */}
+      <section className={`${card} mb-6`}>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+            Carrousel créateurs (section noire)
+          </h2>
+          <button onClick={addCreator} className={`${btn} bg-red-600 text-white hover:bg-red-500`}>
+            <Plus className="h-4 w-4" /> Ajouter
+          </button>
+        </div>
+        {(settings.creators ?? []).length === 0 && (
+          <p className="text-sm text-neutral-500">Aucun créateur pour l'instant.</p>
+        )}
+        <div className="grid gap-3 sm:grid-cols-2">
+          {(settings.creators ?? []).map((c, i) => (
+            <div key={i} className="rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => pickImage(`creator-${i}`, () => {})}
+                  className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+                >
+                  {creatorPreviews[i] ? (
+                    <img src={creatorPreviews[i]!} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <ImagePlus className="h-5 w-5" />
+                  )}
+                </button>
+                <input
+                  ref={(el) => {
+                    fileRefs.current[`creator-${i}`] = el;
+                  }}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!f) return;
+                    try {
+                      const ref = await uploadAsset(f);
+                      patchCreator(i, { photo: ref });
+                      const url = URL.createObjectURL(f);
+                      setCreatorPreviews((p) => p.map((v, idx) => (idx === i ? url : v)));
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : "Upload échoué");
+                    }
+                  }}
+                />
+                <div className="grid flex-1 gap-2">
+                  <input
+                    className={input}
+                    placeholder="Blase (@nom)"
+                    value={c.name}
+                    onChange={(e) => patchCreator(i, { name: e.target.value })}
+                  />
+                  <input
+                    className={input}
+                    placeholder="Abonnés (ex : 1,2M abonnés)"
+                    value={c.followers}
+                    onChange={(e) => patchCreator(i, { followers: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <button
+                  onClick={() => moveCreator(i, -1)}
+                  className="rounded p-1 text-neutral-500 hover:text-white"
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => moveCreator(i, 1)}
+                  className="rounded p-1 text-neutral-500 hover:text-white"
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => removeCreator(i)}
+                  className="ml-auto inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-red-400"
+                >
+                  <Trash2 className="h-4 w-4" /> Supprimer
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
       </section>
 
       {/* Réalisations */}
