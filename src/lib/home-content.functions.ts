@@ -4,10 +4,13 @@ import type { Database } from "@/integrations/supabase/types";
 
 export type TrustClient = { name: string; photo: string | null };
 
+export type Creator = { name: string; followers: string; photo: string | null };
+
 export type HomeSettings = {
   videosCount: number;
   clientsCount: number;
   trust: TrustClient[];
+  creators: Creator[];
   plusLabel: string;
 };
 
