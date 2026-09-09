@@ -512,6 +512,137 @@ function TrustCarousels({ settings }: { settings: HomeContent["settings"] }) {
   );
 }
 
+/* ---------------- services ---------------- */
+
+function ServiceCards() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.15 });
+
+  const cards = [
+    {
+      image: cardMontage,
+      alt: "Montage vidéo stratégique",
+      theme: "dark" as const,
+      title: (
+        <>
+          <span className="font-codec">Le </span>
+          <span className="font-codec-bold">montage stratégique</span>
+          <span className="font-codec">, conçu pour </span>
+          <span className="font-codec-bold">convertir</span>
+          <span className="font-codec">.</span>
+        </>
+      ),
+      description:
+        "Nous créons des vidéos ultra-efficaces, pensées pour capter l'attention dès les premières secondes, retenir ton audience et transformer chaque vue en action.",
+    },
+    {
+      image: cardDesign,
+      alt: "Design visuel",
+      theme: "light" as const,
+      title: (
+        <>
+          <span className="font-codec">Le </span>
+          <span className="font-codec-bold">design visuel</span>
+          <span className="font-codec">, conçu pour </span>
+          <span className="font-codec-bold">captiver</span>
+          <span className="font-codec"> et </span>
+          <span className="font-codec-bold">convaincre</span>
+          <span className="font-codec">.</span>
+        </>
+      ),
+      description:
+        "Nous créons des miniatures et visuels modernes et sur mesure pour présenter ton contenu, renforcer ta crédibilité et transformer tes visiteurs en abonnés ou clients.",
+    },
+  ];
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className="mx-auto mt-12 w-full max-w-6xl px-4 sm:mt-16 lg:mt-20"
+    >
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6">
+        {cards.map((card) => {
+          const isDark = card.theme === "dark";
+          return (
+            <div
+              key={card.alt}
+              className={`group relative flex min-h-[520px] flex-col overflow-hidden rounded-[2rem] shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] transition-shadow duration-300 hover:shadow-[0_28px_70px_-18px_rgba(255,255,255,0.14)] sm:min-h-[580px] ${
+                isDark ? "border border-white/[0.08] bg-black" : "border border-black/[0.08] bg-white"
+              }`}
+            >
+              <img
+                src={card.image}
+                alt={card.alt}
+                width={1024}
+                height={640}
+                loading="lazy"
+                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              />
+
+              <div
+                className={`pointer-events-none absolute inset-0 ${
+                  isDark
+                    ? "bg-gradient-to-t from-black via-black/75 to-transparent"
+                    : "bg-gradient-to-t from-white via-white/80 to-transparent"
+                }`}
+              />
+              <div
+                className={`pointer-events-none absolute inset-x-0 bottom-0 h-[55%] ${
+                  isDark ? "bg-black/35" : "bg-white/35"
+                } backdrop-blur-md`}
+              />
+
+              <div className="relative mt-auto flex flex-col items-start p-6 sm:p-8">
+                <h3
+                  className={`max-w-lg text-2xl leading-[1.05] tracking-[-0.06em] sm:text-3xl lg:text-4xl ${
+                    isDark ? "text-white" : "text-black"
+                  }`}
+                >
+                  {card.title}
+                </h3>
+                <p
+                  className={`mt-3 max-w-md text-base leading-snug sm:text-lg lg:text-xl ${
+                    isDark ? "text-neutral-300" : "text-neutral-600"
+                  }`}
+                >
+                  {card.description}
+                </p>
+                <div className="mt-6 flex flex-wrap items-center gap-3">
+                  <Link
+                    to="/bookacall"
+                    className={`group/btn inline-flex items-center gap-1.5 rounded-md border-2 border-dashed px-3.5 py-2 text-xs font-semibold uppercase tracking-wide transition-all duration-200 ease-out hover:scale-[1.06] active:scale-[0.97] sm:text-sm ${
+                      isDark
+                        ? "border-neutral-600 bg-black text-white hover:bg-neutral-900"
+                        : "border-neutral-300 bg-white text-black hover:bg-neutral-100"
+                    }`}
+                  >
+                    <span className="font-codec-bold">RÉSERVER UN APPEL</span>
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:rotate-45 sm:h-4 sm:w-4" />
+                  </Link>
+                  <Link
+                    to="/bookacall"
+                    className={`group/btn inline-flex items-center gap-1.5 rounded-md border-2 border-dashed px-3.5 py-2 text-xs font-semibold uppercase tracking-wide transition-all duration-200 ease-out hover:scale-[1.06] active:scale-[0.97] sm:text-sm ${
+                      isDark
+                        ? "border-neutral-600 bg-black text-white hover:bg-neutral-900"
+                        : "border-neutral-300 bg-white text-black hover:bg-neutral-100"
+                    }`}
+                  >
+                    <span className="font-codec-bold">RÉSERVER UN APPEL</span>
+                    <ArrowUpRight className="h-3.5 w-3.5 transition-transform duration-200 group-hover/btn:rotate-45 sm:h-4 sm:w-4" />
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </motion.div>
+  );
+}
+
 /* ---------------- réalisations ---------------- */
 
 function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: HomeVideo[] }) {
