@@ -49,6 +49,11 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
       ? Number(v.clientsCount)
       : DEFAULT_HOME_SETTINGS.clientsCount,
     trust: trust.map((t) => ({ name: (t?.name ?? "").toString(), photo: t?.photo ?? null })),
+    creators: (Array.isArray(v.creators) ? v.creators : []).slice(0, 24).map((c) => ({
+      name: (c?.name ?? "").toString(),
+      followers: (c?.followers ?? "").toString(),
+      photo: c?.photo ?? null,
+    })),
     plusLabel: (v.plusLabel ?? DEFAULT_HOME_SETTINGS.plusLabel).toString(),
   };
 }
