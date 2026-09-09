@@ -593,8 +593,8 @@ function ServiceCards() {
               className="absolute inset-0 h-full w-full object-cover object-bottom transition-transform duration-700 ease-out group-hover:scale-105"
             />
 
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/95 via-[44%] via-black/65 via-[72%] via-black/22 via-[92%] to-transparent to-[100%]" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[90%] bg-gradient-to-t from-black/14 via-black/5 via-[82%] to-transparent to-[100%] backdrop-blur-[4px]" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/95 via-[38%] via-black/60 via-[64%] via-black/15 via-[90%] to-transparent to-[100%]" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[95%] bg-gradient-to-t from-black/10 via-black/3 via-[88%] to-transparent to-[100%] backdrop-blur-[5px]" />
 
             <div className="relative mt-auto flex flex-col items-start p-5 text-left sm:p-6 lg:p-8">
               <h3 className="max-w-lg text-2xl leading-[1.05] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
