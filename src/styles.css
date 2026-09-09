@@ -203,8 +203,6 @@
 .marquee:hover .marquee-track,
 .marquee:hover .marquee-track-reverse,
 .marquee:hover .marquee-track-fast,
-.marquee:hover .trust-marquee-track,
-.marquee:hover .trust-marquee-track-reverse,
 .marquee:hover .marquee-y-track,
 .marquee:hover .marquee-y-track-reverse {
   animation-play-state: paused;
