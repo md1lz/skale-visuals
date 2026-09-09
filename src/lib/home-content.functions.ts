@@ -96,6 +96,9 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
   settings.trust = await Promise.all(
     settings.trust.map(async (t) => ({ ...t, photo: await signAsset(t.photo) })),
   );
+  settings.creators = await Promise.all(
+    settings.creators.map(async (c) => ({ ...c, photo: await signAsset(c.photo) })),
+  );
 
   return { settings, folders: (foldersRes.data ?? []) as HomeFolder[], videos };
 });
