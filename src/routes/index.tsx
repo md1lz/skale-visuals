@@ -669,7 +669,7 @@ function ServiceBenefits() {
               <h3 className="font-codec-bold text-xl leading-tight tracking-[-0.06em] text-white sm:text-2xl">
                 {b.title}
               </h3>
-              <p className="font-codec text-base leading-snug tracking-[-0.06em] text-white/80">
+              <p className="font-codec text-lg leading-snug tracking-[-0.06em] text-white sm:text-xl">
                 {b.description}
               </p>
             </motion.div>
