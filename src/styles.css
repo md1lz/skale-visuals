@@ -260,6 +260,7 @@
   color: var(--foreground);
   min-height: 100vh;
   position: relative;
+  overflow-x: hidden;
 }
 
 :root {
