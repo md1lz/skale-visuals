@@ -726,7 +726,7 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="mx-auto mt-20 flex w-full max-w-5xl flex-col items-center gap-6 px-4 text-left sm:mt-24 sm:flex-row sm:items-center sm:justify-center sm:gap-10"
     >
-      <div className="flex shrink-0 items-center gap-3 sm:ml-14 sm:w-48 sm:flex-col sm:items-center sm:justify-center sm:gap-3">
+      <div className="flex shrink-0 items-center gap-3 sm:ml-24 sm:w-48 sm:flex-col sm:items-center sm:justify-center sm:gap-3">
         <div className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-16 sm:w-16">
           {t.photo ? (
             <img src={t.photo} alt={t.name} className="h-full w-full object-cover" />
