@@ -1067,6 +1067,7 @@ function Home() {
               <span className="font-codec-bold tracking-[-0.06em]">.</span>
             </h2>
             <ServiceCards />
+            <ServiceBenefits />
           </div>
         </section>
 
