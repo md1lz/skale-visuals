@@ -455,41 +455,6 @@ function Hero() {
 
 
 
-/* ---------------- carrousel créateurs (section noire) ---------------- */
-
-function CreatorsMarquee({ creators }: { creators: HomeContent["settings"]["creators"] }) {
-  const list = (creators ?? []).filter((c) => c.name || c.photo || c.followers);
-  if (list.length === 0) return null;
-  const loop = [...list, ...list];
-
-  return (
-    <div className="relative w-full overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-      <div className="flex w-max gap-10 animate-[creators-scroll_38s_linear_infinite] hover:[animation-play-state:paused] sm:gap-14">
-        {loop.map((c, i) => (
-          <div key={i} className="flex w-28 shrink-0 flex-col items-center text-center sm:w-32">
-            <div className="grid h-16 w-16 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-20 sm:w-20">
-              {c.photo ? (
-                <img src={c.photo} alt={c.name} className="h-full w-full object-cover" />
-              ) : (
-                <span className="font-codec text-lg text-white/70">
-                  {(c.name || "?").trim().charAt(0).toUpperCase()}
-                </span>
-              )}
-            </div>
-            <p className="font-codec mt-3 text-sm leading-tight text-white sm:text-base" style={{ letterSpacing: "-0.06em" }}>
-              {c.name}
-            </p>
-            <p className="font-codec mt-0.5 text-xs leading-tight text-white/55 sm:text-sm" style={{ letterSpacing: "-0.06em" }}>
-              {c.followers}
-            </p>
-          </div>
-        ))}
-      </div>
-      <style>{`@keyframes creators-scroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }`}</style>
-    </div>
-  );
-}
-
 /* ---------------- trust ---------------- */
 
 function Trust({ settings }: { settings: HomeContent["settings"] }) {
@@ -897,9 +862,6 @@ function Home() {
         {/* Grande bulle noire — transition vers la rubrique suivante */}
         <section className="relative w-full">
           <div className="flex min-h-[75vh] w-full flex-col items-center justify-center rounded-t-[3rem] bg-[#030303] px-6 py-24 text-center sm:rounded-t-[4rem] lg:rounded-t-[5rem]">
-            <div className="mb-14 w-full sm:mb-16">
-              <CreatorsMarquee creators={settings.creators} />
-            </div>
             <h2 className="max-w-4xl text-3xl leading-[1.1] text-white sm:text-4xl md:text-5xl lg:text-6xl">
               <span className="font-codec tracking-[-0.06em]">On transforme ton image de marque en contenu </span>
               <span className="font-codec-bold tracking-[-0.06em]">vidéo et visuel pensé pour convertir & vendre.</span>
