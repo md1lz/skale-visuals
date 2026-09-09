@@ -173,6 +173,45 @@ export function SiteAdminPanel() {
     );
     setDirty(true);
   }
+  function patchCreator(i: number, patch: Partial<HomeSettings["creators"][number]>) {
+    setSettings((s) =>
+      s
+        ? { ...s, creators: (s.creators ?? []).map((c, idx) => (idx === i ? { ...c, ...patch } : c)) }
+        : s,
+    );
+    setDirty(true);
+  }
+  function addCreator() {
+    setSettings((s) =>
+      s ? { ...s, creators: [...(s.creators ?? []), { name: "", followers: "", photo: null }] } : s,
+    );
+    setCreatorPreviews((p) => [...p, null]);
+    setDirty(true);
+  }
+  function removeCreator(i: number) {
+    setSettings((s) =>
+      s ? { ...s, creators: (s.creators ?? []).filter((_, idx) => idx !== i) } : s,
+    );
+    setCreatorPreviews((p) => p.filter((_, idx) => idx !== i));
+    setDirty(true);
+  }
+  function moveCreator(i: number, dir: -1 | 1) {
+    const j = i + dir;
+    setSettings((s) => {
+      if (!s) return s;
+      const arr = [...(s.creators ?? [])];
+      if (j < 0 || j >= arr.length) return s;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+      return { ...s, creators: arr };
+    });
+    setCreatorPreviews((p) => {
+      const arr = [...p];
+      if (j < 0 || j >= arr.length) return p;
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+      return arr;
+    });
+    setDirty(true);
+  }
   function patchVideo(id: string, patch: Partial<HomeVideo>) {
     setVideos((arr) => arr.map((v) => (v.id === id ? { ...v, ...patch } : v)));
     setDirty(true);
