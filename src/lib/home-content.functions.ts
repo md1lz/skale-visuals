@@ -35,6 +35,7 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     { name: "Client 3", photo: null },
     { name: "Client 4", photo: null },
   ],
+  creators: [],
   plusLabel: "+50",
 };
 
