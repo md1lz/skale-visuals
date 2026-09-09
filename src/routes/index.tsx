@@ -600,7 +600,7 @@ function ServiceCards() {
               <h3 className="max-w-lg text-2xl leading-[1.05] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
                 {card.title}
               </h3>
-              <p className="mt-3 max-w-md text-base leading-snug tracking-[-0.06em] text-white sm:text-lg">
+              <p className="mt-3 max-w-md text-base leading-snug tracking-[-0.06em] text-white line-clamp-3 sm:text-lg">
                 {card.description}
               </p>
               <div className="mt-5">
