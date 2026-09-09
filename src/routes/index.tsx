@@ -742,7 +742,7 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
         </div>
       </div>
 
-      <div className="hidden w-px shrink-0 self-stretch bg-white/15 sm:block" />
+      <div className="hidden w-px shrink-0 self-stretch bg-white/15 sm:mx-14 sm:block" />
 
       <div className="flex max-w-2xl flex-col items-start">
         <StarsRow className="mb-3 h-4 w-24" />
