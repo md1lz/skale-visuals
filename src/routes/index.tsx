@@ -541,11 +541,11 @@ function ServiceCards() {
       alt: "Montage vidéo stratégique",
       title: (
         <>
-          <span className="font-codec">Le </span>
-          <span className="font-codec-bold">montage stratégique</span>
-          <span className="font-codec">, conçu pour </span>
-          <span className="font-codec-bold">convertir</span>
-          <span className="font-codec">.</span>
+          <span className="font-codec tracking-[-0.06em]">Le </span>
+          <span className="font-codec-bold tracking-[-0.06em]">montage stratégique</span>
+          <span className="font-codec tracking-[-0.06em]">, conçu pour </span>
+          <span className="font-codec-bold tracking-[-0.06em]">convertir</span>
+          <span className="font-codec tracking-[-0.06em]">.</span>
         </>
       ),
       description:
@@ -556,13 +556,13 @@ function ServiceCards() {
       alt: "Design visuel",
       title: (
         <>
-          <span className="font-codec">Le </span>
-          <span className="font-codec-bold">design visuel</span>
-          <span className="font-codec">, conçu pour </span>
-          <span className="font-codec-bold">captiver</span>
-          <span className="font-codec"> et </span>
-          <span className="font-codec-bold">convaincre</span>
-          <span className="font-codec">.</span>
+          <span className="font-codec tracking-[-0.06em]">Le </span>
+          <span className="font-codec-bold tracking-[-0.06em]">design visuel</span>
+          <span className="font-codec tracking-[-0.06em]">, conçu pour </span>
+          <span className="font-codec-bold tracking-[-0.06em]">captiver</span>
+          <span className="font-codec tracking-[-0.06em]"> et </span>
+          <span className="font-codec-bold tracking-[-0.06em]">convaincre</span>
+          <span className="font-codec tracking-[-0.06em]">.</span>
         </>
       ),
       description:
@@ -600,7 +600,7 @@ function ServiceCards() {
               <h3 className="max-w-lg text-2xl leading-[1.05] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
                 {card.title}
               </h3>
-              <p className="mt-3 max-w-md text-base leading-snug tracking-[-0.06em] text-white line-clamp-3 sm:text-lg">
+              <p className="font-codec mt-3 max-w-md text-base leading-snug tracking-[-0.06em] text-white line-clamp-3 sm:text-lg">
                 {card.description}
               </p>
               <div className="mt-5">
