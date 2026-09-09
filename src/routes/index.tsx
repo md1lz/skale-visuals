@@ -544,7 +544,7 @@ function ServiceCards() {
           <span className="font-codec tracking-[-0.06em]">Le </span>
           <span className="font-codec-bold tracking-[-0.06em]">montage stratégique</span>
           <span className="font-codec tracking-[-0.06em]">, conçu pour </span>
-          <span className="font-codec-bold tracking-[-0.06em]">convertir</span>
+          <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">convertir</span>
           <span className="font-codec tracking-[-0.06em]">.</span>
         </>
       ),
@@ -561,7 +561,7 @@ function ServiceCards() {
           <span className="font-codec tracking-[-0.06em]">, conçu pour </span>
           <span className="font-codec-bold tracking-[-0.06em]">captiver</span>
           <span className="font-codec tracking-[-0.06em]"> et </span>
-          <span className="font-codec-bold tracking-[-0.06em]">convaincre</span>
+          <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">convaincre</span>
           <span className="font-codec tracking-[-0.06em]">.</span>
         </>
       ),
