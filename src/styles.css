@@ -208,6 +208,14 @@
   animation-play-state: paused;
 }
 
+/* Trust carousels slow down on hover instead of pausing */
+.marquee:hover .trust-marquee-track {
+  animation-duration: 44s;
+}
+.marquee:hover .trust-marquee-track-reverse {
+  animation-duration: 48s;
+}
+
 .marquee.is-offscreen .marquee-track,
 .marquee.is-offscreen .marquee-track-reverse,
 .marquee.is-offscreen .marquee-track-fast,
