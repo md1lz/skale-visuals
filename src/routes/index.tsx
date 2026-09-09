@@ -1013,7 +1013,7 @@ function Home() {
 
         {/* Grande bulle noire — transition vers la rubrique suivante */}
         <section className="relative w-full">
-          <div className="flex min-h-[60vh] w-full flex-col items-center justify-center rounded-t-[2.5rem] bg-[#030303] py-14 text-center sm:rounded-t-[3rem] sm:py-16 lg:rounded-t-[4rem]">
+          <div className="flex min-h-[80vh] w-full flex-col items-center justify-center rounded-t-[2.5rem] bg-[#030303] py-14 pb-16 text-center sm:rounded-t-[3rem] sm:py-16 sm:pb-20 lg:rounded-t-[4rem] lg:py-20 lg:pb-28">
             <div className="mb-8 w-full sm:mb-10">
               <TrustCarousels settings={settings} />
             </div>
@@ -1021,6 +1021,7 @@ function Home() {
               <span className="font-codec tracking-[-0.06em]">On transforme ton image de marque en contenu </span>
               <span className="font-codec-bold tracking-[-0.06em]">vidéo et visuel pensé pour convertir & vendre.</span>
             </h2>
+            <ServiceCards />
           </div>
         </section>
 
