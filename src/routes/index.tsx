@@ -585,7 +585,7 @@ function ServiceCards() {
             className="relative flex min-h-[300px] flex-col overflow-hidden rounded-3xl border border-neutral-600/60 bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] sm:min-h-[340px] md:min-h-[380px]"
           >
             <img
-              src={card.image}
+              src={card.image.url ?? card.image}
               alt={card.alt}
               width={1024}
               height={640}
