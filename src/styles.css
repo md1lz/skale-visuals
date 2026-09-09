@@ -195,12 +195,16 @@
 @utility marquee-track { animation: marquee 40s linear infinite; }
 @utility marquee-track-reverse { animation: marquee-reverse 40s linear infinite; }
 @utility marquee-track-fast { animation: marquee 25s linear infinite; }
+@utility trust-marquee-track { animation: marquee 22s linear infinite; }
+@utility trust-marquee-track-reverse { animation: marquee-reverse 24s linear infinite; }
 @utility marquee-y-track { animation: marquee-y 60s linear infinite; }
 @utility marquee-y-track-reverse { animation: marquee-y-reverse 60s linear infinite; }
 
 .marquee:hover .marquee-track,
 .marquee:hover .marquee-track-reverse,
 .marquee:hover .marquee-track-fast,
+.marquee:hover .trust-marquee-track,
+.marquee:hover .trust-marquee-track-reverse,
 .marquee:hover .marquee-y-track,
 .marquee:hover .marquee-y-track-reverse {
   animation-play-state: paused;
@@ -209,6 +213,8 @@
 .marquee.is-offscreen .marquee-track,
 .marquee.is-offscreen .marquee-track-reverse,
 .marquee.is-offscreen .marquee-track-fast,
+.marquee.is-offscreen .trust-marquee-track,
+.marquee.is-offscreen .trust-marquee-track-reverse,
 .marquee.is-offscreen .marquee-y-track,
 .marquee.is-offscreen .marquee-y-track-reverse {
   animation-play-state: paused;
@@ -217,9 +223,18 @@
 .marquee.is-frozen .marquee-track,
 .marquee.is-frozen .marquee-track-reverse,
 .marquee.is-frozen .marquee-track-fast,
+.marquee.is-frozen .trust-marquee-track,
+.marquee.is-frozen .trust-marquee-track-reverse,
 .marquee.is-frozen .marquee-y-track,
 .marquee.is-frozen .marquee-y-track-reverse {
   animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trust-marquee-track,
+  .trust-marquee-track-reverse {
+    animation-play-state: paused;
+  }
 }
 
 @keyframes shimmer {

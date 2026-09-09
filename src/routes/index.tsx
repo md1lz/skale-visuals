@@ -455,39 +455,58 @@ function Hero() {
 
 
 
-/* ---------------- trust ---------------- */
+/* ---------------- compact trust carousels ---------------- */
 
-function Trust({ settings }: { settings: HomeContent["settings"] }) {
+function TrustCarousels({ settings }: { settings: HomeContent["settings"] }) {
+  const companies = settings.companies.filter((company) => company.name || company.logo);
+  const creators = settings.creators.filter((creator) => creator.name || creator.photo);
+  const repeatedCompanies = companies.length ? [...companies, ...companies, ...companies, ...companies] : [];
+  const repeatedCreators = creators.length ? [...creators, ...creators, ...creators, ...creators] : [];
+
   return (
-    <section className="py-10">
-      <FadeIn>
-        <p className="text-center text-2xl font-medium text-foreground sm:text-3xl">
-          Ils nous font confiance
-        </p>
-        <div className="mt-6 flex flex-wrap items-start justify-center gap-5 sm:gap-8">
-          {settings.trust.slice(0, 4).map((c, i) => (
-            <div key={i} className="w-16 text-center sm:w-20">
-              <div className="site-surface mx-auto grid h-16 w-16 place-items-center overflow-hidden rounded-full sm:h-20 sm:w-20">
-                {c.photo ? (
-                  <img src={c.photo} alt={c.name} className="h-full w-full object-cover" />
+    <div className="w-full overflow-hidden">
+      <p className="mx-auto mb-7 max-w-2xl px-6 text-center font-codec text-base tracking-[-0.06em] text-white sm:text-xl">
+        Eux et <strong className="font-codec-bold tracking-[-0.06em]">+100 autres</strong> clients nous ont fait et nous font confiance
+      </p>
+
+      {companies.length > 0 && (
+        <div className="marquee relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+          <div className="trust-marquee-track flex w-max items-center gap-7 py-2 sm:gap-10">
+            {repeatedCompanies.map((company, index) => (
+              <div key={`${company.name}-${index}`} className="flex h-9 w-24 shrink-0 items-center justify-center sm:h-11 sm:w-32">
+                {company.logo ? (
+                  <img src={company.logo} alt={company.name} className="max-h-full max-w-full object-contain brightness-0 invert" />
                 ) : (
-                  <span className="text-lg font-medium text-foreground/80">
-                    {(c.name || "?").trim().charAt(0).toUpperCase()}
-                  </span>
+                  <span className="font-codec text-xs tracking-[-0.06em] text-white/70">{company.name}</span>
                 )}
               </div>
-              <p className="mt-2 text-sm font-medium leading-tight text-muted-foreground">{c.name}</p>
-            </div>
-          ))}
-          <div className="w-16 sm:w-20">
-            <div className="site-pill site-corner-glow mx-auto grid h-16 w-16 place-items-center rounded-full sm:h-20 sm:w-20">
-              <span className="relative z-[1] text-base font-semibold text-foreground sm:text-lg">{settings.plusLabel}</span>
-            </div>
+            ))}
           </div>
         </div>
+      )}
 
-      </FadeIn>
-    </section>
+      {creators.length > 0 && (
+        <div className="marquee relative mt-4 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
+          <div className="trust-marquee-track-reverse flex w-max items-center gap-4 py-2 sm:gap-5">
+            {repeatedCreators.map((creator, index) => (
+              <div key={`${creator.name}-${index}`} className="flex w-44 shrink-0 items-center gap-2.5 sm:w-52">
+                <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-11 sm:w-11">
+                  {creator.photo ? (
+                    <img src={creator.photo} alt={creator.name} className="h-full w-full object-cover" />
+                  ) : (
+                    <span className="font-codec-bold text-xs text-white">{creator.name.charAt(0).toUpperCase()}</span>
+                  )}
+                </div>
+                <div className="min-w-0 text-left font-codec tracking-[-0.06em]">
+                  <p className="truncate text-sm text-white">{creator.name}</p>
+                  <p className="truncate text-xs text-white/50">{creator.audience}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
 
@@ -861,7 +880,10 @@ function Home() {
 
         {/* Grande bulle noire — transition vers la rubrique suivante */}
         <section className="relative w-full">
-          <div className="flex min-h-[75vh] w-full flex-col items-center justify-center rounded-t-[3rem] bg-[#030303] px-6 py-24 text-center sm:rounded-t-[4rem] lg:rounded-t-[5rem]">
+          <div className="flex min-h-[75vh] w-full flex-col items-center justify-center rounded-t-[3rem] bg-[#030303] py-20 text-center sm:rounded-t-[4rem] sm:py-24 lg:rounded-t-[5rem]">
+            <div className="mb-20 w-full sm:mb-24">
+              <TrustCarousels settings={settings} />
+            </div>
             <h2 className="max-w-4xl text-3xl leading-[1.1] text-white sm:text-4xl md:text-5xl lg:text-6xl">
               <span className="font-codec tracking-[-0.06em]">On transforme ton image de marque en contenu </span>
               <span className="font-codec-bold tracking-[-0.06em]">vidéo et visuel pensé pour convertir & vendre.</span>
@@ -870,7 +892,6 @@ function Home() {
         </section>
 
         <div className="mx-auto w-full max-w-6xl px-4">
-          <Trust settings={settings} />
           <Realisations folders={folders} videos={videos} />
           <CallCta />
           <Comparatif />
