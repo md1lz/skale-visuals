@@ -38,13 +38,21 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
   const settings = normalizeHomeSettings(settingsRes.data?.value);
   const { signAsset } = await import("@/lib/home-assets.server");
   const trustPreviews = await Promise.all(settings.trust.map((t) => signAsset(t.photo)));
+  const companyPreviews = await Promise.all(settings.companies.map((company) => signAsset(company.logo)));
+  const creatorPreviews = await Promise.all(settings.creators.map((creator) => signAsset(creator.photo)));
 
   return {
     settings,
     trustPreviews,
+    companyPreviews,
+    creatorPreviews,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
-  } as HomeContent & { trustPreviews: (string | null)[] };
+  } as HomeContent & {
+    trustPreviews: (string | null)[];
+    companyPreviews: (string | null)[];
+    creatorPreviews: (string | null)[];
+  };
 });
 
 const settingsSchema = z.object({
@@ -54,6 +62,18 @@ const settingsSchema = z.object({
   trust: z
     .array(z.object({ name: z.string().trim().max(80), photo: z.string().trim().max(500).nullable() }))
     .max(4),
+  companies: z
+    .array(z.object({ name: z.string().trim().max(80), logo: z.string().trim().max(500).nullable() }))
+    .max(24),
+  creators: z
+    .array(
+      z.object({
+        name: z.string().trim().max(80),
+        audience: z.string().trim().max(80),
+        photo: z.string().trim().max(500).nullable(),
+      }),
+    )
+    .max(24),
 });
 
 export const saveHomeSettings = createServerFn({ method: "POST" })

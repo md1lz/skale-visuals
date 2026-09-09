@@ -3,11 +3,15 @@ import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
 export type TrustClient = { name: string; photo: string | null };
+export type CompanyLogo = { name: string; logo: string | null };
+export type CreatorProfile = { name: string; audience: string; photo: string | null };
 
 export type HomeSettings = {
   videosCount: number;
   clientsCount: number;
   trust: TrustClient[];
+  companies: CompanyLogo[];
+  creators: CreatorProfile[];
   plusLabel: string;
 };
 
@@ -32,6 +36,8 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     { name: "Client 3", photo: null },
     { name: "Client 4", photo: null },
   ],
+  companies: [],
+  creators: [],
   plusLabel: "+50",
 };
 
@@ -39,12 +45,25 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
   const v = (raw ?? {}) as Partial<HomeSettings>;
   const trust = Array.isArray(v.trust) ? v.trust.slice(0, 4) : [];
   while (trust.length < 4) trust.push({ name: `Client ${trust.length + 1}`, photo: null });
+  const companies = Array.isArray(v.companies) ? v.companies.slice(0, 24) : [];
+  const creators = Array.isArray(v.creators) ? v.creators.slice(0, 24) : [];
   return {
     videosCount: Number.isFinite(Number(v.videosCount)) ? Number(v.videosCount) : DEFAULT_HOME_SETTINGS.videosCount,
     clientsCount: Number.isFinite(Number(v.clientsCount))
       ? Number(v.clientsCount)
       : DEFAULT_HOME_SETTINGS.clientsCount,
     trust: trust.map((t) => ({ name: (t?.name ?? "").toString(), photo: t?.photo ?? null })),
+    companies: companies.map((company) => ({
+      name: (company?.name ?? "").toString(),
+      logo: company?.logo ?? null,
+    })),
+    creators: creators.map((creator) => ({
+      name: (creator?.name ?? "").toString(),
+      audience: ((creator as CreatorProfile & { followers?: string })?.audience ??
+        (creator as CreatorProfile & { followers?: string })?.followers ??
+        "").toString(),
+      photo: creator?.photo ?? null,
+    })),
     plusLabel: (v.plusLabel ?? DEFAULT_HOME_SETTINGS.plusLabel).toString(),
   };
 }
@@ -86,6 +105,12 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
   );
   settings.trust = await Promise.all(
     settings.trust.map(async (t) => ({ ...t, photo: await signAsset(t.photo) })),
+  );
+  settings.companies = await Promise.all(
+    settings.companies.map(async (company) => ({ ...company, logo: await signAsset(company.logo) })),
+  );
+  settings.creators = await Promise.all(
+    settings.creators.map(async (creator) => ({ ...creator, photo: await signAsset(creator.photo) })),
   );
 
   return { settings, folders: (foldersRes.data ?? []) as HomeFolder[], videos };
