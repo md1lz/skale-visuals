@@ -483,7 +483,7 @@ function Hero() {
             <span className="relative block sm:hidden">On optimise</span>
             <span className="relative block sm:hidden">le contenu de tes</span>
             <span className="relative hidden sm:block">On optimise le contenu de tes</span>
-            <span className="relative block sm:hidden"><RotatingWord words={ROTATING_WORDS} /></span>
+            <span className="relative mt-1 block sm:hidden"><RotatingWord words={ROTATING_WORDS} /></span>
             <span className="relative block text-primary sm:hidden">préféré(e)s</span>
             <span className="relative hidden items-start gap-3 sm:inline-flex">
               <RotatingWord words={ROTATING_WORDS} />
