@@ -880,8 +880,8 @@ function Home() {
 
         {/* Grande bulle noire — transition vers la rubrique suivante */}
         <section className="relative w-full">
-          <div className="flex min-h-[75vh] w-full flex-col items-center justify-center rounded-t-[3rem] bg-[#030303] py-20 text-center sm:rounded-t-[4rem] sm:py-24 lg:rounded-t-[5rem]">
-            <div className="mb-20 w-full sm:mb-24">
+          <div className="flex min-h-[60vh] w-full flex-col items-center justify-center rounded-t-[2.5rem] bg-[#030303] py-14 text-center sm:rounded-t-[3rem] sm:py-16 lg:rounded-t-[4rem]">
+            <div className="mb-8 w-full sm:mb-10">
               <TrustCarousels settings={settings} />
             </div>
             <h2 className="max-w-4xl text-3xl leading-[1.1] text-white sm:text-4xl md:text-5xl lg:text-6xl">
