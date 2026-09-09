@@ -549,7 +549,7 @@ function ServiceCards() {
         </>
       ),
       description:
-        "Nous créons des vidéos ultra-efficaces qui accrochent dès les premières secondes, retiennent l’attention et poussent chaque vue à l’action.",
+        "Vidéos ultra-efficaces qui accrochent dès les premières secondes, retiennent l’attention et poussent chaque vue à l’action.",
     },
     {
       image: cardDesign,
@@ -566,7 +566,7 @@ function ServiceCards() {
         </>
       ),
       description:
-        "Nous créons miniatures et visuels sur mesure pour valoriser ton contenu, renforcer ta crédibilité et transformer tes visiteurs en abonnés ou clients.",
+        "Miniatures et visuels sur mesure pour valoriser ton contenu, renforcer ta crédibilité et transformer tes visiteurs en clients.",
     },
   ];
 
