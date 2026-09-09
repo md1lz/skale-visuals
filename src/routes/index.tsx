@@ -646,10 +646,6 @@ function ServiceBenefits() {
     },
   ];
 
-  const Separator = () => (
-    <div className="my-12 h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 sm:my-14" />
-  );
-
   return (
     <motion.div
       ref={ref}
@@ -658,7 +654,6 @@ function ServiceBenefits() {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="mx-auto mt-10 flex w-full max-w-6xl flex-col items-center px-4 sm:mt-12 lg:mt-16"
     >
-      <Separator />
       <div className="grid w-full grid-cols-1 gap-10 text-left sm:grid-cols-2 lg:grid-cols-3 lg:gap-12">
         {benefits.map((b, i) => {
           const Icon = b.icon;
@@ -1065,6 +1060,7 @@ function Home() {
               <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">convertir & vendre</span>
               <span className="font-codec-bold tracking-[-0.06em]">.</span>
             </h2>
+            <div className="my-10 h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 sm:my-12" />
             <ServiceCards />
             <ServiceBenefits />
           </div>
