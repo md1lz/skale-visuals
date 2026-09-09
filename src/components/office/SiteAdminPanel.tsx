@@ -325,33 +325,6 @@ export function SiteAdminPanel() {
         </button>
       </header>
 
-      {/* Stats */}
-      <section className={`${card} mb-6`}>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">
-          Stats hero
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2">
-          <label className="block">
-            <span className="mb-1 block text-xs text-neutral-400">Vidéos montées</span>
-            <input
-              type="number"
-              className={input}
-              value={settings.videosCount}
-              onChange={(e) => patchSettings({ videosCount: Number(e.target.value) })}
-            />
-          </label>
-          <label className="block">
-            <span className="mb-1 block text-xs text-neutral-400">Clients accompagnés</span>
-            <input
-              type="number"
-              className={input}
-              value={settings.clientsCount}
-              onChange={(e) => patchSettings({ clientsCount: Number(e.target.value) })}
-            />
-          </label>
-        </div>
-      </section>
-
       {/* Trust */}
       <section className={`${card} mb-6`}>
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">
