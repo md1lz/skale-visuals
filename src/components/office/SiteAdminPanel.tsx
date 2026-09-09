@@ -425,6 +425,95 @@ export function SiteAdminPanel() {
         </label>
       </section>
 
+      {/* Créateurs (carrousel section noire) */}
+      <section className={`${card} mb-6`}>
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+            Carrousel créateurs (section noire)
+          </h2>
+          <button onClick={addCreator} className={`${btn} bg-red-600 text-white hover:bg-red-500`}>
+            <Plus className="h-4 w-4" /> Ajouter
+          </button>
+        </div>
+        {(settings.creators ?? []).length === 0 && (
+          <p className="text-sm text-neutral-500">Aucun créateur pour l'instant.</p>
+        )}
+        <div className="grid gap-3 sm:grid-cols-2">
+          {(settings.creators ?? []).map((c, i) => (
+            <div key={i} className="rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => pickImage(`creator-${i}`, () => {})}
+                  className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+                >
+                  {creatorPreviews[i] ? (
+                    <img src={creatorPreviews[i]!} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <ImagePlus className="h-5 w-5" />
+                  )}
+                </button>
+                <input
+                  ref={(el) => {
+                    fileRefs.current[`creator-${i}`] = el;
+                  }}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!f) return;
+                    try {
+                      const ref = await uploadAsset(f);
+                      patchCreator(i, { photo: ref });
+                      const url = URL.createObjectURL(f);
+                      setCreatorPreviews((p) => p.map((v, idx) => (idx === i ? url : v)));
+                    } catch (err) {
+                      toast.error(err instanceof Error ? err.message : "Upload échoué");
+                    }
+                  }}
+                />
+                <div className="grid flex-1 gap-2">
+                  <input
+                    className={input}
+                    placeholder="Blase (@nom)"
+                    value={c.name}
+                    onChange={(e) => patchCreator(i, { name: e.target.value })}
+                  />
+                  <input
+                    className={input}
+                    placeholder="Abonnés (ex : 1,2M abonnés)"
+                    value={c.followers}
+                    onChange={(e) => patchCreator(i, { followers: e.target.value })}
+                  />
+                </div>
+              </div>
+              <div className="mt-2 flex items-center gap-2">
+                <button
+                  onClick={() => moveCreator(i, -1)}
+                  className="rounded p-1 text-neutral-500 hover:text-white"
+                >
+                  <ArrowUp className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => moveCreator(i, 1)}
+                  className="rounded p-1 text-neutral-500 hover:text-white"
+                >
+                  <ArrowDown className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => removeCreator(i)}
+                  className="ml-auto inline-flex items-center gap-1 text-xs text-neutral-500 hover:text-red-400"
+                >
+                  <Trash2 className="h-4 w-4" /> Supprimer
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Réalisations */}
       <section className={card}>
         <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">
