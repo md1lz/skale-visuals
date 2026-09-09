@@ -582,7 +582,7 @@ function ServiceCards() {
         {cards.map((card) => (
           <div
             key={card.alt}
-            className="group relative flex min-h-[380px] flex-col overflow-hidden rounded-3xl border border-neutral-600/60 bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] transition-shadow duration-300 hover:shadow-[0_28px_70px_-18px_rgba(255,255,255,0.14)] sm:min-h-[420px] md:min-h-[460px]"
+            className="group relative flex min-h-[300px] flex-col overflow-hidden rounded-3xl border border-neutral-600/60 bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] transition-shadow duration-300 hover:shadow-[0_28px_70px_-18px_rgba(255,255,255,0.14)] sm:min-h-[340px] md:min-h-[380px]"
           >
             <img
               src={card.image}
@@ -590,11 +590,11 @@ function ServiceCards() {
               width={1024}
               height={640}
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-105"
             />
 
-            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/95 via-35% via-black/70 via-55% via-black/30 via-80% to-transparent to-100%" />
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[30%] bg-black/25 backdrop-blur-sm" />
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/80 via-[25%] via-black/30 via-[58%] to-transparent to-[100%]" />
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[40%] bg-gradient-to-t from-black/18 via-black/4 to-transparent backdrop-blur-[3px]" />
 
             <div className="relative mt-auto flex flex-col items-start p-5 text-left sm:p-6 lg:p-8">
               <h3 className="max-w-lg text-2xl leading-[1.05] tracking-[-0.06em] text-white sm:text-3xl lg:text-4xl">
