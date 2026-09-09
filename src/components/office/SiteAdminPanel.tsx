@@ -73,7 +73,6 @@ const btn =
 export function SiteAdminPanel() {
   const [loading, setLoading] = useState(true);
   const [settings, setSettings] = useState<HomeSettings | null>(null);
-  const [trustPreviews, setTrustPreviews] = useState<(string | null)[]>([null, null, null, null]);
   const [companyPreviews, setCompanyPreviews] = useState<(string | null)[]>([]);
   const [creatorPreviews, setCreatorPreviews] = useState<(string | null)[]>([]);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
@@ -90,7 +89,6 @@ export function SiteAdminPanel() {
     try {
       const res = await getHomeAdminContent();
       setSettings(res.settings);
-      setTrustPreviews(res.trustPreviews ?? [null, null, null, null]);
       setCompanyPreviews(res.companyPreviews ?? []);
       setCreatorPreviews(res.creatorPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
@@ -168,12 +166,6 @@ export function SiteAdminPanel() {
 
   function patchSettings(patch: Partial<HomeSettings>) {
     setSettings((s) => (s ? { ...s, ...patch } : s));
-    setDirty(true);
-  }
-  function patchTrust(i: number, patch: Partial<HomeSettings["trust"][number]>) {
-    setSettings((s) =>
-      s ? { ...s, trust: s.trust.map((t, idx) => (idx === i ? { ...t, ...patch } : t)) } : s,
-    );
     setDirty(true);
   }
   function patchCompany(i: number, patch: Partial<HomeSettings["companies"][number]>) {
@@ -460,79 +452,6 @@ export function SiteAdminPanel() {
             </div>
           ))}
         </div>
-      </section>
-
-      {/* Trust */}
-      <section className={`${card} mb-6`}>
-        <h2 className="mb-4 text-sm font-semibold uppercase tracking-wider text-neutral-400">
-          Ils nous font confiance
-        </h2>
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {settings.trust.map((t, i) => (
-            <div key={i} className="rounded-xl border border-white/10 bg-black/20 p-3">
-              <div className="flex items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => pickImage(`trust-${i}`, () => {})}
-                  className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
-                >
-                  {trustPreviews[i] ? (
-                    <img src={trustPreviews[i]!} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <ImagePlus className="h-5 w-5" />
-                  )}
-                </button>
-                <input
-                  ref={(el) => {
-                    fileRefs.current[`trust-${i}`] = el;
-                  }}
-                  type="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={async (e) => {
-                    const f = e.target.files?.[0];
-                    e.target.value = "";
-                    if (!f) return;
-                    try {
-                      const ref = await uploadAsset(f);
-                      patchTrust(i, { photo: ref });
-                      setTrustPreviews((p) =>
-                        p.map((v, idx) => (idx === i ? URL.createObjectURL(f) : v)),
-                      );
-                    } catch (err) {
-                      toast.error(err instanceof Error ? err.message : "Upload échoué");
-                    }
-                  }}
-                />
-                <input
-                  className={input}
-                  placeholder="Nom"
-                  value={t.name}
-                  onChange={(e) => patchTrust(i, { name: e.target.value })}
-                />
-              </div>
-              {t.photo && (
-                <button
-                  onClick={() => {
-                    patchTrust(i, { photo: null });
-                    setTrustPreviews((p) => p.map((v, idx) => (idx === i ? null : v)));
-                  }}
-                  className="mt-2 text-xs text-neutral-500 hover:text-red-400"
-                >
-                  Retirer la photo
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-        <label className="mt-4 block max-w-[200px]">
-          <span className="mb-1 block text-xs text-neutral-400">5ᵉ cercle (chiffre)</span>
-          <input
-            className={input}
-            value={settings.plusLabel}
-            onChange={(e) => patchSettings({ plusLabel: e.target.value })}
-          />
-        </label>
       </section>
 
       {/* Réalisations */}
