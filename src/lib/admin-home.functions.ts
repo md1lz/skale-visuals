@@ -56,6 +56,17 @@ const settingsSchema = z.object({
   trust: z
     .array(z.object({ name: z.string().trim().max(80), photo: z.string().trim().max(500).nullable() }))
     .max(4),
+  creators: z
+    .array(
+      z.object({
+        name: z.string().trim().max(80),
+        followers: z.string().trim().max(40),
+        photo: z.string().trim().max(500).nullable(),
+      }),
+    )
+    .max(24)
+    .optional()
+    .default([]),
 });
 
 export const saveHomeSettings = createServerFn({ method: "POST" })
