@@ -582,7 +582,7 @@ function ServiceCards() {
         {cards.map((card) => (
           <div
             key={card.alt}
-            className="group relative flex min-h-[300px] flex-col overflow-hidden rounded-3xl border border-neutral-600/60 bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] transition-all duration-500 ease-out hover:-translate-y-1.5 hover:border-neutral-300/70 hover:shadow-[0_36px_80px_-18px_rgba(255,255,255,0.22)] sm:min-h-[340px] md:min-h-[380px]"
+            className="relative flex min-h-[300px] flex-col overflow-hidden rounded-3xl border border-neutral-600/60 bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] sm:min-h-[340px] md:min-h-[380px]"
           >
             <img
               src={card.image}
@@ -590,7 +590,7 @@ function ServiceCards() {
               width={1024}
               height={640}
               loading="lazy"
-              className="absolute inset-0 h-full w-full object-cover object-center transition-transform duration-700 ease-out group-hover:scale-[1.06]"
+              className="absolute inset-0 h-full w-full object-cover object-center"
             />
 
             <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/80 via-[25%] via-black/30 via-[58%] to-transparent to-[100%]" />
