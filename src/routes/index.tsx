@@ -465,15 +465,15 @@ function TrustCarousels({ settings }: { settings: HomeContent["settings"] }) {
 
   return (
     <div className="w-full overflow-hidden">
-      <p className="mx-auto mb-7 max-w-2xl px-6 text-center font-codec text-base tracking-[-0.06em] text-white sm:text-xl">
+      <p className="mx-auto mb-4 max-w-2xl px-6 text-center font-codec text-base tracking-[-0.06em] text-white sm:text-lg">
         Eux et <strong className="font-codec-bold tracking-[-0.06em]">+100 autres</strong> clients nous ont fait et nous font confiance
       </p>
 
       {companies.length > 0 && (
-        <div className="marquee relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-          <div className="trust-marquee-track flex w-max items-center gap-7 py-2 sm:gap-10">
+        <div className="marquee relative overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+          <div className="trust-marquee-track flex w-max items-center gap-5 py-1.5 sm:gap-8">
             {repeatedCompanies.map((company, index) => (
-              <div key={`${company.name}-${index}`} className="flex h-9 w-24 shrink-0 items-center justify-center sm:h-11 sm:w-32">
+              <div key={`${company.name}-${index}`} className="flex h-8 w-20 shrink-0 items-center justify-center sm:h-9 sm:w-28">
                 {company.logo ? (
                   <img src={company.logo} alt={company.name} className="max-h-full max-w-full object-contain brightness-0 invert" />
                 ) : (
@@ -486,11 +486,11 @@ function TrustCarousels({ settings }: { settings: HomeContent["settings"] }) {
       )}
 
       {creators.length > 0 && (
-        <div className="marquee relative mt-4 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_8%,black_92%,transparent)]">
-          <div className="trust-marquee-track-reverse flex w-max items-center gap-4 py-2 sm:gap-5">
+        <div className="marquee relative mt-2 overflow-hidden [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent)]">
+          <div className="trust-marquee-track-reverse flex w-max items-center gap-3 py-1.5 sm:gap-4">
             {repeatedCreators.map((creator, index) => (
-              <div key={`${creator.name}-${index}`} className="flex w-44 shrink-0 items-center gap-2.5 sm:w-52">
-                <div className="grid h-10 w-10 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-11 sm:w-11">
+              <div key={`${creator.name}-${index}`} className="flex w-40 shrink-0 items-center gap-2 sm:w-48">
+                <div className="grid h-9 w-9 shrink-0 place-items-center overflow-hidden rounded-full bg-white/10 sm:h-10 sm:w-10">
                   {creator.photo ? (
                     <img src={creator.photo} alt={creator.name} className="h-full w-full object-cover" />
                   ) : (
@@ -880,8 +880,8 @@ function Home() {
 
         {/* Grande bulle noire — transition vers la rubrique suivante */}
         <section className="relative w-full">
-          <div className="flex min-h-[75vh] w-full flex-col items-center justify-center rounded-t-[3rem] bg-[#030303] py-20 text-center sm:rounded-t-[4rem] sm:py-24 lg:rounded-t-[5rem]">
-            <div className="mb-20 w-full sm:mb-24">
+          <div className="flex min-h-[60vh] w-full flex-col items-center justify-center rounded-t-[2.5rem] bg-[#030303] py-14 text-center sm:rounded-t-[3rem] sm:py-16 lg:rounded-t-[4rem]">
+            <div className="mb-8 w-full sm:mb-10">
               <TrustCarousels settings={settings} />
             </div>
             <h2 className="max-w-4xl text-3xl leading-[1.1] text-white sm:text-4xl md:text-5xl lg:text-6xl">
