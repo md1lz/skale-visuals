@@ -4,13 +4,10 @@ import type { Database } from "@/integrations/supabase/types";
 
 export type TrustClient = { name: string; photo: string | null };
 
-export type Creator = { name: string; followers: string; photo: string | null };
-
 export type HomeSettings = {
   videosCount: number;
   clientsCount: number;
   trust: TrustClient[];
-  creators: Creator[];
   plusLabel: string;
 };
 
@@ -35,7 +32,6 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     { name: "Client 3", photo: null },
     { name: "Client 4", photo: null },
   ],
-  creators: [],
   plusLabel: "+50",
 };
 
@@ -49,11 +45,6 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
       ? Number(v.clientsCount)
       : DEFAULT_HOME_SETTINGS.clientsCount,
     trust: trust.map((t) => ({ name: (t?.name ?? "").toString(), photo: t?.photo ?? null })),
-    creators: (Array.isArray(v.creators) ? v.creators : []).slice(0, 24).map((c) => ({
-      name: (c?.name ?? "").toString(),
-      followers: (c?.followers ?? "").toString(),
-      photo: c?.photo ?? null,
-    })),
     plusLabel: (v.plusLabel ?? DEFAULT_HOME_SETTINGS.plusLabel).toString(),
   };
 }
@@ -95,9 +86,6 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
   );
   settings.trust = await Promise.all(
     settings.trust.map(async (t) => ({ ...t, photo: await signAsset(t.photo) })),
-  );
-  settings.creators = await Promise.all(
-    settings.creators.map(async (c) => ({ ...c, photo: await signAsset(c.photo) })),
   );
 
   return { settings, folders: (foldersRes.data ?? []) as HomeFolder[], videos };
