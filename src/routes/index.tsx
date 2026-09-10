@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView, useScroll, useSpring, useTransform } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowUpRight, User, BarChart3, Zap, PartyPopper } from "lucide-react";
+import { Mail, Instagram, Linkedin, Check, ChevronDown, ArrowUpRight, User, BarChart3, Zap, PartyPopper } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
@@ -15,8 +15,6 @@ import {
   type HomeFolder,
   type HomeVideo,
 } from "@/lib/home-content.functions";
-import { getCompareContent } from "@/lib/compare-content.functions";
-import { DEFAULT_COMPARE, type CompareContent } from "@/lib/compare-content.shared";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -134,8 +132,6 @@ function posterFor(video: HomeVideo | null): string | null {
 
 const NAV_LINKS = [
   { label: "Accueil", target: "top" },
-  { label: "Nos réalisations", target: "realisations" },
-  { label: "Réserver un call", target: "cta" },
 ];
 
 function scrollTo(target: string) {
@@ -1292,275 +1288,6 @@ function ProcessSteps() {
 }
 
 
-/* ---------------- réalisations ---------------- */
-
-function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: HomeVideo[] }) {
-  const [folderId, setFolderId] = useState<string | "all">("all");
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [playing, setPlaying] = useState(false);
-
-  const list = useMemo(() => {
-    const arr = folderId === "all" ? videos : videos.filter((v) => v.folder_id === folderId);
-    return [...arr].sort((a, b) => a.position - b.position);
-  }, [videos, folderId]);
-
-  useEffect(() => {
-    setSelectedId(list[0]?.id ?? null);
-    setPlaying(false);
-  }, [list]);
-
-  const selected = list.find((v) => v.id === selectedId) ?? null;
-  const poster = posterFor(selected);
-  const embed = selected ? embedFor(selected.source_url) : { kind: "none" as const, src: "" };
-
-  return (
-    <section id="realisations" className="scroll-mt-24 py-12">
-      <FadeIn>
-        <h2 className="text-center text-2xl font-medium text-foreground sm:text-3xl">Nos réalisations</h2>
-      </FadeIn>
-
-      <FadeIn delay={0.1}>
-        <div className="site-pill site-corner-glow mx-auto mt-8 max-w-[1120px] overflow-hidden rounded-2xl">
-          {/* macOS title bar */}
-          <div className="relative z-10 flex items-center border-b border-foreground/10 px-4 py-3">
-            <div className="flex gap-2">
-              <span className="h-3 w-3 rounded-full bg-[#ff5f57]" />
-              <span className="h-3 w-3 rounded-full bg-[#febc2e]" />
-              <span className="h-3 w-3 rounded-full bg-[#28c840]" />
-            </div>
-            <p className="pointer-events-none absolute inset-x-0 text-center text-xs text-muted-foreground">
-              Skale Visuals
-            </p>
-          </div>
-
-          <div className="relative z-10 grid gap-0 md:grid-cols-[170px_minmax(0,1fr)_200px]">
-            {/* folders */}
-            <div className="border-b border-foreground/10 p-4 md:border-b-0 md:border-r">
-              <p className="mb-3 text-[10px] uppercase tracking-widest text-muted-foreground">Dossiers</p>
-              <ul className="flex flex-wrap gap-1.5 md:block md:space-y-1">
-                {[{ id: "all" as const, label: "Tous" }, ...folders].map((f) => (
-                  <li key={f.id}>
-                    <button
-                      type="button"
-                      onClick={() => setFolderId(f.id as string)}
-                      className={`w-full rounded-lg px-3 py-1.5 text-left text-sm transition ${
-                        folderId === f.id
-                          ? "bg-primary/15 text-foreground"
-                          : "text-muted-foreground hover:bg-foreground/5 hover:text-foreground"
-                      }`}
-                    >
-                      {f.label}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* player */}
-            <div className="p-4">
-              <div className="relative aspect-video w-full overflow-hidden rounded-xl bg-black/60">
-                {selected && playing && embed.kind === "iframe" ? (
-                  <iframe
-                    src={embed.src}
-                    title={selected.title}
-                    className="absolute inset-0 h-full w-full"
-                    allow="autoplay; encrypted-media; picture-in-picture; fullscreen"
-                    allowFullScreen
-                  />
-                ) : selected && playing && embed.kind === "video" ? (
-                  <video src={embed.src} controls autoPlay className="absolute inset-0 h-full w-full object-cover" />
-                ) : (
-                  <>
-                    {poster ? (
-                      <img src={poster} alt={selected?.title ?? ""} className="absolute inset-0 h-full w-full object-cover" />
-                    ) : selected && embed.kind === "video" ? (
-                      <video src={embed.src} muted playsInline preload="metadata" className="absolute inset-0 h-full w-full object-cover" />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-primary/25 to-black/60" />
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => selected && setPlaying(true)}
-                      aria-label="Lancer la vidéo"
-                      className="absolute inset-0 grid place-items-center"
-                    >
-                      <span className="grid h-16 w-16 place-items-center rounded-full border border-white/25 bg-white/10 backdrop-blur-md transition hover:scale-110 hover:bg-primary/70">
-                        <Play className="ml-0.5 h-6 w-6 fill-white text-white" />
-                      </span>
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {/* video list */}
-            <div className="border-t border-foreground/10 p-4 md:border-l md:border-t-0">
-              <p className="mb-3 text-[10px] uppercase tracking-widest text-muted-foreground">Vidéos</p>
-              {list.length === 0 ? (
-                <p className="text-xs text-muted-foreground">Aucune vidéo pour l'instant.</p>
-              ) : (
-                <ul className="max-h-[320px] space-y-1 overflow-y-auto pr-1">
-                  {list.map((v) => (
-                    <li key={v.id}>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setSelectedId(v.id);
-                          setPlaying(false);
-                        }}
-                        className={`w-full rounded-lg px-3 py-2 text-left transition ${
-                          selectedId === v.id ? "bg-primary/15" : "hover:bg-foreground/5"
-                        }`}
-                      >
-                        <span className="block truncate text-sm text-foreground">{v.title || "Sans titre"}</span>
-                        <span className="block truncate text-[11px] text-muted-foreground">{v.author}</span>
-                      </button>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
-          </div>
-        </div>
-      </FadeIn>
-    </section>
-  );
-}
-
-/* ---------------- CTA ---------------- */
-
-function CallCta() {
-  return (
-    <section id="cta" className="scroll-mt-24 px-5 pb-24 pt-6 text-center">
-      <FadeIn>
-        <div className="site-pill site-corner-glow mx-auto max-w-2xl rounded-3xl px-6 py-12 sm:px-10">
-          <h2 className="text-balance text-3xl font-medium text-foreground sm:text-4xl">
-            Prêt à faire décoller ta chaîne&nbsp;?
-          </h2>
-          <p className="mx-auto mt-4 max-w-lg text-balance text-sm text-muted-foreground sm:text-base">
-            30 min en call. On analyse ton contenu, on identifie ce qui bloque, et on repart avec un plan
-            de montage clair pour ta croissance.
-          </p>
-          <Link
-            to="/bookacall"
-            className="btn-glow mt-8 inline-flex items-center gap-2 rounded-full bg-primary-deep px-7 py-3.5 text-sm font-medium text-primary-foreground"
-          >
-            Réserve ton call
-          </Link>
-          <p className="mt-4 text-[11px] text-muted-foreground">
-            Places limitées chaque semaine
-          </p>
-        </div>
-      </FadeIn>
-    </section>
-  );
-}
-
-/* ---------------- comparatif ---------------- */
-
-function Comparatif() {
-  const [content, setContent] = useState<CompareContent>(DEFAULT_COMPARE);
-
-  const load = useCallback(() => {
-    getCompareContent()
-      .then(setContent)
-      .catch(() => {});
-  }, []);
-
-  useEffect(() => {
-    load();
-    const channel = supabase
-      .channel("home-compare")
-      .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, load)
-      .subscribe();
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [load]);
-
-  return (
-    <section id="comparatif" className="scroll-mt-24 px-4 pb-20 pt-4">
-      <FadeIn>
-        <div className="text-center">
-          <span className="site-surface inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] uppercase tracking-widest text-muted-foreground">
-            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
-            {content.badge}
-          </span>
-          <h2 className="mx-auto mt-5 max-w-3xl text-balance text-2xl font-medium text-foreground sm:text-3xl">
-            {content.title}
-          </h2>
-          <p className="mx-auto mt-4 max-w-2xl text-balance text-sm text-muted-foreground sm:text-base">
-            {content.subtitle}
-          </p>
-        </div>
-      </FadeIn>
-
-      <FadeIn delay={0.1}>
-        <div className="relative mx-auto mt-10 max-w-[1000px]">
-          <div className="relative grid grid-cols-[minmax(96px,0.7fr)_1fr_1.15fr]">
-            {/* floating Skale card shell — spans header + rows */}
-            <div
-              className="pointer-events-none absolute inset-y-[-12px] left-0 right-0 z-10 col-start-3 rounded-[26px] border border-primary/30 site-corner-glow bg-primary/[0.06]"
-              style={{
-                gridRow: `1 / span ${content.rows.length + 1}`,
-                boxShadow: "0 20px 60px -20px color-mix(in oklab, var(--primary) 45%, transparent)",
-              }}
-            />
-
-            {/* header */}
-            <div className="relative z-20 col-start-1 border-b border-foreground/10" aria-hidden />
-            <div className="relative z-20 col-start-2 border-b border-foreground/10 px-2 py-3 text-center text-base font-bold text-muted-foreground sm:text-lg sm:px-4">
-              {content.otherLabel}
-            </div>
-            <div className="relative z-20 col-start-3 border-b border-foreground/10 px-2 py-3 text-center sm:px-4">
-              <span className="font-codec-bold text-2xl text-white sm:text-3xl">
-                {content.skaleLabel.endsWith(".") ? (
-                  <>
-                    {content.skaleLabel.slice(0, -1)}
-                    <span className="text-primary">.</span>
-                  </>
-                ) : (
-                  content.skaleLabel
-                )}
-              </span>
-            </div>
-
-            {/* rows */}
-            {content.rows.map((row, i) => {
-              const isLast = i === content.rows.length - 1;
-              const borderClass = isLast ? "" : "border-b border-foreground/10";
-              return (
-                <div key={`${row.criterion}-${i}`} className="contents">
-                  <div className={`relative z-20 flex items-center px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
-                    <span className="text-base font-bold text-muted-foreground sm:text-lg">
-                      {row.criterion}
-                    </span>
-                  </div>
-                  <div className={`relative z-20 flex items-center gap-3 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-foreground/20 bg-foreground/10 backdrop-blur-md">
-                      <AlertTriangle className="h-4 w-4 text-muted-foreground" aria-hidden />
-                    </span>
-                    <span className="text-sm font-bold text-muted-foreground sm:text-base">
-                      {row.other}
-                    </span>
-                  </div>
-                  <div className={`relative z-20 flex items-center gap-3 px-2 py-3 sm:px-4 sm:py-4 ${borderClass}`}>
-                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-primary/40 bg-primary/20 backdrop-blur-md">
-                      <Check className="h-4 w-4 text-primary" aria-hidden />
-                    </span>
-                    <span className="overflow-hidden text-ellipsis whitespace-nowrap text-sm font-bold text-white sm:text-base">
-                      {row.skaleTitle}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      </FadeIn>
-    </section>
-  );
-}
 
 
 
@@ -1650,7 +1377,7 @@ function SiteFooter() {
 
 function Home() {
   useLightTheme();
-  const { settings, folders, videos } = useHomeContent();
+  const { settings } = useHomeContent();
 
   return (
     <div className="site-root relative min-h-screen">
@@ -1687,11 +1414,6 @@ function Home() {
 
         <ProcessSteps />
 
-        <div className="mx-auto w-full max-w-6xl px-4">
-          <Realisations folders={folders} videos={videos} />
-          <CallCta />
-          <Comparatif />
-        </div>
       </main>
       <SiteFooter />
     </div>
