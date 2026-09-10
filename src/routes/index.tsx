@@ -5,6 +5,7 @@ import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, Arr
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
+import skaleLogo from "@/assets/skale-logo.png.asset.json";
 import cardMontage from "@/assets/card-montage.png.asset.json";
 import cardDesign from "@/assets/card-design.png.asset.json";
 import { Button } from "@/components/ui/button";
@@ -848,19 +849,13 @@ function BestRealisationsHeader() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center"
       >
-        <div className="flex items-center gap-2.5">
-          <img
-            src={skaleSymbol.url}
-            alt=""
-            aria-hidden="true"
-            className="h-10 w-10 rounded-md object-cover shadow-[0_4px_10px_rgba(0,0,0,0.12)] sm:h-12 sm:w-12"
-          />
-          <span className="font-codec-bold mt-1 text-[1.85rem] leading-none tracking-[-0.06em] text-foreground sm:text-[2.25rem]">
-            skale
-          </span>
-        </div>
+        <img
+          src={skaleLogo.url}
+          alt="Skale Visuals"
+          className="h-8 w-auto object-contain sm:h-10"
+        />
         <h2 className="font-codec-bold mt-6 text-3xl tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
-          Nos meilleurs réalisations
+          Nos meilleurs projets
         </h2>
       </motion.div>
     </section>
