@@ -848,11 +848,17 @@ function BestRealisationsHeader() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center"
       >
-        <img
-          src={skaleLogo.url}
-          alt="Skale Visuals"
-          className="h-8 w-auto object-contain sm:h-10"
-        />
+        <div className="flex items-center gap-2.5">
+          <img
+            src={skaleSymbol.url}
+            alt=""
+            aria-hidden="true"
+            className="h-8 w-8 rounded-md object-cover sm:h-9 sm:w-9"
+          />
+          <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-slate-900 sm:text-[1.75rem]">
+            skale
+          </span>
+        </div>
         <h2 className="font-codec-bold mt-6 text-3xl tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
           Nos meilleurs projets
         </h2>
