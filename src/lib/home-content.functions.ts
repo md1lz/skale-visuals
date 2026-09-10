@@ -5,6 +5,7 @@ import type { Database } from "@/integrations/supabase/types";
 
 export type TrustClient = { name: string; photo: string | null };
 export type CompanyLogo = { name: string; logo: string | null };
+export type FooterLogo = { name: string; logo: string | null };
 export type CreatorProfile = { name: string; audience: string; photo: string | null };
 export type HomeTestimonial = { name: string; role: string; photo: string | null; quote: string };
 export type ProjectRecap = {
@@ -21,6 +22,7 @@ export type HomeSettings = {
   trust: TrustClient[];
   companies: CompanyLogo[];
   creators: CreatorProfile[];
+  footerLogos: FooterLogo[];
   testimonial: HomeTestimonial;
   plusLabel: string;
   projects: ProjectRecap[];
@@ -49,6 +51,7 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
   ],
   companies: [],
   creators: [],
+  footerLogos: [],
   testimonial: {
     name: "",
     role: "",
@@ -80,6 +83,7 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
   while (trust.length < 4) trust.push({ name: `Client ${trust.length + 1}`, photo: null });
   const companies = Array.isArray(v.companies) ? v.companies.slice(0, 24) : [];
   const creators = Array.isArray(v.creators) ? v.creators.slice(0, 24) : [];
+  const footerLogos = Array.isArray(v.footerLogos) ? v.footerLogos.slice(0, 24) : [];
   const projects = Array.isArray(v.projects) ? v.projects.slice(0, 2) : [];
   while (projects.length < 2) projects.push({ ...DEFAULT_HOME_SETTINGS.projects[projects.length] });
   return {
@@ -98,6 +102,10 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
         (creator as CreatorProfile & { followers?: string })?.followers ??
         "").toString(),
       photo: creator?.photo ?? null,
+    })),
+    footerLogos: footerLogos.map((item) => ({
+      name: (item?.name ?? "").toString(),
+      logo: item?.logo ?? null,
     })),
     testimonial: {
       name: ((v.testimonial as HomeTestimonial | undefined)?.name ?? "").toString(),
@@ -162,6 +170,9 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
   );
   settings.creators = await Promise.all(
     settings.creators.map(async (creator) => ({ ...creator, photo: await signAsset(creator.photo) })),
+  );
+  settings.footerLogos = await Promise.all(
+    settings.footerLogos.map(async (item) => ({ ...item, logo: await signAsset(item.logo) })),
   );
   settings.projects = await Promise.all(
     settings.projects.map(async (p) => ({

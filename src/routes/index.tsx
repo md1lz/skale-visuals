@@ -1302,16 +1302,63 @@ function FooterLogo({ className = "" }: { className?: string }) {
       src={skaleRedPill.url}
       alt=""
       aria-hidden="true"
-      className={`h-11 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)] ${className}`}
+      className={`h-20 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)] sm:h-24 lg:h-28 ${className}`}
     />
   );
 }
 
-function SiteFooter() {
+function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) {
+  const logos = (settings.footerLogos ?? []).filter((item) => item.logo || item.name);
+  if (!logos.length) return null;
+  const repeated = [...logos, ...logos, ...logos, ...logos];
+  return (
+    <div className="marquee relative mt-6 w-full max-w-full overflow-hidden [mask-image:linear-gradient(to_right,black_80%,transparent)] sm:w-1/2">
+      <div className="trust-marquee-track flex w-max items-center gap-8 py-2 sm:gap-12">
+        {repeated.map((item, index) => (
+          <div key={`${item.name}-${index}`} className="flex h-12 w-28 shrink-0 items-center justify-center sm:h-16 sm:w-40">
+            {item.logo ? (
+              <img src={item.logo} alt={item.name} className="max-h-full max-w-full object-contain brightness-0 invert" />
+            ) : (
+              <span className="font-codec text-sm tracking-[-0.06em] text-white/70">{item.name}</span>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
   return (
     <footer className="relative z-10 w-full">
       <div className="w-full rounded-t-[2.5rem] bg-[#030303] px-6 pt-10 pb-0 sm:rounded-t-[3rem] lg:rounded-t-[4rem] lg:px-10 lg:pt-14 overflow-hidden">
         <FooterLogo />
+
+        <FooterLogoMarquee settings={settings} />
+
+        <div className="mt-6 h-px w-full bg-white/15 sm:w-1/2" />
+
+        <div className="mt-5 flex flex-wrap items-center gap-x-8 gap-y-3 font-codec text-sm tracking-[-0.06em] text-white/70 sm:text-base">
+          <a
+            href="https://www.linkedin.com/company/skale-visuals"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-white"
+          >
+            LinkedIn
+          </a>
+          <a
+            href="https://www.instagram.com/skalevisuals"
+            target="_blank"
+            rel="noreferrer"
+            className="transition-colors hover:text-white"
+          >
+            Instagram
+          </a>
+          <a href="mailto:contact@skalevisuals.com" className="transition-colors hover:text-white">
+            contact@skalevisuals.com
+          </a>
+        </div>
 
         <div className="relative mt-16 flex justify-center overflow-hidden sm:mt-20 lg:mt-28">
           <img
@@ -1368,7 +1415,7 @@ function Home() {
         <ProcessSteps />
 
       </main>
-      <SiteFooter />
+      <SiteFooter settings={settings} />
     </div>
   );
 }

@@ -75,6 +75,7 @@ export function SiteAdminPanel() {
   const [settings, setSettings] = useState<HomeSettings | null>(null);
   const [companyPreviews, setCompanyPreviews] = useState<(string | null)[]>([]);
   const [creatorPreviews, setCreatorPreviews] = useState<(string | null)[]>([]);
+  const [footerLogoPreviews, setFooterLogoPreviews] = useState<(string | null)[]>([]);
   const [testimonialPreview, setTestimonialPreview] = useState<string | null>(null);
   const [projectPreviews, setProjectPreviews] = useState<{ image: string | null; avatar: string | null }[]>([]);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
@@ -93,6 +94,7 @@ export function SiteAdminPanel() {
       setSettings(res.settings);
       setCompanyPreviews(res.companyPreviews ?? []);
       setCreatorPreviews(res.creatorPreviews ?? []);
+      setFooterLogoPreviews(res.footerLogoPreviews ?? []);
       setTestimonialPreview(res.testimonialPreview ?? null);
       setProjectPreviews(res.projectPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
@@ -141,6 +143,7 @@ export function SiteAdminPanel() {
             audience: creator.audience,
             photo: creator.photo,
           })),
+          footerLogos: settings.footerLogos.map((item) => ({ name: item.name, logo: item.logo })),
           testimonial: {
             name: settings.testimonial.name,
             role: settings.testimonial.role,
@@ -201,7 +204,15 @@ export function SiteAdminPanel() {
     );
     setDirty(true);
   }
-  function moveSettingItem(kind: "companies" | "creators", index: number, direction: -1 | 1) {
+  function patchFooterLogo(i: number, patch: Partial<HomeSettings["footerLogos"][number]>) {
+    setSettings((s) =>
+      s
+        ? { ...s, footerLogos: s.footerLogos.map((item, idx) => (idx === i ? { ...item, ...patch } : item)) }
+        : s,
+    );
+    setDirty(true);
+  }
+  function moveSettingItem(kind: "companies" | "creators" | "footerLogos", index: number, direction: -1 | 1) {
     const target = index + direction;
     setSettings((s) => {
       if (!s || target < 0 || target >= s[kind].length) return s;
@@ -210,7 +221,8 @@ export function SiteAdminPanel() {
       return { ...s, [kind]: items };
     });
     if (target >= 0 && settings && target < settings[kind].length) {
-      const setPreviews = kind === "companies" ? setCompanyPreviews : setCreatorPreviews;
+      const setPreviews =
+        kind === "companies" ? setCompanyPreviews : kind === "creators" ? setCreatorPreviews : setFooterLogoPreviews;
       setPreviews((current) => {
         const next = [...current];
         [next[index], next[target]] = [next[target], next[index]];
@@ -337,6 +349,79 @@ export function SiteAdminPanel() {
           Enregistrer
         </button>
       </header>
+
+
+      {/* Logos du bas de page */}
+      <section className={`${card} mb-6`}>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">
+              Carrousel du bas de page
+            </h2>
+            <p className="mt-1 text-xs text-neutral-500">Logos affichés sous le logo Skale dans le bas de page.</p>
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              patchSettings({ footerLogos: [...settings.footerLogos, { name: "", logo: null }] });
+              setFooterLogoPreviews((items) => [...items, null]);
+            }}
+            className={`${btn} border border-white/10 text-white hover:bg-white/10`}
+          >
+            <Plus className="h-4 w-4" /> Ajouter
+          </button>
+        </div>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          {settings.footerLogos.map((item, i) => (
+            <div key={`footer-logo-${i}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-3">
+              <button
+                type="button"
+                aria-label={`Ajouter le logo de ${item.name || "ce partenaire"}`}
+                onClick={() => fileRefs.current[`footer-logo-${i}`]?.click()}
+                className="grid h-12 w-16 shrink-0 place-items-center overflow-hidden rounded-md border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+              >
+                {footerLogoPreviews[i] ? (
+                  <img src={footerLogoPreviews[i] ?? ""} alt="" className="max-h-full max-w-full object-contain" />
+                ) : (
+                  <ImagePlus className="h-5 w-5" />
+                )}
+              </button>
+              <input
+                ref={(el) => { fileRefs.current[`footer-logo-${i}`] = el; }}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={async (e) => {
+                  const file = e.target.files?.[0];
+                  e.target.value = "";
+                  if (!file) return;
+                  try {
+                    const reference = await uploadAsset(file);
+                    patchFooterLogo(i, { logo: reference });
+                    setFooterLogoPreviews((items) => items.map((it, idx) => (idx === i ? URL.createObjectURL(file) : it)));
+                  } catch (error) {
+                    toast.error(error instanceof Error ? error.message : "Upload échoué");
+                  }
+                }}
+              />
+              <input className={input} placeholder="Nom" value={item.name} onChange={(e) => patchFooterLogo(i, { name: e.target.value })} />
+              <div className="flex shrink-0 flex-col gap-1">
+                <button type="button" aria-label="Monter" onClick={() => moveSettingItem("footerLogos", i, -1)} className="text-neutral-500 hover:text-white"><ArrowUp className="h-3.5 w-3.5" /></button>
+                <button type="button" aria-label="Descendre" onClick={() => moveSettingItem("footerLogos", i, 1)} className="text-neutral-500 hover:text-white"><ArrowDown className="h-3.5 w-3.5" /></button>
+              </div>
+              <button
+                type="button"
+                aria-label="Supprimer"
+                onClick={() => {
+                  patchSettings({ footerLogos: settings.footerLogos.filter((_, idx) => idx !== i) });
+                  setFooterLogoPreviews((items) => items.filter((_, idx) => idx !== i));
+                }}
+                className="text-neutral-500 hover:text-red-400"
+              ><Trash2 className="h-4 w-4" /></button>
+            </div>
+          ))}
+        </div>
+      </section>
 
       {/* Carrousels de confiance */}
       <section className={`${card} mb-6`}>
