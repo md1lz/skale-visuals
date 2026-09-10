@@ -1067,15 +1067,15 @@ const PROCESS_STEPS = [
 ];
 
 const FLOAT_POS_LEFT = [
-  "left-0 -top-5 sm:-left-10 sm:-top-6 rotate-[-16deg]",
-  "left-8 top-16 sm:left-4 sm:top-20 rotate-[12deg]",
-  "left-2 -bottom-5 sm:-left-6 sm:-bottom-6 rotate-[-10deg]",
+  "left-4 -top-10 rotate-[-14deg] sm:-left-4 sm:-top-12",
+  "left-1/2 -top-10 -translate-x-1/2 rotate-[8deg] sm:-top-14",
+  "left-6 -bottom-8 rotate-[12deg] sm:left-4 sm:-bottom-10",
 ];
 
 const FLOAT_POS_RIGHT = [
-  "right-0 -top-5 sm:-right-10 sm:-top-6 rotate-[16deg]",
-  "right-8 top-16 sm:right-4 sm:top-20 rotate-[-12deg]",
-  "right-2 -bottom-5 sm:-right-6 sm:-bottom-6 rotate-[10deg]",
+  "right-4 -top-10 rotate-[14deg] sm:-right-4 sm:-top-12",
+  "left-1/2 -top-10 -translate-x-1/2 rotate-[-8deg] sm:-top-14",
+  "right-6 -bottom-8 rotate-[-12deg] sm:right-4 sm:-bottom-10",
 ];
 
 function ProcessStep({
