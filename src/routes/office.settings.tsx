@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -36,7 +36,6 @@ import { getAdminProfile, updateAdminProfile } from "@/lib/admin-auth.functions"
 import { getBillingConfig, saveBillingConfig } from "@/lib/billing.functions";
 import { DEFAULT_BILLING, type BillingSettings } from "@/lib/billing.shared";
 import { RememberedConnections } from "@/components/RememberedConnections";
-import { SiteAdminPanel } from "@/components/office/SiteAdminPanel";
 import { AvailabilitySettings } from "@/components/office/AvailabilitySettings";
 
 type TabId =
@@ -205,7 +204,7 @@ function ParametresPage() {
           {active === "connections" && <RememberedConnections />}
           {active === "legal" && <BillingPanel section="legal" />}
           {active === "documents" && <BillingPanel section="documents" />}
-          {active === "website" && <SiteAdminPanel />}
+          {active === "website" && null}
           {active === "availability" && (
             <Card title="Disponibilités" description="Créneaux proposés sur la page Book a Call.">
               <AvailabilitySettings />
