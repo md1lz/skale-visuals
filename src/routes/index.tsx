@@ -985,7 +985,7 @@ function ProjectRecapFooter() {
       initial={{ opacity: 0, y: 24 }}
       animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className="mx-auto w-full max-w-6xl px-4 pb-8 sm:pb-10"
+      className="mx-auto -mt-6 w-full max-w-6xl px-4 pb-8 sm:-mt-8 sm:pb-10"
     >
       <div className="flex flex-col items-center">
         <button
@@ -1001,7 +1001,7 @@ function ProjectRecapFooter() {
           <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
         </button>
 
-        <div className="mt-6 flex flex-col items-center gap-1 sm:mt-8 sm:gap-2">
+        <div className="mt-12 flex flex-col items-center gap-1 sm:mt-14 sm:gap-2">
           <div className="text-center">
             <h2 className="font-codec-bold text-3xl leading-[1.1] tracking-[-0.06em] sm:text-4xl lg:text-5xl">
               <span className="block text-neutral-900">Livraison ultra-rapide,</span>
