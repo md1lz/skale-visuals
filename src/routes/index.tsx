@@ -1343,10 +1343,10 @@ function FooterTimezones() {
     <div className="flex gap-6 sm:gap-10">
       {TIME_ZONES.map((zone, i) => (
         <div key={zone.city} className="text-center sm:text-right">
-          <div className="font-codec text-2xl leading-none tracking-[-0.04em] text-white/70 sm:text-3xl">
+          <div className="font-codec-light text-4xl leading-none tracking-[-0.04em] text-white/80 sm:text-5xl">
             {mounted ? times[i] ?? "—:—" : "—:—"}
           </div>
-          <div className="font-codec-bold mt-1 text-sm tracking-[-0.04em] text-white sm:text-base">
+          <div className="font-codec-light mt-1.5 text-base tracking-[-0.04em] text-white/90 sm:text-xl">
             {zone.city}
           </div>
         </div>
@@ -1363,7 +1363,7 @@ function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) 
     <div className="marquee always-scroll relative mt-5 w-full overflow-hidden sm:mt-6 sm:w-5/12">
       <div
         className="trust-marquee-track flex w-max items-center gap-3 py-1 sm:gap-4"
-        style={{ animationDuration: "10s" }}
+        style={{ animationDuration: "14s" }}
       >
         {repeated.map((item, index) => (
           <div
@@ -1373,7 +1373,7 @@ function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) 
             <img
               src={item.logo!}
               alt=""
-              className="max-h-full max-w-full object-contain brightness-0 invert"
+              className="max-h-full max-w-full object-contain"
             />
           </div>
         ))}
@@ -1395,7 +1395,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
 
         <div className="mt-3 h-px w-32 bg-white/15 sm:mt-4 sm:w-48" />
 
-        <div className="mt-5 flex flex-col gap-3 font-codec text-base tracking-[-0.04em] text-white/80 sm:text-lg">
+        <div className="mt-5 flex flex-col gap-1.5 font-codec text-base tracking-[-0.04em] text-white/80 sm:text-lg">
           <a
             href="mailto:contact@skalevisuals.com"
             className="group flex items-center gap-2.5 transition-colors hover:text-white"

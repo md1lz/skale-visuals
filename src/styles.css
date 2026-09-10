@@ -121,6 +121,14 @@
 
 @font-face {
   font-family: "Codec Pro";
+  src: url("/__l5e/assets-v1/a140e969-0da3-4465-84b9-61894f409862/CodecPro-Light.ttf") format("truetype");
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Codec Pro";
   src: url("/__l5e/assets-v1/6b1b0cea-5d55-4fb7-9d64-6327b651ea2b/CodecPro-Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
@@ -138,6 +146,12 @@
 @utility font-codec {
   font-family: "Codec Pro", ui-sans-serif, system-ui, sans-serif;
   font-weight: 400;
+  letter-spacing: 0;
+}
+
+@utility font-codec-light {
+  font-family: "Codec Pro", ui-sans-serif, system-ui, sans-serif;
+  font-weight: 300;
   letter-spacing: 0;
 }
 
