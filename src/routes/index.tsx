@@ -1111,7 +1111,7 @@ function ProcessStep({
       className={`relative max-w-md ${left ? "sm:ml-auto sm:pr-16 sm:text-right" : "sm:mr-auto sm:pl-16 sm:text-left"} pl-14 text-left sm:pl-0`}
     >
       {/* icônes colorées flottantes */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-20">
         {step.icons.map(({ Icon, className }, i) => (
           <motion.span
             key={i}
