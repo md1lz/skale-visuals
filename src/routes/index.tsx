@@ -909,7 +909,7 @@ function ProjectRecapCards({ settings }: { settings: HomeContent["settings"] }) 
               )}
 
               <div className="relative mt-auto p-5 sm:p-6 lg:p-8">
-                <div className="flex items-start gap-4">
+                <div className="flex flex-col items-start gap-4">
                   <div className="shrink-0">
                     <div
                       className={`grid h-12 w-12 place-items-center overflow-hidden rounded-full shadow-lg sm:h-14 sm:w-14 ${
