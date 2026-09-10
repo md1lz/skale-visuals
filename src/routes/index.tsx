@@ -1333,21 +1333,39 @@ function FooterTimezones() {
 
   useEffect(() => {
     setMounted(true);
-    const update = () => setTimes(TIME_ZONES.map((z) => formatZoneTime(new Date(), z.tz)));
+    let serverOffset = 0;
+    let active = true;
+
+    const update = () => {
+      const officialNow = new Date(Date.now() + serverOffset);
+      setTimes(TIME_ZONES.map((z) => formatZoneTime(officialNow, z.tz)));
+    };
+
+    const synchronize = async () => {
+      const requestStartedAt = Date.now();
+      try {
+        const response = await fetch("/api/public/time", { cache: "no-store" });
+        if (!response.ok) return;
+        const payload = (await response.json()) as { now?: number };
+        if (!active || typeof payload.now !== "number") return;
+        const requestFinishedAt = Date.now();
+        const estimatedClientTime = requestStartedAt + (requestFinishedAt - requestStartedAt) / 2;
+        serverOffset = payload.now - estimatedClientTime;
+        update();
+      } catch {
+        // Keep the last synchronized offset if the connection is temporarily unavailable.
+      }
+    };
+
+    void synchronize();
     update();
-
-    const now = new Date();
-    const msUntilNextMinute = 60_000 - (now.getSeconds() * 1_000 + now.getMilliseconds());
-
-    let intervalId: ReturnType<typeof setInterval> | null = null;
-    const timeoutId = setTimeout(() => {
-      update();
-      intervalId = setInterval(update, 60_000);
-    }, msUntilNextMinute);
+    const displayIntervalId = window.setInterval(update, 1_000);
+    const synchronizationIntervalId = window.setInterval(() => void synchronize(), 5 * 60_000);
 
     return () => {
-      clearTimeout(timeoutId);
-      if (intervalId) clearInterval(intervalId);
+      active = false;
+      window.clearInterval(displayIntervalId);
+      window.clearInterval(synchronizationIntervalId);
     };
   }, []);
 
