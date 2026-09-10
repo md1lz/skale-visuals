@@ -1415,17 +1415,19 @@ function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) 
 function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
   return (
     <footer className="relative z-10 w-full">
-      <div className="w-full overflow-hidden rounded-t-[2.5rem] border-8 border-white/10 bg-[#030303] px-8 pt-10 pb-0 sm:rounded-t-[3rem] lg:rounded-t-[4rem] lg:px-14 lg:pt-12">
-        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-start sm:justify-between">
+      <div className="relative w-full overflow-hidden rounded-t-[2.5rem] border-8 border-white/10 bg-[#030303] px-8 pt-10 pb-44 sm:rounded-t-[3rem] sm:pb-56 lg:rounded-t-[4rem] lg:px-14 lg:pt-12 lg:pb-72">
+        <div className="relative z-10 flex flex-col items-start gap-6 sm:flex-row sm:items-start sm:justify-between">
           <FooterLogo />
           <FooterTimezones />
         </div>
 
-        <FooterLogoMarquee settings={settings} />
+        <div className="relative z-10">
+          <FooterLogoMarquee settings={settings} />
+        </div>
 
-        <div className="mt-3 h-px w-32 bg-white/15 sm:mt-4 sm:w-48" />
+        <div className="relative z-10 mt-3 h-px w-32 bg-white/15 sm:mt-4 sm:w-48" />
 
-        <div className="mt-5 flex flex-col gap-1.5 font-codec text-base tracking-[-0.04em] text-white/80 sm:text-lg">
+        <div className="relative z-10 mt-5 flex flex-col gap-1.5 font-codec text-base tracking-[-0.04em] text-white/80 sm:text-lg">
           <a
             href="mailto:contact@skalevisuals.com"
             className="group flex items-center gap-2.5 transition-colors hover:text-white"
@@ -1453,7 +1455,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
           </a>
         </div>
 
-        <div className="mt-5 flex flex-col gap-2 py-1 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+        <div className="relative z-10 mt-5 flex flex-col gap-2 py-1 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <p className="text-left text-xs leading-relaxed text-white/50 sm:text-sm">
             Copyright © 2026 - Skale Visuals pour The Skale Companies
             <br />
@@ -1466,12 +1468,12 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
           </p>
         </div>
 
-        <div className="relative mt-0 flex h-40 items-start justify-center overflow-hidden sm:h-52 lg:h-64">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 flex h-44 items-start justify-center overflow-hidden sm:h-56 lg:h-72">
           <img
             src={skaleRedPill.url}
             alt=""
             aria-hidden="true"
-            className="h-auto w-[70vw] max-w-[46rem] rounded-md object-contain"
+            className="h-auto w-[70vw] max-w-[46rem] -translate-y-[10%] rounded-md object-contain"
           />
         </div>
       </div>
