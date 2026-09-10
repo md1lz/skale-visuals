@@ -1223,6 +1223,35 @@ function ProcessOutro() {
   );
 }
 
+const SERVICES_WORDS = [
+  "Montage vidéo",
+  "Miniature",
+  "Clipping",
+  "Graphisme",
+  "Shorts & Reels",
+  "Branding",
+  "Motion design",
+  "Thumbnails",
+];
+
+function ServicesMarquee() {
+  const items = [...SERVICES_WORDS, ...SERVICES_WORDS];
+  return (
+    <div className="marquee ticker-fade relative mt-14 overflow-hidden sm:mt-16">
+      <div className="marquee-track-fast flex w-max items-center gap-10 pr-10 sm:gap-14 sm:pr-14">
+        {items.map((word, i) => (
+          <span key={`${word}-${i}`} className="flex shrink-0 items-center gap-3 sm:gap-4">
+            <Check className="h-5 w-5 shrink-0 text-primary" strokeWidth={3} />
+            <span className="font-codec whitespace-nowrap text-lg tracking-[-0.01em] text-neutral-800 sm:text-xl">
+              {word}
+            </span>
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ProcessSteps() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -1254,6 +1283,8 @@ function ProcessSteps() {
       </div>
 
       <ProcessOutro />
+
+      <ServicesMarquee />
     </section>
   );
 }
