@@ -1395,7 +1395,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
 
         <div className="mt-3 h-px w-32 bg-white/15 sm:mt-4 sm:w-48" />
 
-        <div className="mt-5 flex flex-col gap-3 font-codec text-base tracking-[-0.04em] text-white/80 sm:text-lg">
+        <div className="mt-5 flex flex-col gap-1.5 font-codec text-base tracking-[-0.04em] text-white/80 sm:text-lg">
           <a
             href="mailto:contact@skalevisuals.com"
             className="group flex items-center gap-2.5 transition-colors hover:text-white"
