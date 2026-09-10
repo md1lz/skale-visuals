@@ -20,20 +20,29 @@ import {
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Skale Visuals — Montage vidéo pour créateurs et marques" },
+      { title: "Skale Visuals - Ton Agence de Création Digitale N°1" },
       {
         name: "description",
         content:
-          "Déléguez votre montage vidéo à une équipe qui livre vite et bien : VSL, Ads, Shorts, Motion Design, Vlog et Podcast.",
+          "L'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but : convertir.",
       },
-      { property: "og:title", content: "Skale Visuals — Montage vidéo pour créateurs et marques" },
+      { property: "og:title", content: "Skale Visuals - Ton Agence de Création Digitale N°1" },
       {
         property: "og:description",
-        content: "Une équipe de montage qui livre vite et bien pendant que vous faites grossir votre activité.",
+        content: "L'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but : convertir.",
       },
       { property: "og:type", content: "website" },
+      { property: "og:url", content: "https://skalevisuals.com/" },
+      { property: "og:image", content: "https://skalevisuals.com/og-image.jpg" },
       { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:title", content: "Skale Visuals - Ton Agence de Création Digitale N°1" },
+      {
+        name: "twitter:description",
+        content: "L'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but : convertir.",
+      },
+      { name: "twitter:image", content: "https://skalevisuals.com/og-image.jpg" },
     ],
+    links: [{ rel: "canonical", href: "https://skalevisuals.com/" }],
   }),
   component: Home,
 });
