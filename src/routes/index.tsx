@@ -1031,9 +1031,9 @@ function ProjectRecapFooter() {
 const PROCESS_STEPS = [
   {
     day: "Jour 1",
-    title: "Appel découverte",
+    title: "On se prévoit un appel 100% gratuit de 30 minutes qui ne t'engage à rien.",
     description:
-      "On échange sur ton projet, tes objectifs et ton audience pour comprendre exactement ce dont tu as besoin.",
+      "On analyse ensemble ce que tu fais déjà, on discute de tes idées, et on échange sur ton projet, tes objectifs et ta niche d'audience pour comprendre précisément comment t'aider au mieux.",
     icons: [
       { Icon: Phone, className: "text-[#3B82F6]" },
       { Icon: MessageSquare, className: "text-[#F59E0B]" },
@@ -1042,9 +1042,9 @@ const PROCESS_STEPS = [
   },
   {
     day: "Jour 2",
-    title: "Brief & stratégie",
+    title: "On prépare un devis adapté à tes besoins, puis on se prévoit un second appel, plus poussé, pour parler des stratégies qu'on propose et de l'accompagnement le plus adapté à ton projet.",
     description:
-      "On définit ensemble l'angle, le style et les références pour cadrer la création avant de commencer.",
+      "C'est aussi le moment où tu nous partages tes inspirations, ta direction artistique et ton angle créatif. Bref, on se met d'accord sur tout pour éviter les allers-retours inutiles.",
     icons: [
       { Icon: Lightbulb, className: "text-[#F59E0B]" },
       { Icon: Palette, className: "text-[#8B5CF6]" },
@@ -1055,7 +1055,7 @@ const PROCESS_STEPS = [
     day: "Jour 3",
     title: "Création",
     description:
-      "Notre équipe monte et designe ta première version, pensée pour capter l'attention dès les premières secondes.",
+      "Selon ton besoin, notre équipe monte ta vidéo ou designe tes visuels, chaque création pensée pour capter l'attention dès les premières secondes.",
     icons: [
       { Icon: Clapperboard, className: "text-[#EF4444]" },
       { Icon: Scissors, className: "text-[#06B6D4]" },
@@ -1066,7 +1066,7 @@ const PROCESS_STEPS = [
     day: "Jour 4",
     title: "Révisions illimitées",
     description:
-      "Tu nous fais tes retours directement sur la vidéo, et on ajuste jusqu'à ce que tu sois 100% satisfait.",
+      "Tu nous fais tes retours directement dans ton espace client : tout est centralisé au même endroit, sans logiciel ni site externe, pour faciliter les échanges et gagner en efficacité, sans prise de tête. On ajuste jusqu'à ce que tu sois 100% satisfait.",
     icons: [
       { Icon: Wand2, className: "text-[#8B5CF6]" },
       { Icon: Heart, className: "text-[#EC4899]" },
@@ -1077,7 +1077,7 @@ const PROCESS_STEPS = [
     day: "Jour 5",
     title: "Livraison",
     description:
-      "Tu reçois tes fichiers finaux, prêts à publier, en quelques jours seulement.",
+      "Une fois validés, tes fichiers finaux te sont livrés prêts à publier, directement dans ton espace client dédié. Rapide, simple, sans prise de tête.",
     icons: [
       { Icon: PackageCheck, className: "text-[#10B981]" },
       { Icon: Rocket, className: "text-[#EF4444]" },
@@ -1111,7 +1111,7 @@ function ProcessStep({
       className={`relative max-w-md ${left ? "sm:ml-auto sm:pr-16 sm:text-right" : "sm:mr-auto sm:pl-16 sm:text-left"} pl-14 text-left sm:pl-0`}
     >
       {/* icônes colorées flottantes */}
-      <div aria-hidden className="pointer-events-none absolute inset-0">
+      <div aria-hidden className="pointer-events-none absolute inset-0 z-20">
         {step.icons.map(({ Icon, className }, i) => (
           <motion.span
             key={i}
