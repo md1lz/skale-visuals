@@ -987,7 +987,7 @@ function ProjectRecapFooter() {
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className="mx-auto w-full max-w-6xl px-4 pb-8 sm:pb-10"
     >
-      <div className="flex flex-col items-center gap-10 sm:gap-14">
+      <div className="flex flex-col items-center">
         <button
           type="button"
           onClick={() => scrollTo("realisations")}
@@ -995,29 +995,32 @@ function ProjectRecapFooter() {
           onMouseLeave={() => setHoverMore(false)}
           onFocus={() => setHoverMore(true)}
           onBlur={() => setHoverMore(false)}
-          className="group font-codec-bold inline-flex items-center justify-center rounded-md border-2 border-dashed border-gray-600 bg-black px-5 py-2.5 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
-        >
-          <SlotMachineText text="EN VOIR PLUS" active={hoverMore} />
-        </button>
-
-        <div className="text-center">
-          <h2 className="font-codec-bold text-3xl leading-[1.1] tracking-[-0.06em] sm:text-4xl lg:text-5xl">
-            <span className="block text-neutral-900">Livraison ultra-rapide,</span>
-            <span className="block text-primary">satisfaction garantie</span>
-          </h2>
-        </div>
-
-        <Link
-          to="/bookacall"
-          onMouseEnter={() => setHoverBook(true)}
-          onMouseLeave={() => setHoverBook(false)}
-          onFocus={() => setHoverBook(true)}
-          onBlur={() => setHoverBook(false)}
           className="group font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-gray-600 bg-black px-5 py-2.5 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
         >
-          <SlotMachineText text="RÉSERVER UN APPEL" active={hoverBook} />
+          <SlotMachineText text="EN VOIR PLUS" active={hoverMore} />
           <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
-        </Link>
+        </button>
+
+        <div className="mt-6 flex flex-col items-center gap-1 sm:mt-8 sm:gap-2">
+          <div className="text-center">
+            <h2 className="font-codec-bold text-3xl leading-[1.1] tracking-[-0.06em] sm:text-4xl lg:text-5xl">
+              <span className="block text-neutral-900">Livraison ultra-rapide,</span>
+              <span className="block text-primary">satisfaction garantie</span>
+            </h2>
+          </div>
+
+          <Link
+            to="/bookacall"
+            onMouseEnter={() => setHoverBook(true)}
+            onMouseLeave={() => setHoverBook(false)}
+            onFocus={() => setHoverBook(true)}
+            onBlur={() => setHoverBook(false)}
+            className="group font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-gray-600 bg-black px-5 py-2.5 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
+          >
+            <SlotMachineText text="RÉSERVER UN APPEL" active={hoverBook} />
+            <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
+          </Link>
+        </div>
       </div>
     </motion.div>
   );
