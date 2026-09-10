@@ -1066,10 +1066,16 @@ const PROCESS_STEPS = [
   },
 ];
 
-const FLOAT_POS = [
-  "left-2 -top-4 sm:left-0 sm:-top-6 rotate-[-18deg]",
-  "right-4 -top-2 sm:right-2 sm:-top-4 rotate-[14deg]",
-  "right-10 -bottom-4 sm:right-8 sm:-bottom-6 rotate-[-9deg]",
+const FLOAT_POS_LEFT = [
+  "left-0 -top-5 sm:-left-10 sm:-top-6 rotate-[-16deg]",
+  "left-8 top-16 sm:left-4 sm:top-20 rotate-[12deg]",
+  "left-2 -bottom-5 sm:-left-6 sm:-bottom-6 rotate-[-10deg]",
+];
+
+const FLOAT_POS_RIGHT = [
+  "right-0 -top-5 sm:-right-10 sm:-top-6 rotate-[16deg]",
+  "right-8 top-16 sm:right-4 sm:top-20 rotate-[-12deg]",
+  "right-2 -bottom-5 sm:-right-6 sm:-bottom-6 rotate-[10deg]",
 ];
 
 function ProcessStep({
@@ -1082,6 +1088,7 @@ function ProcessStep({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.4, once: true });
   const left = index % 2 === 0;
+  const floatPos = left ? FLOAT_POS_LEFT : FLOAT_POS_RIGHT;
 
   const content = (
     <motion.div
@@ -1090,21 +1097,21 @@ function ProcessStep({
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className={`relative max-w-md ${left ? "sm:ml-auto sm:pr-16 sm:text-right" : "sm:mr-auto sm:pl-16 sm:text-left"} pl-14 text-left sm:pl-0`}
     >
-      {/* icônes colorées flottantes */}
+      {/* emojis flottants */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-20">
-        {step.icons.map(({ Icon, className }, i) => (
+        {step.icons.map((emoji, i) => (
           <motion.span
             key={i}
-            className={`absolute ${FLOAT_POS[i]} ${className}`}
+            className={`absolute ${floatPos[i]}`}
             initial={{ opacity: 0, scale: 0.6 }}
-            animate={inView ? { opacity: 0.9, scale: 1, y: [0, -7, 0] } : undefined}
+            animate={inView ? { opacity: 0.95, scale: 1, y: [0, -7, 0] } : undefined}
             transition={{
               opacity: { duration: 0.5, delay: 0.2 + i * 0.1 },
               scale: { duration: 0.5, delay: 0.2 + i * 0.1 },
               y: { duration: 3.6 + i, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.2} />
+            <span className="block text-xl leading-none sm:text-2xl">{emoji}</span>
           </motion.span>
         ))}
       </div>
