@@ -1063,7 +1063,7 @@ const PROCESS_STEPS = [
     ],
   },
   {
-    day: "Jour 4",
+    day: "Jour 6",
     title: "Révisions illimitées",
     description:
       "Tu nous fais tes retours directement dans ton espace client : tout est centralisé sans logiciel externe, pour des échanges simples et efficaces. On ajuste jusqu'à ce que tu sois 100% satisfait.",
@@ -1074,7 +1074,7 @@ const PROCESS_STEPS = [
     ],
   },
   {
-    day: "Jour 5",
+    day: "Jour 7",
     title: "Livraison",
     description:
       "Une fois validés, tes fichiers finaux te sont livrés prêts à publier directement dans ton espace client. Rapide, simple, sans prise de tête.",
