@@ -202,7 +202,9 @@ function RootInner() {
           }
         />
       ) : (
-        <Outlet />
+        <SmoothScroll>
+          <Outlet />
+        </SmoothScroll>
       )}
       <Toaster richColors position="bottom-right" theme="dark" />
     </>
