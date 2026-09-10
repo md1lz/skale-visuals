@@ -91,7 +91,7 @@ function useHomeContent() {
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.15 });
+  const inView = useInView(ref, { amount: 0.15, once: true });
   return (
     <motion.div
       ref={ref}
@@ -615,7 +615,7 @@ function ServiceBookCta() {
 
 function ServiceCards() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.15 });
+  const inView = useInView(ref, { amount: 0.15, once: true });
 
   const cards = [
     {
@@ -708,7 +708,7 @@ function WhatsAppIcon({ className }: { className?: string }) {
 
 function ServiceBenefits() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.2 });
+  const inView = useInView(ref, { amount: 0.2, once: true });
 
   const benefits = [
     {
@@ -792,7 +792,7 @@ function TestimonialCta() {
 
 function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.3 });
+  const inView = useInView(ref, { amount: 0.3, once: true });
   const t = settings.testimonial;
   if (!t.name && !t.photo && !t.quote) return null;
 
@@ -844,7 +844,7 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
 
 function BestRealisationsHeader() {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.3 });
+  const inView = useInView(ref, { amount: 0.3, once: true });
 
   return (
     <section className="w-full bg-white pt-16 pb-6 sm:pt-20 sm:pb-8 lg:pt-24 lg:pb-10">
@@ -878,7 +878,7 @@ function BestRealisationsHeader() {
 
 function ProjectRecapCards({ settings }: { settings: HomeContent["settings"] }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.15 });
+  const inView = useInView(ref, { amount: 0.15, once: true });
 
   const projects = settings.projects.slice(0, 2);
 
@@ -977,7 +977,7 @@ function ProjectRecapFooter() {
   const [hoverMore, setHoverMore] = useState(false);
   const [hoverBook, setHoverBook] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.3 });
+  const inView = useInView(ref, { amount: 0.3, once: true });
 
   return (
     <motion.div
