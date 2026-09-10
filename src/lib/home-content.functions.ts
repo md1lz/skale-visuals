@@ -6,6 +6,13 @@ export type TrustClient = { name: string; photo: string | null };
 export type CompanyLogo = { name: string; logo: string | null };
 export type CreatorProfile = { name: string; audience: string; photo: string | null };
 export type HomeTestimonial = { name: string; role: string; photo: string | null; quote: string };
+export type ProjectRecap = {
+  image: string | null;
+  badge: string;
+  title: string;
+  description: string;
+  avatar: string | null;
+};
 
 export type HomeSettings = {
   videosCount: number;
@@ -15,6 +22,7 @@ export type HomeSettings = {
   creators: CreatorProfile[];
   testimonial: HomeTestimonial;
   plusLabel: string;
+  projects: ProjectRecap[];
 };
 
 export type HomeFolder = { id: string; label: string; position: number };
