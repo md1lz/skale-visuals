@@ -133,6 +133,9 @@ function posterFor(video: HomeVideo | null): string | null {
 
 const NAV_LINKS = [
   { label: "Accueil", target: "top" },
+  { label: "Services", target: "services" },
+  { label: "Projets", target: "projets" },
+  { label: "Processus", target: "processus" },
 ];
 
 function scrollTo(target: string) {
@@ -169,17 +172,16 @@ function useScrollHeader() {
 }
 
 function CenteredTopMenu() {
-  const items = ["TEST", "TEST", "TEST", "TEST"];
   return (
     <nav className="pointer-events-auto absolute left-1/2 top-1/2 hidden -translate-x-1/2 -translate-y-1/2 items-center gap-6 sm:gap-8 md:flex">
-      {items.map((label, i) => (
+      {NAV_LINKS.map((item) => (
         <button
-          key={i}
+          key={item.target}
           type="button"
-          onClick={() => undefined}
+          onClick={() => scrollTo(item.target)}
           className="font-codec text-sm tracking-[-0.04em] text-foreground/80 transition-colors duration-200 hover:text-foreground uppercase"
         >
-          {label}
+          {item.label}
         </button>
       ))}
     </nav>
@@ -334,15 +336,18 @@ function Navbar() {
               transition={{ type: "spring", stiffness: 320, damping: 28 }}
               className="pointer-events-auto absolute inset-x-0 top-0 -z-10 overflow-hidden rounded-2xl border border-black/[0.06] bg-white px-2 pb-2 pt-[66px] shadow-[0_18px_45px_-14px_rgba(0,0,0,0.3)] md:hidden"
             >
-              {["TEST", "TEST", "TEST", "TEST"].map((label, index) => (
+              {NAV_LINKS.map((item) => (
                 <Button
-                  key={`${label}-${index}`}
+                   key={item.target}
                   type="button"
                   variant="ghost"
-                  onClick={() => setMobileNavOpen(false)}
+                   onClick={() => {
+                     setMobileNavOpen(false);
+                     scrollTo(item.target);
+                   }}
                   className="font-codec-bold h-12 w-full justify-start rounded-xl px-4 text-sm uppercase text-foreground hover:bg-foreground/5"
                 >
-                  {label}
+                   {item.label}
                 </Button>
               ))}
               <Button
@@ -1413,7 +1418,7 @@ function Home() {
         </div>
 
         {/* Grande bulle noire — transition vers la rubrique suivante */}
-        <section className="relative w-full">
+        <section id="services" className="relative w-full scroll-mt-24">
           <div className="flex min-h-[80vh] w-full flex-col items-center justify-center rounded-[2.5rem] bg-[#030303] py-14 pb-16 text-center sm:rounded-[3rem] sm:py-16 sm:pb-20 lg:rounded-[4rem] lg:py-20 lg:pb-28">
             <div className="mb-8 w-full sm:mb-10">
               <TrustCarousels settings={settings} />
@@ -1431,13 +1436,17 @@ function Home() {
           </div>
         </section>
 
-        <BestRealisationsHeader />
+        <div id="projets" className="scroll-mt-24">
+          <BestRealisationsHeader />
+        </div>
 
         <ProjectRecapCards settings={settings} />
 
         <ProjectRecapFooter />
 
-        <ProcessSteps />
+        <div id="processus" className="scroll-mt-24">
+          <ProcessSteps />
+        </div>
 
       </main>
       <SiteFooter settings={settings} />
