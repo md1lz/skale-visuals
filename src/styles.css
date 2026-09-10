@@ -273,7 +273,7 @@ html.site-light {
   --background: oklch(0.98 0 0);
   --foreground: oklch(0.18 0.01 280);
   --muted-foreground: oklch(0.52 0.01 280);
-  --site-bg: #f5f5f7;
+  --site-bg: #ffffff;
   --site-surface: rgba(0, 0, 0, 0.04);
   --site-surface-border: rgba(0, 0, 0, 0.09);
   color-scheme: light;
