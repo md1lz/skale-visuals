@@ -1372,7 +1372,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
           </a>
         </div>
 
-        <div className="mt-6 flex flex-col gap-3 border-t border-white/10 py-4 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+        <div className="mt-4 flex flex-col gap-2 py-1 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
           <p className="text-left text-[11px] leading-relaxed text-white/40">
             Copyright © 2026 - Skale Visuals pour The Skale Companies
             <br />
@@ -1385,12 +1385,12 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
           </p>
         </div>
 
-        <div className="relative mt-6 flex justify-center overflow-hidden sm:mt-8 lg:mt-10">
+        <div className="relative mt-0 flex justify-center overflow-hidden">
           <img
             src={skaleRedPill.url}
             alt=""
             aria-hidden="true"
-            className="h-auto w-[70vw] max-w-[46rem] translate-y-[48%] rounded-md object-contain"
+            className="h-auto w-[70vw] max-w-[46rem] translate-y-[10%] rounded-md object-contain"
           />
         </div>
       </div>
