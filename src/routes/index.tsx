@@ -5,6 +5,7 @@ import { Mail, Instagram, Linkedin, Check, ChevronDown, ArrowUpRight, User, BarC
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
+import skaleRedPill from "@/assets/skale-red-pill.png.asset.json";
 import cardMontage from "@/assets/card-montage.png.asset.json";
 import cardDesign from "@/assets/card-design.png.asset.json";
 import { Button } from "@/components/ui/button";
@@ -221,10 +222,10 @@ function Navbar() {
                 className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.055]"
               >
                 <motion.img
-                  src={skaleSymbol.url}
+                  src={skaleRedPill.url}
                   alt=""
                   aria-hidden="true"
-                  className="h-8 w-8 rounded-md object-cover drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
+                  className="h-8 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
                   animate={skaleHover ? { rotate: -18, scale: 1.12 } : { rotate: 0, scale: 1 }}
                   transition={{ type: "spring", stiffness: 260, damping: 10, mass: 0.85 }}
                 />
@@ -277,10 +278,10 @@ function Navbar() {
                     className="group relative flex h-11 w-full cursor-default items-center gap-2.5 rounded-lg px-2.5 text-left transition-transform duration-300 ease-out hover:scale-[1.035]"
                   >
                     <motion.img
-                      src={skaleSymbol.url}
+                      src={skaleRedPill.url}
                       alt=""
                       aria-hidden="true"
-                      className="h-8 w-8 rounded-md object-cover drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
+                      className="h-8 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
                       animate={studioHover ? { rotate: 14, scale: 1.12 } : { rotate: 0, scale: 1 }}
                       transition={{ type: "spring", stiffness: 260, damping: 10, mass: 0.85 }}
                     />
@@ -853,10 +854,10 @@ function BestRealisationsHeader() {
       >
         <div className="flex items-center gap-2.5">
           <img
-            src={skaleSymbol.url}
+            src={skaleRedPill.url}
             alt=""
             aria-hidden="true"
-            className="h-8 w-8 rounded-md object-cover shadow-lg sm:h-9 sm:w-9"
+            className="h-8 w-auto rounded-md object-contain shadow-lg sm:h-9"
           />
           <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-slate-900 sm:text-[1.75rem]">
             skale
@@ -1299,10 +1300,10 @@ function FooterLogo({ className = "" }: { className?: string }) {
   return (
     <div className={`flex items-center gap-2.5 ${className}`}>
       <img
-        src={skaleSymbol.url}
+        src={skaleRedPill.url}
         alt=""
         aria-hidden="true"
-        className="h-8 w-8 rounded-md object-cover"
+        className="h-8 w-auto rounded-md object-contain"
       />
       <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-white">
         skale
@@ -1318,17 +1319,12 @@ function SiteFooter() {
         <FooterLogo />
 
         <div className="relative mt-16 flex justify-center overflow-hidden sm:mt-20 lg:mt-28">
-          <div className="flex translate-y-[35%] items-center gap-3 sm:gap-4">
-            <img
-              src={skaleSymbol.url}
-              alt=""
-              aria-hidden="true"
-              className="h-[18vw] w-[18vw] min-h-[5rem] min-w-[5rem] max-h-[14rem] max-w-[14rem] rounded-md object-cover"
-            />
-            <span className="font-codec-bold text-[22vw] leading-none tracking-[-0.06em] text-white sm:text-[20vw]">
-              skale
-            </span>
-          </div>
+          <img
+            src={skaleRedPill.url}
+            alt=""
+            aria-hidden="true"
+            className="h-auto w-[70vw] max-w-[46rem] translate-y-[35%] rounded-md object-contain"
+          />
         </div>
       </div>
     </footer>
