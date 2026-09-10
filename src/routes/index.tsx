@@ -1343,10 +1343,10 @@ function FooterTimezones() {
     <div className="flex gap-6 sm:gap-10">
       {TIME_ZONES.map((zone, i) => (
         <div key={zone.city} className="text-center sm:text-right">
-          <div className="font-codec text-2xl leading-none tracking-[-0.04em] text-white/70 sm:text-3xl">
+          <div className="font-codec-light text-4xl leading-none tracking-[-0.04em] text-white/80 sm:text-5xl">
             {mounted ? times[i] ?? "—:—" : "—:—"}
           </div>
-          <div className="font-codec-bold mt-1 text-sm tracking-[-0.04em] text-white sm:text-base">
+          <div className="font-codec-light mt-1.5 text-base tracking-[-0.04em] text-white/90 sm:text-xl">
             {zone.city}
           </div>
         </div>
