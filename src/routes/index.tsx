@@ -1318,7 +1318,7 @@ function SiteFooter() {
             src={skaleRedPill.url}
             alt=""
             aria-hidden="true"
-            className="h-auto w-[70vw] max-w-[46rem] translate-y-[35%] rounded-md object-contain"
+            className="h-auto w-[70vw] max-w-[46rem] translate-y-[48%] rounded-md object-contain"
           />
         </div>
       </div>
