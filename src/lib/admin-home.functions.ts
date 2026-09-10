@@ -89,6 +89,17 @@ const settingsSchema = z.object({
     photo: z.string().trim().max(500).nullable(),
     quote: z.string().trim().max(300),
   }),
+  projects: z
+    .array(
+      z.object({
+        image: z.string().trim().max(500).nullable(),
+        badge: z.string().trim().max(60),
+        title: z.string().trim().max(120),
+        description: z.string().trim().max(300),
+        avatar: z.string().trim().max(500).nullable(),
+      }),
+    )
+    .max(2),
 });
 
 export const saveHomeSettings = createServerFn({ method: "POST" })
