@@ -1323,7 +1323,7 @@ function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) 
             className="flex h-9 w-20 shrink-0 items-center justify-center sm:h-11 sm:w-24"
           >
             <img
-              src={item.logo}
+              src={item.logo!}
               alt=""
               className="max-h-full max-w-full object-contain brightness-0 invert"
             />
