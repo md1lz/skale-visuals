@@ -1312,20 +1312,63 @@ function FooterLogo({ className = "" }: { className?: string }) {
   );
 }
 
+const TIME_ZONES = [
+  { city: "Paris", tz: "Europe/Paris" },
+  { city: "Dubai", tz: "Asia/Dubai" },
+  { city: "Tokyo", tz: "Asia/Tokyo" },
+];
+
+function formatZoneTime(date: Date, timeZone: string) {
+  return new Intl.DateTimeFormat("fr-FR", {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+    timeZone,
+  }).format(date);
+}
+
+function FooterTimezones() {
+  const [times, setTimes] = useState<string[]>([]);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    const update = () => setTimes(TIME_ZONES.map((z) => formatZoneTime(new Date(), z.tz)));
+    update();
+    const id = setInterval(update, 60_000);
+    return () => clearInterval(id);
+  }, []);
+
+  return (
+    <div className="flex gap-6 sm:gap-10">
+      {TIME_ZONES.map((zone, i) => (
+        <div key={zone.city} className="text-center sm:text-right">
+          <div className="font-codec text-2xl leading-none tracking-[-0.04em] text-white/70 sm:text-3xl">
+            {mounted ? times[i] ?? "—:—" : "—:—"}
+          </div>
+          <div className="font-codec-bold mt-1 text-sm tracking-[-0.04em] text-white sm:text-base">
+            {zone.city}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
 function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) {
   const logos = (settings.footerLogos ?? []).filter((item) => item.logo);
   if (!logos.length) return null;
   const repeated = [...logos, ...logos, ...logos, ...logos];
   return (
-    <div className="marquee always-scroll relative mt-4 w-full overflow-hidden sm:mt-5 sm:w-1/2">
+    <div className="marquee always-scroll relative mt-5 w-full overflow-hidden sm:mt-6 sm:w-5/12">
       <div
-        className="trust-marquee-track flex w-max items-center gap-4 py-1 sm:gap-5"
-        style={{ animationDuration: "12s" }}
+        className="trust-marquee-track flex w-max items-center gap-3 py-1 sm:gap-4"
+        style={{ animationDuration: "10s" }}
       >
         {repeated.map((item, index) => (
           <div
             key={`footer-logo-${index}`}
-            className="flex h-9 w-20 shrink-0 items-center justify-center sm:h-11 sm:w-24"
+            className="flex h-7 w-16 shrink-0 items-center justify-center sm:h-8 sm:w-20"
           >
             <img
               src={item.logo!}
@@ -1343,18 +1386,21 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
   return (
     <footer className="relative z-10 w-full">
       <div className="w-full overflow-hidden rounded-t-[2.5rem] bg-[#030303] px-6 pt-8 pb-0 sm:rounded-t-[3rem] lg:rounded-t-[4rem] lg:px-10 lg:pt-10">
-        <FooterLogo />
+        <div className="flex flex-col items-start gap-6 sm:flex-row sm:items-start sm:justify-between">
+          <FooterLogo />
+          <FooterTimezones />
+        </div>
 
         <FooterLogoMarquee settings={settings} />
 
-        <div className="mt-4 h-px w-full bg-white/15 sm:mt-5 sm:w-1/2" />
+        <div className="mt-3 h-px w-32 bg-white/15 sm:mt-4 sm:w-48" />
 
-        <div className="mt-4 flex flex-col gap-2 font-codec text-sm tracking-[-0.06em] text-white/80 sm:text-base">
+        <div className="mt-5 flex flex-col gap-3 font-codec text-base tracking-[-0.04em] text-white/80 sm:text-lg">
           <a
             href="mailto:contact@skalevisuals.com"
             className="group flex items-center gap-2.5 transition-colors hover:text-white"
           >
-            <Mail className="h-4 w-4 text-red-500 transition-transform group-hover:scale-110" />
+            <Mail className="h-4 w-4 text-red-500 transition-transform group-hover:scale-110 sm:h-5 sm:w-5" />
             <span>contact@skalevisuals.com</span>
           </a>
           <a
@@ -1363,7 +1409,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
             rel="noreferrer"
             className="group flex items-center gap-2.5 transition-colors hover:text-white"
           >
-            <Linkedin className="h-4 w-4 text-sky-500 transition-transform group-hover:scale-110" />
+            <Linkedin className="h-4 w-4 text-sky-500 transition-transform group-hover:scale-110 sm:h-5 sm:w-5" />
             <span>LinkedIn</span>
           </a>
           <a
@@ -1372,18 +1418,18 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
             rel="noreferrer"
             className="group flex items-center gap-2.5 transition-colors hover:text-white"
           >
-            <Instagram className="h-4 w-4 text-pink-500 transition-transform group-hover:scale-110" />
+            <Instagram className="h-4 w-4 text-pink-500 transition-transform group-hover:scale-110 sm:h-5 sm:w-5" />
             <span>Instagram</span>
           </a>
         </div>
 
-        <div className="mt-4 flex flex-col gap-2 py-1 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
-          <p className="text-left text-[11px] leading-relaxed text-white/40">
+        <div className="mt-5 flex flex-col gap-2 py-1 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+          <p className="text-left text-xs leading-relaxed text-white/50 sm:text-sm">
             Copyright © 2026 - Skale Visuals pour The Skale Companies
             <br />
             Tous droits réservés.
           </p>
-          <p className="text-left text-[11px] leading-relaxed text-white/40 sm:text-right">
+          <p className="text-left text-xs leading-relaxed text-white/50 sm:text-right sm:text-sm">
             Built in France by Skale Studio
             <br />
             Bientôt disponible à la commercialisation.
