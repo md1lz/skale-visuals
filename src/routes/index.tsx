@@ -1295,78 +1295,40 @@ function ProcessSteps() {
 
 /* ---------------- footer ---------------- */
 
+function FooterLogo({ className = "" }: { className?: string }) {
+  return (
+    <div className={`flex items-center gap-2.5 ${className}`}>
+      <img
+        src={skaleSymbol.url}
+        alt=""
+        aria-hidden="true"
+        className="h-8 w-8 rounded-md object-cover"
+      />
+      <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-white">
+        skale
+      </span>
+    </div>
+  );
+}
+
 function SiteFooter() {
   return (
-    <footer className="relative z-10">
-      <div className="mx-auto w-full max-w-4xl px-4">
-        <div className="h-px w-full bg-foreground/[0.06]" />
-      </div>
-      <div className="mx-auto w-full max-w-4xl px-4 py-12">
-        <div className="flex flex-col gap-10 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="font-codec-bold text-3xl text-foreground">
-              skale<span className="text-primary">.</span>
-            </p>
-            <div className="mt-4 space-y-2.5">
-              <a
-                href="mailto:contact@skalevisuals.com"
-                className="flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
-              >
-                <Mail className="h-4 w-4" />
-                contact@skalevisuals.com
-              </a>
-              <a
-                href="https://www.instagram.com/skalevisuals/"
-                target="_blank"
-                rel="noreferrer"
-                className="flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
-              >
-                <Instagram className="h-4 w-4" />
-                @skalevisuals
-              </a>
-              <a
-                href="https://www.linkedin.com/company/skalevisuals/"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="LinkedIn Skale Visuals"
-                className="flex items-center gap-2 text-sm text-foreground/70 transition-colors hover:text-foreground"
-              >
-                <Linkedin className="h-4 w-4" />
-                LinkedIn
-              </a>
-            </div>
+    <footer className="relative z-10 w-full">
+      <div className="w-full rounded-t-[2.5rem] bg-[#030303] px-6 pt-10 pb-0 sm:rounded-t-[3rem] lg:rounded-t-[4rem] lg:px-10 lg:pt-14 overflow-hidden">
+        <FooterLogo />
+
+        <div className="relative mt-16 flex justify-center overflow-hidden sm:mt-20 lg:mt-28">
+          <div className="flex translate-y-[35%] items-center gap-3 sm:gap-4">
+            <img
+              src={skaleSymbol.url}
+              alt=""
+              aria-hidden="true"
+              className="h-[18vw] w-[18vw] min-h-[5rem] min-w-[5rem] max-h-[14rem] max-w-[14rem] rounded-md object-cover"
+            />
+            <span className="font-codec-bold text-[22vw] leading-none tracking-[-0.06em] text-white sm:text-[20vw]">
+              skale
+            </span>
           </div>
-
-          <nav className="sm:text-right">
-            <p className="mb-3 text-[11px] uppercase tracking-widest text-muted-foreground">Navigation</p>
-            <ul className="flex flex-wrap items-center gap-x-6 gap-y-2 sm:justify-end">
-              {NAV_LINKS.map((l) => (
-                <li key={l.label}>
-                  <button
-                    type="button"
-                    onClick={() => scrollTo(l.target)}
-                    className="text-sm text-foreground/70 transition-colors hover:text-foreground"
-                  >
-                    {l.label}
-                  </button>
-                </li>
-              ))}
-              <li>
-                <Link
-                  to="/aboutus"
-                  className="text-sm text-foreground/70 transition-colors hover:text-foreground"
-                >
-                  À propos
-                </Link>
-              </li>
-            </ul>
-
-          </nav>
-        </div>
-
-        <div className="mt-10 flex flex-col items-center justify-between gap-2 border-t border-foreground/[0.06] pt-6 text-xs text-muted-foreground sm:flex-row">
-          <p>© 2026 Skale Visuals. Tous droits réservés.</p>
-          <p>Made in France by Madi Harrois</p>
         </div>
       </div>
     </footer>
