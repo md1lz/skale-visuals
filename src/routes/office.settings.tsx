@@ -150,6 +150,18 @@ function ParametresPage() {
           <div className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
             {TABS.map((t) => {
               const Icon = t.icon;
+              if (t.id === "website") {
+                return (
+                  <Link
+                    key={t.id}
+                    to="/office/website"
+                    className="relative flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-[13px] transition text-neutral-400 hover:bg-white/[0.03] hover:text-white"
+                  >
+                    <Icon className="h-4 w-4 text-neutral-500" />
+                    {t.label}
+                  </Link>
+                );
+              }
               const on = active === t.id;
               return (
                 <button
