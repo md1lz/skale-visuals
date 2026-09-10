@@ -135,7 +135,7 @@ const NAV_LINKS = [
   { label: "Accueil", target: "top" },
   { label: "Services", target: "services" },
   { label: "Projets", target: "projets" },
-  { label: "Processus", target: "processus" },
+  { label: "Process", target: "processus" },
 ];
 
 function scrollTo(target: string) {
