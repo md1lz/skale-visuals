@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef, useState } from "react";
@@ -36,7 +36,6 @@ import { getAdminProfile, updateAdminProfile } from "@/lib/admin-auth.functions"
 import { getBillingConfig, saveBillingConfig } from "@/lib/billing.functions";
 import { DEFAULT_BILLING, type BillingSettings } from "@/lib/billing.shared";
 import { RememberedConnections } from "@/components/RememberedConnections";
-import { SiteAdminPanel } from "@/components/office/SiteAdminPanel";
 import { AvailabilitySettings } from "@/components/office/AvailabilitySettings";
 
 type TabId =
@@ -150,6 +149,18 @@ function ParametresPage() {
           <div className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
             {TABS.map((t) => {
               const Icon = t.icon;
+              if (t.id === "website") {
+                return (
+                  <Link
+                    key={t.id}
+                    to="/office/website"
+                    className="relative flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-[13px] transition text-neutral-400 hover:bg-white/[0.03] hover:text-white"
+                  >
+                    <Icon className="h-4 w-4 text-neutral-500" />
+                    {t.label}
+                  </Link>
+                );
+              }
               const on = active === t.id;
               return (
                 <button
@@ -193,7 +204,7 @@ function ParametresPage() {
           {active === "connections" && <RememberedConnections />}
           {active === "legal" && <BillingPanel section="legal" />}
           {active === "documents" && <BillingPanel section="documents" />}
-          {active === "website" && <SiteAdminPanel />}
+          {active === "website" && null}
           {active === "availability" && (
             <Card title="Disponibilités" description="Créneaux proposés sur la page Book a Call.">
               <AvailabilitySettings />
