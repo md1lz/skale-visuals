@@ -1362,6 +1362,8 @@ function Home() {
 
         <ProjectRecapCards settings={settings} />
 
+        <ProjectRecapFooter />
+
         <div className="mx-auto w-full max-w-6xl px-4">
           <Realisations folders={folders} videos={videos} />
           <CallCta />
