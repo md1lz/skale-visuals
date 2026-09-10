@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView, useScroll, useSpring, useTransform } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowUpRight, User, BarChart3, Zap, Phone, Lightbulb, Clapperboard, MessageSquare, PackageCheck, Sparkles, Film, Palette, Wand2, Rocket, Star, Heart, Music, Camera, Scissors, PartyPopper } from "lucide-react";
+import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowUpRight, User, BarChart3, Zap, PartyPopper } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
@@ -1034,62 +1034,48 @@ const PROCESS_STEPS = [
     title: "Appel découverte",
     description:
       "On se prévoit un appel 100% gratuit de 30 minutes, sans engagement. On analyse ton contenu actuel, on discute de tes idées et on précise tes objectifs, ta niche et ton projet pour comprendre comment t'aider au mieux.",
-    icons: [
-      { Icon: Phone, className: "text-[#3B82F6]" },
-      { Icon: MessageSquare, className: "text-[#F59E0B]" },
-      { Icon: Sparkles, className: "text-[#10B981]" },
-    ],
+    icons: ["📞", "💬", "✨"],
   },
   {
     day: "Jour 2",
     title: "Brief & stratégie",
     description:
       "On prépare un devis adapté à tes besoins, puis on se revoit en appel pour affiner les stratégies et l'accompagnement. Tu nous partages tes inspirations, ta direction artistique et ton angle créatif pour qu'on parte sur une base solide.",
-    icons: [
-      { Icon: Lightbulb, className: "text-[#F59E0B]" },
-      { Icon: Palette, className: "text-[#8B5CF6]" },
-      { Icon: Star, className: "text-[#EC4899]" },
-    ],
+    icons: ["💡", "🎨", "⭐"],
   },
   {
     day: "Jour 3",
     title: "Création",
     description:
       "Selon ton besoin, notre équipe monte ta vidéo ou designe tes visuels. Chaque création est pensée pour capter l'attention dès les premières secondes.",
-    icons: [
-      { Icon: Clapperboard, className: "text-[#EF4444]" },
-      { Icon: Scissors, className: "text-[#06B6D4]" },
-      { Icon: Music, className: "text-[#8B5CF6]" },
-    ],
+    icons: ["🎬", "✂️", "🎵"],
   },
   {
     day: "Jour 6",
     title: "Révisions illimitées",
     description:
       "Tu nous fais tes retours directement dans ton espace client : tout est centralisé sans logiciel externe, pour des échanges simples et efficaces. On ajuste jusqu'à ce que tu sois 100% satisfait.",
-    icons: [
-      { Icon: Wand2, className: "text-[#8B5CF6]" },
-      { Icon: Heart, className: "text-[#EC4899]" },
-      { Icon: Camera, className: "text-[#0EA5E9]" },
-    ],
+    icons: ["🪄", "❤️", "📷"],
   },
   {
     day: "Jour 7",
     title: "Livraison",
     description:
       "Une fois validés, tes fichiers finaux te sont livrés prêts à publier directement dans ton espace client. Rapide, simple, sans prise de tête.",
-    icons: [
-      { Icon: PackageCheck, className: "text-[#10B981]" },
-      { Icon: Rocket, className: "text-[#EF4444]" },
-      { Icon: Film, className: "text-[#F59E0B]" },
-    ],
+    icons: ["📦", "🚀", "🎞️"],
   },
 ];
 
-const FLOAT_POS = [
-  "left-2 -top-4 sm:left-0 sm:-top-6 rotate-[-18deg]",
-  "right-4 -top-2 sm:right-2 sm:-top-4 rotate-[14deg]",
-  "right-10 -bottom-4 sm:right-8 sm:-bottom-6 rotate-[-9deg]",
+const FLOAT_POS_LEFT = [
+  "left-0 -top-5 sm:-left-10 sm:-top-6 rotate-[-16deg]",
+  "left-8 top-16 sm:left-4 sm:top-20 rotate-[12deg]",
+  "left-2 -bottom-5 sm:-left-6 sm:-bottom-6 rotate-[-10deg]",
+];
+
+const FLOAT_POS_RIGHT = [
+  "right-0 -top-5 sm:-right-10 sm:-top-6 rotate-[16deg]",
+  "right-8 top-16 sm:right-4 sm:top-20 rotate-[-12deg]",
+  "right-2 -bottom-5 sm:-right-6 sm:-bottom-6 rotate-[10deg]",
 ];
 
 function ProcessStep({
@@ -1102,6 +1088,7 @@ function ProcessStep({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.4, once: true });
   const left = index % 2 === 0;
+  const floatPos = left ? FLOAT_POS_LEFT : FLOAT_POS_RIGHT;
 
   const content = (
     <motion.div
@@ -1110,21 +1097,21 @@ function ProcessStep({
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className={`relative max-w-md ${left ? "sm:ml-auto sm:pr-16 sm:text-right" : "sm:mr-auto sm:pl-16 sm:text-left"} pl-14 text-left sm:pl-0`}
     >
-      {/* icônes colorées flottantes */}
+      {/* emojis flottants */}
       <div aria-hidden className="pointer-events-none absolute inset-0 z-20">
-        {step.icons.map(({ Icon, className }, i) => (
+        {step.icons.map((emoji, i) => (
           <motion.span
             key={i}
-            className={`absolute ${FLOAT_POS[i]} ${className}`}
+            className={`absolute ${floatPos[i]}`}
             initial={{ opacity: 0, scale: 0.6 }}
-            animate={inView ? { opacity: 0.9, scale: 1, y: [0, -7, 0] } : undefined}
+            animate={inView ? { opacity: 0.95, scale: 1, y: [0, -7, 0] } : undefined}
             transition={{
               opacity: { duration: 0.5, delay: 0.2 + i * 0.1 },
               scale: { duration: 0.5, delay: 0.2 + i * 0.1 },
               y: { duration: 3.6 + i, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.2} />
+            <span className="block text-xl leading-none sm:text-2xl">{emoji}</span>
           </motion.span>
         ))}
       </div>
