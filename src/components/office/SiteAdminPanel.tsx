@@ -76,6 +76,7 @@ export function SiteAdminPanel() {
   const [companyPreviews, setCompanyPreviews] = useState<(string | null)[]>([]);
   const [creatorPreviews, setCreatorPreviews] = useState<(string | null)[]>([]);
   const [testimonialPreview, setTestimonialPreview] = useState<string | null>(null);
+  const [projectPreviews, setProjectPreviews] = useState<{ image: string | null; avatar: string | null }[]>([]);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
   const [videos, setVideos] = useState<HomeVideo[]>([]);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
