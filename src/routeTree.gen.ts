@@ -36,6 +36,7 @@ import { Route as OfficeAnalyticsRouteImport } from './routes/office.analytics'
 import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
+import { Route as ApiPublicTimeRouteImport } from './routes/api/public/time'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 
@@ -174,6 +175,11 @@ const ApiPublicTrackRoute = ApiPublicTrackRouteImport.update({
   path: '/api/public/track',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ApiPublicTimeRoute = ApiPublicTimeRouteImport.update({
+  id: '/api/public/time',
+  path: '/api/public/time',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LovableEmailTransactionalPreviewRoute =
   LovableEmailTransactionalPreviewRouteImport.update({
     id: '/lovable/email/transactional/preview',
@@ -213,6 +219,7 @@ export interface FileRoutesByFullPath {
   '/crm/': typeof CrmIndexRoute
   '/office/': typeof OfficeIndexRoute
   '/studio/': typeof StudioIndexRoute
+  '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/doc/$kind/$token': typeof DocKindTokenRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -241,6 +248,7 @@ export interface FileRoutesByTo {
   '/crm': typeof CrmIndexRoute
   '/office': typeof OfficeIndexRoute
   '/studio': typeof StudioIndexRoute
+  '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/doc/$kind/$token': typeof DocKindTokenRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -273,6 +281,7 @@ export interface FileRoutesById {
   '/crm/': typeof CrmIndexRoute
   '/office/': typeof OfficeIndexRoute
   '/studio/': typeof StudioIndexRoute
+  '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/doc/$kind/$token': typeof DocKindTokenRoute
   '/api/public/hooks/booking-reminders': typeof ApiPublicHooksBookingRemindersRoute
@@ -306,6 +315,7 @@ export interface FileRouteTypes {
     | '/crm/'
     | '/office/'
     | '/studio/'
+    | '/api/public/time'
     | '/api/public/track'
     | '/doc/$kind/$token'
     | '/api/public/hooks/booking-reminders'
@@ -334,6 +344,7 @@ export interface FileRouteTypes {
     | '/crm'
     | '/office'
     | '/studio'
+    | '/api/public/time'
     | '/api/public/track'
     | '/doc/$kind/$token'
     | '/api/public/hooks/booking-reminders'
@@ -365,6 +376,7 @@ export interface FileRouteTypes {
     | '/crm/'
     | '/office/'
     | '/studio/'
+    | '/api/public/time'
     | '/api/public/track'
     | '/doc/$kind/$token'
     | '/api/public/hooks/booking-reminders'
@@ -380,6 +392,7 @@ export interface RootRouteChildren {
   OfficeRoute: typeof OfficeRouteWithChildren
   StudioRoute: typeof StudioRouteWithChildren
   SignTokenRoute: typeof SignTokenRoute
+  ApiPublicTimeRoute: typeof ApiPublicTimeRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   DocKindTokenRoute: typeof DocKindTokenRoute
   ApiPublicHooksBookingRemindersRoute: typeof ApiPublicHooksBookingRemindersRoute
@@ -577,6 +590,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ApiPublicTrackRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/api/public/time': {
+      id: '/api/public/time'
+      path: '/api/public/time'
+      fullPath: '/api/public/time'
+      preLoaderRoute: typeof ApiPublicTimeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/lovable/email/transactional/preview': {
       id: '/lovable/email/transactional/preview'
       path: '/lovable/email/transactional/preview'
@@ -663,6 +683,7 @@ const rootRouteChildren: RootRouteChildren = {
   OfficeRoute: OfficeRouteWithChildren,
   StudioRoute: StudioRouteWithChildren,
   SignTokenRoute: SignTokenRoute,
+  ApiPublicTimeRoute: ApiPublicTimeRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   DocKindTokenRoute: DocKindTokenRoute,
   ApiPublicHooksBookingRemindersRoute: ApiPublicHooksBookingRemindersRoute,
