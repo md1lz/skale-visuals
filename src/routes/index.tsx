@@ -1030,56 +1030,116 @@ function ProjectRecapFooter() {
 
 const PROCESS_STEPS = [
   {
+    day: "Jour 1",
     title: "Appel découverte",
     description:
       "On échange sur ton projet, tes objectifs et ton audience pour comprendre exactement ce dont tu as besoin.",
+    icons: [
+      { Icon: Phone, className: "text-[#3B82F6]" },
+      { Icon: MessageSquare, className: "text-[#F59E0B]" },
+      { Icon: Sparkles, className: "text-[#10B981]" },
+    ],
   },
   {
+    day: "Jour 2",
     title: "Brief & stratégie",
     description:
       "On définit ensemble l'angle, le style et les références pour cadrer la création avant de commencer.",
+    icons: [
+      { Icon: Lightbulb, className: "text-[#F59E0B]" },
+      { Icon: Palette, className: "text-[#8B5CF6]" },
+      { Icon: Star, className: "text-[#EC4899]" },
+    ],
   },
   {
+    day: "Jour 3",
     title: "Création",
     description:
       "Notre équipe monte et designe ta première version, pensée pour capter l'attention dès les premières secondes.",
+    icons: [
+      { Icon: Clapperboard, className: "text-[#EF4444]" },
+      { Icon: Scissors, className: "text-[#06B6D4]" },
+      { Icon: Music, className: "text-[#8B5CF6]" },
+    ],
   },
   {
+    day: "Jour 4",
     title: "Révisions illimitées",
     description:
       "Tu nous fais tes retours directement sur la vidéo, et on ajuste jusqu'à ce que tu sois 100% satisfait.",
+    icons: [
+      { Icon: Wand2, className: "text-[#8B5CF6]" },
+      { Icon: Heart, className: "text-[#EC4899]" },
+      { Icon: Camera, className: "text-[#0EA5E9]" },
+    ],
   },
   {
+    day: "Jour 5",
     title: "Livraison",
     description:
       "Tu reçois tes fichiers finaux, prêts à publier, en quelques jours seulement.",
+    icons: [
+      { Icon: PackageCheck, className: "text-[#10B981]" },
+      { Icon: Rocket, className: "text-[#EF4444]" },
+      { Icon: Film, className: "text-[#F59E0B]" },
+    ],
   },
+];
+
+const FLOAT_POS = [
+  "left-2 -top-4 sm:left-0 sm:-top-6 rotate-[-18deg]",
+  "right-4 -top-2 sm:right-2 sm:-top-4 rotate-[14deg]",
+  "right-10 -bottom-4 sm:right-8 sm:-bottom-6 rotate-[-9deg]",
 ];
 
 function ProcessStep({
   step,
   index,
 }: {
-  step: { title: string; description: string };
+  step: (typeof PROCESS_STEPS)[number];
   index: number;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { amount: 0.5, once: true });
+  const inView = useInView(ref, { amount: 0.4, once: true });
   const left = index % 2 === 0;
 
   const content = (
     <motion.div
-      initial={{ opacity: 0, y: 24 }}
-      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
-      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-      className={`max-w-md ${left ? "sm:ml-auto sm:pr-14 sm:text-right" : "sm:mr-auto sm:pl-14 sm:text-left"} pl-12 text-left sm:pl-0`}
+      initial={{ opacity: 0, y: 28 }}
+      animate={inView ? { opacity: 1, y: 0 } : undefined}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className={`relative max-w-md ${left ? "sm:ml-auto sm:pr-16 sm:text-right" : "sm:mr-auto sm:pl-16 sm:text-left"} pl-14 text-left sm:pl-0`}
     >
-      <p className="font-codec-bold text-xs uppercase tracking-[0.2em] text-primary">
-        Étape {index + 1}
+      {/* icônes colorées flottantes */}
+      <div aria-hidden className="pointer-events-none absolute inset-0">
+        {step.icons.map(({ Icon, className }, i) => (
+          <motion.span
+            key={i}
+            className={`absolute ${FLOAT_POS[i]} ${className}`}
+            initial={{ opacity: 0, scale: 0.6 }}
+            animate={inView ? { opacity: 0.9, scale: 1, y: [0, -7, 0] } : undefined}
+            transition={{
+              opacity: { duration: 0.5, delay: 0.2 + i * 0.1 },
+              scale: { duration: 0.5, delay: 0.2 + i * 0.1 },
+              y: { duration: 3.6 + i, repeat: Infinity, ease: "easeInOut" },
+            }}
+          >
+            <Icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={2.2} />
+          </motion.span>
+        ))}
+      </div>
+
+      <div className={`flex items-center gap-3 ${left ? "sm:justify-end" : "sm:justify-start"}`}>
+        <span className="font-codec-bold flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm text-white shadow-[0_8px_20px_-8px_rgba(226,75,74,0.8)]">
+          {index + 1}
+        </span>
+        <h3 className="font-codec-bold text-2xl tracking-[-0.03em] text-neutral-900 sm:text-3xl">
+          {step.title}
+        </h3>
+      </div>
+      <p className="font-codec-bold mt-2 text-xs uppercase tracking-[0.2em] text-primary">
+        {step.day}
       </p>
-      <h3 className="font-codec-bold mt-2 text-2xl tracking-[-0.03em] text-neutral-900 sm:text-3xl">
-        {step.title}
-      </h3>
       <p className="mt-3 text-base leading-relaxed text-neutral-600 sm:text-lg">
         {step.description}
       </p>
@@ -1088,14 +1148,6 @@ function ProcessStep({
 
   return (
     <div ref={ref} className="relative">
-      {/* point sur la ligne */}
-      <motion.div
-        initial={{ scale: 0 }}
-        animate={inView ? { scale: 1 } : { scale: 0 }}
-        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-        className="absolute left-4 top-1 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-primary bg-white shadow-[0_0_0_5px_rgba(226,75,74,0.12)] sm:left-1/2"
-      />
-      {/* grille 2 colonnes sur desktop pour l'alternance */}
       <div className="grid sm:grid-cols-2">
         {left ? (
           <>
@@ -1113,6 +1165,77 @@ function ProcessStep({
   );
 }
 
+const CONFETTI_COLORS = ["#E24B4A", "#3B82F6", "#F59E0B", "#10B981", "#8B5CF6", "#EC4899"];
+
+function ConfettiBurst({ fire }: { fire: boolean }) {
+  const pieces = useMemo(
+    () =>
+      Array.from({ length: 44 }, (_, i) => ({
+        id: i,
+        x: (Math.random() - 0.5) * 520,
+        y: -(80 + Math.random() * 220),
+        rotate: Math.random() * 720 - 360,
+        delay: Math.random() * 0.35,
+        duration: 1.6 + Math.random() * 1.1,
+        color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+        w: 6 + Math.random() * 5,
+        h: 10 + Math.random() * 8,
+      })),
+    [],
+  );
+
+  return (
+    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 z-0 flex justify-center">
+      {fire &&
+        pieces.map((p) => (
+          <motion.span
+            key={p.id}
+            className="absolute rounded-[2px]"
+            style={{ width: p.w, height: p.h, backgroundColor: p.color }}
+            initial={{ opacity: 0, x: 0, y: 0, rotate: 0 }}
+            animate={{
+              opacity: [0, 1, 1, 0],
+              x: p.x,
+              y: [0, p.y, p.y + 260],
+              rotate: p.rotate,
+            }}
+            transition={{ duration: p.duration, delay: p.delay, ease: "easeOut" }}
+          />
+        ))}
+    </div>
+  );
+}
+
+function ProcessOutro() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.6, once: true });
+
+  return (
+    <div ref={ref} className="relative mt-16 sm:mt-20">
+      <ConfettiBurst fire={inView} />
+      <motion.div
+        initial={{ opacity: 0, y: 24 }}
+        animate={inView ? { opacity: 1, y: 0 } : undefined}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="relative z-10 mx-auto max-w-2xl text-center"
+      >
+        <motion.span
+          initial={{ scale: 0, rotate: -30 }}
+          animate={inView ? { scale: 1, rotate: 0 } : undefined}
+          transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
+          className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-[0_16px_40px_-12px_rgba(226,75,74,0.8)]"
+        >
+          <PartyPopper className="h-7 w-7" />
+        </motion.span>
+        <h3 className="font-codec-bold mt-6 text-2xl leading-[1.15] tracking-[-0.04em] text-neutral-900 sm:text-4xl">
+          Et voilà, en quelques jours seulement tu as ton{" "}
+          <span className="text-primary">montage vidéo et tes visuels livrés</span>, prêts à publier.
+        </h3>
+      </motion.div>
+    </div>
+  );
+}
+
 function ProcessSteps() {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({
@@ -1122,33 +1245,32 @@ function ProcessSteps() {
   const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 25, mass: 0.4 });
 
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:py-24">
-      <FadeIn className="text-center">
-        <p className="font-codec-bold text-xs uppercase tracking-[0.25em] text-primary">
-          Notre méthode
-        </p>
-        <h2 className="font-codec-bold mx-auto mt-3 max-w-3xl text-3xl leading-[1.1] tracking-[-0.05em] text-neutral-900 sm:text-4xl lg:text-5xl">
-          Comment on procède, étape par étape
-        </h2>
-      </FadeIn>
-
-      <div ref={ref} className="relative mt-14 sm:mt-20">
-        {/* ligne de fond */}
-        <div className="absolute bottom-0 left-4 top-0 w-px -translate-x-1/2 bg-neutral-200 sm:left-1/2" />
-        {/* ligne de progression rouge animée au scroll */}
+    <section className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:pb-24 sm:pt-10">
+      <div ref={ref} className="relative">
+        {/* ligne de fond épaisse */}
+        <div className="absolute bottom-0 left-5 top-0 w-[6px] -translate-x-1/2 rounded-full bg-neutral-200/80 sm:left-1/2" />
+        {/* progression rouge au scroll */}
         <motion.div
           style={{ scaleY: progress }}
-          className="absolute bottom-0 left-4 top-0 w-[3px] origin-top -translate-x-1/2 rounded-full bg-gradient-to-b from-primary via-primary to-primary/60 sm:left-1/2"
+          className="absolute bottom-0 left-5 top-0 w-[6px] origin-top -translate-x-1/2 rounded-full bg-primary sm:left-1/2"
         />
-        <div className="flex flex-col gap-14 sm:gap-20">
+        {/* point rouge plein qui descend avec la progression */}
+        <motion.div
+          style={{ top: useTransform(progress, [0, 1], ["0%", "100%"]) }}
+          className="absolute left-5 z-10 h-5 w-5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary shadow-[0_0_0_6px_rgba(226,75,74,0.18)] sm:left-1/2"
+        />
+        <div className="flex flex-col gap-16 sm:gap-24">
           {PROCESS_STEPS.map((step, i) => (
             <ProcessStep key={step.title} step={step} index={i} />
           ))}
         </div>
       </div>
+
+      <ProcessOutro />
     </section>
   );
 }
+
 
 /* ---------------- réalisations ---------------- */
 
