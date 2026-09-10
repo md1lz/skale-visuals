@@ -20,6 +20,7 @@ import { getMaintenanceStatus } from "@/lib/site-settings.functions";
 import { getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { MaintenancePage } from "../components/MaintenancePage";
 import { registerPushWorker } from "@/lib/pwa";
+import { SmoothScroll } from "../components/SmoothScroll";
 
 function NotFoundComponent() {
   return (
@@ -201,7 +202,9 @@ function RootInner() {
           }
         />
       ) : (
-        <Outlet />
+        <SmoothScroll>
+          <Outlet />
+        </SmoothScroll>
       )}
       <Toaster richColors position="bottom-right" theme="dark" />
     </>
