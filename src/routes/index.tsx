@@ -833,6 +833,40 @@ function ClientTestimonial({ settings }: { settings: HomeContent["settings"] }) 
   );
 }
 
+/* ---------------- meilleures réalisations ---------------- */
+
+function BestRealisationsHeader() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.3 });
+
+  return (
+    <section className="w-full bg-white py-16 sm:py-20 lg:py-24">
+      <motion.div
+        ref={ref}
+        initial={{ opacity: 0, y: 24 }}
+        animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+        transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+        className="mx-auto flex max-w-6xl flex-col items-center px-4 text-center"
+      >
+        <div className="flex items-center gap-2.5">
+          <img
+            src={skaleSymbol.url}
+            alt=""
+            aria-hidden="true"
+            className="h-10 w-10 rounded-md object-cover shadow-[0_4px_10px_rgba(0,0,0,0.12)] sm:h-12 sm:w-12"
+          />
+          <span className="font-codec-bold mt-1 text-[1.85rem] leading-none tracking-[-0.06em] text-foreground sm:text-[2.25rem]">
+            skale
+          </span>
+        </div>
+        <h2 className="font-codec-bold mt-6 text-3xl tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
+          Nos meilleurs réalisations
+        </h2>
+      </motion.div>
+    </section>
+  );
+}
+
 /* ---------------- réalisations ---------------- */
 
 function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: HomeVideo[] }) {
