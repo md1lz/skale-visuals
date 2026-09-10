@@ -94,6 +94,7 @@ export function SiteAdminPanel() {
       setCompanyPreviews(res.companyPreviews ?? []);
       setCreatorPreviews(res.creatorPreviews ?? []);
       setTestimonialPreview(res.testimonialPreview ?? null);
+      setProjectPreviews(res.projectPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
