@@ -1034,55 +1034,35 @@ const PROCESS_STEPS = [
     title: "Appel découverte",
     description:
       "On se prévoit un appel 100% gratuit de 30 minutes, sans engagement. On analyse ton contenu actuel, on discute de tes idées et on précise tes objectifs, ta niche et ton projet pour comprendre comment t'aider au mieux.",
-    icons: [
-      { Icon: Phone, className: "text-[#3B82F6]" },
-      { Icon: MessageSquare, className: "text-[#F59E0B]" },
-      { Icon: Sparkles, className: "text-[#10B981]" },
-    ],
+    icons: ["📞", "💬", "✨"],
   },
   {
     day: "Jour 2",
     title: "Brief & stratégie",
     description:
       "On prépare un devis adapté à tes besoins, puis on se revoit en appel pour affiner les stratégies et l'accompagnement. Tu nous partages tes inspirations, ta direction artistique et ton angle créatif pour qu'on parte sur une base solide.",
-    icons: [
-      { Icon: Lightbulb, className: "text-[#F59E0B]" },
-      { Icon: Palette, className: "text-[#8B5CF6]" },
-      { Icon: Star, className: "text-[#EC4899]" },
-    ],
+    icons: ["💡", "🎨", "⭐"],
   },
   {
     day: "Jour 3",
     title: "Création",
     description:
       "Selon ton besoin, notre équipe monte ta vidéo ou designe tes visuels. Chaque création est pensée pour capter l'attention dès les premières secondes.",
-    icons: [
-      { Icon: Clapperboard, className: "text-[#EF4444]" },
-      { Icon: Scissors, className: "text-[#06B6D4]" },
-      { Icon: Music, className: "text-[#8B5CF6]" },
-    ],
+    icons: ["🎬", "✂️", "🎵"],
   },
   {
     day: "Jour 6",
     title: "Révisions illimitées",
     description:
       "Tu nous fais tes retours directement dans ton espace client : tout est centralisé sans logiciel externe, pour des échanges simples et efficaces. On ajuste jusqu'à ce que tu sois 100% satisfait.",
-    icons: [
-      { Icon: Wand2, className: "text-[#8B5CF6]" },
-      { Icon: Heart, className: "text-[#EC4899]" },
-      { Icon: Camera, className: "text-[#0EA5E9]" },
-    ],
+    icons: ["🪄", "❤️", "📷"],
   },
   {
     day: "Jour 7",
     title: "Livraison",
     description:
       "Une fois validés, tes fichiers finaux te sont livrés prêts à publier directement dans ton espace client. Rapide, simple, sans prise de tête.",
-    icons: [
-      { Icon: PackageCheck, className: "text-[#10B981]" },
-      { Icon: Rocket, className: "text-[#EF4444]" },
-      { Icon: Film, className: "text-[#F59E0B]" },
-    ],
+    icons: ["📦", "🚀", "🎞️"],
   },
 ];
 
