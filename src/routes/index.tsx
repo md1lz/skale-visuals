@@ -225,7 +225,7 @@ function Navbar() {
                   src={skaleRedPill.url}
                   alt=""
                   aria-hidden="true"
-                  className="h-8 w-8 rounded-md object-cover drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
+                  className="h-8 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
                   animate={skaleHover ? { rotate: -18, scale: 1.12 } : { rotate: 0, scale: 1 }}
                   transition={{ type: "spring", stiffness: 260, damping: 10, mass: 0.85 }}
                 />
@@ -281,7 +281,7 @@ function Navbar() {
                       src={skaleRedPill.url}
                       alt=""
                       aria-hidden="true"
-                      className="h-8 w-8 rounded-md object-cover drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
+                      className="h-8 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
                       animate={studioHover ? { rotate: 14, scale: 1.12 } : { rotate: 0, scale: 1 }}
                       transition={{ type: "spring", stiffness: 260, damping: 10, mass: 0.85 }}
                     />
@@ -857,7 +857,7 @@ function BestRealisationsHeader() {
             src={skaleRedPill.url}
             alt=""
             aria-hidden="true"
-            className="h-8 w-8 rounded-md object-cover shadow-lg sm:h-9 sm:w-9"
+            className="h-8 w-auto rounded-md object-contain shadow-lg sm:h-9"
           />
           <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-slate-900 sm:text-[1.75rem]">
             skale
@@ -1303,7 +1303,7 @@ function FooterLogo({ className = "" }: { className?: string }) {
         src={skaleRedPill.url}
         alt=""
         aria-hidden="true"
-        className="h-8 w-8 rounded-md object-cover"
+        className="h-8 w-auto rounded-md object-contain"
       />
       <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-white">
         skale
@@ -1319,17 +1319,12 @@ function SiteFooter() {
         <FooterLogo />
 
         <div className="relative mt-16 flex justify-center overflow-hidden sm:mt-20 lg:mt-28">
-          <div className="flex translate-y-[35%] items-center gap-3 sm:gap-4">
-            <img
-              src={skaleRedPill.url}
-              alt=""
-              aria-hidden="true"
-              className="h-[18vw] w-[18vw] min-h-[5rem] min-w-[5rem] max-h-[14rem] max-w-[14rem] rounded-md object-cover"
-            />
-            <span className="font-codec-bold text-[22vw] leading-none tracking-[-0.06em] text-white sm:text-[20vw]">
-              skale
-            </span>
-          </div>
+          <img
+            src={skaleRedPill.url}
+            alt=""
+            aria-hidden="true"
+            className="h-auto w-[70vw] max-w-[46rem] translate-y-[35%] rounded-md object-contain"
+          />
         </div>
       </div>
     </footer>
