@@ -1363,7 +1363,7 @@ function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) 
     <div className="marquee always-scroll relative mt-5 w-full overflow-hidden sm:mt-6 sm:w-5/12">
       <div
         className="trust-marquee-track flex w-max items-center gap-3 py-1 sm:gap-4"
-        style={{ animationDuration: "10s" }}
+        style={{ animationDuration: "14s" }}
       >
         {repeated.map((item, index) => (
           <div
@@ -1373,7 +1373,7 @@ function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) 
             <img
               src={item.logo!}
               alt=""
-              className="max-h-full max-w-full object-contain brightness-0 invert"
+              className="max-h-full max-w-full object-contain"
             />
           </div>
         ))}
