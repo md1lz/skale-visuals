@@ -41,18 +41,26 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
   const creatorPreviews = await Promise.all(settings.creators.map((creator) => signAsset(creator.photo)));
 
   const testimonialPreview = await signAsset(settings.testimonial.photo);
+  const projectPreviews = await Promise.all(
+    settings.projects.map(async (p) => ({
+      image: await signAsset(p.image),
+      avatar: await signAsset(p.avatar),
+    })),
+  );
 
   return {
     settings,
     testimonialPreview,
     companyPreviews,
     creatorPreviews,
+    projectPreviews,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
   } as HomeContent & {
     testimonialPreview: string | null;
     companyPreviews: (string | null)[];
     creatorPreviews: (string | null)[];
+    projectPreviews: { image: string | null; avatar: string | null }[];
   };
 });
 
@@ -81,6 +89,17 @@ const settingsSchema = z.object({
     photo: z.string().trim().max(500).nullable(),
     quote: z.string().trim().max(300),
   }),
+  projects: z
+    .array(
+      z.object({
+        image: z.string().trim().max(500).nullable(),
+        badge: z.string().trim().max(60),
+        title: z.string().trim().max(120),
+        description: z.string().trim().max(300),
+        avatar: z.string().trim().max(500).nullable(),
+      }),
+    )
+    .max(2),
 });
 
 export const saveHomeSettings = createServerFn({ method: "POST" })

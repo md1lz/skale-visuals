@@ -6,6 +6,13 @@ export type TrustClient = { name: string; photo: string | null };
 export type CompanyLogo = { name: string; logo: string | null };
 export type CreatorProfile = { name: string; audience: string; photo: string | null };
 export type HomeTestimonial = { name: string; role: string; photo: string | null; quote: string };
+export type ProjectRecap = {
+  image: string | null;
+  badge: string;
+  title: string;
+  description: string;
+  avatar: string | null;
+};
 
 export type HomeSettings = {
   videosCount: number;
@@ -15,6 +22,7 @@ export type HomeSettings = {
   creators: CreatorProfile[];
   testimonial: HomeTestimonial;
   plusLabel: string;
+  projects: ProjectRecap[];
 };
 
 export type HomeFolder = { id: string; label: string; position: number };
@@ -47,6 +55,22 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     quote: "J'ai adoré l'approche de Skale\u00A0Visuals\npour notre deal",
   },
   plusLabel: "+50",
+  projects: [
+    {
+      image: null,
+      badge: "Montage vidéo",
+      title: "VSL YouTube ultra-convertissant",
+      description: "Un format long réédité pour accrocher dès la première seconde et guider le spectateur jusqu’à l’action.",
+      avatar: null,
+    },
+    {
+      image: null,
+      badge: "Design & Miniatures",
+      title: "Identité visuelle complète",
+      description: "Miniatures, overlays et assets graphiques cohérents pour renforcer la reconnaissance de la chaîne.",
+      avatar: null,
+    },
+  ],
 };
 
 export function normalizeHomeSettings(raw: unknown): HomeSettings {
@@ -55,6 +79,8 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
   while (trust.length < 4) trust.push({ name: `Client ${trust.length + 1}`, photo: null });
   const companies = Array.isArray(v.companies) ? v.companies.slice(0, 24) : [];
   const creators = Array.isArray(v.creators) ? v.creators.slice(0, 24) : [];
+  const projects = Array.isArray(v.projects) ? v.projects.slice(0, 2) : [];
+  while (projects.length < 2) projects.push({ ...DEFAULT_HOME_SETTINGS.projects[projects.length] });
   return {
     videosCount: Number.isFinite(Number(v.videosCount)) ? Number(v.videosCount) : DEFAULT_HOME_SETTINGS.videosCount,
     clientsCount: Number.isFinite(Number(v.clientsCount))
@@ -81,6 +107,13 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
       ).toString(),
     },
     plusLabel: (v.plusLabel ?? DEFAULT_HOME_SETTINGS.plusLabel).toString(),
+    projects: projects.map((p) => ({
+      image: (p as ProjectRecap | undefined)?.image ?? null,
+      badge: ((p as ProjectRecap | undefined)?.badge ?? "").toString(),
+      title: ((p as ProjectRecap | undefined)?.title ?? "").toString(),
+      description: ((p as ProjectRecap | undefined)?.description ?? "").toString(),
+      avatar: (p as ProjectRecap | undefined)?.avatar ?? null,
+    })),
   };
 }
 
@@ -127,6 +160,13 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
   );
   settings.creators = await Promise.all(
     settings.creators.map(async (creator) => ({ ...creator, photo: await signAsset(creator.photo) })),
+  );
+  settings.projects = await Promise.all(
+    settings.projects.map(async (p) => ({
+      ...p,
+      image: await signAsset(p.image),
+      avatar: await signAsset(p.avatar),
+    })),
   );
 
   settings.testimonial = {

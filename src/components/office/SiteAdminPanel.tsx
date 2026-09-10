@@ -76,6 +76,7 @@ export function SiteAdminPanel() {
   const [companyPreviews, setCompanyPreviews] = useState<(string | null)[]>([]);
   const [creatorPreviews, setCreatorPreviews] = useState<(string | null)[]>([]);
   const [testimonialPreview, setTestimonialPreview] = useState<string | null>(null);
+  const [projectPreviews, setProjectPreviews] = useState<{ image: string | null; avatar: string | null }[]>([]);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
   const [videos, setVideos] = useState<HomeVideo[]>([]);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
@@ -93,6 +94,7 @@ export function SiteAdminPanel() {
       setCompanyPreviews(res.companyPreviews ?? []);
       setCreatorPreviews(res.creatorPreviews ?? []);
       setTestimonialPreview(res.testimonialPreview ?? null);
+      setProjectPreviews(res.projectPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
@@ -145,6 +147,13 @@ export function SiteAdminPanel() {
             photo: settings.testimonial.photo,
             quote: settings.testimonial.quote,
           },
+          projects: settings.projects.map((p) => ({
+            image: p.image,
+            badge: p.badge,
+            title: p.title,
+            description: p.description,
+            avatar: p.avatar,
+          })),
         },
       });
       await Promise.all(
@@ -212,6 +221,12 @@ export function SiteAdminPanel() {
   }
   function patchVideo(id: string, patch: Partial<HomeVideo>) {
     setVideos((arr) => arr.map((v) => (v.id === id ? { ...v, ...patch } : v)));
+    setDirty(true);
+  }
+  function patchProject(i: number, patch: Partial<HomeSettings["projects"][number]>) {
+    setSettings((s) =>
+      s ? { ...s, projects: s.projects.map((p, idx) => (idx === i ? { ...p, ...patch } : p)) } : s,
+    );
     setDirty(true);
   }
 
@@ -517,6 +532,107 @@ export function SiteAdminPanel() {
               onChange={(e) => patchSettings({ testimonial: { ...settings.testimonial, quote: e.target.value } })}
             />
           </div>
+        </div>
+      </section>
+
+      {/* Récap projets */}
+      <section className={`${card} mb-6`}>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">Récap projets</h2>
+        <p className="mt-1 text-xs text-neutral-500">Deux cartes mises en avant sous “Nos meilleurs projets”.</p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          {settings.projects.map((project, i) => (
+            <div key={`project-${i}`} className="rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="flex items-start gap-3">
+                <button
+                  type="button"
+                  aria-label={`Image du projet ${i + 1}`}
+                  onClick={() => fileRefs.current[`project-image-${i}`]?.click()}
+                  className="grid h-20 w-28 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+                >
+                  {projectPreviews[i]?.image ? (
+                    <img src={projectPreviews[i].image ?? ""} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <ImagePlus className="h-5 w-5" />
+                  )}
+                </button>
+                <input
+                  ref={(el) => { fileRefs.current[`project-image-${i}`] = el; }}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!file) return;
+                    try {
+                      const reference = await uploadAsset(file);
+                      patchProject(i, { image: reference });
+                      setProjectPreviews((items) =>
+                        items.map((item, idx) => (idx === i ? { ...item, image: URL.createObjectURL(file) } : item)),
+                      );
+                    } catch (error) {
+                      toast.error(error instanceof Error ? error.message : "Upload échoué");
+                    }
+                  }}
+                />
+                <div className="min-w-0 flex-1 space-y-2">
+                  <input
+                    className={input}
+                    placeholder="Titre"
+                    value={project.title}
+                    onChange={(e) => patchProject(i, { title: e.target.value })}
+                  />
+                  <input
+                    className={input}
+                    placeholder="Pastille"
+                    value={project.badge}
+                    onChange={(e) => patchProject(i, { badge: e.target.value })}
+                  />
+                </div>
+              </div>
+              <textarea
+                className={`${input} mt-3 min-h-[70px]`}
+                placeholder="Description"
+                value={project.description}
+                onChange={(e) => patchProject(i, { description: e.target.value })}
+              />
+              <div className="mt-3 flex items-center gap-3">
+                <button
+                  type="button"
+                  aria-label={`Photo de profil du projet ${i + 1}`}
+                  onClick={() => fileRefs.current[`project-avatar-${i}`]?.click()}
+                  className="grid h-12 w-12 shrink-0 place-items-center overflow-hidden rounded-full border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+                >
+                  {projectPreviews[i]?.avatar ? (
+                    <img src={projectPreviews[i].avatar ?? ""} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <ImagePlus className="h-5 w-5" />
+                  )}
+                </button>
+                <input
+                  ref={(el) => { fileRefs.current[`project-avatar-${i}`] = el; }}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!file) return;
+                    try {
+                      const reference = await uploadAsset(file);
+                      patchProject(i, { avatar: reference });
+                      setProjectPreviews((items) =>
+                        items.map((item, idx) => (idx === i ? { ...item, avatar: URL.createObjectURL(file) } : item)),
+                      );
+                    } catch (error) {
+                      toast.error(error instanceof Error ? error.message : "Upload échoué");
+                    }
+                  }}
+                />
+                <p className="text-xs text-neutral-500">Avatar rond du client/créateur</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
 
