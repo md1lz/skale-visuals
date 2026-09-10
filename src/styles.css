@@ -208,6 +208,14 @@
   animation-play-state: paused;
 }
 
+.marquee.always-scroll:hover .marquee-track,
+.marquee.always-scroll:hover .marquee-track-reverse,
+.marquee.always-scroll:hover .marquee-track-fast,
+.marquee.always-scroll:hover .marquee-y-track,
+.marquee.always-scroll:hover .marquee-y-track-reverse {
+  animation-play-state: running;
+}
+
 .marquee.is-offscreen .marquee-track,
 .marquee.is-offscreen .marquee-track-reverse,
 .marquee.is-offscreen .marquee-track-fast,
