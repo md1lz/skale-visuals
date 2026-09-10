@@ -72,8 +72,15 @@ function useHomeContent() {
       .on("postgres_changes", { event: "*", schema: "public", table: "home_videos" }, load)
       .on("postgres_changes", { event: "*", schema: "public", table: "site_settings" }, load)
       .subscribe();
+    const onVisible = () => {
+      if (document.visibilityState === "visible") load();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+    window.addEventListener("focus", load);
     return () => {
       supabase.removeChannel(channel);
+      document.removeEventListener("visibilitychange", onVisible);
+      window.removeEventListener("focus", load);
     };
   }, [load]);
 

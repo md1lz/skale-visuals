@@ -1,4 +1,5 @@
 import { createServerFn } from "@tanstack/react-start";
+import { setResponseHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -124,6 +125,7 @@ export type HomeContent = {
 };
 
 export const getHomeContent = createServerFn({ method: "GET" }).handler(async (): Promise<HomeContent> => {
+  setResponseHeader("Cache-Control", "no-store");
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) return { settings: DEFAULT_HOME_SETTINGS, folders: [], videos: [] };

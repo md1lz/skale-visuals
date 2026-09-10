@@ -1,9 +1,11 @@
 import { createServerFn } from "@tanstack/react-start";
+import { setResponseHeader } from "@tanstack/react-start/server";
 import { createClient } from "@supabase/supabase-js";
 import type { Database } from "@/integrations/supabase/types";
 import { DEFAULT_ABOUT, normalizeAbout, type AboutContent } from "@/lib/about-content.shared";
 
 export const getAboutContent = createServerFn({ method: "GET" }).handler(async (): Promise<AboutContent> => {
+  setResponseHeader("Cache-Control", "no-store");
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) return DEFAULT_ABOUT;
