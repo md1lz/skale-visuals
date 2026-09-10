@@ -1001,7 +1001,7 @@ function ProjectRecapFooter() {
           <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45" />
         </button>
 
-        <div className="mt-12 flex flex-col items-center gap-1 sm:mt-14 sm:gap-2">
+        <div className="mt-16 flex flex-col items-center gap-1 sm:mt-24 sm:gap-2">
           <div className="text-center">
             <h2 className="font-codec-bold text-3xl leading-[1.1] tracking-[-0.06em] sm:text-4xl lg:text-5xl">
               <span className="block text-neutral-900">Livraison ultra-rapide,</span>
