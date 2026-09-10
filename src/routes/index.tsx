@@ -1377,7 +1377,7 @@ function SiteFooter() {
 
 function Home() {
   useLightTheme();
-  const { settings, folders, videos } = useHomeContent();
+  const { settings } = useHomeContent();
 
   return (
     <div className="site-root relative min-h-screen">
@@ -1414,11 +1414,6 @@ function Home() {
 
         <ProcessSteps />
 
-        <div className="mx-auto w-full max-w-6xl px-4">
-          <Realisations folders={folders} videos={videos} />
-          <CallCta />
-          <Comparatif />
-        </div>
       </main>
       <SiteFooter />
     </div>
