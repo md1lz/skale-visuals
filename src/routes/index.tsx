@@ -853,7 +853,7 @@ function BestRealisationsHeader() {
             src={skaleSymbol.url}
             alt=""
             aria-hidden="true"
-            className="h-8 w-8 rounded-md object-cover sm:h-9 sm:w-9"
+            className="h-8 w-8 rounded-md object-cover shadow-lg sm:h-9 sm:w-9"
           />
           <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-slate-900 sm:text-[1.75rem]">
             skale
