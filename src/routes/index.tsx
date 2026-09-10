@@ -1102,7 +1102,7 @@ function ProcessStep({
         {step.icons.map((emoji, i) => (
           <motion.span
             key={i}
-            className={`absolute ${floatPos[i]}`}
+            className={`absolute ${floatPos[i]} ${i === 2 ? "hidden sm:block" : ""}`}
             initial={{ opacity: 0, scale: 0.6 }}
             animate={inView ? { opacity: 0.95, scale: 1, y: [0, -7, 0] } : undefined}
             transition={{
@@ -1111,7 +1111,7 @@ function ProcessStep({
               y: { duration: 3.6 + i, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            <span className="block text-xl leading-none sm:text-2xl">{emoji}</span>
+            <span className="block text-lg leading-none sm:text-2xl">{emoji}</span>
           </motion.span>
         ))}
       </div>
