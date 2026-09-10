@@ -1231,18 +1231,20 @@ const SERVICES_WORDS = [
   "Shorts & Reels",
   "Branding",
   "Motion design",
-  "Thumbnails",
 ];
 
 function ServicesMarquee() {
   const items = [...SERVICES_WORDS, ...SERVICES_WORDS];
   return (
-    <div className="marquee ticker-fade relative mt-14 overflow-hidden sm:mt-16">
-      <div className="marquee-track-fast flex w-max items-center gap-10 pr-10 sm:gap-14 sm:pr-14">
+    <div className="marquee always-scroll ticker-fade relative mt-14 overflow-hidden sm:mt-16">
+      <div className="marquee-track-fast flex w-max items-center gap-4 py-2 pr-4 sm:gap-6 sm:pr-6">
         {items.map((word, i) => (
-          <span key={`${word}-${i}`} className="flex shrink-0 items-center gap-3 sm:gap-4">
-            <Check className="h-5 w-5 shrink-0 text-primary" strokeWidth={3} />
-            <span className="font-codec whitespace-nowrap text-lg tracking-[-0.01em] text-neutral-800 sm:text-xl">
+          <span
+            key={`${word}-${i}`}
+            className="flex shrink-0 items-center gap-2.5 rounded-2xl border border-neutral-100 bg-white px-4 py-2.5 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)] sm:gap-3 sm:rounded-3xl sm:px-5 sm:py-3"
+          >
+            <Check className="h-4 w-4 shrink-0 text-primary sm:h-5 sm:w-5" strokeWidth={3} />
+            <span className="font-codec whitespace-nowrap text-base tracking-[-0.01em] text-neutral-800 sm:text-lg">
               {word}
             </span>
           </span>
