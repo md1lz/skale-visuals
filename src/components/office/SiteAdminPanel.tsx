@@ -223,6 +223,12 @@ export function SiteAdminPanel() {
     setVideos((arr) => arr.map((v) => (v.id === id ? { ...v, ...patch } : v)));
     setDirty(true);
   }
+  function patchProject(i: number, patch: Partial<HomeSettings["projects"][number]>) {
+    setSettings((s) =>
+      s ? { ...s, projects: s.projects.map((p, idx) => (idx === i ? { ...p, ...patch } : p)) } : s,
+    );
+    setDirty(true);
+  }
 
   async function addFolder() {
     const label = newFolder.trim();
