@@ -892,7 +892,7 @@ function ProjectRecapCards({ settings }: { settings: HomeContent["settings"] }) 
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 * (i + 1), ease: [0.22, 1, 0.36, 1] }}
-              className="group relative flex min-h-[360px] flex-col overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18)] transition-transform duration-500 ease-out hover:scale-[1.02] hover:rotate-1 sm:min-h-[420px] lg:min-h-[480px]"
+              className={`group relative flex min-h-[360px] flex-col overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18)] transition-transform duration-500 ease-out hover:scale-[1.02] ${i === 0 ? "hover:-rotate-1" : "hover:rotate-1"} sm:min-h-[420px] lg:min-h-[480px]`}
             >
               {hasImage && (
                 <>
