@@ -1415,7 +1415,7 @@ function Home() {
         <ProcessSteps />
 
       </main>
-      <SiteFooter />
+      <SiteFooter settings={settings} />
     </div>
   );
 }
