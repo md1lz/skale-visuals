@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { AnimatePresence, motion, useInView } from "framer-motion";
+import { AnimatePresence, motion, useInView, useScroll, useSpring } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowUpRight, User, BarChart3, Zap } from "lucide-react";
 
@@ -1026,6 +1026,130 @@ function ProjectRecapFooter() {
   );
 }
 
+/* ---------------- processus étape par étape ---------------- */
+
+const PROCESS_STEPS = [
+  {
+    title: "Appel découverte",
+    description:
+      "On échange sur ton projet, tes objectifs et ton audience pour comprendre exactement ce dont tu as besoin.",
+  },
+  {
+    title: "Brief & stratégie",
+    description:
+      "On définit ensemble l'angle, le style et les références pour cadrer la création avant de commencer.",
+  },
+  {
+    title: "Création",
+    description:
+      "Notre équipe monte et designe ta première version, pensée pour capter l'attention dès les premières secondes.",
+  },
+  {
+    title: "Révisions illimitées",
+    description:
+      "Tu nous fais tes retours directement sur la vidéo, et on ajuste jusqu'à ce que tu sois 100% satisfait.",
+  },
+  {
+    title: "Livraison",
+    description:
+      "Tu reçois tes fichiers finaux, prêts à publier, en quelques jours seulement.",
+  },
+];
+
+function ProcessStep({
+  step,
+  index,
+}: {
+  step: { title: string; description: string };
+  index: number;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.5, once: true });
+  const left = index % 2 === 0;
+
+  const content = (
+    <motion.div
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+      className={`max-w-md ${left ? "sm:ml-auto sm:pr-14 sm:text-right" : "sm:mr-auto sm:pl-14 sm:text-left"} pl-12 text-left sm:pl-0`}
+    >
+      <p className="font-codec-bold text-xs uppercase tracking-[0.2em] text-primary">
+        Étape {index + 1}
+      </p>
+      <h3 className="font-codec-bold mt-2 text-2xl tracking-[-0.03em] text-neutral-900 sm:text-3xl">
+        {step.title}
+      </h3>
+      <p className="mt-3 text-base leading-relaxed text-neutral-600 sm:text-lg">
+        {step.description}
+      </p>
+    </motion.div>
+  );
+
+  return (
+    <div ref={ref} className="relative">
+      {/* point sur la ligne */}
+      <motion.div
+        initial={{ scale: 0 }}
+        animate={inView ? { scale: 1 } : { scale: 0 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="absolute left-4 top-1 z-10 h-3.5 w-3.5 -translate-x-1/2 rounded-full border-2 border-primary bg-white shadow-[0_0_0_5px_rgba(226,75,74,0.12)] sm:left-1/2"
+      />
+      {/* grille 2 colonnes sur desktop pour l'alternance */}
+      <div className="grid sm:grid-cols-2">
+        {left ? (
+          <>
+            <div className="sm:contents">{content}</div>
+            <div className="hidden sm:block" />
+          </>
+        ) : (
+          <>
+            <div className="hidden sm:block" />
+            <div className="sm:contents">{content}</div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ProcessSteps() {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start 0.75", "end 0.6"],
+  });
+  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 25, mass: 0.4 });
+
+  return (
+    <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:py-24">
+      <FadeIn className="text-center">
+        <p className="font-codec-bold text-xs uppercase tracking-[0.25em] text-primary">
+          Notre méthode
+        </p>
+        <h2 className="font-codec-bold mx-auto mt-3 max-w-3xl text-3xl leading-[1.1] tracking-[-0.05em] text-neutral-900 sm:text-4xl lg:text-5xl">
+          Comment on procède, étape par étape
+        </h2>
+      </FadeIn>
+
+      <div ref={ref} className="relative mt-14 sm:mt-20">
+        {/* ligne de fond */}
+        <div className="absolute bottom-0 left-4 top-0 w-px -translate-x-1/2 bg-neutral-200 sm:left-1/2" />
+        {/* ligne de progression rouge animée au scroll */}
+        <motion.div
+          style={{ scaleY: progress }}
+          className="absolute bottom-0 left-4 top-0 w-[3px] origin-top -translate-x-1/2 rounded-full bg-gradient-to-b from-primary via-primary to-primary/60 sm:left-1/2"
+        />
+        <div className="flex flex-col gap-14 sm:gap-20">
+          {PROCESS_STEPS.map((step, i) => (
+            <ProcessStep key={step.title} step={step} index={i} />
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /* ---------------- réalisations ---------------- */
 
 function Realisations({ folders, videos }: { folders: HomeFolder[]; videos: HomeVideo[] }) {
@@ -1418,6 +1542,8 @@ function Home() {
         <ProjectRecapCards settings={settings} />
 
         <ProjectRecapFooter />
+
+        <ProcessSteps />
 
         <div className="mx-auto w-full max-w-6xl px-4">
           <Realisations folders={folders} videos={videos} />
