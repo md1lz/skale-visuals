@@ -1067,15 +1067,15 @@ const PROCESS_STEPS = [
 ];
 
 const FLOAT_POS_LEFT = [
-  "left-4 -top-10 rotate-[-14deg] sm:-left-4 sm:-top-12",
-  "left-1/2 -top-10 -translate-x-1/2 rotate-[8deg] sm:-top-14",
-  "left-6 -bottom-8 rotate-[12deg] sm:left-4 sm:-bottom-10",
+  "left-2 -top-8 rotate-[-14deg] sm:left-2 sm:-top-10",
+  "right-2 -top-8 rotate-[10deg] sm:right-8 sm:-top-11",
+  "left-1/2 -bottom-6 -translate-x-1/2 rotate-[8deg] sm:left-8 sm:-bottom-8",
 ];
 
 const FLOAT_POS_RIGHT = [
-  "right-4 -top-10 rotate-[14deg] sm:-right-4 sm:-top-12",
-  "left-1/2 -top-10 -translate-x-1/2 rotate-[-8deg] sm:-top-14",
-  "right-6 -bottom-8 rotate-[-12deg] sm:right-4 sm:-bottom-10",
+  "right-2 -top-8 rotate-[14deg] sm:right-2 sm:-top-10",
+  "left-2 -top-8 rotate-[-10deg] sm:left-8 sm:-top-11",
+  "left-1/2 -bottom-6 -translate-x-1/2 rotate-[-8deg] sm:right-8 sm:-bottom-8",
 ];
 
 function ProcessStep({
@@ -1102,7 +1102,7 @@ function ProcessStep({
         {step.icons.map((emoji, i) => (
           <motion.span
             key={i}
-            className={`absolute ${floatPos[i]}`}
+            className={`absolute ${floatPos[i]} ${i === 2 ? "hidden sm:block" : ""}`}
             initial={{ opacity: 0, scale: 0.6 }}
             animate={inView ? { opacity: 0.95, scale: 1, y: [0, -7, 0] } : undefined}
             transition={{
@@ -1111,7 +1111,7 @@ function ProcessStep({
               y: { duration: 3.6 + i, repeat: Infinity, ease: "easeInOut" },
             }}
           >
-            <span className="block text-xl leading-none sm:text-2xl">{emoji}</span>
+            <span className="block text-lg leading-none sm:text-2xl">{emoji}</span>
           </motion.span>
         ))}
       </div>
