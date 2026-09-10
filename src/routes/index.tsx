@@ -222,7 +222,7 @@ function Navbar() {
                 className="group flex h-11 items-center gap-2.5 rounded-lg px-2.5 transition-transform duration-300 ease-out hover:scale-[1.055]"
               >
                 <motion.img
-                  src={skaleRedPill.url}
+                  src={skaleSymbol.url}
                   alt=""
                   aria-hidden="true"
                   className="h-8 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
@@ -278,7 +278,7 @@ function Navbar() {
                     className="group relative flex h-11 w-full cursor-default items-center gap-2.5 rounded-lg px-2.5 text-left transition-transform duration-300 ease-out hover:scale-[1.035]"
                   >
                     <motion.img
-                      src={skaleRedPill.url}
+                      src={skaleSymbol.url}
                       alt=""
                       aria-hidden="true"
                       className="h-8 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
@@ -854,7 +854,7 @@ function BestRealisationsHeader() {
       >
         <div className="flex items-center gap-2.5">
           <img
-            src={skaleRedPill.url}
+            src={skaleSymbol.url}
             alt=""
             aria-hidden="true"
             className="h-8 w-auto rounded-md object-contain shadow-lg sm:h-9"
@@ -1298,17 +1298,12 @@ function ProcessSteps() {
 
 function FooterLogo({ className = "" }: { className?: string }) {
   return (
-    <div className={`flex items-center gap-2.5 ${className}`}>
-      <img
-        src={skaleRedPill.url}
-        alt=""
-        aria-hidden="true"
-        className="h-8 w-auto rounded-md object-contain"
-      />
-      <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-white">
-        skale
-      </span>
-    </div>
+    <img
+      src={skaleRedPill.url}
+      alt=""
+      aria-hidden="true"
+      className={`h-11 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)] ${className}`}
+    />
   );
 }
 
