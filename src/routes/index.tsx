@@ -1385,7 +1385,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
           </p>
         </div>
 
-        <div className="relative mt-10 flex justify-center overflow-hidden sm:mt-12 lg:mt-16">
+        <div className="relative mt-6 flex justify-center overflow-hidden sm:mt-8 lg:mt-10">
           <img
             src={skaleRedPill.url}
             alt=""
