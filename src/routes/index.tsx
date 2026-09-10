@@ -885,46 +885,72 @@ function ProjectRecapCards({ settings }: { settings: HomeContent["settings"] }) 
     >
       <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6">
         {projects.map((project, i) => {
-          const imageUrl = project.image || cardMontage.url;
-          const avatarUrl = project.avatar || cardDesign.url;
+          const hasImage = Boolean(project.image);
           return (
             <motion.div
               key={`${project.title}-${i}`}
               initial={{ opacity: 0, y: 20 }}
               animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
               transition={{ duration: 0.6, delay: 0.1 * (i + 1), ease: [0.22, 1, 0.36, 1] }}
-              className="group relative flex min-h-[360px] flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-black shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18)] sm:min-h-[420px] lg:min-h-[480px]"
+              className="group relative flex min-h-[360px] flex-col overflow-hidden rounded-3xl bg-white shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18)] sm:min-h-[420px] lg:min-h-[480px]"
             >
-              <img
-                src={imageUrl}
-                alt={project.title}
-                width={1024}
-                height={640}
-                loading="lazy"
-                className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-              />
-
-              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/80 via-[28%] via-black/30 via-[62%] to-transparent to-[100%]" />
+              {hasImage && (
+                <>
+                  <img
+                    src={project.image ?? ""}
+                    alt={project.title}
+                    width={1024}
+                    height={640}
+                    loading="lazy"
+                    className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/80 via-[28%] via-black/30 via-[62%] to-transparent to-[100%]" />
+                </>
+              )}
 
               <div className="relative mt-auto p-5 sm:p-6 lg:p-8">
                 <div className="flex items-start gap-4">
                   <div className="shrink-0">
-                    <div className="grid h-12 w-12 place-items-center overflow-hidden rounded-full border-2 border-white/20 bg-black/40 shadow-lg backdrop-blur-sm sm:h-14 sm:w-14">
-                      <img
-                        src={avatarUrl}
-                        alt={project.title}
-                        className="h-full w-full object-cover"
-                      />
+                    <div
+                      className={`grid h-12 w-12 place-items-center overflow-hidden rounded-full shadow-lg sm:h-14 sm:w-14 ${
+                        hasImage ? "border-2 border-white/20 bg-black/40 backdrop-blur-sm" : "border border-black/[0.06] bg-neutral-100"
+                      }`}
+                    >
+                      {project.avatar ? (
+                        <img
+                          src={project.avatar}
+                          alt={project.title}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <span className={`text-lg font-semibold ${hasImage ? "text-white/60" : "text-neutral-300"}`}>
+                          {project.title.charAt(0)}
+                        </span>
+                      )}
                     </div>
                   </div>
                   <div className="min-w-0 flex-1 text-left">
-                    <h3 className="font-codec-bold text-xl leading-[1.1] tracking-[-0.06em] text-white sm:text-2xl lg:text-3xl">
+                    <h3
+                      className={`font-codec-bold text-xl leading-[1.1] tracking-[-0.06em] sm:text-2xl lg:text-3xl ${
+                        hasImage ? "text-white" : "text-neutral-900"
+                      }`}
+                    >
                       {project.title}
                     </h3>
-                    <p className="font-codec mt-2 max-w-md text-sm leading-snug tracking-[-0.06em] text-white/80 sm:text-base">
+                    <p
+                      className={`font-codec mt-2 max-w-md text-sm leading-snug tracking-[-0.06em] sm:text-base ${
+                        hasImage ? "text-white/80" : "text-neutral-600"
+                      }`}
+                    >
                       {project.description}
                     </p>
-                    <span className="mt-4 inline-flex items-center self-start rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md sm:text-[11px]">
+                    <span
+                      className={`mt-4 inline-flex items-center self-start rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider sm:text-[11px] ${
+                        hasImage
+                          ? "border border-white/10 bg-white/10 text-white backdrop-blur-md"
+                          : "bg-white text-neutral-900 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.25)]"
+                      }`}
+                    >
                       {project.badge}
                     </span>
                   </div>
