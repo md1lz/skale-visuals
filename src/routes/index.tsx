@@ -1298,12 +1298,17 @@ function ProcessSteps() {
 
 function FooterLogo({ className = "" }: { className?: string }) {
   return (
-    <img
-      src={skaleRedPill.url}
-      alt=""
-      aria-hidden="true"
-      className={`h-11 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)] ${className}`}
-    />
+    <div className={`flex items-center gap-2.5 ${className}`}>
+      <img
+        src={skaleRedPill.url}
+        alt=""
+        aria-hidden="true"
+        className="h-8 w-auto rounded-md object-contain"
+      />
+      <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] text-white">
+        skale
+      </span>
+    </div>
   );
 }
 
