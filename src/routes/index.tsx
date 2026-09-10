@@ -1385,12 +1385,12 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
           </p>
         </div>
 
-        <div className="relative mt-0 flex justify-center overflow-hidden">
+        <div className="relative mt-0 flex h-40 items-start justify-center overflow-hidden sm:h-52 lg:h-64">
           <img
             src={skaleRedPill.url}
             alt=""
             aria-hidden="true"
-            className="h-auto w-[70vw] max-w-[46rem] translate-y-[10%] rounded-md object-contain"
+            className="h-auto w-[70vw] max-w-[46rem] rounded-md object-contain"
           />
         </div>
       </div>
