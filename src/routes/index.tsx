@@ -1242,7 +1242,7 @@ function ProcessSteps() {
     target: ref,
     offset: ["start 0.75", "end 0.6"],
   });
-  const progress = useSpring(scrollYProgress, { stiffness: 90, damping: 25, mass: 0.4 });
+  const progress = useSpring(scrollYProgress, { stiffness: 500, damping: 40, mass: 0.05 });
 
   return (
     <section className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:pb-24 sm:pt-10">
