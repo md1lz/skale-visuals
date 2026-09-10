@@ -55,6 +55,22 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     quote: "J'ai adoré l'approche de Skale\u00A0Visuals\npour notre deal",
   },
   plusLabel: "+50",
+  projects: [
+    {
+      image: null,
+      badge: "Montage vidéo",
+      title: "VSL YouTube ultra-convertissant",
+      description: "Un format long réédité pour accrocher dès la première seconde et guider le spectateur jusqu’à l’action.",
+      avatar: null,
+    },
+    {
+      image: null,
+      badge: "Design & Miniatures",
+      title: "Identité visuelle complète",
+      description: "Miniatures, overlays et assets graphiques cohérents pour renforcer la reconnaissance de la chaîne.",
+      avatar: null,
+    },
+  ],
 };
 
 export function normalizeHomeSettings(raw: unknown): HomeSettings {
