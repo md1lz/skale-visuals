@@ -41,18 +41,26 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
   const creatorPreviews = await Promise.all(settings.creators.map((creator) => signAsset(creator.photo)));
 
   const testimonialPreview = await signAsset(settings.testimonial.photo);
+  const projectPreviews = await Promise.all(
+    settings.projects.map(async (p) => ({
+      image: await signAsset(p.image),
+      avatar: await signAsset(p.avatar),
+    })),
+  );
 
   return {
     settings,
     testimonialPreview,
     companyPreviews,
     creatorPreviews,
+    projectPreviews,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
   } as HomeContent & {
     testimonialPreview: string | null;
     companyPreviews: (string | null)[];
     creatorPreviews: (string | null)[];
+    projectPreviews: { image: string | null; avatar: string | null }[];
   };
 });
 
