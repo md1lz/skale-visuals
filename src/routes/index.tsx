@@ -1237,14 +1237,14 @@ function ServicesMarquee() {
   const items = [...SERVICES_WORDS, ...SERVICES_WORDS];
   return (
     <div className="marquee always-scroll ticker-fade relative mt-14 overflow-hidden sm:mt-16">
-      <div className="marquee-track-fast flex w-max items-center gap-4 py-2 pr-4 sm:gap-6 sm:pr-6">
+      <div className="marquee-track-fast flex w-max items-center gap-3 py-2 pr-3 sm:gap-4 sm:pr-4">
         {items.map((word, i) => (
           <span
             key={`${word}-${i}`}
-            className="flex shrink-0 items-center gap-2.5 rounded-2xl border border-neutral-100 bg-white px-4 py-2.5 shadow-[0_8px_24px_-8px_rgba(0,0,0,0.12)] sm:gap-3 sm:rounded-3xl sm:px-5 sm:py-3"
+            className="flex shrink-0 items-center gap-2 rounded-xl border border-neutral-100 bg-white px-3 py-2 shadow-[0_6px_18px_-8px_rgba(0,0,0,0.08)] sm:gap-2.5 sm:rounded-2xl sm:px-4 sm:py-2.5"
           >
-            <Check className="h-4 w-4 shrink-0 text-primary sm:h-5 sm:w-5" strokeWidth={3} />
-            <span className="font-codec whitespace-nowrap text-base tracking-[-0.01em] text-neutral-800 sm:text-lg">
+            <Check className="h-3.5 w-3.5 shrink-0 text-primary sm:h-4 sm:w-4" strokeWidth={3} />
+            <span className="font-codec whitespace-nowrap text-sm tracking-[-0.01em] text-neutral-800 sm:text-base">
               {word}
             </span>
           </span>
