@@ -988,8 +988,9 @@ function ProjectRecapFooter() {
       className="mx-auto w-full max-w-6xl px-4 pb-8 sm:pb-10"
     >
       <div className="flex flex-col items-center gap-10 sm:gap-14">
-        <Link
-          to="/realisations"
+        <button
+          type="button"
+          onClick={() => scrollTo("realisations")}
           onMouseEnter={() => setHoverMore(true)}
           onMouseLeave={() => setHoverMore(false)}
           onFocus={() => setHoverMore(true)}
@@ -997,7 +998,7 @@ function ProjectRecapFooter() {
           className="group font-codec-bold inline-flex items-center justify-center rounded-md border-2 border-dashed border-gray-600 bg-black px-5 py-2.5 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
         >
           <SlotMachineText text="EN VOIR PLUS" active={hoverMore} />
-        </Link>
+        </button>
 
         <div className="text-center">
           <h2 className="font-codec-bold text-3xl leading-[1.1] tracking-[-0.06em] sm:text-4xl lg:text-5xl">
