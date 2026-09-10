@@ -147,6 +147,13 @@ export function SiteAdminPanel() {
             photo: settings.testimonial.photo,
             quote: settings.testimonial.quote,
           },
+          projects: settings.projects.map((p) => ({
+            image: p.image,
+            badge: p.badge,
+            title: p.title,
+            description: p.description,
+            avatar: p.avatar,
+          })),
         },
       });
       await Promise.all(
