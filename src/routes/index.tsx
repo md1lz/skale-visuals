@@ -840,7 +840,7 @@ function BestRealisationsHeader() {
   const inView = useInView(ref, { amount: 0.3 });
 
   return (
-    <section className="w-full bg-white py-16 sm:py-20 lg:py-24">
+    <section className="w-full bg-white pt-16 pb-6 sm:pt-20 sm:pb-8 lg:pt-24 lg:pb-10">
       <motion.div
         ref={ref}
         initial={{ opacity: 0, y: 24 }}
@@ -864,6 +864,94 @@ function BestRealisationsHeader() {
         </h2>
       </motion.div>
     </section>
+  );
+}
+
+/* ---------------- récap projets ---------------- */
+
+function ProjectRecapCards() {
+  const ref = useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { amount: 0.15 });
+
+  const projects = [
+    {
+      image: cardMontage,
+      alt: "Aperçu montage vidéo",
+      badge: "Montage vidéo",
+      title: "VSL YouTube ultra-convertissant",
+      description: "Un format long réédité pour accrocher dès la première seconde et guider le spectateur jusqu’à l’action.",
+      avatar: cardDesign,
+      avatarAlt: "Client",
+    },
+    {
+      image: cardDesign,
+      alt: "Aperçu design visuel",
+      badge: "Design & Miniatures",
+      title: "Identité visuelle complète",
+      description: "Miniatures, overlays et assets graphiques cohérents pour renforcer la reconnaissance de la chaîne.",
+      avatar: cardMontage,
+      avatarAlt: "Client",
+    },
+  ];
+
+  return (
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 24 }}
+      animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 24 }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
+      className="mx-auto w-full max-w-6xl px-4 pb-10 sm:pb-14 lg:pb-20"
+    >
+      <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:gap-6">
+        {projects.map((project, i) => (
+          <motion.div
+            key={project.title}
+            initial={{ opacity: 0, y: 20 }}
+            animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 20 }}
+            transition={{ duration: 0.6, delay: 0.1 * (i + 1), ease: [0.22, 1, 0.36, 1] }}
+            className="group relative flex min-h-[360px] flex-col overflow-hidden rounded-3xl border border-black/[0.06] bg-black shadow-[0_24px_60px_-20px_rgba(0,0,0,0.18)] sm:min-h-[420px] lg:min-h-[480px]"
+          >
+            <img
+              src={typeof project.image === "string" ? project.image : project.image.url}
+              alt={project.alt}
+              width={1024}
+              height={640}
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+            />
+
+            <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black from-0% via-black/80 via-[28%] via-black/30 via-[62%] to-transparent to-[100%]" />
+
+            <div className="absolute left-5 top-5 sm:left-6 sm:top-6">
+              <span className="inline-flex items-center rounded-full border border-white/10 bg-white/10 px-3 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-white backdrop-blur-md sm:text-[11px]">
+                {project.badge}
+              </span>
+            </div>
+
+            <div className="relative mt-auto flex items-end justify-between gap-4 p-5 sm:p-6 lg:p-8">
+              <div className="min-w-0 flex-1 text-left">
+                <h3 className="font-codec-bold text-xl leading-[1.1] tracking-[-0.06em] text-white sm:text-2xl lg:text-3xl">
+                  {project.title}
+                </h3>
+                <p className="font-codec mt-2 max-w-md text-sm leading-snug tracking-[-0.06em] text-white/80 sm:text-base">
+                  {project.description}
+                </p>
+              </div>
+
+              <div className="shrink-0">
+                <div className="grid h-12 w-12 place-items-center overflow-hidden rounded-full border-2 border-white/20 bg-black/40 shadow-lg backdrop-blur-sm sm:h-14 sm:w-14">
+                  <img
+                    src={typeof project.avatar === "string" ? project.avatar : project.avatar.url}
+                    alt={project.avatarAlt}
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
   );
 }
 
