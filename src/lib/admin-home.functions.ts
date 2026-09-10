@@ -40,6 +40,8 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
   const companyPreviews = await Promise.all(settings.companies.map((company) => signAsset(company.logo)));
   const creatorPreviews = await Promise.all(settings.creators.map((creator) => signAsset(creator.photo)));
 
+  const footerLogoPreviews = await Promise.all(settings.footerLogos.map((item) => signAsset(item.logo)));
+
   const testimonialPreview = await signAsset(settings.testimonial.photo);
   const projectPreviews = await Promise.all(
     settings.projects.map(async (p) => ({
@@ -53,6 +55,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     testimonialPreview,
     companyPreviews,
     creatorPreviews,
+    footerLogoPreviews,
     projectPreviews,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
@@ -60,6 +63,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     testimonialPreview: string | null;
     companyPreviews: (string | null)[];
     creatorPreviews: (string | null)[];
+    footerLogoPreviews: (string | null)[];
     projectPreviews: { image: string | null; avatar: string | null }[];
   };
 });
@@ -83,6 +87,10 @@ const settingsSchema = z.object({
       }),
     )
     .max(24),
+  footerLogos: z
+    .array(z.object({ name: z.string().trim().max(80), logo: z.string().trim().max(500).nullable() }))
+    .max(24)
+    .default([]),
   testimonial: z.object({
     name: z.string().trim().max(80),
     role: z.string().trim().max(80),
