@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView, useScroll, useSpring } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowUpRight, User, BarChart3, Zap } from "lucide-react";
+import { Play, Mail, Instagram, Linkedin, AlertTriangle, Check, ChevronDown, ArrowUpRight, User, BarChart3, Zap, Phone, Lightbulb, Clapperboard, MessageSquare, PackageCheck, Sparkles, Film, Palette, Wand2, Rocket, Star, Heart, Music, Camera, Scissors, PartyPopper } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
