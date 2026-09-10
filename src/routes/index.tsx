@@ -1335,8 +1335,20 @@ function FooterTimezones() {
     setMounted(true);
     const update = () => setTimes(TIME_ZONES.map((z) => formatZoneTime(new Date(), z.tz)));
     update();
-    const id = setInterval(update, 60_000);
-    return () => clearInterval(id);
+
+    const now = new Date();
+    const msUntilNextMinute = 60_000 - (now.getSeconds() * 1_000 + now.getMilliseconds());
+
+    let intervalId: ReturnType<typeof setInterval> | null = null;
+    const timeoutId = setTimeout(() => {
+      update();
+      intervalId = setInterval(update, 60_000);
+    }, msUntilNextMinute);
+
+    return () => {
+      clearTimeout(timeoutId);
+      if (intervalId) clearInterval(intervalId);
+    };
   }, []);
 
   return (
