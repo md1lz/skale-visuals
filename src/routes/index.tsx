@@ -1415,7 +1415,7 @@ function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) 
 function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
   return (
     <footer className="relative z-10 w-full">
-      <div className="relative w-full overflow-hidden rounded-t-[2.5rem] border-8 border-white/10 bg-[#030303] px-8 pt-10 pb-44 sm:rounded-t-[3rem] sm:pb-56 lg:rounded-t-[4rem] lg:px-14 lg:pt-12 lg:pb-72">
+      <div className="relative w-full overflow-hidden rounded-t-[2.5rem] border-8 border-white/10 bg-[#030303] px-8 pt-10 pb-36 sm:rounded-t-[3rem] sm:pb-44 lg:rounded-t-[4rem] lg:px-14 lg:pt-12 lg:pb-52">
         <div className="relative z-10 flex flex-col items-start gap-6 sm:flex-row sm:items-start sm:justify-between">
           <FooterLogo />
           <FooterTimezones />
@@ -1468,12 +1468,12 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
           </p>
         </div>
 
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 flex h-44 items-start justify-center overflow-hidden sm:h-56 lg:h-72">
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-0 flex h-36 items-start justify-center overflow-hidden sm:h-44 lg:h-52">
           <img
             src={skaleRedPill.url}
             alt=""
             aria-hidden="true"
-            className="h-auto w-[70vw] max-w-[46rem] -translate-y-[10%] rounded-md object-contain"
+            className="h-auto w-[70vw] max-w-[46rem] rounded-md object-contain"
           />
         </div>
       </div>
