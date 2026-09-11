@@ -632,6 +632,7 @@ function ServiceCards() {
     {
       image: cardMontage,
       alt: "Montage vidéo stratégique",
+      link: "/videoediting",
       title: (
         <>
           <span className="font-codec tracking-[-0.06em]">Le </span>
@@ -647,6 +648,7 @@ function ServiceCards() {
     {
       image: cardDesign,
       alt: "Design visuel",
+      link: "/design",
       title: (
         <>
           <span className="font-codec tracking-[-0.06em]">Le </span>
