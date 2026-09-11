@@ -55,8 +55,9 @@ function WindowFrame({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_40px_80px_-24px_rgba(0,0,0,0.5)] ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-white/10 bg-black/95 shadow-[0_40px_80px_-24px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-xl ${className}`}
     >
+      <div className="pointer-events-none absolute -inset-12 -z-10 rounded-[40px] bg-[radial-gradient(circle_at_center,rgba(226,27,60,0.18)_0%,transparent_65%)] blur-2xl" />
       <div className="flex items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2.5">
         <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
