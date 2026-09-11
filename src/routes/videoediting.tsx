@@ -266,10 +266,10 @@ function VideoEditingPage() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10 flex max-w-3xl flex-col items-center text-center"
           >
-            <h1 className="font-codec-bold text-4xl leading-[1.05] tracking-[-0.06em] text-black sm:text-6xl lg:text-7xl">
-              On crée vos
+            <h1 className="text-4xl leading-[1.05] tracking-[-0.06em] text-black sm:text-6xl lg:text-7xl">
+              <span className="font-codec">On crée vos</span>
               <br />
-              contenus vidéo
+              <span className="font-codec-bold text-[#e21b3c]">contenus vidéo.</span>
             </h1>
             <p className="font-codec mt-5 max-w-xl text-lg leading-[1.2] tracking-[-0.04em] text-neutral-600 sm:text-xl">
               Tout inclus, prix fixes &amp; retours illimités.
