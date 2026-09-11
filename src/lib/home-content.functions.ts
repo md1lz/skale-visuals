@@ -16,6 +16,16 @@ export type ProjectRecap = {
   avatar: string | null;
 };
 
+export type ServiceHeader = {
+  image: string | null;
+  title: string;
+  description: string;
+  primaryCta: string;
+  primaryLink: string;
+  secondaryCta: string;
+  secondaryLink: string;
+};
+
 export type HomeSettings = {
   videosCount: number;
   clientsCount: number;
@@ -26,6 +36,7 @@ export type HomeSettings = {
   testimonial: HomeTestimonial;
   plusLabel: string;
   projects: ProjectRecap[];
+  serviceHeader: ServiceHeader;
 };
 
 export type HomeFolder = { id: string; label: string; position: number };
@@ -75,6 +86,15 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
       avatar: null,
     },
   ],
+  serviceHeader: {
+    image: null,
+    title: "Le montage stratégique, conçu pour convertir.",
+    description: "Vidéos ultra-efficaces qui accrochent dès les premières secondes, retiennent l’attention et poussent chaque vue à l’action.",
+    primaryCta: "Réserver un appel",
+    primaryLink: "/bookacall",
+    secondaryCta: "Voir nos projets",
+    secondaryLink: "/#projets",
+  },
 };
 
 export function normalizeHomeSettings(raw: unknown): HomeSettings {
@@ -123,6 +143,15 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
       description: ((p as ProjectRecap | undefined)?.description ?? "").toString(),
       avatar: (p as ProjectRecap | undefined)?.avatar ?? null,
     })),
+    serviceHeader: {
+      image: (v.serviceHeader as ServiceHeader | undefined)?.image ?? DEFAULT_HOME_SETTINGS.serviceHeader.image,
+      title: ((v.serviceHeader as ServiceHeader | undefined)?.title ?? DEFAULT_HOME_SETTINGS.serviceHeader.title).toString(),
+      description: ((v.serviceHeader as ServiceHeader | undefined)?.description ?? DEFAULT_HOME_SETTINGS.serviceHeader.description).toString(),
+      primaryCta: ((v.serviceHeader as ServiceHeader | undefined)?.primaryCta ?? DEFAULT_HOME_SETTINGS.serviceHeader.primaryCta).toString(),
+      primaryLink: ((v.serviceHeader as ServiceHeader | undefined)?.primaryLink ?? DEFAULT_HOME_SETTINGS.serviceHeader.primaryLink).toString(),
+      secondaryCta: ((v.serviceHeader as ServiceHeader | undefined)?.secondaryCta ?? DEFAULT_HOME_SETTINGS.serviceHeader.secondaryCta).toString(),
+      secondaryLink: ((v.serviceHeader as ServiceHeader | undefined)?.secondaryLink ?? DEFAULT_HOME_SETTINGS.serviceHeader.secondaryLink).toString(),
+    },
   };
 }
 
@@ -185,6 +214,10 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
   settings.testimonial = {
     ...settings.testimonial,
     photo: await signAsset(settings.testimonial.photo),
+  };
+  settings.serviceHeader = {
+    ...settings.serviceHeader,
+    image: await signAsset(settings.serviceHeader.image),
   };
 
   return { settings, folders: (foldersRes.data ?? []) as HomeFolder[], videos };
