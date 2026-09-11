@@ -191,7 +191,7 @@ const PLATFORMS = [
 
 function ProjectStatusWindow() {
   return (
-    <WindowFrame title="AcmeLabs_023_VDEF.mp4" className="w-80">
+    <WindowFrame title="Micha_023_VDEF.mp4" className="w-80">
       <div className="p-5">
         <p className="font-codec text-[13px] text-white/50">Micha · 11 sept. 2026</p>
 
