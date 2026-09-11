@@ -267,11 +267,11 @@ function VideoEditingPage() {
             className="relative z-10 flex max-w-3xl flex-col items-center text-center"
           >
             <h1 className="text-4xl leading-[1.05] text-black sm:text-6xl lg:text-7xl">
-              <span className="font-codec tracking-[-0.06em]">On crée vos</span>
+              <span className="font-codec-bold tracking-[-0.06em]">On crée vos</span>
               <br />
               <span className="font-codec-bold tracking-[-0.06em] text-[#e21b3c]">contenus vidéo.</span>
             </h1>
-            <p className="font-codec mt-5 max-w-xl text-lg leading-[1.2] tracking-[-0.04em] text-neutral-600 sm:text-xl">
+            <p className="font-codec mt-5 max-w-[22rem] text-left text-lg leading-[1.18] tracking-[-0.06em] text-black sm:mx-auto sm:mt-3 sm:max-w-2xl sm:text-center sm:text-xl lg:text-2xl">
               Tout inclus, prix fixes &amp; retours illimités.
             </p>
 
