@@ -607,18 +607,18 @@ function TrustCarousels({ settings }: { settings: HomeContent["settings"] }) {
 
 /* ---------------- services ---------------- */
 
-function ServiceBookCta() {
+function ServiceDiscoverCta({ to }: { to: string }) {
   const [hover, setHover] = useState(false);
   return (
     <Link
-      to="/bookacall"
+      to={to}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       onFocus={() => setHover(true)}
       onBlur={() => setHover(false)}
       className="group font-codec-bold inline-flex items-center justify-center gap-1.5 rounded-md border-2 border-dashed border-neutral-500 bg-black px-4 py-2 text-xs uppercase tracking-wide text-white transition-all duration-200 ease-out hover:scale-[1.09] hover:bg-black/90 hover:shadow-[0_18px_40px_-10px_rgba(0,0,0,0.45)] active:scale-[0.97] sm:text-sm"
     >
-      <SlotMachineText text="RÉSERVER UN APPEL" active={hover} />
+      <SlotMachineText text="DÉCOUVRIR" active={hover} />
       <ArrowUpRight className="h-3.5 w-3.5 shrink-0 transition-transform duration-200 group-hover:translate-x-1 group-hover:rotate-45 sm:h-4 sm:w-4" />
     </Link>
   );
@@ -632,6 +632,7 @@ function ServiceCards() {
     {
       image: cardMontage,
       alt: "Montage vidéo stratégique",
+      link: "/videoediting",
       title: (
         <>
           <span className="font-codec tracking-[-0.06em]">Le </span>
@@ -647,6 +648,7 @@ function ServiceCards() {
     {
       image: cardDesign,
       alt: "Design visuel",
+      link: "/design",
       title: (
         <>
           <span className="font-codec tracking-[-0.06em]">Le </span>
@@ -697,7 +699,7 @@ function ServiceCards() {
                 {card.description}
               </p>
               <div className="mt-5">
-                <ServiceBookCta />
+                <ServiceDiscoverCta to={card.link} />
               </div>
             </div>
           </div>

@@ -9,8 +9,10 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as VideoeditingRouteImport } from './routes/videoediting'
 import { Route as StudioRouteImport } from './routes/studio'
 import { Route as OfficeRouteImport } from './routes/office'
+import { Route as DesignRouteImport } from './routes/design'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
@@ -40,6 +42,11 @@ import { Route as ApiPublicTimeRouteImport } from './routes/api/public/time'
 import { Route as LovableEmailTransactionalPreviewRouteImport } from './routes/lovable/email/transactional/preview'
 import { Route as ApiPublicHooksBookingRemindersRouteImport } from './routes/api/public/hooks/booking-reminders'
 
+const VideoeditingRoute = VideoeditingRouteImport.update({
+  id: '/videoediting',
+  path: '/videoediting',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const StudioRoute = StudioRouteImport.update({
   id: '/studio',
   path: '/studio',
@@ -48,6 +55,11 @@ const StudioRoute = StudioRouteImport.update({
 const OfficeRoute = OfficeRouteImport.update({
   id: '/office',
   path: '/office',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DesignRoute = DesignRouteImport.update({
+  id: '/design',
+  path: '/design',
   getParentRoute: () => rootRouteImport,
 } as any)
 const CrmRoute = CrmRouteImport.update({
@@ -199,8 +211,10 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
+  '/design': typeof DesignRoute
   '/office': typeof OfficeRouteWithChildren
   '/studio': typeof StudioRouteWithChildren
+  '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
   '/office/analytics': typeof OfficeAnalyticsRoute
   '/office/calls': typeof OfficeCallsRoute
@@ -230,6 +244,8 @@ export interface FileRoutesByTo {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
+  '/design': typeof DesignRoute
+  '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
   '/office/analytics': typeof OfficeAnalyticsRoute
   '/office/calls': typeof OfficeCallsRoute
@@ -261,8 +277,10 @@ export interface FileRoutesById {
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
+  '/design': typeof DesignRoute
   '/office': typeof OfficeRouteWithChildren
   '/studio': typeof StudioRouteWithChildren
+  '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
   '/office/analytics': typeof OfficeAnalyticsRoute
   '/office/calls': typeof OfficeCallsRoute
@@ -295,8 +313,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/bookacall'
     | '/crm'
+    | '/design'
     | '/office'
     | '/studio'
+    | '/videoediting'
     | '/crm/$'
     | '/office/analytics'
     | '/office/calls'
@@ -326,6 +346,8 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
+    | '/design'
+    | '/videoediting'
     | '/crm/$'
     | '/office/analytics'
     | '/office/calls'
@@ -356,8 +378,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/bookacall'
     | '/crm'
+    | '/design'
     | '/office'
     | '/studio'
+    | '/videoediting'
     | '/crm/$'
     | '/office/analytics'
     | '/office/calls'
@@ -389,8 +413,10 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
   CrmRoute: typeof CrmRouteWithChildren
+  DesignRoute: typeof DesignRoute
   OfficeRoute: typeof OfficeRouteWithChildren
   StudioRoute: typeof StudioRouteWithChildren
+  VideoeditingRoute: typeof VideoeditingRoute
   SignTokenRoute: typeof SignTokenRoute
   ApiPublicTimeRoute: typeof ApiPublicTimeRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -401,6 +427,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/videoediting': {
+      id: '/videoediting'
+      path: '/videoediting'
+      fullPath: '/videoediting'
+      preLoaderRoute: typeof VideoeditingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/studio': {
       id: '/studio'
       path: '/studio'
@@ -413,6 +446,13 @@ declare module '@tanstack/react-router' {
       path: '/office'
       fullPath: '/office'
       preLoaderRoute: typeof OfficeRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/design': {
+      id: '/design'
+      path: '/design'
+      fullPath: '/design'
+      preLoaderRoute: typeof DesignRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/crm': {
@@ -680,8 +720,10 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
   CrmRoute: CrmRouteWithChildren,
+  DesignRoute: DesignRoute,
   OfficeRoute: OfficeRouteWithChildren,
   StudioRoute: StudioRouteWithChildren,
+  VideoeditingRoute: VideoeditingRoute,
   SignTokenRoute: SignTokenRoute,
   ApiPublicTimeRoute: ApiPublicTimeRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
