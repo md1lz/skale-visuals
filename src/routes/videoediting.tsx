@@ -227,39 +227,56 @@ function ClientChatWindow() {
 
 /* ---------------- project status window ---------------- */
 
+const PLATFORMS = [
+  { name: "LinkedIn", icon: Linkedin },
+  { name: "YouTube", icon: Youtube },
+  { name: "Instagram", icon: Instagram },
+  { name: "TikTok", icon: Music2 },
+  { name: "Facebook", icon: Facebook },
+];
+
 function ProjectStatusWindow() {
   return (
-    <WindowFrame title="Projet — Suivi" className="w-64">
+    <WindowFrame title="AcmeLabs_023_VDEF.mp4" className="w-80">
       <div className="p-5">
-        <div className="mb-4 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
-            <Clapperboard className="h-5 w-5 text-white/80" />
-          </div>
+        <p className="font-codec text-[13px] text-white/50">Micha · 11 sept. 2026</p>
+
+        <div className="mt-6 space-y-5">
           <div>
-            <p className="font-codec-bold text-sm tracking-[-0.04em] text-white">Vidéo 1 — Lancement</p>
-            <p className="font-codec text-[11px] text-white/40">Micha · 7 juillet 2026</p>
+            <div className="mb-2 flex items-center gap-2 text-white/80">
+              <Flag className="h-4 w-4 shrink-0" />
+              <span className="font-codec text-sm tracking-[-0.02em]">État de la vidéo</span>
+            </div>
+            <span className="inline-flex rounded-full border border-white/10 bg-white/5 px-3 py-1.5 font-codec text-xs tracking-[-0.01em] text-white">
+              Prêt à être publié
+            </span>
+          </div>
+
+          <div>
+            <div className="mb-2 flex items-center gap-2 text-white/80">
+              <MonitorPlay className="h-4 w-4 shrink-0" />
+              <span className="font-codec text-sm tracking-[-0.02em]">Plateforme de publication</span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {PLATFORMS.map((p) => (
+                <span
+                  key={p.name}
+                  className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-2.5 py-1.5 font-codec text-[11px] tracking-[-0.01em] text-white/90"
+                >
+                  <p.icon className="h-3 w-3 shrink-0" />
+                  {p.name}
+                </span>
+              ))}
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between pt-1">
+            <span className="font-codec text-sm tracking-[-0.02em] text-white">Édition finale</span>
+            <div className="flex h-6 w-6 items-center justify-center rounded-md bg-emerald-500 text-white">
+              <Check className="h-4 w-4" />
+            </div>
           </div>
         </div>
-        <dl className="space-y-2.5 text-xs">
-          <div className="flex items-center justify-between">
-            <dt className="font-codec text-white/40">Statut</dt>
-            <dd>
-              <span className="rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] font-medium text-emerald-400">
-                Montage terminé
-              </span>
-            </dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="font-codec text-white/40">Plateforme</dt>
-            <dd className="font-codec-bold flex items-center gap-1.5 text-white">
-              <MonitorPlay className="h-3.5 w-3.5 text-[#e21b3c]" /> YouTube
-            </dd>
-          </div>
-          <div className="flex items-center justify-between">
-            <dt className="font-codec text-white/40">Édition</dt>
-            <dd className="font-codec-bold text-white">Version finale</dd>
-          </div>
-        </dl>
       </div>
     </WindowFrame>
   );
