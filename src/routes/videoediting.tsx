@@ -137,21 +137,65 @@ const CHAT_MESSAGES: { from: "client" | "skale"; text: string }[] = [
   { from: "client", text: "Vous gérez, merci l'équipe 🙏" },
 ];
 
+function TypingDots({ from }: { from: "client" | "skale" }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.95 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className={`max-w-[85%] rounded-2xl px-3 py-2 ${
+        from === "client"
+          ? "self-start rounded-bl-sm bg-white/10"
+          : "self-end rounded-br-sm bg-[#e21b3c]"
+      }`}
+    >
+      <span className="flex gap-1">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="h-1.5 w-1.5 rounded-full bg-white/80"
+            animate={{ y: [0, -4, 0] }}
+            transition={{
+              duration: 0.55,
+              repeat: Infinity,
+              delay: i * 0.1,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </span>
+    </motion.div>
+  );
+}
+
 function ClientChatWindow() {
-  const [visible, setVisible] = useState(2);
+  const [step, setStep] = useState(0);
+  const [typing, setTyping] = useState(true);
 
   useEffect(() => {
-    const id = window.setInterval(() => {
-      setVisible((v) => (v >= CHAT_MESSAGES.length ? 1 : v + 1));
-    }, 2400);
-    return () => window.clearInterval(id);
-  }, []);
+    if (step >= CHAT_MESSAGES.length) {
+      setTyping(false);
+      return;
+    }
+    const pauseBeforeType = step === 0 ? 400 : 1200;
+    const typeDuration = 1600;
+    const t1 = window.setTimeout(() => setTyping(true), pauseBeforeType);
+    const t2 = window.setTimeout(() => {
+      setTyping(false);
+      setStep((s) => s + 1);
+    }, pauseBeforeType + typeDuration);
+    return () => {
+      window.clearTimeout(t1);
+      window.clearTimeout(t2);
+    };
+  }, [step]);
 
   return (
     <WindowFrame title="Micha — Espace client" className="w-72">
       <div className="flex h-56 flex-col justify-end gap-2 overflow-hidden p-4">
         <AnimatePresence initial={false}>
-          {CHAT_MESSAGES.slice(0, visible).map((m, i) => (
+          {CHAT_MESSAGES.slice(0, step).map((m, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 14, scale: 0.95 }}
@@ -166,6 +210,9 @@ function ClientChatWindow() {
               <span className="font-codec tracking-[-0.02em]">{m.text}</span>
             </motion.div>
           ))}
+          {typing && step < CHAT_MESSAGES.length && (
+            <TypingDots key={`typing-${step}`} from={CHAT_MESSAGES[step].from} />
+          )}
         </AnimatePresence>
       </div>
     </WindowFrame>
@@ -232,13 +279,21 @@ function VideoEditingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute -left-14 top-[20%] z-0 hidden flex-col gap-24 lg:flex"
+            className="absolute -left-14 top-[16%] z-0 hidden flex-col lg:flex"
           >
             <motion.div animate={{ y: [0, -14, 0] }} transition={SLOW_FLOAT}>
               <Tilt rotate={-6} rotateX={9}>
                 <VideoInfoWindow />
               </Tilt>
             </motion.div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
+            className="absolute left-[8%] top-[46%] z-0 hidden lg:flex"
+          >
             <motion.div animate={{ y: [0, -16, 0] }} transition={{ ...SLOW_FLOAT, duration: 13, delay: 1.5 }}>
               <Tilt rotate={5} rotateX={8}>
                 <ProjectStatusWindow />
