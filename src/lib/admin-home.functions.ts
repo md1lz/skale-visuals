@@ -49,6 +49,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
       avatar: await signAsset(p.avatar),
     })),
   );
+  const serviceHeaderPreview = await signAsset(settings.serviceHeader.image);
 
   return {
     settings,
@@ -57,6 +58,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     creatorPreviews,
     footerLogoPreviews,
     projectPreviews,
+    serviceHeaderPreview,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
   } as HomeContent & {
@@ -65,6 +67,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     creatorPreviews: (string | null)[];
     footerLogoPreviews: (string | null)[];
     projectPreviews: { image: string | null; avatar: string | null }[];
+    serviceHeaderPreview: string | null;
   };
 });
 
@@ -108,6 +111,15 @@ const settingsSchema = z.object({
       }),
     )
     .max(2),
+  serviceHeader: z.object({
+    image: z.string().trim().max(500).nullable(),
+    title: z.string().trim().max(120),
+    description: z.string().trim().max(400),
+    primaryCta: z.string().trim().max(60),
+    primaryLink: z.string().trim().max(200),
+    secondaryCta: z.string().trim().max(60),
+    secondaryLink: z.string().trim().max(200),
+  }),
 });
 
 export const saveHomeSettings = createServerFn({ method: "POST" })

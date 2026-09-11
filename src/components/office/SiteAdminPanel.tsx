@@ -78,6 +78,7 @@ export function SiteAdminPanel() {
   const [footerLogoPreviews, setFooterLogoPreviews] = useState<(string | null)[]>([]);
   const [testimonialPreview, setTestimonialPreview] = useState<string | null>(null);
   const [projectPreviews, setProjectPreviews] = useState<{ image: string | null; avatar: string | null }[]>([]);
+  const [serviceHeaderPreview, setServiceHeaderPreview] = useState<string | null>(null);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
   const [videos, setVideos] = useState<HomeVideo[]>([]);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
@@ -97,6 +98,7 @@ export function SiteAdminPanel() {
       setFooterLogoPreviews(res.footerLogoPreviews ?? []);
       setTestimonialPreview(res.testimonialPreview ?? null);
       setProjectPreviews(res.projectPreviews ?? []);
+      setServiceHeaderPreview(res.serviceHeaderPreview ?? null);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
@@ -157,6 +159,15 @@ export function SiteAdminPanel() {
             description: p.description,
             avatar: p.avatar,
           })),
+          serviceHeader: {
+            image: settings.serviceHeader.image,
+            title: settings.serviceHeader.title,
+            description: settings.serviceHeader.description,
+            primaryCta: settings.serviceHeader.primaryCta,
+            primaryLink: settings.serviceHeader.primaryLink,
+            secondaryCta: settings.serviceHeader.secondaryCta,
+            secondaryLink: settings.serviceHeader.secondaryLink,
+          },
         },
       });
       await Promise.all(
@@ -239,6 +250,10 @@ export function SiteAdminPanel() {
     setSettings((s) =>
       s ? { ...s, projects: s.projects.map((p, idx) => (idx === i ? { ...p, ...patch } : p)) } : s,
     );
+    setDirty(true);
+  }
+  function patchServiceHeader(patch: Partial<HomeSettings["serviceHeader"]>) {
+    setSettings((s) => (s ? { ...s, serviceHeader: { ...s.serviceHeader, ...patch } } : s));
     setDirty(true);
   }
 
@@ -616,6 +631,84 @@ export function SiteAdminPanel() {
               value={settings.testimonial.quote}
               onChange={(e) => patchSettings({ testimonial: { ...settings.testimonial, quote: e.target.value } })}
             />
+          </div>
+        </div>
+      </section>
+
+      {/* En-tête service (montage vidéo) */}
+      <section className={`${card} mb-6`}>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">En-tête page Montage vidéo</h2>
+        <p className="mt-1 text-xs text-neutral-500">Image, titre, description et CTAs de la page /videoediting.</p>
+        <div className="mt-4 flex items-start gap-4">
+          <button
+            type="button"
+            aria-label="Image d’en-tête"
+            onClick={() => fileRefs.current["service-header-image"]?.click()}
+            className="grid h-28 w-40 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/15 bg-black/20 text-neutral-400 hover:border-red-600/40"
+          >
+            {serviceHeaderPreview ? (
+              <img src={serviceHeaderPreview} alt="" className="h-full w-full object-cover" />
+            ) : (
+              <ImagePlus className="h-6 w-6" />
+            )}
+          </button>
+          <input
+            ref={(el) => { fileRefs.current["service-header-image"] = el; }}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={async (e) => {
+              const file = e.target.files?.[0];
+              e.target.value = "";
+              if (!file) return;
+              try {
+                const reference = await uploadAsset(file);
+                patchServiceHeader({ image: reference });
+                setServiceHeaderPreview(URL.createObjectURL(file));
+              } catch (error) {
+                toast.error(error instanceof Error ? error.message : "Upload échoué");
+              }
+            }}
+          />
+          <div className="min-w-0 flex-1 space-y-2">
+            <input
+              className={input}
+              placeholder="Titre"
+              value={settings.serviceHeader.title}
+              onChange={(e) => patchServiceHeader({ title: e.target.value })}
+            />
+            <textarea
+              className={`${input} min-h-[70px]`}
+              placeholder="Description"
+              value={settings.serviceHeader.description}
+              onChange={(e) => patchServiceHeader({ description: e.target.value })}
+            />
+            <div className="grid gap-2 sm:grid-cols-2">
+              <input
+                className={input}
+                placeholder="Texte CTA principal"
+                value={settings.serviceHeader.primaryCta}
+                onChange={(e) => patchServiceHeader({ primaryCta: e.target.value })}
+              />
+              <input
+                className={input}
+                placeholder="Lien CTA principal"
+                value={settings.serviceHeader.primaryLink}
+                onChange={(e) => patchServiceHeader({ primaryLink: e.target.value })}
+              />
+              <input
+                className={input}
+                placeholder="Texte CTA secondaire"
+                value={settings.serviceHeader.secondaryCta}
+                onChange={(e) => patchServiceHeader({ secondaryCta: e.target.value })}
+              />
+              <input
+                className={input}
+                placeholder="Lien CTA secondaire"
+                value={settings.serviceHeader.secondaryLink}
+                onChange={(e) => patchServiceHeader({ secondaryLink: e.target.value })}
+              />
+            </div>
           </div>
         </div>
       </section>
