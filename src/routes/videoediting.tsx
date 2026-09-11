@@ -143,65 +143,22 @@ const CHAT_MESSAGES: { from: "client" | "skale"; text: string }[] = [
   { from: "client", text: "Vous gérez, merci l'équipe 🙏" },
 ];
 
-function TypingDots({ from }: { from: "client" | "skale" }) {
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 10, scale: 0.95 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, scale: 0.95 }}
-      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-      className={`max-w-[85%] rounded-2xl px-3 py-2 ${
-        from === "client"
-          ? "self-start rounded-bl-sm bg-white/10"
-          : "self-end rounded-br-sm bg-[#e21b3c]"
-      }`}
-    >
-      <span className="flex gap-1">
-        {[0, 1, 2].map((i) => (
-          <motion.span
-            key={i}
-            className="h-1.5 w-1.5 rounded-full bg-white/80"
-            animate={{ y: [0, -4, 0] }}
-            transition={{
-              duration: 0.55,
-              repeat: Infinity,
-              delay: i * 0.1,
-              ease: "easeInOut",
-            }}
-          />
-        ))}
-      </span>
-    </motion.div>
-  );
-}
-
 function ClientChatWindow() {
-  const [step, setStep] = useState(0);
-  const [typing, setTyping] = useState(true);
+  const [visible, setVisible] = useState(1);
 
   useEffect(() => {
-    if (step >= CHAT_MESSAGES.length) {
-      setTyping(false);
-      return;
-    }
-    const pauseBeforeType = step === 0 ? 400 : 1200;
-    const typeDuration = 1600;
-    const t1 = window.setTimeout(() => setTyping(true), pauseBeforeType);
-    const t2 = window.setTimeout(() => {
-      setTyping(false);
-      setStep((s) => s + 1);
-    }, pauseBeforeType + typeDuration);
-    return () => {
-      window.clearTimeout(t1);
-      window.clearTimeout(t2);
-    };
-  }, [step]);
+    if (visible >= CHAT_MESSAGES.length) return;
+    const id = window.setTimeout(() => {
+      setVisible((v) => v + 1);
+    }, 2200);
+    return () => window.clearTimeout(id);
+  }, [visible]);
 
   return (
     <WindowFrame title="Micha — Espace client" className="w-72">
       <div className="flex h-56 flex-col justify-end gap-2 overflow-hidden p-4">
         <AnimatePresence initial={false}>
-          {CHAT_MESSAGES.slice(0, step).map((m, i) => (
+          {CHAT_MESSAGES.slice(0, visible).map((m, i) => (
             <motion.div
               key={i}
               initial={{ opacity: 0, y: 14, scale: 0.95 }}
@@ -216,9 +173,6 @@ function ClientChatWindow() {
               <span className="font-codec tracking-[-0.02em]">{m.text}</span>
             </motion.div>
           ))}
-          {typing && step < CHAT_MESSAGES.length && (
-            <TypingDots key={`typing-${step}`} from={CHAT_MESSAGES[step].from} />
-          )}
         </AnimatePresence>
       </div>
     </WindowFrame>
