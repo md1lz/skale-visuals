@@ -231,21 +231,13 @@ function VideoEditingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute -left-8 top-28 z-0 hidden lg:block"
+            className="absolute -left-8 top-[22%] z-0 hidden flex-col gap-20 lg:flex"
           >
             <motion.div animate={{ y: [0, -14, 0] }} transition={SLOW_FLOAT}>
               <Tilt rotate={-6} rotateX={9}>
                 <VideoInfoWindow />
               </Tilt>
             </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute -left-4 bottom-20 z-0 hidden lg:block"
-          >
             <motion.div animate={{ y: [0, -16, 0] }} transition={{ ...SLOW_FLOAT, duration: 13, delay: 1.5 }}>
               <Tilt rotate={5} rotateX={8}>
                 <ProjectStatusWindow />
