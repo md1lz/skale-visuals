@@ -143,16 +143,65 @@ const CHAT_MESSAGES: { from: "client" | "skale"; text: string }[] = [
   { from: "client", text: "Vous gérez, merci l'équipe 🙏" },
 ];
 
+function TypingDots({ from }: { from: "client" | "skale" }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10, scale: 0.95 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      exit={{ opacity: 0, scale: 0.8 }}
+      transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+      className={`max-w-[85%] rounded-2xl px-3 py-2 ${
+        from === "client"
+          ? "self-start rounded-bl-sm bg-white/10"
+          : "self-end rounded-br-sm bg-[#e21b3c]"
+      }`}
+    >
+      <span className="flex gap-1">
+        {[0, 1, 2].map((i) => (
+          <motion.span
+            key={i}
+            className="h-1.5 w-1.5 rounded-full bg-white/80"
+            animate={{ y: [0, -4, 0] }}
+            transition={{
+              duration: 0.55,
+              repeat: Infinity,
+              delay: i * 0.1,
+              ease: "easeInOut",
+            }}
+          />
+        ))}
+      </span>
+    </motion.div>
+  );
+}
+
 function ClientChatWindow() {
-  const [visible, setVisible] = useState(1);
+  const [visible, setVisible] = useState(0);
+  const [phase, setPhase] = useState<"typing" | "reveal" | "idle">("typing");
 
   useEffect(() => {
     if (visible >= CHAT_MESSAGES.length) return;
-    const id = window.setTimeout(() => {
-      setVisible((v) => v + 1);
-    }, 2200);
-    return () => window.clearTimeout(id);
-  }, [visible]);
+
+    if (phase === "typing") {
+      const id = window.setTimeout(() => setPhase("reveal"), 1600);
+      return () => window.clearTimeout(id);
+    }
+
+    if (phase === "reveal") {
+      const id = window.setTimeout(() => {
+        setVisible((v) => v + 1);
+        setPhase("idle");
+      }, 250);
+      return () => window.clearTimeout(id);
+    }
+
+    if (phase === "idle") {
+      const id = window.setTimeout(() => setPhase("typing"), 900);
+      return () => window.clearTimeout(id);
+    }
+  }, [phase, visible]);
+
+  const nextMessage = CHAT_MESSAGES[visible];
 
   return (
     <WindowFrame title="Micha — Espace client" className="w-72">
@@ -173,6 +222,9 @@ function ClientChatWindow() {
               <span className="font-codec tracking-[-0.02em]">{m.text}</span>
             </motion.div>
           ))}
+          {phase === "typing" && nextMessage && (
+            <TypingDots key={`typing-${visible}`} from={nextMessage.from} />
+          )}
         </AnimatePresence>
       </div>
     </WindowFrame>
