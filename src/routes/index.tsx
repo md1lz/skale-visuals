@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Mail, Instagram, Linkedin, Check, ArrowUpRight, BarChart3, Zap, PartyPopper } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
-import { SiteNavbar, SlotMachineText } from "@/components/SiteNavbar";
+import { SiteNavbar, SlotMachineText, scrollTo } from "@/components/SiteNavbar";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
 import skaleRedPill from "@/assets/skale-red-pill.png.asset.json";
 import cardMontage from "@/assets/card-montage.png.asset.json";
