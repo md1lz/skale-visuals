@@ -4,12 +4,18 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   ArrowDownToLine,
   ArrowUpRight,
-  Clapperboard,
+  Check,
   Clock,
+  Facebook,
+  Flag,
   Info,
-  Mountain,
+  Instagram,
+  Linkedin,
   MonitorPlay,
+  Mountain,
+  Music2,
   SlidersHorizontal,
+  Youtube,
 } from "lucide-react";
 
 import { SiteNavbar, SlotMachineText } from "@/components/SiteNavbar";
