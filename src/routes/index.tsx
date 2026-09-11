@@ -699,7 +699,7 @@ function ServiceCards() {
                 {card.description}
               </p>
               <div className="mt-5">
-                <ServiceBookCta />
+                <ServiceDiscoverCta to={card.link} />
               </div>
             </div>
           </div>
