@@ -696,7 +696,7 @@ function ProjectRecapFooter() {
       <div className="flex flex-col items-center">
         <button
           type="button"
-          onClick={() => scrollTo("realisations")}
+          onClick={() => scrollTo("projets")}
           onMouseEnter={() => setHoverMore(true)}
           onMouseLeave={() => setHoverMore(false)}
           onFocus={() => setHoverMore(true)}
