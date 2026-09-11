@@ -55,8 +55,9 @@ function WindowFrame({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_40px_80px_-24px_rgba(0,0,0,0.5)] ${className}`}
+      className={`relative overflow-hidden rounded-2xl border border-white/10 bg-black/95 shadow-[0_40px_80px_-24px_rgba(0,0,0,0.5),inset_0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-xl ${className}`}
     >
+      <div className="pointer-events-none absolute -inset-12 -z-10 rounded-[40px] bg-[radial-gradient(circle_at_center,rgba(226,27,60,0.18)_0%,transparent_65%)] blur-2xl" />
       <div className="flex items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2.5">
         <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
@@ -231,7 +232,7 @@ function VideoEditingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute -left-8 top-[22%] z-0 hidden flex-col gap-20 lg:flex"
+            className="absolute -left-14 top-[20%] z-0 hidden flex-col gap-24 lg:flex"
           >
             <motion.div animate={{ y: [0, -14, 0] }} transition={SLOW_FLOAT}>
               <Tilt rotate={-6} rotateX={9}>
@@ -249,7 +250,7 @@ function VideoEditingPage() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute -right-8 top-36 z-0 hidden lg:block"
+            className="absolute -right-14 top-[26%] z-0 hidden lg:block"
           >
             <motion.div animate={{ y: [0, -14, 0] }} transition={{ ...SLOW_FLOAT, duration: 12, delay: 0.8 }}>
               <Tilt rotate={5} rotateX={9}>
@@ -265,10 +266,10 @@ function VideoEditingPage() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10 flex max-w-3xl flex-col items-center text-center"
           >
-            <h1 className="font-codec-bold text-4xl leading-[1.05] tracking-[-0.06em] text-black sm:text-6xl lg:text-7xl">
-              On crée vos
+            <h1 className="text-4xl leading-[1.05] tracking-[-0.06em] text-black sm:text-6xl lg:text-7xl">
+              <span className="font-codec">On crée vos</span>
               <br />
-              contenus vidéo
+              <span className="font-codec-bold text-[#e21b3c]">contenus vidéo.</span>
             </h1>
             <p className="font-codec mt-5 max-w-xl text-lg leading-[1.2] tracking-[-0.04em] text-neutral-600 sm:text-xl">
               Tout inclus, prix fixes &amp; retours illimités.
