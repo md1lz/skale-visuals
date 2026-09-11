@@ -1,7 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowUpRight, Clapperboard, Film, MonitorPlay } from "lucide-react";
+import {
+  ArrowDownToLine,
+  ArrowUpRight,
+  Clapperboard,
+  Clock,
+  Info,
+  Mountain,
+  MonitorPlay,
+  SlidersHorizontal,
+} from "lucide-react";
 
 import { SiteNavbar, SlotMachineText } from "@/components/SiteNavbar";
 
@@ -33,7 +42,7 @@ function useLightTheme() {
   }, []);
 }
 
-/* ---------------- macOS-style window frame ---------------- */
+/* ---------------- dark window frame + 3d tilt ---------------- */
 
 function WindowFrame({
   title,
@@ -46,15 +55,35 @@ function WindowFrame({
 }) {
   return (
     <div
-      className={`overflow-hidden rounded-2xl border border-neutral-200 bg-white shadow-[0_24px_60px_-24px_rgba(0,0,0,0.25)] ${className}`}
+      className={`overflow-hidden rounded-2xl border border-white/10 bg-black shadow-[0_40px_80px_-24px_rgba(0,0,0,0.5)] ${className}`}
     >
-      <div className="flex items-center gap-2 border-b border-neutral-100 bg-neutral-50/80 px-4 py-2.5">
+      <div className="flex items-center gap-2 border-b border-white/10 bg-white/5 px-4 py-2.5">
         <span className="h-2.5 w-2.5 rounded-full bg-[#FF5F57]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#FEBC2E]" />
         <span className="h-2.5 w-2.5 rounded-full bg-[#28C840]" />
-        <span className="font-codec ml-2 truncate text-[11px] tracking-[-0.02em] text-neutral-500">{title}</span>
+        <span className="font-codec ml-2 truncate text-[11px] tracking-[-0.02em] text-white/40">{title}</span>
       </div>
       {children}
+    </div>
+  );
+}
+
+function Tilt({
+  children,
+  rotate = -5,
+  rotateX = 8,
+  className = "",
+}: {
+  children: React.ReactNode;
+  rotate?: number;
+  rotateX?: number;
+  className?: string;
+}) {
+  return (
+    <div className={className} style={{ perspective: 1200 }}>
+      <div style={{ transform: `rotateX(${rotateX}deg) rotateY(${rotate * 1.6}deg) rotateZ(${rotate}deg)`, transformStyle: "preserve-3d" }}>
+        {children}
+      </div>
     </div>
   );
 }
@@ -62,29 +91,34 @@ function WindowFrame({
 /* ---------------- video info window ---------------- */
 
 function VideoInfoWindow() {
-  const rows = [
-    { label: "Durée", value: "12:47" },
-    { label: "Taille", value: "248 Mo" },
-    { label: "Format", value: "MP4 · H.264" },
-    { label: "Dimensions", value: "1920 × 1080" },
+  const chips = [
+    { icon: Clock, value: "1:10" },
+    { icon: ArrowDownToLine, value: "9MB" },
+    { icon: Mountain, value: "1920×1080" },
+    { icon: SlidersHorizontal, value: "MPEG4, H.264" },
   ];
   return (
-    <WindowFrame title="montage_final.mp4" className="w-60">
-      <div className="p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/10">
-            <Film className="h-4.5 w-4.5 text-red-500" />
-          </div>
-          <p className="font-codec-bold text-sm tracking-[-0.04em] text-black">Vidéo YouTube</p>
+    <WindowFrame title="montage_final.mp4" className="w-64">
+      <div className="p-5">
+        <div className="mb-5 flex items-center gap-2.5">
+          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10">
+            <Info className="h-3.5 w-3.5 text-white/70" />
+          </span>
+          <p className="font-codec-bold text-base tracking-[-0.03em] text-white">Informations</p>
         </div>
-        <dl className="space-y-1.5">
-          {rows.map((r) => (
-            <div key={r.label} className="flex items-center justify-between text-xs">
-              <dt className="font-codec text-neutral-500">{r.label}</dt>
-              <dd className="font-codec-bold tabular-nums text-black">{r.value}</dd>
-            </div>
+        <div className="flex flex-wrap gap-2.5">
+          {chips.map((c, i) => (
+            <span
+              key={i}
+              className={`inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-2 ${
+                i >= 2 ? "w-full" : ""
+              }`}
+            >
+              <c.icon className="h-4 w-4 shrink-0 text-white/50" />
+              <span className="font-codec text-sm tracking-[-0.02em] text-white/80">{c.value}</span>
+            </span>
           ))}
-        </dl>
+        </div>
       </div>
     </WindowFrame>
   );
@@ -108,7 +142,7 @@ function ClientChatWindow() {
   useEffect(() => {
     const id = window.setInterval(() => {
       setVisible((v) => (v >= CHAT_MESSAGES.length ? 1 : v + 1));
-    }, 2200);
+    }, 2400);
     return () => window.clearInterval(id);
   }, []);
 
@@ -124,8 +158,8 @@ function ClientChatWindow() {
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
               className={`max-w-[85%] rounded-2xl px-3 py-2 text-[12px] leading-snug ${
                 m.from === "client"
-                  ? "self-start rounded-bl-sm bg-neutral-100 text-black"
-                  : "self-end rounded-br-sm bg-black text-white"
+                  ? "self-start rounded-bl-sm bg-white/10 text-white"
+                  : "self-end rounded-br-sm bg-[#e21b3c] text-white"
               }`}
             >
               <span className="font-codec tracking-[-0.02em]">{m.text}</span>
@@ -142,34 +176,34 @@ function ClientChatWindow() {
 function ProjectStatusWindow() {
   return (
     <WindowFrame title="Projet — Suivi" className="w-64">
-      <div className="p-4">
-        <div className="mb-3 flex items-center gap-2">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10">
-            <Clapperboard className="h-4.5 w-4.5 text-emerald-600" />
+      <div className="p-5">
+        <div className="mb-4 flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/10">
+            <Clapperboard className="h-5 w-5 text-white/80" />
           </div>
           <div>
-            <p className="font-codec-bold text-sm tracking-[-0.04em] text-black">Vidéo 1 — Lancement</p>
-            <p className="font-codec text-[11px] text-neutral-500">Micha · 7 juillet 2026</p>
+            <p className="font-codec-bold text-sm tracking-[-0.04em] text-white">Vidéo 1 — Lancement</p>
+            <p className="font-codec text-[11px] text-white/40">Micha · 7 juillet 2026</p>
           </div>
         </div>
-        <dl className="space-y-1.5 text-xs">
+        <dl className="space-y-2.5 text-xs">
           <div className="flex items-center justify-between">
-            <dt className="font-codec text-neutral-500">Statut</dt>
+            <dt className="font-codec text-white/40">Statut</dt>
             <dd>
-              <span className="rounded-full bg-emerald-500/10 px-2 py-0.5 text-[11px] font-medium text-emerald-600">
+              <span className="rounded-full bg-emerald-400/15 px-2.5 py-1 text-[11px] font-medium text-emerald-400">
                 Montage terminé
               </span>
             </dd>
           </div>
           <div className="flex items-center justify-between">
-            <dt className="font-codec text-neutral-500">Plateforme</dt>
-            <dd className="font-codec-bold flex items-center gap-1 text-black">
-              <MonitorPlay className="h-3.5 w-3.5 text-red-500" /> YouTube
+            <dt className="font-codec text-white/40">Plateforme</dt>
+            <dd className="font-codec-bold flex items-center gap-1.5 text-white">
+              <MonitorPlay className="h-3.5 w-3.5 text-[#e21b3c]" /> YouTube
             </dd>
           </div>
           <div className="flex items-center justify-between">
-            <dt className="font-codec text-neutral-500">Édition</dt>
-            <dd className="font-codec-bold text-black">Version finale</dd>
+            <dt className="font-codec text-white/40">Édition</dt>
+            <dd className="font-codec-bold text-white">Version finale</dd>
           </div>
         </dl>
       </div>
@@ -178,6 +212,8 @@ function ProjectStatusWindow() {
 }
 
 /* ---------------- page ---------------- */
+
+const SLOW_FLOAT = { duration: 11, repeat: Infinity, ease: "easeInOut" as const };
 
 function VideoEditingPage() {
   useLightTheme();
@@ -190,37 +226,43 @@ function VideoEditingPage() {
 
       <main className="relative z-10">
         <section className="relative mx-auto flex min-h-[92vh] max-w-7xl items-center justify-center px-4 pb-24 pt-32 sm:px-6 lg:px-8">
-          {/* floating windows — desktop */}
+          {/* floating windows — desktop, behind text, allowed to crop off-screen */}
           <motion.div
-            initial={{ opacity: 0, y: 30, rotate: -8 }}
-            animate={{ opacity: 1, y: 0, rotate: -6 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute left-2 top-32 hidden lg:block xl:left-16"
+            className="absolute -left-8 top-28 z-0 hidden lg:block"
           >
-            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}>
-              <VideoInfoWindow />
+            <motion.div animate={{ y: [0, -14, 0] }} transition={SLOW_FLOAT}>
+              <Tilt rotate={-6} rotateX={9}>
+                <VideoInfoWindow />
+              </Tilt>
             </motion.div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30, rotate: 8 }}
-            animate={{ opacity: 1, y: 0, rotate: 5 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.5, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute bottom-24 left-4 hidden lg:block xl:left-32"
+            className="absolute -left-4 bottom-20 z-0 hidden lg:block"
           >
-            <motion.div animate={{ y: [0, -12, 0] }} transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}>
-              <ProjectStatusWindow />
+            <motion.div animate={{ y: [0, -16, 0] }} transition={{ ...SLOW_FLOAT, duration: 13, delay: 1.5 }}>
+              <Tilt rotate={5} rotateX={8}>
+                <ProjectStatusWindow />
+              </Tilt>
             </motion.div>
           </motion.div>
 
           <motion.div
-            initial={{ opacity: 0, y: 30, rotate: -7 }}
-            animate={{ opacity: 1, y: 0, rotate: -5 }}
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.65, ease: [0.22, 1, 0.36, 1] }}
-            className="absolute right-2 top-40 hidden lg:block xl:right-16"
+            className="absolute -right-8 top-36 z-0 hidden lg:block"
           >
-            <motion.div animate={{ y: [0, -10, 0] }} transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}>
-              <ClientChatWindow />
+            <motion.div animate={{ y: [0, -14, 0] }} transition={{ ...SLOW_FLOAT, duration: 12, delay: 0.8 }}>
+              <Tilt rotate={5} rotateX={9}>
+                <ClientChatWindow />
+              </Tilt>
             </motion.div>
           </motion.div>
 
@@ -229,10 +271,12 @@ function VideoEditingPage() {
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className="flex max-w-3xl flex-col items-center text-center"
+            className="relative z-10 flex max-w-3xl flex-col items-center text-center"
           >
-            <h1 className="font-codec text-4xl leading-[1.05] tracking-[-0.06em] text-black sm:text-6xl lg:text-7xl">
-              On crée vos contenus vidéo
+            <h1 className="font-codec-bold text-4xl leading-[1.05] tracking-[-0.06em] text-black sm:text-6xl lg:text-7xl">
+              On crée vos
+              <br />
+              contenus vidéo
             </h1>
             <p className="font-codec mt-5 max-w-xl text-lg leading-[1.2] tracking-[-0.04em] text-neutral-600 sm:text-xl">
               Tout inclus, prix fixes &amp; retours illimités.
