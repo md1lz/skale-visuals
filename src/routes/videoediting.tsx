@@ -346,8 +346,8 @@ function VideoEditingPage() {
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className="relative z-10 flex max-w-3xl flex-col items-center text-center"
           >
-            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-[#e21b3c]/30 bg-[#e21b3c]/10 px-3 py-1.5 font-codec text-xs tracking-[-0.02em] text-[#e21b3c]">
-              <span className="h-1.5 w-1.5 rounded-full bg-[#e21b3c]" />
+            <span className="mb-4 inline-flex items-center gap-2 rounded-full border border-yellow-400/40 bg-yellow-400/15 px-3 py-1.5 font-codec text-xs tracking-[-0.02em] text-yellow-600">
+              <span className="h-1.5 w-1.5 rounded-full bg-yellow-500" />
               Cette partie est en travaux, merci de repasser plus tard
             </span>
             <h1 className="text-4xl leading-[1.05] text-black sm:text-6xl lg:text-7xl">
