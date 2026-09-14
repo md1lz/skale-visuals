@@ -167,6 +167,13 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
       description: ((p as ProjectRecap | undefined)?.description ?? "").toString(),
       avatar: (p as ProjectRecap | undefined)?.avatar ?? null,
     })),
+    serviceCards: serviceCards.map((c, i) => ({
+      image: (c as ServiceCard | undefined)?.image ?? null,
+      title: ((c as ServiceCard | undefined)?.title ?? DEFAULT_HOME_SETTINGS.serviceCards[i].title).toString(),
+      description: (
+        (c as ServiceCard | undefined)?.description ?? DEFAULT_HOME_SETTINGS.serviceCards[i].description
+      ).toString(),
+    })),
     serviceHeader: {
       image: (v.serviceHeader as ServiceHeader | undefined)?.image ?? DEFAULT_HOME_SETTINGS.serviceHeader.image,
       title: ((v.serviceHeader as ServiceHeader | undefined)?.title ?? DEFAULT_HOME_SETTINGS.serviceHeader.title).toString(),
