@@ -16,6 +16,12 @@ export type ProjectRecap = {
   avatar: string | null;
 };
 
+export type ServiceCard = {
+  image: string | null;
+  title: string;
+  description: string;
+};
+
 export type ServiceHeader = {
   image: string | null;
   title: string;
@@ -36,6 +42,7 @@ export type HomeSettings = {
   testimonial: HomeTestimonial;
   plusLabel: string;
   projects: ProjectRecap[];
+  serviceCards: ServiceCard[];
   serviceHeader: ServiceHeader;
 };
 
