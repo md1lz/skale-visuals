@@ -648,6 +648,70 @@ export function SiteAdminPanel() {
         </div>
       </section>
 
+      {/* Cartes Montage & Design */}
+      <section className={`${card} mb-6`}>
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">Cartes Montage & Design</h2>
+        <p className="mt-1 text-xs text-neutral-500">
+          Images et textes des deux cartes de la page d’accueil. Entoure un mot de **double astérisques** pour le
+          mettre en gras.
+        </p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          {settings.serviceCards.map((cardItem, i) => (
+            <div key={`service-card-${i}`} className="rounded-xl border border-white/10 bg-black/20 p-3">
+              <div className="flex items-start gap-3">
+                <button
+                  type="button"
+                  aria-label={`Image de la carte ${i + 1}`}
+                  onClick={() => fileRefs.current[`service-card-image-${i}`]?.click()}
+                  className="grid h-20 w-28 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+                >
+                  {serviceCardPreviews[i] ? (
+                    <img src={serviceCardPreviews[i] ?? ""} alt="" className="h-full w-full object-cover" />
+                  ) : (
+                    <ImagePlus className="h-5 w-5" />
+                  )}
+                </button>
+                <input
+                  ref={(el) => { fileRefs.current[`service-card-image-${i}`] = el; }}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={async (e) => {
+                    const file = e.target.files?.[0];
+                    e.target.value = "";
+                    if (!file) return;
+                    try {
+                      const reference = await uploadAsset(file);
+                      patchServiceCard(i, { image: reference });
+                      const objectUrl = URL.createObjectURL(file);
+                      setServiceCardPreviews((items) => {
+                        const next = [...items];
+                        next[i] = objectUrl;
+                        return next;
+                      });
+                    } catch (error) {
+                      toast.error(error instanceof Error ? error.message : "Upload échoué");
+                    }
+                  }}
+                />
+                <textarea
+                  className={`${input} min-h-[70px] flex-1`}
+                  placeholder="Titre"
+                  value={cardItem.title}
+                  onChange={(e) => patchServiceCard(i, { title: e.target.value })}
+                />
+              </div>
+              <textarea
+                className={`${input} mt-3 min-h-[80px]`}
+                placeholder="Description"
+                value={cardItem.description}
+                onChange={(e) => patchServiceCard(i, { description: e.target.value })}
+              />
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* En-tête service (montage vidéo) */}
       <section className={`${card} mb-6`}>
         <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">En-tête page Montage vidéo</h2>
