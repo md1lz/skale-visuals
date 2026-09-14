@@ -562,8 +562,8 @@ function BestRealisationsHeader() {
             skale
           </span>
         </div>
-        <h2 className="font-codec-bold mt-6 text-3xl tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
-          Nos meilleurs projets
+        <h2 className="font-codec-bold mt-6 flex items-center justify-center gap-2.5 text-3xl tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
+          Nos meilleurs projets <span aria-hidden>🏆</span>
         </h2>
       </motion.div>
     </section>
