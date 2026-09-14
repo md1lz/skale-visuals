@@ -50,6 +50,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     })),
   );
   const serviceHeaderPreview = await signAsset(settings.serviceHeader.image);
+  const serviceCardPreviews = await Promise.all(settings.serviceCards.map((c) => signAsset(c.image)));
 
   return {
     settings,
@@ -59,6 +60,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     footerLogoPreviews,
     projectPreviews,
     serviceHeaderPreview,
+    serviceCardPreviews,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
   } as HomeContent & {
