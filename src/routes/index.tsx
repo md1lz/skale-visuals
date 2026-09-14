@@ -363,7 +363,7 @@ function ServiceCards({ settings }: { settings: HomeContent["settings"] }) {
             className="relative flex min-h-[300px] flex-col overflow-hidden rounded-3xl border border-neutral-600/60 bg-black shadow-[0_24px_60px_-20px_rgba(255,255,255,0.10)] sm:min-h-[340px] md:min-h-[380px]"
           >
             <img
-              src={typeof card.image === "string" ? card.image : card.image.url}
+              src={card.image}
               alt={card.alt}
               width={1024}
               height={640}
@@ -1201,7 +1201,7 @@ function Home() {
               <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">convertir & vendre</span>
               <span className="font-codec-bold tracking-[-0.06em]">.</span>
             </h2>
-            <ServiceCards />
+            <ServiceCards settings={settings} />
             <div className="my-8 h-px w-full max-w-5xl bg-gradient-to-r from-transparent via-primary to-transparent opacity-80 sm:my-9" />
             <ServiceBenefits />
             <ClientTestimonial settings={settings} />
