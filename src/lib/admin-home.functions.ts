@@ -114,6 +114,16 @@ const settingsSchema = z.object({
       }),
     )
     .max(2),
+  serviceCards: z
+    .array(
+      z.object({
+        image: z.string().trim().max(500).nullable(),
+        title: z.string().trim().max(200),
+        description: z.string().trim().max(400),
+      }),
+    )
+    .max(2)
+    .default([]),
   serviceHeader: z.object({
     image: z.string().trim().max(500).nullable(),
     title: z.string().trim().max(120),
