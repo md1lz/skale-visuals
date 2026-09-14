@@ -317,46 +317,36 @@ function ServiceDiscoverCta({ to }: { to: string }) {
   );
 }
 
-function ServiceCards() {
+function RichTitle({ text }: { text: string }) {
+  return (
+    <>
+      {text.split("**").map((part, i) =>
+        i % 2 === 1 ? (
+          <span key={i} className="font-codec-bold tracking-[-0.06em]">
+            {part}
+          </span>
+        ) : (
+          <span key={i} className="font-codec tracking-[-0.06em]">
+            {part}
+          </span>
+        ),
+      )}
+    </>
+  );
+}
+
+function ServiceCards({ settings }: { settings: HomeContent["settings"] }) {
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.15, once: true });
 
-  const cards = [
-    {
-      image: cardMontage,
-      alt: "Montage vidéo stratégique",
-      link: "/videoediting",
-      title: (
-        <>
-          <span className="font-codec tracking-[-0.06em]">Le </span>
-          <span className="font-codec-bold tracking-[-0.06em]">montage stratégique</span>
-          <span className="font-codec tracking-[-0.06em]">, conçu pour </span>
-          <span className="font-codec-bold tracking-[-0.06em]">convertir</span>
-          <span className="font-codec tracking-[-0.06em]">.</span>
-        </>
-      ),
-      description:
-        "Vidéos ultra-efficaces qui accrochent dès les premières secondes, retiennent l’attention et poussent chaque vue à l’action.",
-    },
-    {
-      image: cardDesign,
-      alt: "Design visuel",
-      link: "/design",
-      title: (
-        <>
-          <span className="font-codec tracking-[-0.06em]">Le </span>
-          <span className="font-codec-bold tracking-[-0.06em]">design visuel</span>
-          <span className="font-codec tracking-[-0.06em]">, conçu pour </span>
-          <span className="font-codec-bold tracking-[-0.06em]">captiver</span>
-          <span className="font-codec tracking-[-0.06em]"> et </span>
-          <span className="font-codec-bold tracking-[-0.06em]">convaincre</span>
-          <span className="font-codec tracking-[-0.06em]">.</span>
-        </>
-      ),
-      description:
-        "Miniatures et visuels sur mesure pour valoriser ton contenu, renforcer ta crédibilité et transformer tes visiteurs en clients.",
-    },
-  ];
+  const fallbacks = [cardMontage, cardDesign];
+  const cards = settings.serviceCards.slice(0, 2).map((c, i) => ({
+    image: c.image ?? (typeof fallbacks[i] === "string" ? fallbacks[i] : fallbacks[i].url),
+    alt: i === 0 ? "Montage vidéo stratégique" : "Design visuel",
+    link: i === 0 ? "/videoediting" : "/design",
+    title: <RichTitle text={c.title} />,
+    description: c.description,
+  }));
 
   return (
     <motion.div
