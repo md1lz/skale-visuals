@@ -79,6 +79,7 @@ export function SiteAdminPanel() {
   const [testimonialPreview, setTestimonialPreview] = useState<string | null>(null);
   const [projectPreviews, setProjectPreviews] = useState<{ image: string | null; avatar: string | null }[]>([]);
   const [serviceHeaderPreview, setServiceHeaderPreview] = useState<string | null>(null);
+  const [serviceCardPreviews, setServiceCardPreviews] = useState<(string | null)[]>([]);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
   const [videos, setVideos] = useState<HomeVideo[]>([]);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
@@ -99,6 +100,7 @@ export function SiteAdminPanel() {
       setTestimonialPreview(res.testimonialPreview ?? null);
       setProjectPreviews(res.projectPreviews ?? []);
       setServiceHeaderPreview(res.serviceHeaderPreview ?? null);
+      setServiceCardPreviews(res.serviceCardPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
@@ -158,6 +160,11 @@ export function SiteAdminPanel() {
             title: p.title,
             description: p.description,
             avatar: p.avatar,
+          })),
+          serviceCards: settings.serviceCards.map((c) => ({
+            image: c.image,
+            title: c.title,
+            description: c.description,
           })),
           serviceHeader: {
             image: settings.serviceHeader.image,
@@ -249,6 +256,12 @@ export function SiteAdminPanel() {
   function patchProject(i: number, patch: Partial<HomeSettings["projects"][number]>) {
     setSettings((s) =>
       s ? { ...s, projects: s.projects.map((p, idx) => (idx === i ? { ...p, ...patch } : p)) } : s,
+    );
+    setDirty(true);
+  }
+  function patchServiceCard(i: number, patch: Partial<HomeSettings["serviceCards"][number]>) {
+    setSettings((s) =>
+      s ? { ...s, serviceCards: s.serviceCards.map((c, idx) => (idx === i ? { ...c, ...patch } : c)) } : s,
     );
     setDirty(true);
   }
