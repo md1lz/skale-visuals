@@ -1124,7 +1124,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
         <div className="relative z-10 mt-5 flex flex-col gap-1.5 font-codec text-base tracking-[-0.04em] text-white/80 sm:text-lg">
           <a
             href="mailto:contact@skalevisuals.com"
-            className="group flex items-center gap-2.5 transition-colors hover:text-white"
+            className="group flex w-fit items-center gap-2.5 transition-colors hover:text-white"
           >
             <Mail className="h-4 w-4 text-red-500 transition-transform group-hover:scale-110 sm:h-5 sm:w-5" />
             <span>contact@skalevisuals.com</span>
@@ -1133,7 +1133,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
             href="https://www.linkedin.com/company/skale-visuals"
             target="_blank"
             rel="noreferrer"
-            className="group flex items-center gap-2.5 transition-colors hover:text-white"
+            className="group flex w-fit items-center gap-2.5 transition-colors hover:text-white"
           >
             <Linkedin className="h-4 w-4 text-sky-500 transition-transform group-hover:scale-110 sm:h-5 sm:w-5" />
             <span>LinkedIn</span>
@@ -1142,7 +1142,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
             href="https://www.instagram.com/skalevisuals"
             target="_blank"
             rel="noreferrer"
-            className="group flex items-center gap-2.5 transition-colors hover:text-white"
+            className="group flex w-fit items-center gap-2.5 transition-colors hover:text-white"
           >
             <Instagram className="h-4 w-4 text-pink-500 transition-transform group-hover:scale-110 sm:h-5 sm:w-5" />
             <span>Instagram</span>
