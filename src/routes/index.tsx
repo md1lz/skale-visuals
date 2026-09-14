@@ -787,6 +787,7 @@ function ProcessStep({
         <h3 className="font-codec-bold text-2xl tracking-[-0.03em] text-neutral-900 sm:text-3xl">
           {step.title}
         </h3>
+        <span aria-hidden className="text-2xl sm:text-3xl">{step.emoji}</span>
       </div>
       <p className="font-codec-bold mt-2 text-xs uppercase tracking-[0.2em] text-primary">
         {step.day}
