@@ -93,6 +93,20 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
       avatar: null,
     },
   ],
+  serviceCards: [
+    {
+      image: null,
+      title: "Le **montage stratégique**, conçu pour **convertir**.",
+      description:
+        "Vidéos ultra-efficaces qui accrochent dès les premières secondes, retiennent l’attention et poussent chaque vue à l’action.",
+    },
+    {
+      image: null,
+      title: "Le **design visuel**, conçu pour **captiver** et **convaincre**.",
+      description:
+        "Miniatures et visuels sur mesure pour valoriser ton contenu, renforcer ta crédibilité et transformer tes visiteurs en clients.",
+    },
+  ],
   serviceHeader: {
     image: null,
     title: "Le montage stratégique, conçu pour convertir.",
