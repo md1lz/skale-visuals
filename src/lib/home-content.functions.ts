@@ -16,6 +16,12 @@ export type ProjectRecap = {
   avatar: string | null;
 };
 
+export type ServiceCard = {
+  image: string | null;
+  title: string;
+  description: string;
+};
+
 export type ServiceHeader = {
   image: string | null;
   title: string;
@@ -36,6 +42,7 @@ export type HomeSettings = {
   testimonial: HomeTestimonial;
   plusLabel: string;
   projects: ProjectRecap[];
+  serviceCards: ServiceCard[];
   serviceHeader: ServiceHeader;
 };
 
@@ -86,6 +93,20 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
       avatar: null,
     },
   ],
+  serviceCards: [
+    {
+      image: null,
+      title: "Le **montage stratégique**, conçu pour **convertir**.",
+      description:
+        "Vidéos ultra-efficaces qui accrochent dès les premières secondes, retiennent l’attention et poussent chaque vue à l’action.",
+    },
+    {
+      image: null,
+      title: "Le **design visuel**, conçu pour **captiver** et **convaincre**.",
+      description:
+        "Miniatures et visuels sur mesure pour valoriser ton contenu, renforcer ta crédibilité et transformer tes visiteurs en clients.",
+    },
+  ],
   serviceHeader: {
     image: null,
     title: "Le montage stratégique, conçu pour convertir.",
@@ -106,6 +127,9 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
   const footerLogos = Array.isArray(v.footerLogos) ? v.footerLogos.slice(0, 24) : [];
   const projects = Array.isArray(v.projects) ? v.projects.slice(0, 2) : [];
   while (projects.length < 2) projects.push({ ...DEFAULT_HOME_SETTINGS.projects[projects.length] });
+  const serviceCards = Array.isArray(v.serviceCards) ? v.serviceCards.slice(0, 2) : [];
+  while (serviceCards.length < 2)
+    serviceCards.push({ ...DEFAULT_HOME_SETTINGS.serviceCards[serviceCards.length] });
   return {
     videosCount: Number.isFinite(Number(v.videosCount)) ? Number(v.videosCount) : DEFAULT_HOME_SETTINGS.videosCount,
     clientsCount: Number.isFinite(Number(v.clientsCount))
@@ -142,6 +166,13 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
       title: ((p as ProjectRecap | undefined)?.title ?? "").toString(),
       description: ((p as ProjectRecap | undefined)?.description ?? "").toString(),
       avatar: (p as ProjectRecap | undefined)?.avatar ?? null,
+    })),
+    serviceCards: serviceCards.map((c, i) => ({
+      image: (c as ServiceCard | undefined)?.image ?? null,
+      title: ((c as ServiceCard | undefined)?.title ?? DEFAULT_HOME_SETTINGS.serviceCards[i].title).toString(),
+      description: (
+        (c as ServiceCard | undefined)?.description ?? DEFAULT_HOME_SETTINGS.serviceCards[i].description
+      ).toString(),
     })),
     serviceHeader: {
       image: (v.serviceHeader as ServiceHeader | undefined)?.image ?? DEFAULT_HOME_SETTINGS.serviceHeader.image,
@@ -215,6 +246,9 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
     ...settings.testimonial,
     photo: await signAsset(settings.testimonial.photo),
   };
+  settings.serviceCards = await Promise.all(
+    settings.serviceCards.map(async (c) => ({ ...c, image: await signAsset(c.image) })),
+  );
   settings.serviceHeader = {
     ...settings.serviceHeader,
     image: await signAsset(settings.serviceHeader.image),

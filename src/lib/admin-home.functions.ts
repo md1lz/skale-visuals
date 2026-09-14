@@ -50,6 +50,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     })),
   );
   const serviceHeaderPreview = await signAsset(settings.serviceHeader.image);
+  const serviceCardPreviews = await Promise.all(settings.serviceCards.map((c) => signAsset(c.image)));
 
   return {
     settings,
@@ -59,6 +60,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     footerLogoPreviews,
     projectPreviews,
     serviceHeaderPreview,
+    serviceCardPreviews,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
   } as HomeContent & {
@@ -68,6 +70,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     footerLogoPreviews: (string | null)[];
     projectPreviews: { image: string | null; avatar: string | null }[];
     serviceHeaderPreview: string | null;
+    serviceCardPreviews: (string | null)[];
   };
 });
 
@@ -111,6 +114,16 @@ const settingsSchema = z.object({
       }),
     )
     .max(2),
+  serviceCards: z
+    .array(
+      z.object({
+        image: z.string().trim().max(500).nullable(),
+        title: z.string().trim().max(200),
+        description: z.string().trim().max(400),
+      }),
+    )
+    .max(2)
+    .default([]),
   serviceHeader: z.object({
     image: z.string().trim().max(500).nullable(),
     title: z.string().trim().max(120),
