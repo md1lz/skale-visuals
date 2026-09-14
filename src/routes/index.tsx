@@ -813,7 +813,7 @@ function ProcessStep({
       </div>
 
       <div className={`flex items-center gap-3 ${left ? "sm:justify-end" : "sm:justify-start"}`}>
-        <span className="font-codec-bold flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm text-white shadow-[0_8px_20px_-8px_rgba(226,75,74,0.8)]">
+        <span className="font-codec-bold flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.35)]">
           {index + 1}
         </span>
         <h3 className="font-codec-bold text-2xl tracking-[-0.03em] text-neutral-900 sm:text-3xl">
