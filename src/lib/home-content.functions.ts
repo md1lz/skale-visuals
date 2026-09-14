@@ -246,6 +246,9 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
     ...settings.testimonial,
     photo: await signAsset(settings.testimonial.photo),
   };
+  settings.serviceCards = await Promise.all(
+    settings.serviceCards.map(async (c) => ({ ...c, image: await signAsset(c.image) })),
+  );
   settings.serviceHeader = {
     ...settings.serviceHeader,
     image: await signAsset(settings.serviceHeader.image),
