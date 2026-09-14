@@ -563,7 +563,7 @@ function BestRealisationsHeader() {
           </span>
         </div>
         <h2 className="font-codec-bold mt-6 flex items-center justify-center gap-2.5 text-3xl tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
-          Nos meilleurs projets <span aria-hidden>🏆</span>
+          Nos meilleurs projets
         </h2>
       </motion.div>
     </section>
@@ -727,30 +727,35 @@ function ProjectRecapFooter() {
 const PROCESS_STEPS = [
   {
     day: "Jour 1",
+    emoji: "📞",
     title: "Appel découverte",
     description:
       "On se prévoit un appel 100% gratuit de 30 minutes, sans engagement. On analyse ton contenu actuel, on discute de tes idées et on précise tes objectifs, ta niche et ton projet pour comprendre comment t'aider au mieux.",
   },
   {
     day: "Jour 2",
+    emoji: "📝",
     title: "Brief & stratégie",
     description:
       "On prépare un devis adapté à tes besoins, puis on se revoit en appel pour affiner les stratégies et l'accompagnement. Tu nous partages tes inspirations, ta direction artistique et ton angle créatif pour qu'on parte sur une base solide.",
   },
   {
     day: "Jour 3",
+    emoji: "🎨",
     title: "Création",
     description:
       "Selon ton besoin, notre équipe monte ta vidéo ou designe tes visuels. Chaque création est pensée pour capter l'attention dès les premières secondes.",
   },
   {
     day: "Jour 6",
+    emoji: "💬",
     title: "Révisions illimitées",
     description:
       "Tu nous fais tes retours directement dans ton espace client : tout est centralisé sans logiciel externe, pour des échanges simples et efficaces. On ajuste jusqu'à ce que tu sois 100% satisfait.",
   },
   {
     day: "Jour 7",
+    emoji: "🚀",
     title: "Livraison",
     description:
       "Une fois validés, tes fichiers finaux te sont livrés prêts à publier directement dans ton espace client. Rapide, simple, sans prise de tête.",
@@ -782,6 +787,7 @@ function ProcessStep({
         <h3 className="font-codec-bold text-2xl tracking-[-0.03em] text-neutral-900 sm:text-3xl">
           {step.title}
         </h3>
+        <span aria-hidden className="text-2xl sm:text-3xl">{step.emoji}</span>
       </div>
       <p className="font-codec-bold mt-2 text-xs uppercase tracking-[0.2em] text-primary">
         {step.day}
