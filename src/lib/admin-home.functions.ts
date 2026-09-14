@@ -70,6 +70,7 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     footerLogoPreviews: (string | null)[];
     projectPreviews: { image: string | null; avatar: string | null }[];
     serviceHeaderPreview: string | null;
+    serviceCardPreviews: (string | null)[];
   };
 });
 
