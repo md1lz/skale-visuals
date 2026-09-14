@@ -813,7 +813,7 @@ function ProcessStep({
       </div>
 
       <div className={`flex items-center gap-3 ${left ? "sm:justify-end" : "sm:justify-start"}`}>
-        <span className="font-codec-bold flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-sm text-white shadow-[0_8px_20px_-8px_rgba(226,75,74,0.8)]">
+        <span className="font-codec-bold flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.35)]">
           {index + 1}
         </span>
         <h3 className="font-codec-bold text-2xl tracking-[-0.03em] text-neutral-900 sm:text-3xl">
@@ -902,14 +902,9 @@ function ProcessOutro() {
         transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 mx-auto max-w-2xl text-center"
       >
-        <motion.span
-          initial={{ scale: 0, rotate: -30 }}
-          animate={inView ? { scale: 1, rotate: 0 } : undefined}
-          transition={{ duration: 0.6, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-          className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-[0_16px_40px_-12px_rgba(226,75,74,0.8)]"
-        >
-          <PartyPopper className="h-7 w-7" />
-        </motion.span>
+        <span className="mx-auto block text-5xl leading-none sm:text-6xl" aria-hidden>
+          🎉
+        </span>
         <h3 className="font-codec-bold mt-6 text-2xl leading-[1.15] tracking-[-0.04em] text-neutral-900 sm:text-4xl">
           Et voilà, en quelques jours seulement tu as ton{" "}
           <span className="text-primary">montage vidéo et tes visuels livrés</span>, prêts à publier.
