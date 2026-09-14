@@ -757,18 +757,6 @@ const PROCESS_STEPS = [
   },
 ];
 
-const FLOAT_POS_LEFT = [
-  "left-2 -top-8 rotate-[-14deg] sm:left-2 sm:-top-10",
-  "right-2 -top-8 rotate-[10deg] sm:right-8 sm:-top-11",
-  "left-1/2 -bottom-6 -translate-x-1/2 rotate-[8deg] sm:left-8 sm:-bottom-8",
-];
-
-const FLOAT_POS_RIGHT = [
-  "right-2 -top-8 rotate-[14deg] sm:right-2 sm:-top-10",
-  "left-2 -top-8 rotate-[-10deg] sm:left-8 sm:-top-11",
-  "left-1/2 -bottom-6 -translate-x-1/2 rotate-[-8deg] sm:right-8 sm:-bottom-8",
-];
-
 function ProcessStep({
   step,
   index,
@@ -779,7 +767,6 @@ function ProcessStep({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.4, once: true });
   const left = index % 2 === 0;
-  const floatPos = left ? FLOAT_POS_LEFT : FLOAT_POS_RIGHT;
 
   const content = (
     <motion.div
@@ -788,25 +775,6 @@ function ProcessStep({
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className={`relative max-w-md ${left ? "sm:ml-auto sm:pr-16 sm:text-right" : "sm:mr-auto sm:pl-16 sm:text-left"} pl-14 text-left sm:pl-0`}
     >
-      {/* emojis flottants */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-20">
-        {step.icons.map((emoji, i) => (
-          <motion.span
-            key={i}
-            className={`absolute ${floatPos[i]} ${i === 2 ? "hidden sm:block" : ""}`}
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={inView ? { opacity: 0.95, scale: 1, y: [0, -7, 0] } : undefined}
-            transition={{
-              opacity: { duration: 0.5, delay: 0.2 + i * 0.1 },
-              scale: { duration: 0.5, delay: 0.2 + i * 0.1 },
-              y: { duration: 3.6 + i, repeat: Infinity, ease: "easeInOut" },
-            }}
-          >
-            <span className="block text-lg leading-none sm:text-2xl">{emoji}</span>
-          </motion.span>
-        ))}
-      </div>
-
       <div className={`flex items-center gap-3 ${left ? "sm:justify-end" : "sm:justify-start"}`}>
         <span className="font-codec-bold flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.35)]">
           {index + 1}
