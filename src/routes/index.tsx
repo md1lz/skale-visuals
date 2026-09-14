@@ -562,8 +562,8 @@ function BestRealisationsHeader() {
             skale
           </span>
         </div>
-        <h2 className="font-codec-bold mt-6 text-3xl tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
-          Nos meilleurs projets
+        <h2 className="font-codec-bold mt-6 flex items-center justify-center gap-2.5 text-3xl tracking-[-0.06em] text-foreground sm:text-4xl lg:text-5xl">
+          Nos meilleurs projets <span aria-hidden>🏆</span>
         </h2>
       </motion.div>
     </section>
@@ -730,48 +730,31 @@ const PROCESS_STEPS = [
     title: "Appel découverte",
     description:
       "On se prévoit un appel 100% gratuit de 30 minutes, sans engagement. On analyse ton contenu actuel, on discute de tes idées et on précise tes objectifs, ta niche et ton projet pour comprendre comment t'aider au mieux.",
-    icons: ["📞", "💬", "✨"],
   },
   {
     day: "Jour 2",
     title: "Brief & stratégie",
     description:
       "On prépare un devis adapté à tes besoins, puis on se revoit en appel pour affiner les stratégies et l'accompagnement. Tu nous partages tes inspirations, ta direction artistique et ton angle créatif pour qu'on parte sur une base solide.",
-    icons: ["💡", "🎨", "⭐"],
   },
   {
     day: "Jour 3",
     title: "Création",
     description:
       "Selon ton besoin, notre équipe monte ta vidéo ou designe tes visuels. Chaque création est pensée pour capter l'attention dès les premières secondes.",
-    icons: ["🎬", "✂️", "🎵"],
   },
   {
     day: "Jour 6",
     title: "Révisions illimitées",
     description:
       "Tu nous fais tes retours directement dans ton espace client : tout est centralisé sans logiciel externe, pour des échanges simples et efficaces. On ajuste jusqu'à ce que tu sois 100% satisfait.",
-    icons: ["🪄", "❤️", "📷"],
   },
   {
     day: "Jour 7",
     title: "Livraison",
     description:
       "Une fois validés, tes fichiers finaux te sont livrés prêts à publier directement dans ton espace client. Rapide, simple, sans prise de tête.",
-    icons: ["📦", "🚀", "🎞️"],
   },
-];
-
-const FLOAT_POS_LEFT = [
-  "left-2 -top-8 rotate-[-14deg] sm:left-2 sm:-top-10",
-  "right-2 -top-8 rotate-[10deg] sm:right-8 sm:-top-11",
-  "left-1/2 -bottom-6 -translate-x-1/2 rotate-[8deg] sm:left-8 sm:-bottom-8",
-];
-
-const FLOAT_POS_RIGHT = [
-  "right-2 -top-8 rotate-[14deg] sm:right-2 sm:-top-10",
-  "left-2 -top-8 rotate-[-10deg] sm:left-8 sm:-top-11",
-  "left-1/2 -bottom-6 -translate-x-1/2 rotate-[-8deg] sm:right-8 sm:-bottom-8",
 ];
 
 function ProcessStep({
@@ -784,7 +767,6 @@ function ProcessStep({
   const ref = useRef<HTMLDivElement>(null);
   const inView = useInView(ref, { amount: 0.4, once: true });
   const left = index % 2 === 0;
-  const floatPos = left ? FLOAT_POS_LEFT : FLOAT_POS_RIGHT;
 
   const content = (
     <motion.div
@@ -793,25 +775,6 @@ function ProcessStep({
       transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
       className={`relative max-w-md ${left ? "sm:ml-auto sm:pr-16 sm:text-right" : "sm:mr-auto sm:pl-16 sm:text-left"} pl-14 text-left sm:pl-0`}
     >
-      {/* emojis flottants */}
-      <div aria-hidden className="pointer-events-none absolute inset-0 z-20">
-        {step.icons.map((emoji, i) => (
-          <motion.span
-            key={i}
-            className={`absolute ${floatPos[i]} ${i === 2 ? "hidden sm:block" : ""}`}
-            initial={{ opacity: 0, scale: 0.6 }}
-            animate={inView ? { opacity: 0.95, scale: 1, y: [0, -7, 0] } : undefined}
-            transition={{
-              opacity: { duration: 0.5, delay: 0.2 + i * 0.1 },
-              scale: { duration: 0.5, delay: 0.2 + i * 0.1 },
-              y: { duration: 3.6 + i, repeat: Infinity, ease: "easeInOut" },
-            }}
-          >
-            <span className="block text-lg leading-none sm:text-2xl">{emoji}</span>
-          </motion.span>
-        ))}
-      </div>
-
       <div className={`flex items-center gap-3 ${left ? "sm:justify-end" : "sm:justify-start"}`}>
         <span className="font-codec-bold flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-neutral-900 text-sm text-white shadow-[0_8px_20px_-8px_rgba(0,0,0,0.35)]">
           {index + 1}
