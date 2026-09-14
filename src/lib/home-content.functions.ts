@@ -127,6 +127,9 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
   const footerLogos = Array.isArray(v.footerLogos) ? v.footerLogos.slice(0, 24) : [];
   const projects = Array.isArray(v.projects) ? v.projects.slice(0, 2) : [];
   while (projects.length < 2) projects.push({ ...DEFAULT_HOME_SETTINGS.projects[projects.length] });
+  const serviceCards = Array.isArray(v.serviceCards) ? v.serviceCards.slice(0, 2) : [];
+  while (serviceCards.length < 2)
+    serviceCards.push({ ...DEFAULT_HOME_SETTINGS.serviceCards[serviceCards.length] });
   return {
     videosCount: Number.isFinite(Number(v.videosCount)) ? Number(v.videosCount) : DEFAULT_HOME_SETTINGS.videosCount,
     clientsCount: Number.isFinite(Number(v.clientsCount))
