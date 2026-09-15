@@ -127,7 +127,8 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999]">
-      <canvas ref={canvasRef} className="h-full w-full" />
+      {blackout ? <div className="absolute inset-0 bg-black" /> : null}
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
     </div>
   );
 }
