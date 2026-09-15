@@ -16,6 +16,10 @@ function isMobileDevice() {
 
 function IntroCanvas({ onDone }: { onDone: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // Fond noir plein écran tant que le chroma key n'a pas commencé :
+  // le site reste masqué pendant le chargement et le début de la vidéo.
+  const [blackout, setBlackout] = useState(true);
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -62,6 +66,7 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
       ctx.drawImage(video, dx, dy, dw, dh);
 
       if (video.currentTime >= CHROMA_START_TIME) {
+        setBlackout(false);
         try {
           const frame = ctx.getImageData(0, 0, cw, ch);
           const d = frame.data;
@@ -86,15 +91,30 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
     video.addEventListener("ended", handleEnded);
     video.addEventListener("error", handleError);
 
+    let started = false;
     const start = () => {
+      if (started || stopped) return;
+      started = true;
       void video.play().catch(() => onDone());
       raf = requestAnimationFrame(draw);
     };
-    if (video.readyState >= 2) start();
-    else video.addEventListener("loadeddata", start, { once: true });
+    // On attend que la vidéo soit suffisamment chargée pour éviter les saccades.
+    if (video.readyState >= 4) start();
+    else {
+      video.addEventListener("canplaythrough", start, { once: true });
+      video.addEventListener("loadeddata", () => {
+        // filet de sécurité si canplaythrough ne se déclenche jamais
+        setTimeout(start, 2500);
+      }, { once: true });
+    }
+    // Sécurité absolue : si la vidéo ne démarre pas, on libère le site.
+    const failSafe = setTimeout(() => {
+      if (!started) onDone();
+    }, 12000);
 
     return () => {
       stopped = true;
+      clearTimeout(failSafe);
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       video.removeEventListener("ended", handleEnded);
@@ -107,7 +127,8 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999]">
-      <canvas ref={canvasRef} className="h-full w-full" />
+      {blackout ? <div className="absolute inset-0 bg-black" /> : null}
+      <canvas ref={canvasRef} className="absolute inset-0 h-full w-full" />
     </div>
   );
 }
