@@ -114,6 +114,7 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
 
     return () => {
       stopped = true;
+      clearTimeout(failSafe);
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       video.removeEventListener("ended", handleEnded);
