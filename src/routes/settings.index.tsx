@@ -38,7 +38,7 @@ import { MaintenanceCard } from "@/components/MaintenanceCard";
 import { getFinanceKpis } from "@/lib/billing.functions";
 import { formatEUR } from "@/lib/billing.shared";
 
-export const Route = createFileRoute("/office/")({
+export const Route = createFileRoute("/settings/")({
   component: AdminHome,
 });
 

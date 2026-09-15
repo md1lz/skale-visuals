@@ -1,37 +1,34 @@
-import { Outlet, createFileRoute, redirect, Link, useRouterState } from "@tanstack/react-router";
+import { Outlet, createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
 
 import {
   LayoutDashboard,
   Users,
-  FolderKanban,
-  Settings,
-  Scissors,
-  Target,
+  Palette,
+  Plug,
+  Globe,
+  UserCircle2,
+  BarChart3,
   CalendarClock,
-  FileSignature,
-  Receipt,
-  Sparkles,
+  CalendarCheck,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
 import { getAdminSessionFn, getAdminProfile } from "@/lib/admin-auth.functions";
-import { getEditorSessionFn } from "@/lib/editor.functions";
 import { AdminProfileMenu } from "@/components/AdminProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
-import { MessagePing } from "@/components/MessagePing";
-import { PanelMobileNav } from "@/components/PanelMobileNav";
 import { OfficeLogin } from "@/components/OfficeLogin";
+import { PanelMobileNav } from "@/components/PanelMobileNav";
 
-export const Route = createFileRoute("/office")({
+export const Route = createFileRoute("/settings")({
   head: () => ({
     meta: [
-      { title: "Skale Office — Espace équipe" },
-      { name: "description", content: "Espace de pilotage interne de Skale Visuals." },
-      { property: "og:title", content: "Skale Office — Espace équipe" },
-      { property: "og:description", content: "Espace de pilotage interne de Skale Visuals." },
+      { title: "Skale Settings — Espace équipe" },
+      { name: "description", content: "Espace de réglages interne de Skale Visuals." },
+      { property: "og:title", content: "Skale Settings — Espace équipe" },
+      { property: "og:description", content: "Espace de réglages interne de Skale Visuals." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "robots", content: "noindex" },
@@ -39,14 +36,9 @@ export const Route = createFileRoute("/office")({
   }),
   beforeLoad: async () => {
     const session = await getAdminSessionFn();
-    if (!session) {
-      const editor = await getEditorSessionFn();
-      if (editor) throw redirect({ to: "/studio" });
-      return { session: null };
-    }
     return { session };
   },
-  component: AdminLayout,
+  component: SettingsLayout,
   errorComponent: ({ error }) => (
     <div className="min-h-screen flex items-center justify-center bg-neutral-950 text-white p-6">
       <p className="text-sm text-neutral-400">Erreur ({error.message}).</p>
@@ -66,19 +58,18 @@ const NAV: {
   exact?: boolean;
   desktopOnly?: boolean;
 }[] = [
-  { to: "/office", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
-  { to: "/office/prospects", label: "Prospection", icon: Target },
-  { to: "/office/clients", label: "Clients", icon: Users },
-  { to: "/office/quotes", label: "Devis", icon: FileSignature },
-  { to: "/office/invoices", label: "Factures", icon: Receipt },
-  { to: "/office/services", label: "Prestations", icon: Sparkles },
-  { to: "/office/projects", label: "Projets", icon: FolderKanban },
-  { to: "/office/editors", label: "Monteurs", icon: Scissors },
-  { to: "/office/calls", label: "Book a Call", icon: CalendarClock },
-  { to: "/office/settings", label: "Paramètres", icon: Settings },
+  { to: "/settings", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+  { to: "/settings/analytics", label: "Analytiques", icon: BarChart3 },
+  { to: "/settings/calls", label: "Book a Call", icon: CalendarClock },
+  { to: "/settings/account", label: "Mon compte", icon: UserCircle2 },
+  { to: "/settings/appearance", label: "Apparence", icon: Palette },
+  { to: "/settings/connections", label: "Connexions", icon: Plug },
+  { to: "/settings/availability", label: "Disponibilités", icon: CalendarCheck },
+  { to: "/settings/website", label: "Gestion du site web", icon: Globe },
+  { to: "/settings/admins", label: "Comptes admin", icon: Users },
 ];
 
-function AdminLayout() {
+function SettingsLayout() {
   const session = Route.useRouteContext().session;
   if (!session) return <OfficeLogin />;
 
@@ -86,13 +77,12 @@ function AdminLayout() {
     <AdminPrefsProvider>
       <ThemeStyleInjector />
       <ConnectionHeartbeat />
-      <MessagePing role="admin" />
-      <AdminLayoutInner />
+      <SettingsLayoutInner />
     </AdminPrefsProvider>
   );
 }
 
-function AdminLayoutInner() {
+function SettingsLayoutInner() {
   const session = Route.useRouteContext().session;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { background, mode } = useAdminPrefs();
@@ -129,7 +119,7 @@ function AdminLayoutInner() {
           <div className="flex items-center gap-1.5 px-5 py-6">
             <span className="font-codec-bold text-[26px] leading-none text-white">skale.</span>
             <span className="text-[9px] font-medium uppercase tracking-[0.28em] text-neutral-500">
-              Office
+              Settings
             </span>
           </div>
 
@@ -148,7 +138,7 @@ function AdminLayoutInner() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to as "/office"}
+                  to={item.to as "/settings"}
                   className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition-all duration-200 ${
                     active
                       ? "bg-white/[0.06] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
@@ -173,7 +163,7 @@ function AdminLayoutInner() {
 
         <main className="flex-1 min-w-0 overflow-x-hidden">
           <PanelMobileNav
-            title="Skale Office"
+            title="Skale Settings"
             items={NAV}
             profile={{
               name: profile?.firstName?.trim() || profile?.username || session?.user || "Admin",

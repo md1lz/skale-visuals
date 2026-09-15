@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { SiteAdminPanel } from "@/components/office/SiteAdminPanel";
 
-export const Route = createFileRoute("/office/website")({
+export const Route = createFileRoute("/settings/website")({
   component: WebsiteAdminPage,
 });
 
