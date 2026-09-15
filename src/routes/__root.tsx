@@ -21,6 +21,7 @@ import { getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { MaintenancePage } from "../components/MaintenancePage";
 import { registerPushWorker } from "@/lib/pwa";
 import { SmoothScroll } from "../components/SmoothScroll";
+import { IntroOverlay } from "../components/IntroOverlay";
 
 function NotFoundComponent() {
   return (
