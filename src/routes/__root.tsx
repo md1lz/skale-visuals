@@ -21,6 +21,7 @@ import { getAdminSessionFn } from "@/lib/admin-auth.functions";
 import { MaintenancePage } from "../components/MaintenancePage";
 import { registerPushWorker } from "@/lib/pwa";
 import { SmoothScroll } from "../components/SmoothScroll";
+import { IntroOverlay } from "../components/IntroOverlay";
 
 function NotFoundComponent() {
   return (
@@ -202,9 +203,12 @@ function RootInner() {
           }
         />
       ) : (
-        <SmoothScroll>
-          <Outlet />
-        </SmoothScroll>
+        <>
+          <SmoothScroll>
+            <Outlet />
+          </SmoothScroll>
+          {!isAdmin && pathname === "/" ? <IntroOverlay /> : null}
+        </>
       )}
       <Toaster richColors position="bottom-right" theme="dark" />
     </>
