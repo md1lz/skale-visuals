@@ -31,13 +31,13 @@ export const DEFAULT_ABOUT: AboutContent = {
     {
       name: "Madi Harrois",
       role: "Fondateur et CEO, Directeur de production",
-      bio: "J'ai toujours eu cette soif d'entreprendre, depuis l'enfance. Avant de fonder Skale Visuals, je suis passé par plusieurs petits business — du reselling de sneakers à d'autres projets à droite et à gauche. Cette période m'a appris à repérer les tendances, à comprendre ce qui capte l'attention, et surtout à ne jamais attendre le moment \"idéal\" pour se lancer.\n\nC'est ce qui m'a poussé à fonder Skale Visuals à 18 ans, avec une conviction : la création digitale peut devenir le canal d'acquisition numéro 1 pour un business, à condition de savoir capter l'attention et construire une vraie crédibilité.",
+      bio: "J'ai toujours eu cette soif d'entreprendre, depuis l'enfance. Avant de fonder Skale Visuals, je suis passé par plusieurs petits business — du reselling de sneakers à d'autres projets à droite et à gauche. Cette période m'a appris à repérer les tendances, à comprendre ce qui capte l'attention, et surtout à ne jamais attendre le moment \"idéal\" pour se lancer.\n\nC'est ce qui m'a poussé à fonder Skale Visuals à 18 ans, avec une conviction : le contenu vidéo peut devenir le canal d'acquisition numéro 1 pour un business, à condition de savoir capter l'attention et construire une vraie crédibilité.",
       photo: null,
     },
     {
       name: "Lorenzo Di Dio",
       role: "Fondateur et CEO, Directeur commercial",
-      bio: "J'ai rencontré Madi Harrois au lycée. On s'est vite rendu compte qu'on avait la même dalle, la même envie d'entreprendre et de construire quelque chose de concret. Naturellement, après le lycée, on s'est associés pour fonder Skale Visuals en étant à peine majeur.\n\nAujourd'hui, on accompagne plus de 50 clients à transformer leur contenu vidéo en véritable levier de croissance — short form, long form et motion design — avec une obsession commune : livrer un travail rapide, stratégique, et qui convertit.",
+      bio: "J'ai rencontré Madi Harrois au lycée. On s'est vite rendu compte qu'on avait la même dalle, la même envie d'entreprendre et de construire quelque chose de concret. Naturellement, après le lycée, on s'est associés pour fonder Skale Visuals en étant à peine majeur.\n\nAujourd'hui, on accompagne plus de 50 clients à transformer leur contenu vidéo en véritable levier de croissance — short form, long form et clipping — avec une obsession commune : livrer un travail rapide, stratégique, et qui convertit.",
       photo: null,
     },
   ],

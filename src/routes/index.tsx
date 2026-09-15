@@ -24,12 +24,12 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "L'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but : convertir.",
+          "L'agence de création digitale spécialisée en montage vidéo et clipping qui n'ont qu'un seul but : convertir.",
       },
       { property: "og:title", content: "Skale Visuals - Ton Agence de Création Digitale N°1" },
       {
         property: "og:description",
-        content: "L'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but : convertir.",
+        content: "L'agence de création digitale spécialisée en montage vidéo et clipping qui n'ont qu'un seul but : convertir.",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://skalevisuals.com/" },
@@ -38,7 +38,7 @@ export const Route = createFileRoute("/")({
       { name: "twitter:title", content: "Skale Visuals - Ton Agence de Création Digitale N°1" },
       {
         name: "twitter:description",
-        content: "L'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but : convertir.",
+        content: "L'agence de création digitale spécialisée en montage vidéo et clipping qui n'ont qu'un seul but : convertir.",
       },
       { name: "twitter:image", content: "https://skalevisuals.com/og-image.jpg" },
     ],
@@ -202,7 +202,7 @@ function Hero() {
             </span>
           </h1>
           <p className="font-codec mt-5 max-w-[22rem] text-left text-lg leading-[1.18] tracking-[-0.06em] text-black sm:mx-auto sm:mt-3 sm:max-w-2xl sm:text-center sm:text-xl lg:text-2xl">
-            Skale Visuals, l'agence de création digitale spécialisée en montage, clipping et design qui n'ont qu'un seul but :{" "}
+            Skale Visuals, l'agence de création digitale spécialisée en montage vidéo et clipping qui n'ont qu'un seul but :{" "}
             <span className="font-codec-bold tracking-[-0.06em] text-black">convertir</span>.
           </p>
 
@@ -342,7 +342,7 @@ function ServiceCards({ settings }: { settings: HomeContent["settings"] }) {
   const fallbacks = [cardMontage, cardDesign];
   const cards = settings.serviceCards.slice(0, 2).map((c, i) => ({
     image: c.image ?? (typeof fallbacks[i] === "string" ? fallbacks[i] : fallbacks[i].url),
-    alt: i === 0 ? "Montage vidéo stratégique" : "Design visuel",
+    alt: i === 0 ? "Montage vidéo stratégique" : "Clipping vidéo",
     link: i === 0 ? "/videoediting" : "/design",
     title: <RichTitle text={c.title} />,
     description: c.description,
@@ -744,7 +744,7 @@ const PROCESS_STEPS = [
     emoji: "🎨",
     title: "Création",
     description:
-      "Selon ton besoin, notre équipe monte ta vidéo ou designe tes visuels. Chaque création est pensée pour capter l'attention dès les premières secondes.",
+      "Selon ton besoin, notre équipe monte tes vidéos en format court ou long. Chaque création est pensée pour capter l'attention dès les premières secondes.",
   },
   {
     day: "Jour 6",
@@ -876,7 +876,7 @@ function ProcessOutro() {
         </span>
         <h3 className="font-codec-bold mt-6 text-2xl leading-[1.15] tracking-[-0.04em] text-neutral-900 sm:text-4xl">
           Et voilà, en quelques jours seulement tu as ton{" "}
-          <span className="text-primary">montage vidéo et tes visuels livrés</span>, prêts à publier.
+          <span className="text-primary">contenus vidéo livrés</span>, prêts à publier.
         </h3>
       </motion.div>
     </div>
@@ -885,11 +885,10 @@ function ProcessOutro() {
 
 const SERVICES_WORDS = [
   "Montage vidéo",
-  "Miniature",
   "Clipping",
-  "Graphisme",
+  "Format court",
   "Shorts & Reels",
-  "Branding",
+  "Format long",
   "Motion design",
 ];
 
@@ -1161,7 +1160,7 @@ function Home() {
             </div>
             <h2 className="max-w-[19rem] px-2 text-3xl leading-[1.1] text-white sm:max-w-4xl sm:px-0 sm:text-4xl md:text-5xl lg:text-6xl">
               <span className="font-codec tracking-[-0.06em]">On transforme ton image de marque en contenu </span>
-              <span className="font-codec-bold tracking-[-0.06em]">vidéo et visuel pensé pour </span>
+              <span className="font-codec-bold tracking-[-0.06em]">vidéo pensé pour </span>
               <span className="font-codec-bold tracking-[-0.06em] underline decoration-primary decoration-2 underline-offset-4">convertir & vendre</span>
               <span className="font-codec-bold tracking-[-0.06em]">.</span>
             </h2>

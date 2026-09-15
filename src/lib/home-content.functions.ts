@@ -87,9 +87,9 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     },
     {
       image: null,
-      badge: "Design & Miniatures",
-      title: "Identité visuelle complète",
-      description: "Miniatures, overlays et assets graphiques cohérents pour renforcer la reconnaissance de la chaîne.",
+      badge: "Clipping vidéo",
+      title: "Formats courts ultra-dynamiques",
+      description: "Des extraits courts pensés pour capter l’attention, maximiser la rétention et multiplier ta présence sur les réseaux.",
       avatar: null,
     },
   ],
@@ -102,9 +102,9 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     },
     {
       image: null,
-      title: "Le **design visuel**, conçu pour **captiver** et **convaincre**.",
+      title: "Le **clipping**, conçu pour **capter** et **convertir**.",
       description:
-        "Miniatures et visuels sur mesure pour valoriser ton contenu, renforcer ta crédibilité et transformer tes visiteurs en clients.",
+        "Des formats courts percutants, extraits de tes contenus longs pour accrocher dès les premières secondes et toucher une audience plus large.",
     },
   ],
   serviceHeader: {

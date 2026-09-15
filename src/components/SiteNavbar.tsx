@@ -98,7 +98,7 @@ export function SiteNavbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [skaleHover, setSkaleHover] = useState(false);
-  const [studioHover, setStudioHover] = useState(false);
+  const [studioHover, setStudioHover] = useState<string | null>(null);
   const [ctaHover, setCtaHover] = useState(false);
   const scrollHidden = useScrollHeader();
   const headerHidden = scrollHidden && !menuOpen && !mobileNavOpen;
@@ -187,36 +187,42 @@ export function SiteNavbar() {
                   transition={{ type: "spring", stiffness: 380, damping: 26 }}
                   className="overflow-hidden pt-1 pb-2"
                 >
-                  <motion.button
-                    type="button"
-                    onClick={() => undefined}
-                    onMouseEnter={() => setStudioHover(true)}
-                    onMouseLeave={() => setStudioHover(false)}
-                    aria-label="Skale Studio, bientôt disponible"
-                    initial={{ opacity: 0, y: -6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.06, type: "spring", stiffness: 300, damping: 20 }}
-                    className="group relative flex h-11 w-full cursor-default items-center gap-2.5 rounded-lg px-2.5 text-left transition-transform duration-300 ease-out hover:scale-[1.035]"
-                  >
-                    <motion.img
-                      src={skaleSymbol.url}
-                      alt=""
-                      aria-hidden="true"
-                      className="h-8 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
-                      animate={studioHover ? { rotate: 14, scale: 1.12 } : { rotate: 0, scale: 1 }}
-                      transition={{ type: "spring", stiffness: 260, damping: 10, mass: 0.85 }}
-                    />
-                    <span
-                      className={`font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] ${
-                        menuOpen ? "text-slate-400" : "text-muted-foreground"
-                      }`}
+                  {[
+                    { id: "minia", label: "minia", delay: 0.06 },
+                    { id: "motion", label: "motion", delay: 0.1 },
+                  ].map((item) => (
+                    <motion.button
+                      key={item.id}
+                      type="button"
+                      onClick={() => undefined}
+                      onMouseEnter={() => setStudioHover(item.id)}
+                      onMouseLeave={() => setStudioHover(null)}
+                      aria-label={`Skale ${item.label}, bientôt disponible`}
+                      initial={{ opacity: 0, y: -6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: item.delay, type: "spring", stiffness: 300, damping: 20 }}
+                      className="group relative flex h-11 w-full cursor-default items-center gap-2.5 rounded-lg px-2.5 text-left transition-transform duration-300 ease-out hover:scale-[1.035]"
                     >
-                      studio
-                    </span>
-                    <span className="absolute right-1.5 top-1 rounded-full bg-primary px-1.5 py-0.5 text-[8px] font-semibold uppercase leading-none text-primary-foreground">
-                      bientôt
-                    </span>
-                  </motion.button>
+                      <motion.img
+                        src={skaleSymbol.url}
+                        alt=""
+                        aria-hidden="true"
+                        className="h-8 w-auto rounded-md object-contain drop-shadow-[0_4px_8px_rgba(0,0,0,0.30)]"
+                        animate={studioHover === item.id ? { rotate: 14, scale: 1.12 } : { rotate: 0, scale: 1 }}
+                        transition={{ type: "spring", stiffness: 260, damping: 10, mass: 0.85 }}
+                      />
+                      <span
+                        className={`font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em] ${
+                          menuOpen ? "text-slate-400" : "text-muted-foreground"
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                      <span className="absolute right-1.5 top-1 rounded-full bg-primary px-1.5 py-0.5 text-[8px] font-semibold uppercase leading-none text-primary-foreground">
+                        bientôt
+                      </span>
+                    </motion.button>
+                  ))}
                 </motion.div>
               )}
             </AnimatePresence>
