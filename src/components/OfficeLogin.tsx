@@ -3,13 +3,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 import { loginAdmin, getAdminSessionFn, tryAutoLoginByIp } from "@/lib/admin-auth.functions";
-import { getEditorSessionFn } from "@/lib/editor.functions";
 
-/** Point d'entrée unique : écran de connexion de /office (admin et monteurs). */
+/** Écran de connexion de /settings. */
 export function OfficeLogin() {
   const login = useServerFn(loginAdmin);
   const fetchAdmin = useServerFn(getAdminSessionFn);
-  const fetchEditor = useServerFn(getEditorSessionFn);
   const autoLogin = useServerFn(tryAutoLoginByIp);
 
   const [checking, setChecking] = useState(true);
@@ -24,20 +22,16 @@ export function OfficeLogin() {
     let cancelled = false;
     (async () => {
       try {
-        const [admin, editor] = await Promise.all([fetchAdmin(), fetchEditor()]);
+        const admin = await fetchAdmin();
         if (cancelled) return;
         if (admin) {
-          window.location.replace("/office");
-          return;
-        }
-        if (editor) {
-          window.location.replace("/studio");
+          window.location.replace("/settings");
           return;
         }
         const auto = await autoLogin({ data: { source: "web" } });
         if (cancelled) return;
         if (auto.ok) {
-          window.location.replace("role" in auto && auto.role === "editor" ? "/studio" : "/office");
+          window.location.replace("/settings");
           return;
         }
       } catch {
@@ -48,7 +42,7 @@ export function OfficeLogin() {
     return () => {
       cancelled = true;
     };
-  }, [fetchAdmin, fetchEditor, autoLogin]);
+  }, [fetchAdmin, autoLogin]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -58,14 +52,10 @@ export function OfficeLogin() {
     try {
       const res = await login({ data: { username, password, remember, source: "web" } });
       if (!res.ok) {
-        setError(
-          "suspended" in res && res.suspended
-            ? "Ce compte est suspendu."
-            : "Identifiants incorrects.",
-        );
+        setError("Identifiants incorrects.");
         return;
       }
-      window.location.replace("role" in res && res.role === "editor" ? "/studio" : "/office");
+      window.location.replace("/settings");
     } catch {
       setError("Identifiants incorrects.");
     } finally {
@@ -100,9 +90,9 @@ export function OfficeLogin() {
       >
         <div className="mb-1 flex items-center gap-2">
           <span className="h-2 w-2 rounded-full bg-red-600 shadow-[0_0_10px_rgba(226,75,74,0.9)]" />
-          <h2 className="text-lg font-semibold tracking-tight text-white">Skale Office</h2>
+          <h2 className="text-lg font-semibold tracking-tight text-white">Skale Settings</h2>
         </div>
-        <p className="mb-6 text-xs text-neutral-400">Accès réservé à l'équipe et aux monteurs.</p>
+        <p className="mb-6 text-xs text-neutral-400">Accès réservé à l'équipe.</p>
 
         <label className="mb-1 block text-xs text-neutral-300">Identifiant</label>
         <input

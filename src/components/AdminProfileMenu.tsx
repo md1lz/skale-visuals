@@ -82,7 +82,7 @@ export function AdminProfileMenu({ initialUsername }: { initialUsername: string 
     await logout();
     await router.invalidate();
     // Rechargement complet : empêche de revenir sur le panel via le bouton précédent
-    if (typeof window !== "undefined") window.location.replace("/office");
+    if (typeof window !== "undefined") window.location.replace("/settings");
     else navigate({ to: "/" });
   }
 

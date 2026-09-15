@@ -1,29 +1,19 @@
-import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
 import { useServerFn } from "@tanstack/react-start";
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
-  Palette,
-  ImageIcon,
-  Users,
-  Trash2,
-  Upload,
-  KeyRound,
-  Plus,
   Check,
   Eye,
   EyeOff,
-  Sun,
+  KeyRound,
   MonitorSmartphone,
   Moon,
-  UserCircle2,
-  Bell,
-  Plug,
-  Scale,
-  FileText,
-  Globe,
-  CalendarClock,
+  Plus,
+  Sun,
+  Trash2,
+  Upload,
+  Users,
   Loader2,
 } from "lucide-react";
 import { ADMIN_THEMES, useAdminPrefs, type AdminTheme } from "@/components/admin-prefs";
@@ -33,43 +23,8 @@ import {
   createAdminAccount,
 } from "@/lib/admin-settings.functions";
 import { getAdminProfile, updateAdminProfile } from "@/lib/admin-auth.functions";
-import { getBillingConfig, saveBillingConfig } from "@/lib/billing.functions";
-import { DEFAULT_BILLING, type BillingSettings } from "@/lib/billing.shared";
-import { RememberedConnections } from "@/components/RememberedConnections";
-import { AvailabilitySettings } from "@/components/office/AvailabilitySettings";
 
-type TabId =
-  | "account"
-  | "appearance"
-  | "notifications"
-  | "connections"
-  | "legal"
-  | "documents"
-  | "website"
-  | "availability"
-  | "admins";
-
-const TABS: { id: TabId; label: string; icon: React.ElementType }[] = [
-  { id: "account", label: "Mon compte", icon: UserCircle2 },
-  { id: "appearance", label: "Apparence", icon: Palette },
-  { id: "notifications", label: "Notifications", icon: Bell },
-  { id: "connections", label: "Connexions", icon: Plug },
-  { id: "legal", label: "Informations légales", icon: Scale },
-  { id: "documents", label: "Documents", icon: FileText },
-  { id: "website", label: "Gestion du site web", icon: Globe },
-  { id: "availability", label: "Disponibilités", icon: CalendarClock },
-  { id: "admins", label: "Comptes admin", icon: Users },
-];
-
-export const Route = createFileRoute("/office/settings")({
-  validateSearch: (s: Record<string, unknown>): { tab?: TabId } => {
-    const tab = typeof s.tab === "string" ? (s.tab as TabId) : undefined;
-    return TABS.some((t) => t.id === tab) ? { tab } : {};
-  },
-  component: ParametresPage,
-});
-
-function Card({
+export function Card({
   title,
   description,
   children,
@@ -87,138 +42,44 @@ function Card({
   );
 }
 
+export function SettingsHeader({ title, subtitle }: { title: string; subtitle?: string }) {
+  return (
+    <div className="mb-6">
+      <h1 className="text-3xl font-semibold tracking-tight">{title}</h1>
+      {subtitle && <p className="mt-1 text-sm text-neutral-400">{subtitle}</p>}
+    </div>
+  );
+}
+
+export function SettingsPage({ children }: { children: React.ReactNode }) {
+  return <div className="mx-auto max-w-4xl px-4 pt-6 pb-12 md:px-8 md:pt-10">{children}</div>;
+}
+
 function Field({
   label,
   value,
   onChange,
-  placeholder,
-  textarea,
-  type = "text",
 }: {
   label: string;
-  value: string | number;
+  value: string;
   onChange: (v: string) => void;
-  placeholder?: string;
-  textarea?: boolean;
-  type?: string;
 }) {
-  const cls =
-    "w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500";
   return (
     <label className="block">
       <span className="mb-1 block text-[11px] uppercase tracking-wider text-neutral-500">
         {label}
       </span>
-      {textarea ? (
-        <textarea
-          rows={3}
-          value={value}
-          placeholder={placeholder}
-          onChange={(e) => onChange(e.target.value)}
-          className={cls}
-        />
-      ) : (
-        <input
-          type={type}
-          value={value}
-          placeholder={placeholder}
-          onChange={(e) => onChange(e.target.value)}
-          className={cls}
-        />
-      )}
+      <input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-lg border border-white/10 bg-neutral-900/60 px-3 py-2 text-sm text-white outline-none focus:border-red-500"
+      />
     </label>
   );
 }
 
-function ParametresPage() {
-  const { tab } = Route.useSearch();
-  const navigate = useNavigate();
-  const active: TabId = tab ?? "account";
-
-  return (
-    <div className="mx-auto max-w-6xl px-4 pt-6 pb-12 md:px-8 md:pt-10">
-      <div className="mb-6">
-        <h1 className="text-3xl font-semibold tracking-tight">Paramètres</h1>
-        <p className="mt-1 text-sm text-neutral-400">
-          Compte, apparence, informations légales, site web et accès administrateurs.
-        </p>
-      </div>
-
-      <div className="flex flex-col gap-6 lg:flex-row">
-        <nav className="lg:w-60 lg:shrink-0">
-          <div className="flex gap-1 overflow-x-auto pb-1 lg:flex-col lg:overflow-visible lg:pb-0">
-            {TABS.map((t) => {
-              const Icon = t.icon;
-              if (t.id === "website") {
-                return (
-                  <Link
-                    key={t.id}
-                    to="/office/website"
-                    className="relative flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-[13px] transition text-neutral-400 hover:bg-white/[0.03] hover:text-white"
-                  >
-                    <Icon className="h-4 w-4 text-neutral-500" />
-                    {t.label}
-                  </Link>
-                );
-              }
-              const on = active === t.id;
-              return (
-                <button
-                  key={t.id}
-                  onClick={() => navigate({ to: "/office/settings", search: { tab: t.id } })}
-                  className={`relative flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-xl px-3 py-2.5 text-[13px] transition ${
-                    on
-                      ? "bg-white/[0.06] text-white"
-                      : "text-neutral-400 hover:bg-white/[0.03] hover:text-white"
-                  }`}
-                >
-                  {on && (
-                    <motion.span
-                      layoutId="settings-tab"
-                      className="absolute inset-0 -z-10 rounded-xl border border-white/10"
-                    />
-                  )}
-                  <Icon className={`h-4 w-4 ${on ? "text-red-400" : "text-neutral-500"}`} />
-                  {t.label}
-                </button>
-              );
-            })}
-          </div>
-        </nav>
-
-        <motion.div
-          key={active}
-          initial={{ opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.25 }}
-          className="min-w-0 flex-1 space-y-6"
-        >
-          {active === "account" && <AccountPanel />}
-          {active === "appearance" && (
-            <>
-              <ThemeSection />
-              <BackgroundSection />
-            </>
-          )}
-          {active === "notifications" && <NotificationsPanel />}
-          {active === "connections" && <RememberedConnections />}
-          {active === "legal" && <BillingPanel section="legal" />}
-          {active === "documents" && <BillingPanel section="documents" />}
-          {active === "website" && null}
-          {active === "availability" && (
-            <Card title="Disponibilités" description="Créneaux proposés sur la page Book a Call.">
-              <AvailabilitySettings />
-            </Card>
-          )}
-          {active === "admins" && <AccountsSection />}
-        </motion.div>
-      </div>
-    </div>
-  );
-}
-
 /* ---------- MON COMPTE ---------- */
-function AccountPanel() {
+export function AccountPanel() {
   const fetchProfile = useServerFn(getAdminProfile);
   const saveProfile = useServerFn(updateAdminProfile);
   const q = useQuery({ queryKey: ["admin", "profile"], queryFn: () => fetchProfile() });
@@ -249,7 +110,7 @@ function AccountPanel() {
 
   return (
     <>
-      <Card title="Mon profil" description="Nom affiché dans Skale Office.">
+      <Card title="Mon profil" description="Nom affiché dans Skale Settings.">
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="Prénom" value={firstName} onChange={setFirstName} />
           <Field label="Nom" value={lastName} onChange={setLastName} />
@@ -273,7 +134,7 @@ function AccountPanel() {
 
       <Card
         title="Identifiants de connexion"
-        description="Changer l'identifiant ou le mot de passe. Code de sauvetage requis."
+        description="Changer l'identifiant ou le mot de passe de ce compte."
       >
         <button
           onClick={() => setEditing(true)}
@@ -294,242 +155,8 @@ function AccountPanel() {
   );
 }
 
-/* ---------- NOTIFICATIONS ---------- */
-const NOTIF_KEY = "office:notifications";
-type NotifPrefs = { banners: boolean; sound: boolean; emailAlerts: boolean };
-const DEFAULT_NOTIF: NotifPrefs = { banners: true, sound: true, emailAlerts: true };
-
-function NotificationsPanel() {
-  const [prefs, setPrefs] = useState<NotifPrefs>(DEFAULT_NOTIF);
-
-  useEffect(() => {
-    try {
-      const raw = window.localStorage.getItem(NOTIF_KEY);
-      if (raw) setPrefs({ ...DEFAULT_NOTIF, ...JSON.parse(raw) });
-    } catch {
-      /* ignore */
-    }
-  }, []);
-
-  function toggle(key: keyof NotifPrefs) {
-    setPrefs((p) => {
-      const next = { ...p, [key]: !p[key] };
-      try {
-        window.localStorage.setItem(NOTIF_KEY, JSON.stringify(next));
-      } catch {
-        /* ignore */
-      }
-      return next;
-    });
-  }
-
-  const rows: { key: keyof NotifPrefs; label: string; hint: string }[] = [
-    { key: "banners", label: "Bannières in-app", hint: "Nouveaux messages et versions vidéo." },
-    { key: "sound", label: "Son des messages", hint: "Petit son à la réception d'un message." },
-    {
-      key: "emailAlerts",
-      label: "Alertes email",
-      hint: "Réservations d'appels et devis signés.",
-    },
-  ];
-
-  return (
-    <Card title="Notifications" description="Préférences enregistrées sur cet appareil.">
-      <div className="space-y-2">
-        {rows.map((r) => (
-          <button
-            key={r.key}
-            onClick={() => toggle(r.key)}
-            className="flex w-full items-center justify-between gap-4 rounded-xl border border-white/5 bg-white/[0.02] px-3 py-3 text-left transition hover:border-white/15"
-          >
-            <span>
-              <span className="block text-sm text-white">{r.label}</span>
-              <span className="block text-[11px] text-neutral-500">{r.hint}</span>
-            </span>
-            <span
-              className={`relative h-5 w-9 shrink-0 rounded-full transition ${
-                prefs[r.key] ? "bg-red-500" : "bg-white/15"
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 h-4 w-4 rounded-full bg-white transition-all ${
-                  prefs[r.key] ? "left-[18px]" : "left-0.5"
-                }`}
-              />
-            </span>
-          </button>
-        ))}
-      </div>
-    </Card>
-  );
-}
-
-/* ---------- LÉGAL / DOCUMENTS ---------- */
-function BillingPanel({ section }: { section: "legal" | "documents" }) {
-  const fetchCfg = useServerFn(getBillingConfig);
-  const saveCfg = useServerFn(saveBillingConfig);
-  const q = useQuery({ queryKey: ["office", "billing-config"], queryFn: () => fetchCfg() });
-  const [cfg, setCfg] = useState<BillingSettings>(DEFAULT_BILLING);
-  const [busy, setBusy] = useState(false);
-  const [saved, setSaved] = useState(false);
-
-  useEffect(() => {
-    if (q.data) setCfg(q.data as BillingSettings);
-  }, [q.data]);
-
-  const patch = (p: Partial<BillingSettings>) => setCfg((c) => ({ ...c, ...p }));
-
-  async function save() {
-    setBusy(true);
-    try {
-      await saveCfg({ data: cfg });
-      setSaved(true);
-      window.setTimeout(() => setSaved(false), 2000);
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  const saveButton = (
-    <button
-      onClick={save}
-      disabled={busy}
-      className="mt-4 inline-flex items-center gap-2 rounded-full bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-500 disabled:opacity-60"
-    >
-      {busy ? (
-        <Loader2 className="h-4 w-4 animate-spin" />
-      ) : saved ? (
-        <Check className="h-4 w-4" />
-      ) : null}
-      {saved ? "Enregistré" : "Enregistrer"}
-    </button>
-  );
-
-  if (section === "legal") {
-    return (
-      <Card
-        title="Informations légales"
-        description="Ces informations apparaissent sur les devis et factures PDF."
-      >
-        <div className="grid gap-3 sm:grid-cols-2">
-          <Field
-            label="Nom légal"
-            value={cfg.legalName}
-            onChange={(v) => patch({ legalName: v })}
-          />
-          <div className="space-y-2 sm:col-span-2">
-            <span className="block text-[11px] text-neutral-400">SIRET</span>
-            <div className="flex flex-wrap gap-2">
-              {[
-                { key: true, label: "Pas encore de SIRET" },
-                { key: false, label: "Renseigner le SIRET" },
-              ].map((o) => (
-                <button
-                  key={String(o.key)}
-                  type="button"
-                  onClick={() => patch({ siretPending: o.key })}
-                  className={`rounded-full px-3 py-1.5 text-xs transition ${
-                    !!cfg.siretPending === o.key
-                      ? "bg-red-600 text-white"
-                      : "border border-white/10 text-neutral-400 hover:text-white"
-                  }`}
-                >
-                  {o.label}
-                </button>
-              ))}
-            </div>
-            {cfg.siretPending ? (
-              <p className="text-[11px] text-neutral-500">
-                Les documents afficheront « en attente d'immatriculation » avec la mention légale.
-              </p>
-            ) : (
-              <Field label="Numéro SIRET" value={cfg.siret} onChange={(v) => patch({ siret: v })} />
-            )}
-          </div>
-
-          <Field
-            label="TVA intracommunautaire"
-            value={cfg.vatNumber}
-            onChange={(v) => patch({ vatNumber: v })}
-          />
-          <Field
-            label="Email de facturation"
-            value={cfg.email}
-            onChange={(v) => patch({ email: v })}
-          />
-          <Field label="Téléphone" value={cfg.phone} onChange={(v) => patch({ phone: v })} />
-          <Field label="IBAN" value={cfg.iban} onChange={(v) => patch({ iban: v })} />
-          <Field label="BIC" value={cfg.bic} onChange={(v) => patch({ bic: v })} />
-        </div>
-        <div className="mt-3 grid gap-3">
-          <Field
-            label="Adresse"
-            value={cfg.address}
-            onChange={(v) => patch({ address: v })}
-            textarea
-          />
-          <Field
-            label="Conditions de paiement"
-            value={cfg.paymentTerms}
-            onChange={(v) => patch({ paymentTerms: v })}
-            textarea
-          />
-          <Field
-            label="Mentions légales"
-            value={cfg.legalMentions}
-            onChange={(v) => patch({ legalMentions: v })}
-            textarea
-          />
-        </div>
-        {saveButton}
-      </Card>
-    );
-  }
-
-  return (
-    <Card
-      title="Documents"
-      description="Numérotation et conditions par défaut des devis et factures."
-    >
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Field
-          label="Préfixe devis"
-          value={cfg.quotePrefix}
-          onChange={(v) => patch({ quotePrefix: v })}
-        />
-        <Field
-          label="Numéro de départ (devis)"
-          type="number"
-          value={cfg.quoteStart}
-          onChange={(v) => patch({ quoteStart: Number(v) || 0 })}
-        />
-        <Field
-          label="Préfixe factures"
-          value={cfg.invoicePrefix}
-          onChange={(v) => patch({ invoicePrefix: v })}
-        />
-        <Field
-          label="Numéro de départ (factures)"
-          type="number"
-          value={cfg.invoiceStart}
-          onChange={(v) => patch({ invoiceStart: Number(v) || 0 })}
-        />
-      </div>
-      <div className="mt-3">
-        <Field
-          label="Conditions par défaut"
-          value={cfg.defaultConditions}
-          onChange={(v) => patch({ defaultConditions: v })}
-          textarea
-        />
-      </div>
-      {saveButton}
-    </Card>
-  );
-}
-
 /* ---------- THEME ---------- */
-function ThemeSection() {
+export function ThemeSection() {
   const { theme, setTheme, modePref, setMode } = useAdminPrefs();
   return (
     <Card
@@ -594,7 +221,7 @@ function ThemeSection() {
 }
 
 /* ---------- BACKGROUND ---------- */
-function BackgroundSection() {
+export function BackgroundSection() {
   const { background, setBackground } = useAdminPrefs();
   const fileRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState<string | null>(null);
@@ -668,7 +295,7 @@ function BackgroundSection() {
 }
 
 /* ---------- ACCOUNTS ---------- */
-function AccountsSection() {
+export function AccountsSection() {
   const fetchList = useServerFn(listAdmins);
   const q = useQuery({
     queryKey: ["admin", "accounts"],
@@ -682,7 +309,7 @@ function AccountsSection() {
   return (
     <Card
       title="Comptes admins"
-      description="Modifier les identifiants existants ou créer un nouveau compte. Code de sauvetage requis."
+      description="Modifier les identifiants existants ou créer un nouveau compte."
     >
       <div className="mb-3 space-y-2">
         {q.data.map((a) => (
@@ -817,7 +444,6 @@ function EditCredentialsModal({
   const save = useServerFn(updateAdminCredentials);
   const [newUsername, setNewUsername] = useState(username);
   const [newPassword, setNewPassword] = useState("");
-  const [rescueCode, setRescueCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -832,7 +458,6 @@ function EditCredentialsModal({
           targetUsername: username,
           newUsername: newUsername !== username ? newUsername : null,
           newPassword: newPassword || null,
-          rescueCode,
         },
       });
       if (!res.ok) setError(res.error);
@@ -860,14 +485,6 @@ function EditCredentialsModal({
             Nouveau mot de passe (laisser vide pour conserver)
           </span>
           <PasswordInput value={newPassword} onChange={setNewPassword} placeholder="••••••••" />
-        </label>
-        <label className="block">
-          <span className="mb-1 block text-[11px] text-neutral-400">Code de sauvetage</span>
-          <PasswordInput
-            value={rescueCode}
-            onChange={setRescueCode}
-            placeholder="Code de sauvetage"
-          />
         </label>
         {error && <p className="text-xs text-red-400">{error}</p>}
         <div className="flex gap-2 pt-2">
@@ -902,7 +519,6 @@ function CreateAccountModal({
   const create = useServerFn(createAdminAccount);
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [rescueCode, setRescueCode] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -912,7 +528,7 @@ function CreateAccountModal({
     setBusy(true);
     setError(null);
     try {
-      const res = await create({ data: { username, password, rescueCode } });
+      const res = await create({ data: { username, password } });
       if (!res.ok) setError(res.error);
       else onCreated();
     } catch (err) {
@@ -938,10 +554,6 @@ function CreateAccountModal({
             Mot de passe (min. 8 caractères)
           </span>
           <PasswordInput value={password} onChange={setPassword} />
-        </label>
-        <label className="block">
-          <span className="mb-1 block text-[11px] text-neutral-400">Code de sauvetage</span>
-          <PasswordInput value={rescueCode} onChange={setRescueCode} />
         </label>
         {error && <p className="text-xs text-red-400">{error}</p>}
         <div className="flex gap-2 pt-2">

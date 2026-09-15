@@ -6,10 +6,6 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
-  Cell,
-  Legend,
-  Pie,
-  PieChart,
   ResponsiveContainer,
   Tooltip,
   XAxis,
@@ -29,29 +25,15 @@ import {
   Plus,
   Pencil,
   Trash2,
-  Target,
 } from "lucide-react";
 import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.functions";
 import { getAdminProfile } from "@/lib/admin-auth.functions";
-import { listFollowupsDue } from "@/lib/admin-prospects.functions";
 import { MaintenanceCard } from "@/components/MaintenanceCard";
-import { getFinanceKpis } from "@/lib/billing.functions";
-import { formatEUR } from "@/lib/billing.shared";
 
-export const Route = createFileRoute("/office/")({
+export const Route = createFileRoute("/settings/")({
   component: AdminHome,
 });
 
-const QUOTE_STATUS_COLORS: Record<string, string> = {
-  Brouillon: "#737373",
-  "Envoyé": "#3b82f6",
-  "Signé": "#10b981",
-  "Refusé": "#ef4444",
-  "Expiré": "#52525b",
-};
-
-const MONTH_LABEL = (m: string) =>
-  new Date(`${m}-01T12:00:00Z`).toLocaleDateString("fr-FR", { month: "short" });
 
 function SectionTitle({ label }: { label: string }) {
   return (
@@ -79,14 +61,6 @@ function AdminHome() {
   const fetchAnalytics = useServerFn(getSiteAnalytics);
   const fetchProfile = useServerFn(getAdminProfile);
   const fetchActivity = useServerFn(getRecentActivity);
-  const fetchFollowups = useServerFn(listFollowupsDue);
-
-  const followupsQ = useQuery({
-    queryKey: ["admin", "prospect-followups"],
-    queryFn: () => fetchFollowups(),
-    initialData: [] as Awaited<ReturnType<typeof fetchFollowups>>,
-    refetchInterval: 60_000,
-  });
 
   const profileQ = useQuery({
     queryKey: ["admin", "profile"],
@@ -132,51 +106,6 @@ function AdminHome() {
     { label: "Devis soumis", value: dayQ.isLoading ? "…" : fmtNum(k?.devisSubmitted), icon: FileSignature },
   ];
 
-  const fetchFinance = useServerFn(getFinanceKpis);
-  const finance = useQuery({ queryKey: ["office", "finance-kpis"], queryFn: () => fetchFinance() });
-  const fk = finance.data;
-  const revenueSeries = (fk?.series ?? []).map((x) => ({
-    label: MONTH_LABEL(x.month),
-    revenue: x.revenue,
-  }));
-  const quoteStatusData = (fk?.quoteStatusCounts ?? []).filter((x) => x.count > 0);
-
-  const financeCards = [
-    {
-      label: "CA du mois",
-      icon: TrendingUp,
-      value: fk ? formatEUR(fk.revenueMonth) : "—",
-      hint:
-        fk && fk.revenuePrevMonth > 0
-          ? `${fk.revenueMonth >= fk.revenuePrevMonth ? "+" : ""}${Math.round(
-              ((fk.revenueMonth - fk.revenuePrevMonth) / fk.revenuePrevMonth) * 100,
-            )} % vs mois dernier`
-          : undefined,
-      to: "/office/invoices",
-    },
-    {
-      label: "En attente de paiement",
-      icon: Clock,
-      value: fk ? formatEUR(fk.pendingPayment) : "—",
-      to: "/office/invoices",
-    },
-    {
-      label: "Devis à signer",
-      icon: FileSignature,
-      value: fk ? formatEUR(fk.awaitingSignatureAmount) : "—",
-      hint: fk ? `${fk.awaitingSignatureCount} devis envoyés` : undefined,
-      to: "/office/quotes",
-    },
-    {
-      label: "Factures en retard",
-      icon: AlertTriangle,
-      value: fk ? formatEUR(fk.overdueAmount) : "—",
-      hint: fk ? `${fk.overdueCount} facture(s)` : undefined,
-      danger: !!fk && fk.overdueCount > 0,
-      to: "/office/invoices",
-    },
-  ];
-
   return (
     <div className="w-full max-w-6xl mx-auto overflow-x-hidden px-4 pt-6 pb-10 md:px-8 md:pt-10">
       {/* Greeting */}
@@ -206,157 +135,8 @@ function AdminHome() {
         </div>
       </motion.div>
 
-      {/* Bloc 1 — Financier (placeholder) */}
-      <SectionTitle label="Financier" />
-      <div className="mb-10 grid grid-cols-2 gap-3 lg:grid-cols-4">
-        {financeCards.map((c, i) => {
-          const Icon = c.icon;
-          return (
-            <motion.div
-              key={c.label}
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: 0.04 * i }}
-            >
-              <Link
-                to={c.to}
-                className="block rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur transition hover:border-white/20"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] uppercase tracking-wider text-neutral-500">
-                    {c.label}
-                  </span>
-                  <Icon className="h-3.5 w-3.5 text-neutral-600" />
-                </div>
-                <p
-                  className={`mt-3 text-2xl font-semibold ${
-                    c.danger ? "text-red-400" : "text-white"
-                  }`}
-                >
-                  {c.value}
-                </p>
-                {c.hint && <p className="mt-0.5 text-[11px] text-neutral-500">{c.hint}</p>}
-              </Link>
-            </motion.div>
-          );
-        })}
-      </div>
-
-      {/* Graphiques financiers */}
-      <div className="mb-10 grid gap-3 lg:grid-cols-3">
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur md:p-5 lg:col-span-2"
-        >
-          <p className="text-[11px] uppercase tracking-wider text-neutral-500">
-            Évolution du CA — 6 derniers mois
-          </p>
-          <p className="mt-1 text-2xl font-semibold text-white">
-            {fk ? formatEUR(fk.series.reduce((s, x) => s + x.revenue, 0)) : "…"}
-            <span className="ml-2 text-xs font-normal text-neutral-500">cumulé HT</span>
-          </p>
-          <div className="mt-4 h-56 md:h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <AreaChart
-                data={revenueSeries}
-                margin={{ top: 10, right: 10, left: -18, bottom: 0 }}
-              >
-                <defs>
-                  <linearGradient id="caGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#ef4444" stopOpacity={0.55} />
-                    <stop offset="100%" stopColor="#ef4444" stopOpacity={0} />
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.06)" vertical={false} />
-                <XAxis dataKey="label" stroke="#737373" fontSize={11} tickLine={false} axisLine={false} />
-                <YAxis
-                  stroke="#737373"
-                  fontSize={11}
-                  tickLine={false}
-                  axisLine={false}
-                  tickFormatter={(v) => `${v} €`}
-                />
-                <Tooltip
-                  contentStyle={{
-                    background: "#0a0a0a",
-                    border: "1px solid rgba(255,255,255,0.1)",
-                    borderRadius: 12,
-                    fontSize: 12,
-                  }}
-                  formatter={(v: any) => [formatEUR(Number(v)), "CA HT"]}
-                />
-                <Area
-                  type="monotone"
-                  dataKey="revenue"
-                  stroke="#ef4444"
-                  strokeWidth={2}
-                  fill="url(#caGrad)"
-                />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 6 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3, delay: 0.05 }}
-          className="rounded-2xl border border-white/[0.07] bg-white/[0.02] p-4 backdrop-blur md:p-5"
-        >
-          <p className="text-[11px] uppercase tracking-wider text-neutral-500">
-            Statuts des devis
-          </p>
-          <div className="mt-2 h-56 md:h-64">
-            {quoteStatusData.length === 0 ? (
-              <div className="grid h-full place-items-center text-xs text-neutral-500">
-                Aucun devis pour l'instant.
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie
-                    data={quoteStatusData}
-                    dataKey="count"
-                    nameKey="status"
-                    innerRadius="58%"
-                    outerRadius="82%"
-                    paddingAngle={3}
-                    stroke="none"
-                  >
-                    {quoteStatusData.map((entry) => (
-                      <Cell key={entry.status} fill={QUOTE_STATUS_COLORS[entry.status] ?? "#737373"} />
-                    ))}
-                  </Pie>
-                  <Legend
-                    layout="vertical"
-                    align="right"
-                    verticalAlign="middle"
-                    iconType="circle"
-                    formatter={(value) => (
-                      <span style={{ color: "#a3a3a3", fontSize: 11 }}>{value}</span>
-                    )}
-                  />
-                  <Tooltip
-                    contentStyle={{
-                      background: "#0a0a0a",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      borderRadius: 12,
-                      fontSize: 12,
-                    }}
-                    formatter={(v: any, n: any) => [`${v} devis`, n]}
-                  />
-                </PieChart>
-              </ResponsiveContainer>
-            )}
-          </div>
-        </motion.div>
-      </div>
-
-
-
       {/* Bloc 2 — Analytiques */}
+
       <SectionTitle label="Analytiques" />
 
       {/* 24h chart */}
@@ -464,40 +244,6 @@ function AdminHome() {
             Activité récente
           </h2>
         </div>
-        {!!(followupsQ.data ?? []).length && (
-          <div className="mb-4 rounded-xl border border-orange-500/25 bg-orange-500/[0.06] p-3">
-            <div className="flex items-center gap-2 mb-2">
-              <Target className="h-3.5 w-3.5 text-orange-400" />
-              <p className="text-[11px] uppercase tracking-wider text-orange-300 font-medium">
-                Relances à faire
-              </p>
-            </div>
-            <div className="space-y-1.5">
-              {(followupsQ.data ?? []).map((f) => {
-                const days = Math.max(
-                  0,
-                  Math.floor(
-                    (Date.now() - new Date(f.next_followup_date + "T00:00:00").getTime()) / 86400000,
-                  ),
-                );
-                return (
-                  <Link
-                    key={f.id}
-                    to="/office/prospects"
-                    search={{ p: f.id }}
-                    className="flex min-h-[44px] flex-wrap items-center gap-x-3 gap-y-1 rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2 hover:bg-white/[0.05] transition"
-                  >
-                    <span className="min-w-0 flex-1 truncate text-sm text-white">{f.name}</span>
-                    <span className="text-[11px] text-neutral-400 shrink-0">{f.platform}</span>
-                    <span className="ml-auto text-xs shrink-0 text-orange-300">
-                      {days === 0 ? "Aujourd'hui" : `En retard de ${days} j`}
-                    </span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        )}
         <div className="space-y-2">
           {!(activityQ.data ?? []).length ? (
             <div className="text-sm text-neutral-400 bg-neutral-800/50 rounded-xl px-4 py-3 text-center">

@@ -10,31 +10,24 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideoeditingRouteImport } from './routes/videoediting'
-import { Route as StudioRouteImport } from './routes/studio'
-import { Route as OfficeRouteImport } from './routes/office'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as CrmRouteImport } from './routes/crm'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
-import { Route as StudioIndexRouteImport } from './routes/studio.index'
-import { Route as OfficeIndexRouteImport } from './routes/office.index'
+import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as CrmIndexRouteImport } from './routes/crm.index'
-import { Route as StudioSettingsRouteImport } from './routes/studio.settings'
-import { Route as StudioProjectsRouteImport } from './routes/studio.projects'
 import { Route as SignTokenRouteImport } from './routes/sign.$token'
-import { Route as OfficeWebsiteRouteImport } from './routes/office.website'
-import { Route as OfficeSettingsRouteImport } from './routes/office.settings'
-import { Route as OfficeServicesRouteImport } from './routes/office.services'
-import { Route as OfficeQuotesRouteImport } from './routes/office.quotes'
-import { Route as OfficeProspectsRouteImport } from './routes/office.prospects'
-import { Route as OfficeProjectsRouteImport } from './routes/office.projects'
-import { Route as OfficeInvoicesRouteImport } from './routes/office.invoices'
-import { Route as OfficeEditorsRouteImport } from './routes/office.editors'
-import { Route as OfficeClientsRouteImport } from './routes/office.clients'
-import { Route as OfficeCallsRouteImport } from './routes/office.calls'
-import { Route as OfficeAnalyticsRouteImport } from './routes/office.analytics'
+import { Route as SettingsWebsiteRouteImport } from './routes/settings.website'
+import { Route as SettingsConnectionsRouteImport } from './routes/settings.connections'
+import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
+import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
+import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
+import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
+import { Route as SettingsAdminsRouteImport } from './routes/settings.admins'
+import { Route as SettingsAccountRouteImport } from './routes/settings.account'
 import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -47,14 +40,9 @@ const VideoeditingRoute = VideoeditingRouteImport.update({
   path: '/videoediting',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StudioRoute = StudioRouteImport.update({
-  id: '/studio',
-  path: '/studio',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const OfficeRoute = OfficeRouteImport.update({
-  id: '/office',
-  path: '/office',
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DesignRoute = DesignRouteImport.update({
@@ -87,90 +75,60 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StudioIndexRoute = StudioIndexRouteImport.update({
+const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
-  getParentRoute: () => StudioRoute,
-} as any)
-const OfficeIndexRoute = OfficeIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => OfficeRoute,
+  getParentRoute: () => SettingsRoute,
 } as any)
 const CrmIndexRoute = CrmIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => CrmRoute,
 } as any)
-const StudioSettingsRoute = StudioSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => StudioRoute,
-} as any)
-const StudioProjectsRoute = StudioProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => StudioRoute,
-} as any)
 const SignTokenRoute = SignTokenRouteImport.update({
   id: '/sign/$token',
   path: '/sign/$token',
   getParentRoute: () => rootRouteImport,
 } as any)
-const OfficeWebsiteRoute = OfficeWebsiteRouteImport.update({
+const SettingsWebsiteRoute = SettingsWebsiteRouteImport.update({
   id: '/website',
   path: '/website',
-  getParentRoute: () => OfficeRoute,
+  getParentRoute: () => SettingsRoute,
 } as any)
-const OfficeSettingsRoute = OfficeSettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => OfficeRoute,
+const SettingsConnectionsRoute = SettingsConnectionsRouteImport.update({
+  id: '/connections',
+  path: '/connections',
+  getParentRoute: () => SettingsRoute,
 } as any)
-const OfficeServicesRoute = OfficeServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
-  getParentRoute: () => OfficeRoute,
-} as any)
-const OfficeQuotesRoute = OfficeQuotesRouteImport.update({
-  id: '/quotes',
-  path: '/quotes',
-  getParentRoute: () => OfficeRoute,
-} as any)
-const OfficeProspectsRoute = OfficeProspectsRouteImport.update({
-  id: '/prospects',
-  path: '/prospects',
-  getParentRoute: () => OfficeRoute,
-} as any)
-const OfficeProjectsRoute = OfficeProjectsRouteImport.update({
-  id: '/projects',
-  path: '/projects',
-  getParentRoute: () => OfficeRoute,
-} as any)
-const OfficeInvoicesRoute = OfficeInvoicesRouteImport.update({
-  id: '/invoices',
-  path: '/invoices',
-  getParentRoute: () => OfficeRoute,
-} as any)
-const OfficeEditorsRoute = OfficeEditorsRouteImport.update({
-  id: '/editors',
-  path: '/editors',
-  getParentRoute: () => OfficeRoute,
-} as any)
-const OfficeClientsRoute = OfficeClientsRouteImport.update({
-  id: '/clients',
-  path: '/clients',
-  getParentRoute: () => OfficeRoute,
-} as any)
-const OfficeCallsRoute = OfficeCallsRouteImport.update({
+const SettingsCallsRoute = SettingsCallsRouteImport.update({
   id: '/calls',
   path: '/calls',
-  getParentRoute: () => OfficeRoute,
+  getParentRoute: () => SettingsRoute,
 } as any)
-const OfficeAnalyticsRoute = OfficeAnalyticsRouteImport.update({
+const SettingsAvailabilityRoute = SettingsAvailabilityRouteImport.update({
+  id: '/availability',
+  path: '/availability',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
+  id: '/appearance',
+  path: '/appearance',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
-  getParentRoute: () => OfficeRoute,
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsAdminsRoute = SettingsAdminsRouteImport.update({
+  id: '/admins',
+  path: '/admins',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsAccountRoute = SettingsAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
+  getParentRoute: () => SettingsRoute,
 } as any)
 const CrmSplatRoute = CrmSplatRouteImport.update({
   id: '/$',
@@ -212,27 +170,20 @@ export interface FileRoutesByFullPath {
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
   '/design': typeof DesignRoute
-  '/office': typeof OfficeRouteWithChildren
-  '/studio': typeof StudioRouteWithChildren
+  '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/office/analytics': typeof OfficeAnalyticsRoute
-  '/office/calls': typeof OfficeCallsRoute
-  '/office/clients': typeof OfficeClientsRoute
-  '/office/editors': typeof OfficeEditorsRoute
-  '/office/invoices': typeof OfficeInvoicesRoute
-  '/office/projects': typeof OfficeProjectsRoute
-  '/office/prospects': typeof OfficeProspectsRoute
-  '/office/quotes': typeof OfficeQuotesRoute
-  '/office/services': typeof OfficeServicesRoute
-  '/office/settings': typeof OfficeSettingsRoute
-  '/office/website': typeof OfficeWebsiteRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/admins': typeof SettingsAdminsRoute
+  '/settings/analytics': typeof SettingsAnalyticsRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/availability': typeof SettingsAvailabilityRoute
+  '/settings/calls': typeof SettingsCallsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/studio/projects': typeof StudioProjectsRoute
-  '/studio/settings': typeof StudioSettingsRoute
   '/crm/': typeof CrmIndexRoute
-  '/office/': typeof OfficeIndexRoute
-  '/studio/': typeof StudioIndexRoute
+  '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/doc/$kind/$token': typeof DocKindTokenRoute
@@ -247,23 +198,17 @@ export interface FileRoutesByTo {
   '/design': typeof DesignRoute
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/office/analytics': typeof OfficeAnalyticsRoute
-  '/office/calls': typeof OfficeCallsRoute
-  '/office/clients': typeof OfficeClientsRoute
-  '/office/editors': typeof OfficeEditorsRoute
-  '/office/invoices': typeof OfficeInvoicesRoute
-  '/office/projects': typeof OfficeProjectsRoute
-  '/office/prospects': typeof OfficeProspectsRoute
-  '/office/quotes': typeof OfficeQuotesRoute
-  '/office/services': typeof OfficeServicesRoute
-  '/office/settings': typeof OfficeSettingsRoute
-  '/office/website': typeof OfficeWebsiteRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/admins': typeof SettingsAdminsRoute
+  '/settings/analytics': typeof SettingsAnalyticsRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/availability': typeof SettingsAvailabilityRoute
+  '/settings/calls': typeof SettingsCallsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/studio/projects': typeof StudioProjectsRoute
-  '/studio/settings': typeof StudioSettingsRoute
   '/crm': typeof CrmIndexRoute
-  '/office': typeof OfficeIndexRoute
-  '/studio': typeof StudioIndexRoute
+  '/settings': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/doc/$kind/$token': typeof DocKindTokenRoute
@@ -278,27 +223,20 @@ export interface FileRoutesById {
   '/bookacall': typeof BookacallRoute
   '/crm': typeof CrmRouteWithChildren
   '/design': typeof DesignRoute
-  '/office': typeof OfficeRouteWithChildren
-  '/studio': typeof StudioRouteWithChildren
+  '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/office/analytics': typeof OfficeAnalyticsRoute
-  '/office/calls': typeof OfficeCallsRoute
-  '/office/clients': typeof OfficeClientsRoute
-  '/office/editors': typeof OfficeEditorsRoute
-  '/office/invoices': typeof OfficeInvoicesRoute
-  '/office/projects': typeof OfficeProjectsRoute
-  '/office/prospects': typeof OfficeProspectsRoute
-  '/office/quotes': typeof OfficeQuotesRoute
-  '/office/services': typeof OfficeServicesRoute
-  '/office/settings': typeof OfficeSettingsRoute
-  '/office/website': typeof OfficeWebsiteRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/admins': typeof SettingsAdminsRoute
+  '/settings/analytics': typeof SettingsAnalyticsRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/availability': typeof SettingsAvailabilityRoute
+  '/settings/calls': typeof SettingsCallsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
+  '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/studio/projects': typeof StudioProjectsRoute
-  '/studio/settings': typeof StudioSettingsRoute
   '/crm/': typeof CrmIndexRoute
-  '/office/': typeof OfficeIndexRoute
-  '/studio/': typeof StudioIndexRoute
+  '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
   '/doc/$kind/$token': typeof DocKindTokenRoute
@@ -314,27 +252,20 @@ export interface FileRouteTypes {
     | '/bookacall'
     | '/crm'
     | '/design'
-    | '/office'
-    | '/studio'
+    | '/settings'
     | '/videoediting'
     | '/crm/$'
-    | '/office/analytics'
-    | '/office/calls'
-    | '/office/clients'
-    | '/office/editors'
-    | '/office/invoices'
-    | '/office/projects'
-    | '/office/prospects'
-    | '/office/quotes'
-    | '/office/services'
-    | '/office/settings'
-    | '/office/website'
+    | '/settings/account'
+    | '/settings/admins'
+    | '/settings/analytics'
+    | '/settings/appearance'
+    | '/settings/availability'
+    | '/settings/calls'
+    | '/settings/connections'
+    | '/settings/website'
     | '/sign/$token'
-    | '/studio/projects'
-    | '/studio/settings'
     | '/crm/'
-    | '/office/'
-    | '/studio/'
+    | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
     | '/doc/$kind/$token'
@@ -349,23 +280,17 @@ export interface FileRouteTypes {
     | '/design'
     | '/videoediting'
     | '/crm/$'
-    | '/office/analytics'
-    | '/office/calls'
-    | '/office/clients'
-    | '/office/editors'
-    | '/office/invoices'
-    | '/office/projects'
-    | '/office/prospects'
-    | '/office/quotes'
-    | '/office/services'
-    | '/office/settings'
-    | '/office/website'
+    | '/settings/account'
+    | '/settings/admins'
+    | '/settings/analytics'
+    | '/settings/appearance'
+    | '/settings/availability'
+    | '/settings/calls'
+    | '/settings/connections'
+    | '/settings/website'
     | '/sign/$token'
-    | '/studio/projects'
-    | '/studio/settings'
     | '/crm'
-    | '/office'
-    | '/studio'
+    | '/settings'
     | '/api/public/time'
     | '/api/public/track'
     | '/doc/$kind/$token'
@@ -379,27 +304,20 @@ export interface FileRouteTypes {
     | '/bookacall'
     | '/crm'
     | '/design'
-    | '/office'
-    | '/studio'
+    | '/settings'
     | '/videoediting'
     | '/crm/$'
-    | '/office/analytics'
-    | '/office/calls'
-    | '/office/clients'
-    | '/office/editors'
-    | '/office/invoices'
-    | '/office/projects'
-    | '/office/prospects'
-    | '/office/quotes'
-    | '/office/services'
-    | '/office/settings'
-    | '/office/website'
+    | '/settings/account'
+    | '/settings/admins'
+    | '/settings/analytics'
+    | '/settings/appearance'
+    | '/settings/availability'
+    | '/settings/calls'
+    | '/settings/connections'
+    | '/settings/website'
     | '/sign/$token'
-    | '/studio/projects'
-    | '/studio/settings'
     | '/crm/'
-    | '/office/'
-    | '/studio/'
+    | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
     | '/doc/$kind/$token'
@@ -414,8 +332,7 @@ export interface RootRouteChildren {
   BookacallRoute: typeof BookacallRoute
   CrmRoute: typeof CrmRouteWithChildren
   DesignRoute: typeof DesignRoute
-  OfficeRoute: typeof OfficeRouteWithChildren
-  StudioRoute: typeof StudioRouteWithChildren
+  SettingsRoute: typeof SettingsRouteWithChildren
   VideoeditingRoute: typeof VideoeditingRoute
   SignTokenRoute: typeof SignTokenRoute
   ApiPublicTimeRoute: typeof ApiPublicTimeRoute
@@ -434,18 +351,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof VideoeditingRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/studio': {
-      id: '/studio'
-      path: '/studio'
-      fullPath: '/studio'
-      preLoaderRoute: typeof StudioRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/office': {
-      id: '/office'
-      path: '/office'
-      fullPath: '/office'
-      preLoaderRoute: typeof OfficeRouteImport
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/design': {
@@ -490,19 +400,12 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/studio/': {
-      id: '/studio/'
+    '/settings/': {
+      id: '/settings/'
       path: '/'
-      fullPath: '/studio/'
-      preLoaderRoute: typeof StudioIndexRouteImport
-      parentRoute: typeof StudioRoute
-    }
-    '/office/': {
-      id: '/office/'
-      path: '/'
-      fullPath: '/office/'
-      preLoaderRoute: typeof OfficeIndexRouteImport
-      parentRoute: typeof OfficeRoute
+      fullPath: '/settings/'
+      preLoaderRoute: typeof SettingsIndexRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/crm/': {
       id: '/crm/'
@@ -511,20 +414,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof CrmIndexRouteImport
       parentRoute: typeof CrmRoute
     }
-    '/studio/settings': {
-      id: '/studio/settings'
-      path: '/settings'
-      fullPath: '/studio/settings'
-      preLoaderRoute: typeof StudioSettingsRouteImport
-      parentRoute: typeof StudioRoute
-    }
-    '/studio/projects': {
-      id: '/studio/projects'
-      path: '/projects'
-      fullPath: '/studio/projects'
-      preLoaderRoute: typeof StudioProjectsRouteImport
-      parentRoute: typeof StudioRoute
-    }
     '/sign/$token': {
       id: '/sign/$token'
       path: '/sign/$token'
@@ -532,82 +421,61 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SignTokenRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/office/website': {
-      id: '/office/website'
+    '/settings/website': {
+      id: '/settings/website'
       path: '/website'
-      fullPath: '/office/website'
-      preLoaderRoute: typeof OfficeWebsiteRouteImport
-      parentRoute: typeof OfficeRoute
+      fullPath: '/settings/website'
+      preLoaderRoute: typeof SettingsWebsiteRouteImport
+      parentRoute: typeof SettingsRoute
     }
-    '/office/settings': {
-      id: '/office/settings'
-      path: '/settings'
-      fullPath: '/office/settings'
-      preLoaderRoute: typeof OfficeSettingsRouteImport
-      parentRoute: typeof OfficeRoute
+    '/settings/connections': {
+      id: '/settings/connections'
+      path: '/connections'
+      fullPath: '/settings/connections'
+      preLoaderRoute: typeof SettingsConnectionsRouteImport
+      parentRoute: typeof SettingsRoute
     }
-    '/office/services': {
-      id: '/office/services'
-      path: '/services'
-      fullPath: '/office/services'
-      preLoaderRoute: typeof OfficeServicesRouteImport
-      parentRoute: typeof OfficeRoute
-    }
-    '/office/quotes': {
-      id: '/office/quotes'
-      path: '/quotes'
-      fullPath: '/office/quotes'
-      preLoaderRoute: typeof OfficeQuotesRouteImport
-      parentRoute: typeof OfficeRoute
-    }
-    '/office/prospects': {
-      id: '/office/prospects'
-      path: '/prospects'
-      fullPath: '/office/prospects'
-      preLoaderRoute: typeof OfficeProspectsRouteImport
-      parentRoute: typeof OfficeRoute
-    }
-    '/office/projects': {
-      id: '/office/projects'
-      path: '/projects'
-      fullPath: '/office/projects'
-      preLoaderRoute: typeof OfficeProjectsRouteImport
-      parentRoute: typeof OfficeRoute
-    }
-    '/office/invoices': {
-      id: '/office/invoices'
-      path: '/invoices'
-      fullPath: '/office/invoices'
-      preLoaderRoute: typeof OfficeInvoicesRouteImport
-      parentRoute: typeof OfficeRoute
-    }
-    '/office/editors': {
-      id: '/office/editors'
-      path: '/editors'
-      fullPath: '/office/editors'
-      preLoaderRoute: typeof OfficeEditorsRouteImport
-      parentRoute: typeof OfficeRoute
-    }
-    '/office/clients': {
-      id: '/office/clients'
-      path: '/clients'
-      fullPath: '/office/clients'
-      preLoaderRoute: typeof OfficeClientsRouteImport
-      parentRoute: typeof OfficeRoute
-    }
-    '/office/calls': {
-      id: '/office/calls'
+    '/settings/calls': {
+      id: '/settings/calls'
       path: '/calls'
-      fullPath: '/office/calls'
-      preLoaderRoute: typeof OfficeCallsRouteImport
-      parentRoute: typeof OfficeRoute
+      fullPath: '/settings/calls'
+      preLoaderRoute: typeof SettingsCallsRouteImport
+      parentRoute: typeof SettingsRoute
     }
-    '/office/analytics': {
-      id: '/office/analytics'
+    '/settings/availability': {
+      id: '/settings/availability'
+      path: '/availability'
+      fullPath: '/settings/availability'
+      preLoaderRoute: typeof SettingsAvailabilityRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/appearance': {
+      id: '/settings/appearance'
+      path: '/appearance'
+      fullPath: '/settings/appearance'
+      preLoaderRoute: typeof SettingsAppearanceRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/analytics': {
+      id: '/settings/analytics'
       path: '/analytics'
-      fullPath: '/office/analytics'
-      preLoaderRoute: typeof OfficeAnalyticsRouteImport
-      parentRoute: typeof OfficeRoute
+      fullPath: '/settings/analytics'
+      preLoaderRoute: typeof SettingsAnalyticsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/admins': {
+      id: '/settings/admins'
+      path: '/admins'
+      fullPath: '/settings/admins'
+      preLoaderRoute: typeof SettingsAdminsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/account': {
+      id: '/settings/account'
+      path: '/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof SettingsAccountRouteImport
+      parentRoute: typeof SettingsRoute
     }
     '/crm/$': {
       id: '/crm/$'
@@ -666,53 +534,33 @@ const CrmRouteChildren: CrmRouteChildren = {
 
 const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
 
-interface OfficeRouteChildren {
-  OfficeAnalyticsRoute: typeof OfficeAnalyticsRoute
-  OfficeCallsRoute: typeof OfficeCallsRoute
-  OfficeClientsRoute: typeof OfficeClientsRoute
-  OfficeEditorsRoute: typeof OfficeEditorsRoute
-  OfficeInvoicesRoute: typeof OfficeInvoicesRoute
-  OfficeProjectsRoute: typeof OfficeProjectsRoute
-  OfficeProspectsRoute: typeof OfficeProspectsRoute
-  OfficeQuotesRoute: typeof OfficeQuotesRoute
-  OfficeServicesRoute: typeof OfficeServicesRoute
-  OfficeSettingsRoute: typeof OfficeSettingsRoute
-  OfficeWebsiteRoute: typeof OfficeWebsiteRoute
-  OfficeIndexRoute: typeof OfficeIndexRoute
+interface SettingsRouteChildren {
+  SettingsAccountRoute: typeof SettingsAccountRoute
+  SettingsAdminsRoute: typeof SettingsAdminsRoute
+  SettingsAnalyticsRoute: typeof SettingsAnalyticsRoute
+  SettingsAppearanceRoute: typeof SettingsAppearanceRoute
+  SettingsAvailabilityRoute: typeof SettingsAvailabilityRoute
+  SettingsCallsRoute: typeof SettingsCallsRoute
+  SettingsConnectionsRoute: typeof SettingsConnectionsRoute
+  SettingsWebsiteRoute: typeof SettingsWebsiteRoute
+  SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
-const OfficeRouteChildren: OfficeRouteChildren = {
-  OfficeAnalyticsRoute: OfficeAnalyticsRoute,
-  OfficeCallsRoute: OfficeCallsRoute,
-  OfficeClientsRoute: OfficeClientsRoute,
-  OfficeEditorsRoute: OfficeEditorsRoute,
-  OfficeInvoicesRoute: OfficeInvoicesRoute,
-  OfficeProjectsRoute: OfficeProjectsRoute,
-  OfficeProspectsRoute: OfficeProspectsRoute,
-  OfficeQuotesRoute: OfficeQuotesRoute,
-  OfficeServicesRoute: OfficeServicesRoute,
-  OfficeSettingsRoute: OfficeSettingsRoute,
-  OfficeWebsiteRoute: OfficeWebsiteRoute,
-  OfficeIndexRoute: OfficeIndexRoute,
+const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsAccountRoute: SettingsAccountRoute,
+  SettingsAdminsRoute: SettingsAdminsRoute,
+  SettingsAnalyticsRoute: SettingsAnalyticsRoute,
+  SettingsAppearanceRoute: SettingsAppearanceRoute,
+  SettingsAvailabilityRoute: SettingsAvailabilityRoute,
+  SettingsCallsRoute: SettingsCallsRoute,
+  SettingsConnectionsRoute: SettingsConnectionsRoute,
+  SettingsWebsiteRoute: SettingsWebsiteRoute,
+  SettingsIndexRoute: SettingsIndexRoute,
 }
 
-const OfficeRouteWithChildren =
-  OfficeRoute._addFileChildren(OfficeRouteChildren)
-
-interface StudioRouteChildren {
-  StudioProjectsRoute: typeof StudioProjectsRoute
-  StudioSettingsRoute: typeof StudioSettingsRoute
-  StudioIndexRoute: typeof StudioIndexRoute
-}
-
-const StudioRouteChildren: StudioRouteChildren = {
-  StudioProjectsRoute: StudioProjectsRoute,
-  StudioSettingsRoute: StudioSettingsRoute,
-  StudioIndexRoute: StudioIndexRoute,
-}
-
-const StudioRouteWithChildren =
-  StudioRoute._addFileChildren(StudioRouteChildren)
+const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
+  SettingsRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -721,8 +569,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookacallRoute: BookacallRoute,
   CrmRoute: CrmRouteWithChildren,
   DesignRoute: DesignRoute,
-  OfficeRoute: OfficeRouteWithChildren,
-  StudioRoute: StudioRouteWithChildren,
+  SettingsRoute: SettingsRouteWithChildren,
   VideoeditingRoute: VideoeditingRoute,
   SignTokenRoute: SignTokenRoute,
   ApiPublicTimeRoute: ApiPublicTimeRoute,

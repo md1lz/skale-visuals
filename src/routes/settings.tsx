@@ -1,26 +1,44 @@
-import { Outlet, createFileRoute, redirect, Link, useRouterState } from "@tanstack/react-router";
+import { Outlet, createFileRoute, Link, useRouterState } from "@tanstack/react-router";
 import { AnimatePresence, motion } from "framer-motion";
-import { Home, FolderKanban, Settings } from "lucide-react";
-import { getEditorSessionFn } from "@/lib/editor.functions";
-import { EditorProfileMenu } from "@/components/EditorProfileMenu";
+
+import {
+  LayoutDashboard,
+  Users,
+  Palette,
+  Plug,
+  Globe,
+  UserCircle2,
+  BarChart3,
+  CalendarClock,
+  CalendarCheck,
+} from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getAdminSessionFn, getAdminProfile } from "@/lib/admin-auth.functions";
+import { AdminProfileMenu } from "@/components/AdminProfileMenu";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
-import { MessagePing } from "@/components/MessagePing";
+import { OfficeLogin } from "@/components/OfficeLogin";
 import { PanelMobileNav } from "@/components/PanelMobileNav";
 
-export const Route = createFileRoute("/studio")({
+export const Route = createFileRoute("/settings")({
+  head: () => ({
+    meta: [
+      { title: "Skale Settings — Espace équipe" },
+      { name: "description", content: "Espace de réglages interne de Skale Visuals." },
+      { property: "og:title", content: "Skale Settings — Espace équipe" },
+      { property: "og:description", content: "Espace de réglages interne de Skale Visuals." },
+      { property: "og:type", content: "website" },
+      { name: "twitter:card", content: "summary" },
+      { name: "robots", content: "noindex" },
+    ],
+  }),
   beforeLoad: async () => {
-    const session = await getEditorSessionFn();
-    if (!session) {
-      const { getAdminSessionFn } = await import("@/lib/admin-auth.functions");
-      const admin = await getAdminSessionFn();
-      if (admin) throw redirect({ to: "/office" });
-      throw redirect({ to: "/office" });
-    }
-    return { editor: session };
+    const session = await getAdminSessionFn();
+    return { session };
   },
-  component: EditorLayout,
+  component: SettingsLayout,
   errorComponent: ({ error }) => (
     <div className="min-h-screen flex items-center justify-center bg-neutral-950 text-white p-6">
       <p className="text-sm text-neutral-400">Erreur ({error.message}).</p>
@@ -33,27 +51,44 @@ export const Route = createFileRoute("/studio")({
   ),
 });
 
-const NAV: { to: string; label: string; icon: typeof Home; exact?: boolean }[] = [
-  { to: "/studio", label: "Accueil", icon: Home, exact: true },
-  { to: "/studio/projects", label: "Mes projets", icon: FolderKanban },
-  { to: "/studio/settings", label: "Paramètres", icon: Settings },
+const NAV: {
+  to: string;
+  label: string;
+  icon: typeof Users;
+  exact?: boolean;
+  desktopOnly?: boolean;
+}[] = [
+  { to: "/settings", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
+  { to: "/settings/analytics", label: "Analytiques", icon: BarChart3 },
+  { to: "/settings/calls", label: "Book a Call", icon: CalendarClock },
+  { to: "/settings/account", label: "Mon compte", icon: UserCircle2 },
+  { to: "/settings/appearance", label: "Apparence", icon: Palette },
+  { to: "/settings/connections", label: "Connexions", icon: Plug },
+  { to: "/settings/availability", label: "Disponibilités", icon: CalendarCheck },
+  { to: "/settings/website", label: "Gestion du site web", icon: Globe },
+  { to: "/settings/admins", label: "Comptes admin", icon: Users },
 ];
 
-function EditorLayout() {
+function SettingsLayout() {
+  const session = Route.useRouteContext().session;
+  if (!session) return <OfficeLogin />;
+
   return (
     <AdminPrefsProvider>
       <ThemeStyleInjector />
       <ConnectionHeartbeat />
-      <MessagePing role="editor" />
-      <EditorLayoutInner />
+      <SettingsLayoutInner />
     </AdminPrefsProvider>
   );
 }
 
-function EditorLayoutInner() {
-  const editor = Route.useRouteContext().editor;
+function SettingsLayoutInner() {
+  const session = Route.useRouteContext().session;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { background, mode } = useAdminPrefs();
+  const fetchProfile = useServerFn(getAdminProfile);
+  const profileQ = useQuery({ queryKey: ["admin", "profile"], queryFn: () => fetchProfile() });
+  const profile = profileQ.data;
 
   return (
     <div
@@ -81,23 +116,19 @@ function EditorLayoutInner() {
       )}
       <div className="relative z-10 flex w-full">
         <aside className="hidden md:flex w-64 shrink-0 flex-col border-r border-white/[0.07] bg-neutral-950/70 backdrop-blur-xl">
-          <div className="px-5 py-6 flex items-center gap-2.5">
-            <span className="h-2.5 w-2.5 rounded-full bg-red-600 shadow-[0_0_10px_rgba(226,75,74,0.9)] animate-pulse" />
-            <p className="text-[15px] font-semibold tracking-tight">Skale Studio</p>
+          <div className="flex items-center gap-1.5 px-5 py-6">
+            <span className="font-codec-bold text-[26px] leading-none text-white">skale.</span>
+            <span className="text-[9px] font-medium uppercase tracking-[0.28em] text-neutral-500">
+              Settings
+            </span>
           </div>
 
-          <div className="px-5 pb-3">
+          <div className="px-5 pb-4">
             <BackToSiteLink />
           </div>
 
           <div className="mx-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-2">
-            <EditorProfileMenu
-              initial={{
-                username: editor.username,
-                displayName: editor.displayName,
-                avatarUrl: editor.avatarUrl,
-              }}
-            />
+            {session?.user && <AdminProfileMenu initialUsername={session.user} />}
           </div>
 
           <nav className="flex-1 px-3 py-5 space-y-1">
@@ -107,7 +138,7 @@ function EditorLayoutInner() {
               return (
                 <Link
                   key={item.to}
-                  to={item.to as "/studio"}
+                  to={item.to as "/settings"}
                   className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-[13px] transition-all duration-200 ${
                     active
                       ? "bg-white/[0.06] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]"
@@ -116,7 +147,7 @@ function EditorLayoutInner() {
                 >
                   {active && (
                     <motion.span
-                      layoutId="editor-nav-bar"
+                      layoutId="admin-nav-bar"
                       className="absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-red-500 shadow-[0_0_10px_rgba(226,75,74,0.8)]"
                     />
                   )}
@@ -132,21 +163,15 @@ function EditorLayoutInner() {
 
         <main className="flex-1 min-w-0 overflow-x-hidden">
           <PanelMobileNav
-            title="Skale Studio"
+            title="Skale Settings"
             items={NAV}
             profile={{
-              name: editor.displayName || editor.username,
-              role: "Monteur",
-              avatarUrl: editor.avatarUrl ?? null,
+              name: profile?.firstName?.trim() || profile?.username || session?.user || "Admin",
+              role: "Administrateur",
+              avatarUrl: profile?.avatarUrl ?? null,
             }}
           >
-            <EditorProfileMenu
-              initial={{
-                username: editor.username,
-                displayName: editor.displayName,
-                avatarUrl: editor.avatarUrl,
-              }}
-            />
+            {session?.user && <AdminProfileMenu initialUsername={session.user} />}
           </PanelMobileNav>
           <AnimatePresence mode="wait">
             <motion.div
