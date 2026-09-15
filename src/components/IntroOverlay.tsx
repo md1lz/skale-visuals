@@ -16,6 +16,10 @@ function isMobileDevice() {
 
 function IntroCanvas({ onDone }: { onDone: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  // Fond noir plein écran tant que le chroma key n'a pas commencé :
+  // le site reste masqué pendant le chargement et le début de la vidéo.
+  const [blackout, setBlackout] = useState(true);
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
