@@ -91,8 +91,15 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
       }
     };
 
-    const handleEnded = () => onDone();
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      onDone();
+    };
+    const handleEnded = () => finish();
     video.addEventListener("ended", handleEnded);
+    video.addEventListener("error", handleEnded);
 
     // Lecture forcée : on réessaie tant que la vidéo n'a pas démarré.
     const tryPlay = () => {
