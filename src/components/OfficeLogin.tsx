@@ -11,7 +11,6 @@ export function OfficeLogin() {
   const autoLogin = useServerFn(tryAutoLoginByIp);
 
   const [checking, setChecking] = useState(true);
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
