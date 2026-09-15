@@ -7,6 +7,7 @@ import {
   ArrowUp,
   ArrowDown,
   ImagePlus,
+  X,
   Loader2,
   FolderPlus,
   Upload,
@@ -67,6 +68,21 @@ async function uploadAsset(file: File): Promise<string> {
 const card = "rounded-2xl border border-white/10 bg-white/[0.03] p-4 md:p-5";
 const input =
   "w-full rounded-lg border border-white/10 bg-black/30 px-3 py-2 text-sm text-white outline-none focus:border-red-600/50";
+function ClearImage({ show, onClear }: { show: unknown; onClear: () => void }) {
+  if (!show) return null;
+  return (
+    <button
+      type="button"
+      aria-label="Retirer l’image"
+      title="Retirer l’image"
+      onClick={onClear}
+      className="grid h-6 w-6 shrink-0 self-start place-items-center rounded-full border border-white/10 bg-black/60 text-neutral-400 transition hover:border-red-500/50 hover:text-red-400"
+    >
+      <X className="h-3.5 w-3.5" />
+    </button>
+  );
+}
+
 const btn =
   "inline-flex items-center gap-2 rounded-lg px-3 py-2 text-sm transition disabled:opacity-50";
 
@@ -414,6 +430,7 @@ export function SiteAdminPanel() {
                   <ImagePlus className="h-5 w-5" />
                 )}
               </button>
+              <ClearImage show={footerLogoPreviews[i]} onClear={() => { patchFooterLogo(i, { logo: null }); setFooterLogoPreviews((items) => items.map((it, idx) => (idx === i ? null : it))); }} />
               <input
                 ref={(el) => { fileRefs.current[`footer-logo-${i}`] = el; }}
                 type="file"
@@ -486,6 +503,7 @@ export function SiteAdminPanel() {
                   <ImagePlus className="h-5 w-5" />
                 )}
               </button>
+              <ClearImage show={companyPreviews[i]} onClear={() => { patchCompany(i, { logo: null }); setCompanyPreviews((items) => items.map((it, idx) => (idx === i ? null : it))); }} />
               <input
                 ref={(el) => { fileRefs.current[`company-${i}`] = el; }}
                 type="file"
@@ -550,6 +568,7 @@ export function SiteAdminPanel() {
                   <ImagePlus className="h-5 w-5" />
                 )}
               </button>
+              <ClearImage show={creatorPreviews[i]} onClear={() => { patchCreator(i, { photo: null }); setCreatorPreviews((items) => items.map((it, idx) => (idx === i ? null : it))); }} />
               <input
                 ref={(el) => { fileRefs.current[`creator-${i}`] = el; }}
                 type="file"
@@ -607,7 +626,8 @@ export function SiteAdminPanel() {
               <ImagePlus className="h-5 w-5" />
             )}
           </button>
-          <input
+          <ClearImage show={testimonialPreview} onClear={() => { patchSettings({ testimonial: { ...settings.testimonial, photo: null } }); setTestimonialPreview(null); }} />
+              <input
             ref={(el) => { fileRefs.current["testimonial"] = el; }}
             type="file"
             accept="image/*"
@@ -671,7 +691,8 @@ export function SiteAdminPanel() {
                     <ImagePlus className="h-5 w-5" />
                   )}
                 </button>
-                <input
+                <ClearImage show={serviceCardPreviews[i]} onClear={() => { patchServiceCard(i, { image: null }); setServiceCardPreviews((items) => items.map((it, idx) => (idx === i ? null : it))); }} />
+              <input
                   ref={(el) => { fileRefs.current[`service-card-image-${i}`] = el; }}
                   type="file"
                   accept="image/*"
@@ -729,7 +750,8 @@ export function SiteAdminPanel() {
               <ImagePlus className="h-6 w-6" />
             )}
           </button>
-          <input
+          <ClearImage show={serviceHeaderPreview} onClear={() => { patchServiceHeader({ image: null }); setServiceHeaderPreview(null); }} />
+              <input
             ref={(el) => { fileRefs.current["service-header-image"] = el; }}
             type="file"
             accept="image/*"
@@ -810,7 +832,8 @@ export function SiteAdminPanel() {
                     <ImagePlus className="h-5 w-5" />
                   )}
                 </button>
-                <input
+                <ClearImage show={projectPreviews[i]?.image} onClear={() => { patchProject(i, { image: null }); setProjectPreviews((items) => items.map((it, idx) => (idx === i ? { ...it, image: null } : it))); }} />
+              <input
                   ref={(el) => { fileRefs.current[`project-image-${i}`] = el; }}
                   type="file"
                   accept="image/*"
@@ -864,7 +887,8 @@ export function SiteAdminPanel() {
                     <ImagePlus className="h-5 w-5" />
                   )}
                 </button>
-                <input
+                <ClearImage show={projectPreviews[i]?.avatar} onClear={() => { patchProject(i, { avatar: null }); setProjectPreviews((items) => items.map((it, idx) => (idx === i ? { ...it, avatar: null } : it))); }} />
+              <input
                   ref={(el) => { fileRefs.current[`project-avatar-${i}`] = el; }}
                   type="file"
                   accept="image/*"
@@ -1238,7 +1262,8 @@ function AboutSection() {
                     <ImagePlus className="h-5 w-5" />
                   )}
                 </button>
-                <input
+                <ClearImage show={previews[i]} onClear={() => { patchFounder(i, { photo: null }); setPreviews((pv) => pv.map((v, x) => (x === i ? null : v))); }} />
+              <input
                   ref={(el) => {
                     photoRefs.current[i] = el;
                   }}
