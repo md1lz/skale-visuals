@@ -11,7 +11,6 @@ export function OfficeLogin() {
   const autoLogin = useServerFn(tryAutoLoginByIp);
 
   const [checking, setChecking] = useState(true);
-  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [remember, setRemember] = useState(false);
@@ -50,14 +49,14 @@ export function OfficeLogin() {
     setPending(true);
     setError(null);
     try {
-      const res = await login({ data: { username, password, remember, source: "web" } });
+      const res = await login({ data: { password, remember, source: "web" } });
       if (!res.ok) {
-        setError("Identifiants incorrects.");
+        setError("Mot de passe incorrect.");
         return;
       }
       window.location.replace("/settings");
     } catch {
-      setError("Identifiants incorrects.");
+      setError("Mot de passe incorrect.");
     } finally {
       setPending(false);
     }
@@ -93,18 +92,6 @@ export function OfficeLogin() {
           <h2 className="text-lg font-semibold tracking-tight text-white">Skale Settings</h2>
         </div>
         <p className="mb-6 text-xs text-neutral-400">Accès réservé à l'équipe.</p>
-
-        <label className="mb-1 block text-xs text-neutral-300">Identifiant</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          autoComplete="username"
-          autoCapitalize="none"
-          autoCorrect="off"
-          disabled={pending}
-          className="mb-3 w-full rounded-xl border border-white/10 bg-neutral-900/70 px-3 py-2.5 text-sm text-white transition-colors focus:border-red-500 focus:outline-none disabled:opacity-60"
-        />
 
         <label className="mb-1 block text-xs text-neutral-300">Mot de passe</label>
         <div className="relative mb-4">

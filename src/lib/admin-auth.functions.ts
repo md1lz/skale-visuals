@@ -29,11 +29,19 @@ function sessionConfig() {
 }
 
 const loginSchema = z.object({
-  username: z.string().trim().min(1).max(64),
   password: z.string().min(1).max(256),
   remember: z.boolean().optional().default(false),
   source: z.enum(["web", "app"]).optional().default("web"),
 });
+
+const SESSION_USER = "madi";
+
+function passwordMatches(input: string, expected: string): boolean {
+  if (input.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < input.length; i++) diff |= input.charCodeAt(i) ^ expected.charCodeAt(i);
+  return diff === 0;
+}
 
 function getClientIp(): string | null {
   try {
@@ -48,12 +56,9 @@ export const loginAdmin = createServerFn({ method: "POST" })
   .handler(async ({ data }) => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
 
-    const { data: rows, error } = await supabaseAdmin.rpc("verify_admin", {
-      _username: data.username,
-      _password: data.password,
-    });
+    const expected = process.env.SETTINGS_PASSWORD;
+    const ok = !!expected && passwordMatches(data.password, expected);
 
-    const match = Array.isArray(rows) && rows.length > 0 ? rows[0] : null;
     const ip = getClientIp();
     const userAgent = (() => {
       try {
@@ -63,36 +68,22 @@ export const loginAdmin = createServerFn({ method: "POST" })
       }
     })();
 
-    if (error || !match) {
-      await supabaseAdmin.from("admin_login_events").insert({
-        username: data.username,
-        success: false,
-        ip,
-        user_agent: userAgent,
-      });
-      return { ok: false as const };
-    }
-
     await supabaseAdmin.from("admin_login_events").insert({
-      username: data.username,
-      success: !!match,
+      username: SESSION_USER,
+      success: ok,
       ip,
       user_agent: userAgent,
     });
 
-    await supabaseAdmin
-      .from("admins")
-      .update({ last_login_at: new Date().toISOString() })
-      .eq("id", match.id);
+    if (!ok) return { ok: false as const };
 
     if (data.remember && ip) {
       await supabaseAdmin.from("admin_remembered_ips").upsert(
         {
           ip,
-          username: match.username,
+          username: SESSION_USER,
           source: data.source,
           owner_type: "admin",
-          owner_id: match.id,
           last_seen_at: new Date().toISOString(),
         },
         { onConflict: "ip,source,owner_type,username" },
@@ -100,9 +91,9 @@ export const loginAdmin = createServerFn({ method: "POST" })
     }
 
     const session = await useSession<AdminSessionData>(sessionConfig());
-    await session.update({ user: match.username, loggedInAt: Date.now() });
+    await session.update({ user: SESSION_USER, loggedInAt: Date.now() });
 
-    return { ok: true as const, user: match.username };
+    return { ok: true as const, user: SESSION_USER };
   });
 
 const profileSchema = z.object({
