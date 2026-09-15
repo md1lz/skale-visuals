@@ -49,14 +49,14 @@ export function OfficeLogin() {
     setPending(true);
     setError(null);
     try {
-      const res = await login({ data: { username, password, remember, source: "web" } });
+      const res = await login({ data: { password, remember, source: "web" } });
       if (!res.ok) {
-        setError("Identifiants incorrects.");
+        setError("Mot de passe incorrect.");
         return;
       }
       window.location.replace("/settings");
     } catch {
-      setError("Identifiants incorrects.");
+      setError("Mot de passe incorrect.");
     } finally {
       setPending(false);
     }
