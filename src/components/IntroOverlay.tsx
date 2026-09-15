@@ -84,8 +84,9 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
             }
             ctx.putImageData(frame, 0, 0);
           } catch {
-            // impossible de lire les pixels : on garde la vidéo visible telle quelle
+            // impossible de lire les pixels : on libère le site tout de suite
             chromaOk = false;
+            onDone();
           }
         }
       }
