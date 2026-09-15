@@ -93,18 +93,6 @@ export function OfficeLogin() {
         </div>
         <p className="mb-6 text-xs text-neutral-400">Accès réservé à l'équipe.</p>
 
-        <label className="mb-1 block text-xs text-neutral-300">Identifiant</label>
-        <input
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          autoComplete="username"
-          autoCapitalize="none"
-          autoCorrect="off"
-          disabled={pending}
-          className="mb-3 w-full rounded-xl border border-white/10 bg-neutral-900/70 px-3 py-2.5 text-sm text-white transition-colors focus:border-red-500 focus:outline-none disabled:opacity-60"
-        />
-
         <label className="mb-1 block text-xs text-neutral-300">Mot de passe</label>
         <div className="relative mb-4">
           <input
