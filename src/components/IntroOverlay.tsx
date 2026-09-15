@@ -91,12 +91,26 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
     video.addEventListener("ended", handleEnded);
     video.addEventListener("error", handleError);
 
+    let started = false;
     const start = () => {
+      if (started || stopped) return;
+      started = true;
       void video.play().catch(() => onDone());
       raf = requestAnimationFrame(draw);
     };
-    if (video.readyState >= 2) start();
-    else video.addEventListener("loadeddata", start, { once: true });
+    // On attend que la vidéo soit suffisamment chargée pour éviter les saccades.
+    if (video.readyState >= 4) start();
+    else {
+      video.addEventListener("canplaythrough", start, { once: true });
+      video.addEventListener("loadeddata", () => {
+        // filet de sécurité si canplaythrough ne se déclenche jamais
+        setTimeout(start, 2500);
+      }, { once: true });
+    }
+    // Sécurité absolue : si la vidéo ne démarre pas, on libère le site.
+    const failSafe = setTimeout(() => {
+      if (!started) onDone();
+    }, 12000);
 
     return () => {
       stopped = true;
