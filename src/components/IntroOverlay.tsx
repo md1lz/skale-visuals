@@ -84,15 +84,23 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
             }
             ctx.putImageData(frame, 0, 0);
           } catch {
-            // impossible de lire les pixels : on garde la vidéo visible telle quelle
+            // impossible de lire les pixels : on libère le site tout de suite
             chromaOk = false;
+            onDone();
           }
         }
       }
     };
 
-    const handleEnded = () => onDone();
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      onDone();
+    };
+    const handleEnded = () => finish();
     video.addEventListener("ended", handleEnded);
+    video.addEventListener("error", handleEnded);
 
     // Lecture forcée : on réessaie tant que la vidéo n'a pas démarré.
     const tryPlay = () => {
@@ -116,14 +124,39 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
 
     raf = requestAnimationFrame(draw);
 
+    // Filets de sécurité : en cas de blocage, on affiche le site immédiatement.
+    const startGuard = setTimeout(() => {
+      if (video.currentTime === 0 || video.readyState < 2) finish();
+    }, 5000);
+    let lastTime = -1;
+    let stuck = 0;
+    const watchdog = setInterval(() => {
+      if (video.paused && video.currentTime === 0) return; // pas encore démarré
+      if (video.currentTime === lastTime && !video.ended) {
+        stuck += 1;
+        if (stuck >= 3) finish(); // ~3s sans progression
+      } else {
+        stuck = 0;
+        lastTime = video.currentTime;
+      }
+    }, 1000);
+    const onVisibility = () => {
+      if (document.hidden) finish();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     return () => {
       stopped = true;
       clearInterval(playLoop);
+      clearTimeout(startGuard);
+      clearInterval(watchdog);
       cancelAnimationFrame(raf);
       window.removeEventListener("resize", resize);
       window.removeEventListener("pointerdown", onUserGesture);
       window.removeEventListener("keydown", onUserGesture);
+      document.removeEventListener("visibilitychange", onVisibility);
       video.removeEventListener("ended", handleEnded);
+      video.removeEventListener("error", handleEnded);
       try {
         video.pause();
       } catch {
