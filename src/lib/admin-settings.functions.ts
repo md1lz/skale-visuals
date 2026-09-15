@@ -23,22 +23,6 @@ async function requireSession() {
   return session.data.user;
 }
 
-function getRescueCode(): string | null {
-  const v = process.env.ADMIN_RESCUE_CODE;
-  return v && v.length > 0 ? v : null;
-}
-
-function verifyRescueCode(provided: string): boolean {
-  const expected = getRescueCode();
-  if (!expected) return false;
-  if (provided.length !== expected.length) return false;
-  let mismatch = 0;
-  for (let i = 0; i < expected.length; i++) {
-    mismatch |= expected.charCodeAt(i) ^ provided.charCodeAt(i);
-  }
-  return mismatch === 0;
-}
-
 // --- Connections (remembered IPs) ---
 
 export const listRememberedIps = createServerFn({ method: "GET" }).handler(async () => {
@@ -103,16 +87,12 @@ const credsSchema = z.object({
   targetUsername: z.string().min(1).max(64),
   newUsername: z.string().trim().min(3).max(64).optional().nullable(),
   newPassword: z.string().min(8).max(256).optional().nullable(),
-  rescueCode: z.string().min(1).max(128),
 });
 
 export const updateAdminCredentials = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => credsSchema.parse(d))
   .handler(async ({ data }) => {
     await requireSession();
-    if (!verifyRescueCode(data.rescueCode)) {
-      return { ok: false as const, error: "Code de sauvetage invalide." };
-    }
     if (!data.newUsername && !data.newPassword) {
       return { ok: false as const, error: "Aucune modification fournie." };
     }
@@ -150,16 +130,12 @@ export const updateAdminCredentials = createServerFn({ method: "POST" })
 const createSchema = z.object({
   username: z.string().trim().min(3).max(64),
   password: z.string().min(8).max(256),
-  rescueCode: z.string().min(1).max(128),
 });
 
 export const createAdminAccount = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) => createSchema.parse(d))
   .handler(async ({ data }) => {
     await requireSession();
-    if (!verifyRescueCode(data.rescueCode)) {
-      return { ok: false as const, error: "Code de sauvetage invalide." };
-    }
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const { data: exists } = await supabaseAdmin
       .from("admins")
