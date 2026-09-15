@@ -106,7 +106,37 @@ function AdminHome() {
     { label: "Devis soumis", value: dayQ.isLoading ? "…" : fmtNum(k?.devisSubmitted), icon: FileSignature },
   ];
 
+  return (
+    <div className="w-full max-w-6xl mx-auto overflow-x-hidden px-4 pt-6 pb-10 md:px-8 md:pt-10">
+      {/* Greeting */}
+      <motion.div
+        initial={{ opacity: 0, y: 8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35 }}
+        className="mb-8 flex items-center gap-4 md:mb-10 md:gap-5"
+      >
+        <span className="grid place-items-center h-14 w-14 md:h-16 md:w-16 rounded-full bg-gradient-to-br from-red-600 to-red-800 ring-1 ring-white/15 overflow-hidden shrink-0">
+          {p?.avatarUrl ? (
+            <img src={p.avatarUrl} alt="" className="h-full w-full object-cover" />
+          ) : (
+            <Initials name={greetingName} />
+          )}
+        </span>
+        <div className="min-w-0 flex-1">
+          <h1 className="text-2xl md:text-4xl font-semibold tracking-tight break-words">
+            Bonjour,{" "}
+            <span className="font-codec-bold italic text-red-500 text-2xl md:text-4xl leading-none align-middle">
+              {greetingName}
+            </span>
+          </h1>
+          <p className="text-sm text-neutral-400 mt-1">
+            Voici un aperçu de l'activité de Skale Visuals.
+          </p>
+        </div>
+      </motion.div>
+
       {/* Bloc 2 — Analytiques */}
+
       <SectionTitle label="Analytiques" />
 
       {/* 24h chart */}
