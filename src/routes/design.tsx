@@ -1,9 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { motion } from "framer-motion";
 
-const TITLE = "Design visuel — Skale Visuals";
+const TITLE = "Clipping vidéo — Skale Visuals";
 const DESCRIPTION =
-  "Miniatures et visuels sur mesure pour valoriser ton contenu, renforcer ta crédibilité et transformer tes visiteurs en clients.";
+  "Formats courts et clipping vidéo conçus pour capter l’attention, maximiser la rétention et convertir davantage.";
 
 export const Route = createFileRoute("/design")({
   head: () => ({
