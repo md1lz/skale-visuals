@@ -21,8 +21,13 @@ import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as CrmIndexRouteImport } from './routes/crm.index'
 import { Route as SignTokenRouteImport } from './routes/sign.$token'
 import { Route as SettingsWebsiteRouteImport } from './routes/settings.website'
+import { Route as SettingsConnectionsRouteImport } from './routes/settings.connections'
 import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
+import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
+import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
+import { Route as SettingsAdminsRouteImport } from './routes/settings.admins'
+import { Route as SettingsAccountRouteImport } from './routes/settings.account'
 import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -90,14 +95,39 @@ const SettingsWebsiteRoute = SettingsWebsiteRouteImport.update({
   path: '/website',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsConnectionsRoute = SettingsConnectionsRouteImport.update({
+  id: '/connections',
+  path: '/connections',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsCallsRoute = SettingsCallsRouteImport.update({
   id: '/calls',
   path: '/calls',
   getParentRoute: () => SettingsRoute,
 } as any)
+const SettingsAvailabilityRoute = SettingsAvailabilityRouteImport.update({
+  id: '/availability',
+  path: '/availability',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsAppearanceRoute = SettingsAppearanceRouteImport.update({
+  id: '/appearance',
+  path: '/appearance',
+  getParentRoute: () => SettingsRoute,
+} as any)
 const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsAdminsRoute = SettingsAdminsRouteImport.update({
+  id: '/admins',
+  path: '/admins',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsAccountRoute = SettingsAccountRouteImport.update({
+  id: '/account',
+  path: '/account',
   getParentRoute: () => SettingsRoute,
 } as any)
 const CrmSplatRoute = CrmSplatRouteImport.update({
@@ -143,8 +173,13 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
   '/crm/': typeof CrmIndexRoute
@@ -163,8 +198,13 @@ export interface FileRoutesByTo {
   '/design': typeof DesignRoute
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
   '/crm': typeof CrmIndexRoute
@@ -186,8 +226,13 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
+  '/settings/account': typeof SettingsAccountRoute
+  '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
+  '/settings/appearance': typeof SettingsAppearanceRoute
+  '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
+  '/settings/connections': typeof SettingsConnectionsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
   '/crm/': typeof CrmIndexRoute
@@ -210,8 +255,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/videoediting'
     | '/crm/$'
+    | '/settings/account'
+    | '/settings/admins'
     | '/settings/analytics'
+    | '/settings/appearance'
+    | '/settings/availability'
     | '/settings/calls'
+    | '/settings/connections'
     | '/settings/website'
     | '/sign/$token'
     | '/crm/'
@@ -230,8 +280,13 @@ export interface FileRouteTypes {
     | '/design'
     | '/videoediting'
     | '/crm/$'
+    | '/settings/account'
+    | '/settings/admins'
     | '/settings/analytics'
+    | '/settings/appearance'
+    | '/settings/availability'
     | '/settings/calls'
+    | '/settings/connections'
     | '/settings/website'
     | '/sign/$token'
     | '/crm'
@@ -252,8 +307,13 @@ export interface FileRouteTypes {
     | '/settings'
     | '/videoediting'
     | '/crm/$'
+    | '/settings/account'
+    | '/settings/admins'
     | '/settings/analytics'
+    | '/settings/appearance'
+    | '/settings/availability'
     | '/settings/calls'
+    | '/settings/connections'
     | '/settings/website'
     | '/sign/$token'
     | '/crm/'
@@ -368,6 +428,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsWebsiteRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/settings/connections': {
+      id: '/settings/connections'
+      path: '/connections'
+      fullPath: '/settings/connections'
+      preLoaderRoute: typeof SettingsConnectionsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/calls': {
       id: '/settings/calls'
       path: '/calls'
@@ -375,11 +442,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsCallsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/settings/availability': {
+      id: '/settings/availability'
+      path: '/availability'
+      fullPath: '/settings/availability'
+      preLoaderRoute: typeof SettingsAvailabilityRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/appearance': {
+      id: '/settings/appearance'
+      path: '/appearance'
+      fullPath: '/settings/appearance'
+      preLoaderRoute: typeof SettingsAppearanceRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/analytics': {
       id: '/settings/analytics'
       path: '/analytics'
       fullPath: '/settings/analytics'
       preLoaderRoute: typeof SettingsAnalyticsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/admins': {
+      id: '/settings/admins'
+      path: '/admins'
+      fullPath: '/settings/admins'
+      preLoaderRoute: typeof SettingsAdminsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
+    '/settings/account': {
+      id: '/settings/account'
+      path: '/account'
+      fullPath: '/settings/account'
+      preLoaderRoute: typeof SettingsAccountRouteImport
       parentRoute: typeof SettingsRoute
     }
     '/crm/$': {
@@ -440,15 +535,25 @@ const CrmRouteChildren: CrmRouteChildren = {
 const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
 
 interface SettingsRouteChildren {
+  SettingsAccountRoute: typeof SettingsAccountRoute
+  SettingsAdminsRoute: typeof SettingsAdminsRoute
   SettingsAnalyticsRoute: typeof SettingsAnalyticsRoute
+  SettingsAppearanceRoute: typeof SettingsAppearanceRoute
+  SettingsAvailabilityRoute: typeof SettingsAvailabilityRoute
   SettingsCallsRoute: typeof SettingsCallsRoute
+  SettingsConnectionsRoute: typeof SettingsConnectionsRoute
   SettingsWebsiteRoute: typeof SettingsWebsiteRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
+  SettingsAccountRoute: SettingsAccountRoute,
+  SettingsAdminsRoute: SettingsAdminsRoute,
   SettingsAnalyticsRoute: SettingsAnalyticsRoute,
+  SettingsAppearanceRoute: SettingsAppearanceRoute,
+  SettingsAvailabilityRoute: SettingsAvailabilityRoute,
   SettingsCallsRoute: SettingsCallsRoute,
+  SettingsConnectionsRoute: SettingsConnectionsRoute,
   SettingsWebsiteRoute: SettingsWebsiteRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }

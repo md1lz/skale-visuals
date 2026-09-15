@@ -8,7 +8,7 @@ export function panelUrl(
   projectId: string | null,
   videoId?: string | null,
 ): string {
-  const base = role === "admin" ? "/office/projects" : "/studio/projects";
+  const base = role === "admin" ? "/settings" : "/settings";
   if (!projectId) return base;
   const v = videoId ? `&v=${videoId}` : "";
   return `${base}?p=${projectId}${v}`;
