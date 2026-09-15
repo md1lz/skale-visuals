@@ -66,6 +66,7 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
       ctx.drawImage(video, dx, dy, dw, dh);
 
       if (video.currentTime >= CHROMA_START_TIME) {
+        setBlackout(false);
         try {
           const frame = ctx.getImageData(0, 0, cw, ch);
           const d = frame.data;
