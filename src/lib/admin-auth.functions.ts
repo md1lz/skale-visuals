@@ -29,11 +29,19 @@ function sessionConfig() {
 }
 
 const loginSchema = z.object({
-  username: z.string().trim().min(1).max(64),
   password: z.string().min(1).max(256),
   remember: z.boolean().optional().default(false),
   source: z.enum(["web", "app"]).optional().default("web"),
 });
+
+const SESSION_USER = "madi";
+
+function passwordMatches(input: string, expected: string): boolean {
+  if (input.length !== expected.length) return false;
+  let diff = 0;
+  for (let i = 0; i < input.length; i++) diff |= input.charCodeAt(i) ^ expected.charCodeAt(i);
+  return diff === 0;
+}
 
 function getClientIp(): string | null {
   try {
