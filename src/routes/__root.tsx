@@ -203,9 +203,12 @@ function RootInner() {
           }
         />
       ) : (
-        <SmoothScroll>
-          <Outlet />
-        </SmoothScroll>
+        <>
+          <SmoothScroll>
+            <Outlet />
+          </SmoothScroll>
+          {!isAdmin && pathname === "/" ? <IntroOverlay /> : null}
+        </>
       )}
       <Toaster richColors position="bottom-right" theme="dark" />
     </>
