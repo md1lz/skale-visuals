@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideoeditingRouteImport } from './routes/videoediting'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
@@ -23,6 +24,7 @@ import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
 import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
+import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicTimeRouteImport } from './routes/api/public/time'
@@ -39,6 +41,11 @@ const VideoeditingRoute = VideoeditingRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const McpRoute = McpRouteImport.update({
+  id: '/mcp',
+  path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DesignRoute = DesignRouteImport.update({
@@ -101,6 +108,12 @@ const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => SettingsRoute,
 } as any)
+const Char91DotwellKnownChar93OauthProtectedResourceRoute =
+  Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
+    id: '/.well-known/oauth-protected-resource',
+    path: '/.well-known/oauth-protected-resource',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const DocKindTokenRoute = DocKindTokenRouteImport.update({
   id: '/doc/$kind/$token',
   path: '/doc/$kind/$token',
@@ -145,8 +158,10 @@ export interface FileRoutesByFullPath {
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
+  '/mcp': typeof McpRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -168,7 +183,9 @@ export interface FileRoutesByTo {
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
+  '/mcp': typeof McpRoute
   '/videoediting': typeof VideoeditingRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -191,8 +208,10 @@ export interface FileRoutesById {
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
+  '/mcp': typeof McpRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
+  '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -216,8 +235,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/bookacall'
     | '/design'
+    | '/mcp'
     | '/settings'
     | '/videoediting'
+    | '/.well-known/oauth-protected-resource'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -239,7 +260,9 @@ export interface FileRouteTypes {
     | '/app'
     | '/bookacall'
     | '/design'
+    | '/mcp'
     | '/videoediting'
+    | '/.well-known/oauth-protected-resource'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -261,8 +284,10 @@ export interface FileRouteTypes {
     | '/app'
     | '/bookacall'
     | '/design'
+    | '/mcp'
     | '/settings'
     | '/videoediting'
+    | '/.well-known/oauth-protected-resource'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -285,8 +310,10 @@ export interface RootRouteChildren {
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
   DesignRoute: typeof DesignRoute
+  McpRoute: typeof McpRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   VideoeditingRoute: typeof VideoeditingRoute
+  Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   SignTokenRoute: typeof SignTokenRoute
   ApiPublicTimeRoute: typeof ApiPublicTimeRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
@@ -311,6 +338,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/mcp': {
+      id: '/mcp'
+      path: '/mcp'
+      fullPath: '/mcp'
+      preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/design': {
@@ -397,6 +431,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsAnalyticsRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/.well-known/oauth-protected-resource': {
+      id: '/.well-known/oauth-protected-resource'
+      path: '/.well-known/oauth-protected-resource'
+      fullPath: '/.well-known/oauth-protected-resource'
+      preLoaderRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/doc/$kind/$token': {
       id: '/doc/$kind/$token'
       path: '/doc/$kind/$token'
@@ -477,8 +518,11 @@ const rootRouteChildren: RootRouteChildren = {
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
   DesignRoute: DesignRoute,
+  McpRoute: McpRoute,
   SettingsRoute: SettingsRouteWithChildren,
   VideoeditingRoute: VideoeditingRoute,
+  Char91DotwellKnownChar93OauthProtectedResourceRoute:
+    Char91DotwellKnownChar93OauthProtectedResourceRoute,
   SignTokenRoute: SignTokenRoute,
   ApiPublicTimeRoute: ApiPublicTimeRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
