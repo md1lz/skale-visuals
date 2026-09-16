@@ -20,7 +20,7 @@ function Menu() {
     <header className="pointer-events-auto absolute inset-x-0 top-0 z-20 flex justify-center px-4 pt-4">
       <nav className="flex w-full max-w-3xl items-center justify-between rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 backdrop-blur-xl">
         <a href={SITE_URL} className="flex items-center gap-2 pl-1">
-          <img src={skaleLogo.url} alt="Skale Visuals" className="h-6 w-auto" />
+          <img src={skaleLogo.url} alt="Skale Visuals" className="h-7 w-auto rounded-md" />
         </a>
         <div className="flex items-center gap-1">
           <a
