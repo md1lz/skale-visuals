@@ -142,9 +142,10 @@ function SettingsLayoutInner() {
             <BackToSiteLink />
           </div>
 
-          <div className="mx-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-2">
-            {session?.user && <AdminProfileMenu initialUsername={session.user} />}
+          <div className="mx-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-1">
+            <LogoutButton />
           </div>
+
 
           <nav className="flex-1 px-3 py-5 space-y-1">
             {NAV.map((item) => {
