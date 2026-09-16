@@ -5,8 +5,8 @@ import mobileIntroAsset from "@/assets/skale-logo-reveal-mobile.mp4.asset.json";
 const CHROMA_START_TIME = 3.2; // secondes avant l'activation du chroma key
 const CHROMA_THRESHOLD = 40; // seuil en dessous duquel un pixel noir devient transparent
 const MOBILE_BREAKPOINT = 768;
-const MAX_CANVAS_WIDTH = 1280; // résolution de traitement (perf Safari/Mac)
-const MAX_MOBILE_CANVAS_WIDTH = 768;
+const MAX_DPR = 2; // densité maximale (écrans Retina)
+const MAX_CANVAS_WIDTH = 2560; // garde-fou pour les très grands écrans
 
 function isMobileDevice() {
   if (typeof window === "undefined") return true;
