@@ -1,88 +1,37 @@
-import * as React from 'react'
+import * as React from "react";
+import { Body, Button, Container, Head, Heading, Hr, Html, Img, Preview, Text } from "@react-email/components";
 
-import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
-  Html,
-  Link,
-  Preview,
-  Text,
-} from '@react-email/components'
+import { button, container, CONTACT_LINE, footer, heading, hr, LOGO_URL, logo, main, text } from "./_shared";
 
 interface InviteEmailProps {
-  siteName: string
-  siteUrl: string
-  confirmationUrl: string
+  siteName: string;
+  siteUrl: string;
+  confirmationUrl: string;
 }
 
-export const InviteEmail = ({
-  siteName,
-  siteUrl,
-  confirmationUrl,
-}: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head>
-      <style>{darkModeCss}</style>
-    </Head>
-    <Preview>You've been invited to join {siteName}</Preview>
+export const InviteEmail = ({ siteName, confirmationUrl }: InviteEmailProps) => (
+  <Html lang="fr" dir="ltr">
+    <Head />
+    <Preview>Vous êtes invité à rejoindre Skale Visuals.</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
+        <Img src={LOGO_URL} alt="Skale Visuals" style={logo} />
+        <Heading style={heading}>Vous êtes invité.</Heading>
         <Text style={text}>
-          You've been invited to join{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>{siteName}</strong>
-          </Link>
-          . Click the button below to accept the invitation and create your
-          account.
+          Vous avez été invité à rejoindre {siteName}. Acceptez l'invitation pour créer votre accès.
         </Text>
-        <Button className="dm-btn" style={button} href={confirmationUrl}>
-          Accept Invitation
+        <Button style={button} href={confirmationUrl}>
+          Accepter l'invitation
         </Button>
-        <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
+        <Text style={{ ...text, margin: "24px 0 16px" }}>
+          Si cette invitation ne vous concerne pas, ignorez simplement ce message.
         </Text>
+        <Text style={text}>{CONTACT_LINE}</Text>
+        <Hr style={hr} />
+        <Text style={footer}>skalevisuals.com</Text>
       </Container>
     </Body>
   </Html>
-)
+);
 
-export default InviteEmail
-
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#000000',
-  margin: '0 0 20px',
-}
-const text = {
-  fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
-  margin: '0 0 25px',
-}
-const link = { color: 'inherit', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#000000',
-  color: '#ffffff',
-  fontSize: '14px',
-  border: '1px solid #000000',
-  borderRadius: '8px',
-  padding: '12px 20px',
-  textDecoration: 'none',
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
-// Rendered as a text child, which React may HTML-escape: keep this CSS free of >, &, and quotes.
-const darkModeCss = `
-  @media (prefers-color-scheme: dark) {
-    .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
-  }
-  [data-ogsc] .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
-  [data-ogsb] .dm-btn { background-color: #ffffff !important; color: #000000 !important; }
-`
+export default InviteEmail;
