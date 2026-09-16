@@ -12,7 +12,6 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideoeditingRouteImport } from './routes/videoediting'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as DesignRouteImport } from './routes/design'
-import { Route as CrmRouteImport } from './routes/crm'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutusRouteImport } from './routes/aboutus'
@@ -47,11 +46,6 @@ const DesignRoute = DesignRouteImport.update({
   path: '/design',
   getParentRoute: () => rootRouteImport,
 } as any)
-const CrmRoute = CrmRouteImport.update({
-  id: '/crm',
-  path: '/crm',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const BookacallRoute = BookacallRouteImport.update({
   id: '/bookacall',
   path: '/bookacall',
@@ -78,9 +72,9 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   getParentRoute: () => SettingsRoute,
 } as any)
 const CrmIndexRoute = CrmIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CrmRoute,
+  id: '/crm/',
+  path: '/crm/',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const SignTokenRoute = SignTokenRouteImport.update({
   id: '/sign/$token',
@@ -113,9 +107,9 @@ const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   getParentRoute: () => SettingsRoute,
 } as any)
 const CrmSplatRoute = CrmSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => CrmRoute,
+  id: '/crm/$',
+  path: '/crm/$',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DocKindTokenRoute = DocKindTokenRouteImport.update({
   id: '/doc/$kind/$token',
@@ -150,7 +144,6 @@ export interface FileRoutesByFullPath {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRouteWithChildren
   '/design': typeof DesignRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
@@ -197,7 +190,6 @@ export interface FileRoutesById {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRouteWithChildren
   '/design': typeof DesignRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
@@ -223,7 +215,6 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
-    | '/crm'
     | '/design'
     | '/settings'
     | '/videoediting'
@@ -269,7 +260,6 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
-    | '/crm'
     | '/design'
     | '/settings'
     | '/videoediting'
@@ -294,11 +284,12 @@ export interface RootRouteChildren {
   AboutusRoute: typeof AboutusRoute
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
-  CrmRoute: typeof CrmRouteWithChildren
   DesignRoute: typeof DesignRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   VideoeditingRoute: typeof VideoeditingRoute
+  CrmSplatRoute: typeof CrmSplatRoute
   SignTokenRoute: typeof SignTokenRoute
+  CrmIndexRoute: typeof CrmIndexRoute
   ApiPublicTimeRoute: typeof ApiPublicTimeRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   DocKindTokenRoute: typeof DocKindTokenRoute
@@ -327,13 +318,6 @@ declare module '@tanstack/react-router' {
       path: '/design'
       fullPath: '/design'
       preLoaderRoute: typeof DesignRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/crm': {
-      id: '/crm'
-      path: '/crm'
-      fullPath: '/crm'
-      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookacall': {
@@ -373,10 +357,10 @@ declare module '@tanstack/react-router' {
     }
     '/crm/': {
       id: '/crm/'
-      path: '/'
+      path: '/crm'
       fullPath: '/crm/'
       preLoaderRoute: typeof CrmIndexRouteImport
-      parentRoute: typeof CrmRoute
+      parentRoute: typeof rootRouteImport
     }
     '/sign/$token': {
       id: '/sign/$token'
@@ -422,10 +406,10 @@ declare module '@tanstack/react-router' {
     }
     '/crm/$': {
       id: '/crm/$'
-      path: '/$'
+      path: '/crm/$'
       fullPath: '/crm/$'
       preLoaderRoute: typeof CrmSplatRouteImport
-      parentRoute: typeof CrmRoute
+      parentRoute: typeof rootRouteImport
     }
     '/doc/$kind/$token': {
       id: '/doc/$kind/$token'
@@ -465,18 +449,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface CrmRouteChildren {
-  CrmSplatRoute: typeof CrmSplatRoute
-  CrmIndexRoute: typeof CrmIndexRoute
-}
-
-const CrmRouteChildren: CrmRouteChildren = {
-  CrmSplatRoute: CrmSplatRoute,
-  CrmIndexRoute: CrmIndexRoute,
-}
-
-const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
-
 interface SettingsRouteChildren {
   SettingsAnalyticsRoute: typeof SettingsAnalyticsRoute
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
@@ -504,11 +476,12 @@ const rootRouteChildren: RootRouteChildren = {
   AboutusRoute: AboutusRoute,
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
-  CrmRoute: CrmRouteWithChildren,
   DesignRoute: DesignRoute,
   SettingsRoute: SettingsRouteWithChildren,
   VideoeditingRoute: VideoeditingRoute,
+  CrmSplatRoute: CrmSplatRoute,
   SignTokenRoute: SignTokenRoute,
+  CrmIndexRoute: CrmIndexRoute,
   ApiPublicTimeRoute: ApiPublicTimeRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   DocKindTokenRoute: DocKindTokenRoute,
