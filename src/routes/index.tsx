@@ -4,6 +4,8 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Mail, Instagram, Linkedin, Check, ArrowUpRight, BarChart3, Zap, PartyPopper } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
+import { getIsClientAppHost } from "@/lib/app-host";
+import { ClientSpace } from "@/components/client/ClientSpace";
 import { SiteNavbar, SlotMachineText, scrollTo } from "@/components/SiteNavbar";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
 import skaleRedPill from "@/assets/skale-red-pill.png.asset.json";
@@ -44,8 +46,16 @@ export const Route = createFileRoute("/")({
     ],
     links: [{ rel: "canonical", href: "https://skalevisuals.com/" }],
   }),
-  component: Home,
+  beforeLoad: () => ({ isClientApp: getIsClientAppHost() }),
+  component: RootPage,
 });
+
+/** app.skalevisuals.com sert l'espace client ; le domaine principal sert le site. */
+function RootPage() {
+  const { isClientApp } = Route.useRouteContext();
+  if (isClientApp) return <ClientSpace />;
+  return <Home />;
+}
 
 /* ---------------- theme (clair uniquement) ---------------- */
 

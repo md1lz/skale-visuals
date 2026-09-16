@@ -5,6 +5,7 @@ import { ArrowUpRight, ChevronDown, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
+import { CLIENT_APP_URL } from "@/lib/app-host";
 
 const NAV_LINKS = [
   { label: "Accueil", target: "top" },
@@ -277,10 +278,10 @@ export function SiteNavbar() {
                 onClick={() => setMobileNavOpen(false)}
                 className="font-codec-bold h-12 w-full justify-start gap-2 rounded-xl px-4 text-sm uppercase text-foreground hover:bg-foreground/5"
               >
-                <Link to="/app">
+                <a href={CLIENT_APP_URL}>
                   ESPACE CLIENT
                   <User className="h-4 w-4" strokeWidth={2.5} />
-                </Link>
+                </a>
               </Button>
               <Button asChild className="font-codec-bold mt-1 h-12 w-full rounded-xl border-2 border-dashed border-gray-600 bg-black text-sm uppercase text-white hover:bg-black/90">
                 <Link
@@ -303,13 +304,13 @@ export function SiteNavbar() {
             whileHover={{ scale: 1.02 }}
             transition={{ type: "spring", stiffness: 400, damping: 22 }}
           >
-            <Link
-              to="/app"
+            <a
+              href={CLIENT_APP_URL}
               className="font-codec-bold flex items-center gap-1.5 text-sm tracking-[-0.04em] text-foreground transition-colors duration-200 hover:text-foreground/80 uppercase"
             >
               espace client
               <User className="h-3.5 w-3.5" strokeWidth={2.5} />
-            </Link>
+            </a>
           </motion.div>
 
           <motion.div
