@@ -8,7 +8,6 @@ type AdminSessionData = {
 };
 
 const SESSION_NAME = "skale_admin";
-const SESSION_MAX_AGE = 60 * 60 * 8; // 8h
 
 function sessionConfig() {
   const password = process.env.ADMIN_SESSION_SECRET;
@@ -18,7 +17,7 @@ function sessionConfig() {
   return {
     password,
     name: SESSION_NAME,
-    maxAge: SESSION_MAX_AGE,
+    // No maxAge: pure session cookie, cleared when the browser session ends.
     cookie: {
       httpOnly: true,
       secure: true,
@@ -30,7 +29,6 @@ function sessionConfig() {
 
 const loginSchema = z.object({
   password: z.string().min(1).max(256),
-  remember: z.boolean().optional().default(false),
   source: z.enum(["web", "app"]).optional().default("web"),
 });
 
