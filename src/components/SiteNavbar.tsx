@@ -5,6 +5,7 @@ import { ArrowUpRight, ChevronDown, User } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
+import { CLIENT_APP_URL } from "@/lib/app-host";
 
 const NAV_LINKS = [
   { label: "Accueil", target: "top" },
