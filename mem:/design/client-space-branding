@@ -1,0 +1,6 @@
+---
+name: Client space branding and backdrop
+description: Client login uses lowercase Skale branding and two full-screen half-height image carousels
+ type: design
+---
+Use the transparent Skale symbol without any surrounding tile or border. Pair it with lowercase “skale” using Codec Pro Bold and the same spacing as the main site menu. The client-space background is exactly two edge-to-edge carousel rows, each occupying half of the viewport, moving in opposite directions.
