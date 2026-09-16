@@ -22,6 +22,7 @@ import { MaintenancePage } from "../components/MaintenancePage";
 import { registerPushWorker } from "@/lib/pwa";
 import { SmoothScroll } from "../components/SmoothScroll";
 import { IntroOverlay } from "../components/IntroOverlay";
+import { getIsClientAppHost } from "@/lib/app-host";
 
 function NotFoundComponent() {
   return (
@@ -146,7 +147,8 @@ function RootInner() {
   const loaderData = Route.useLoaderData();
   const isAdmin =
     pathname.startsWith("/settings") ||
-    pathname.startsWith("/app");
+    pathname.startsWith("/reset-password") ||
+    getIsClientAppHost();
 
   useEffect(() => {
     initTracker();
