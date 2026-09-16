@@ -41,7 +41,7 @@ export function OfficeLogin() {
     setPending(true);
     setError(null);
     try {
-      const res = await login({ data: { password, remember, source: "web" } });
+      const res = await login({ data: { password, source: "web" } });
       if (!res.ok) {
         setError("Mot de passe incorrect.");
         return;
