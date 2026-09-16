@@ -7,15 +7,13 @@ import {
   Palette,
   Plug,
   Globe,
-  UserCircle2,
+  LogOut,
   BarChart3,
   CalendarClock,
   CalendarCheck,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminSessionFn, getAdminProfile } from "@/lib/admin-auth.functions";
-import { AdminProfileMenu } from "@/components/AdminProfileMenu";
+import { getAdminSessionFn, logoutAdminFn } from "@/lib/admin-auth.functions";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
