@@ -272,14 +272,15 @@ export function SiteNavbar() {
                   {item.label}
                 </Button>
               ))}
-              <Button
-                type="button"
+              <Button asChild
                 variant="ghost"
                 onClick={() => setMobileNavOpen(false)}
                 className="font-codec-bold h-12 w-full justify-start gap-2 rounded-xl px-4 text-sm uppercase text-foreground hover:bg-foreground/5"
               >
-                ESPACE CLIENT
-                <User className="h-4 w-4" strokeWidth={2.5} />
+                <Link to="/app">
+                  ESPACE CLIENT
+                  <User className="h-4 w-4" strokeWidth={2.5} />
+                </Link>
               </Button>
               <Button asChild className="font-codec-bold mt-1 h-12 w-full rounded-xl border-2 border-dashed border-gray-600 bg-black text-sm uppercase text-white hover:bg-black/90">
                 <Link
