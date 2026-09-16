@@ -2,18 +2,16 @@ import { useServerFn } from "@tanstack/react-start";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { loginAdmin, getAdminSessionFn, tryAutoLoginByIp } from "@/lib/admin-auth.functions";
+import { loginAdmin, getAdminSessionFn } from "@/lib/admin-auth.functions";
 
 /** Écran de connexion de /settings. */
 export function OfficeLogin() {
   const login = useServerFn(loginAdmin);
   const fetchAdmin = useServerFn(getAdminSessionFn);
-  const autoLogin = useServerFn(tryAutoLoginByIp);
 
   const [checking, setChecking] = useState(true);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -27,12 +25,6 @@ export function OfficeLogin() {
           window.location.replace("/settings");
           return;
         }
-        const auto = await autoLogin({ data: { source: "web" } });
-        if (cancelled) return;
-        if (auto.ok) {
-          window.location.replace("/settings");
-          return;
-        }
       } catch {
         /* noop */
       }
@@ -41,7 +33,7 @@ export function OfficeLogin() {
     return () => {
       cancelled = true;
     };
-  }, [fetchAdmin, autoLogin]);
+  }, [fetchAdmin]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
