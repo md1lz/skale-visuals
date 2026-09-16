@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideoeditingRouteImport } from './routes/videoediting'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as BookacallRouteImport } from './routes/bookacall'
@@ -43,6 +44,11 @@ const VideoeditingRoute = VideoeditingRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResetPasswordRoute = ResetPasswordRouteImport.update({
+  id: '/reset-password',
+  path: '/reset-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const McpRoute = McpRouteImport.update({
@@ -171,6 +177,7 @@ export interface FileRoutesByFullPath {
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
   '/mcp': typeof McpRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -197,6 +204,7 @@ export interface FileRoutesByTo {
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
   '/mcp': typeof McpRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
   '/app/reset-password': typeof AppResetPasswordRoute
@@ -224,6 +232,7 @@ export interface FileRoutesById {
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
   '/mcp': typeof McpRoute
+  '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -253,6 +262,7 @@ export interface FileRouteTypes {
     | '/bookacall'
     | '/design'
     | '/mcp'
+    | '/reset-password'
     | '/settings'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
@@ -279,6 +289,7 @@ export interface FileRouteTypes {
     | '/bookacall'
     | '/design'
     | '/mcp'
+    | '/reset-password'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
     | '/app/reset-password'
@@ -305,6 +316,7 @@ export interface FileRouteTypes {
     | '/bookacall'
     | '/design'
     | '/mcp'
+    | '/reset-password'
     | '/settings'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
@@ -333,6 +345,7 @@ export interface RootRouteChildren {
   BookacallRoute: typeof BookacallRoute
   DesignRoute: typeof DesignRoute
   McpRoute: typeof McpRoute
+  ResetPasswordRoute: typeof ResetPasswordRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   VideoeditingRoute: typeof VideoeditingRoute
   Char91DotwellKnownChar93OauthProtectedResourceRoute: typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
@@ -360,6 +373,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reset-password': {
+      id: '/reset-password'
+      path: '/reset-password'
+      fullPath: '/reset-password'
+      preLoaderRoute: typeof ResetPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/mcp': {
@@ -567,6 +587,7 @@ const rootRouteChildren: RootRouteChildren = {
   BookacallRoute: BookacallRoute,
   DesignRoute: DesignRoute,
   McpRoute: McpRoute,
+  ResetPasswordRoute: ResetPasswordRoute,
   SettingsRoute: SettingsRouteWithChildren,
   VideoeditingRoute: VideoeditingRoute,
   Char91DotwellKnownChar93OauthProtectedResourceRoute:
