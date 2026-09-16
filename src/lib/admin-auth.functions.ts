@@ -75,19 +75,6 @@ export const loginAdmin = createServerFn({ method: "POST" })
 
     if (!ok) return { ok: false as const };
 
-    if (data.remember && ip) {
-      await supabaseAdmin.from("admin_remembered_ips").upsert(
-        {
-          ip,
-          username: SESSION_USER,
-          source: data.source,
-          owner_type: "admin",
-          last_seen_at: new Date().toISOString(),
-        },
-        { onConflict: "ip,source,owner_type,username" },
-      );
-    }
-
     const session = await useSession<AdminSessionData>(sessionConfig());
     await session.update({ user: SESSION_USER, loggedInAt: Date.now() });
 
