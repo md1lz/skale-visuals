@@ -80,13 +80,30 @@ function SettingsLayout() {
   );
 }
 
+function LogoutButton() {
+  const logout = useServerFn(logoutAdminFn);
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          await logout();
+        } finally {
+          window.location.replace("/settings");
+        }
+      }}
+      className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-[13px] text-neutral-300 transition-colors hover:bg-white/[0.05] hover:text-white"
+    >
+      <LogOut className="h-[17px] w-[17px] text-neutral-500" />
+      Se déconnecter
+    </button>
+  );
+}
+
 function SettingsLayoutInner() {
-  const session = Route.useRouteContext().session;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { background, mode } = useAdminPrefs();
-  const fetchProfile = useServerFn(getAdminProfile);
-  const profileQ = useQuery({ queryKey: ["admin", "profile"], queryFn: () => fetchProfile() });
-  const profile = profileQ.data;
+
 
   return (
     <div
