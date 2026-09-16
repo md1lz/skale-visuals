@@ -5,7 +5,6 @@ import {
   LayoutDashboard,
   Users,
   Palette,
-  Plug,
   Globe,
   LogOut,
   BarChart3,
@@ -61,7 +60,6 @@ const NAV: {
   { to: "/settings/calls", label: "Book a Call", icon: CalendarClock },
   
   { to: "/settings/appearance", label: "Apparence", icon: Palette },
-  { to: "/settings/connections", label: "Connexions", icon: Plug },
   { to: "/settings/availability", label: "Disponibilités", icon: CalendarCheck },
   { to: "/settings/website", label: "Gestion du site web", icon: Globe },
   { to: "/settings/admins", label: "Comptes admin", icon: Users },
