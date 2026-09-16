@@ -1140,7 +1140,7 @@ function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
             src={skaleRedPill.url}
             alt=""
             aria-hidden="true"
-            className="h-auto w-[70vw] max-w-[46rem] rounded-md object-contain"
+            className="h-auto w-[110vw] max-w-none rounded-md object-contain sm:w-[70vw] sm:max-w-[46rem]"
           />
         </div>
       </div>
