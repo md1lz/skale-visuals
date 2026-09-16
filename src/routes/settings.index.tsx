@@ -46,26 +46,9 @@ function SectionTitle({ label }: { label: string }) {
   );
 }
 
-function Initials({ name }: { name: string }) {
-
-  const letters = name
-    .split(/\s+/)
-    .map((w) => w[0])
-    .slice(0, 2)
-    .join("")
-    .toUpperCase();
-  return <span className="text-lg font-semibold text-white">{letters || "?"}</span>;
-}
-
 function AdminHome() {
   const fetchAnalytics = useServerFn(getSiteAnalytics);
-  const fetchProfile = useServerFn(getAdminProfile);
   const fetchActivity = useServerFn(getRecentActivity);
-
-  const profileQ = useQuery({
-    queryKey: ["admin", "profile"],
-    queryFn: () => fetchProfile(),
-  });
 
   // Same queryKey as the Analytics page so both views share cache and auto-sync
   const dayQ = useQuery({
