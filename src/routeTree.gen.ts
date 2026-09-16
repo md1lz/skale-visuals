@@ -12,20 +12,17 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as VideoeditingRouteImport } from './routes/videoediting'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as DesignRouteImport } from './routes/design'
-import { Route as CrmRouteImport } from './routes/crm'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
-import { Route as CrmIndexRouteImport } from './routes/crm.index'
 import { Route as SignTokenRouteImport } from './routes/sign.$token'
 import { Route as SettingsWebsiteRouteImport } from './routes/settings.website'
 import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
 import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
-import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicTimeRouteImport } from './routes/api/public/time'
@@ -45,11 +42,6 @@ const SettingsRoute = SettingsRouteImport.update({
 const DesignRoute = DesignRouteImport.update({
   id: '/design',
   path: '/design',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CrmRoute = CrmRouteImport.update({
-  id: '/crm',
-  path: '/crm',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookacallRoute = BookacallRouteImport.update({
@@ -76,11 +68,6 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRoute,
-} as any)
-const CrmIndexRoute = CrmIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => CrmRoute,
 } as any)
 const SignTokenRoute = SignTokenRouteImport.update({
   id: '/sign/$token',
@@ -111,11 +98,6 @@ const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
   getParentRoute: () => SettingsRoute,
-} as any)
-const CrmSplatRoute = CrmSplatRouteImport.update({
-  id: '/$',
-  path: '/$',
-  getParentRoute: () => CrmRoute,
 } as any)
 const DocKindTokenRoute = DocKindTokenRouteImport.update({
   id: '/doc/$kind/$token',
@@ -150,18 +132,15 @@ export interface FileRoutesByFullPath {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRouteWithChildren
   '/design': typeof DesignRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
-  '/crm/$': typeof CrmSplatRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/crm/': typeof CrmIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -176,14 +155,12 @@ export interface FileRoutesByTo {
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
   '/videoediting': typeof VideoeditingRoute
-  '/crm/$': typeof CrmSplatRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/crm': typeof CrmIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -197,18 +174,15 @@ export interface FileRoutesById {
   '/aboutus': typeof AboutusRoute
   '/app': typeof AppRoute
   '/bookacall': typeof BookacallRoute
-  '/crm': typeof CrmRouteWithChildren
   '/design': typeof DesignRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
-  '/crm/$': typeof CrmSplatRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/crm/': typeof CrmIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -223,18 +197,15 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
-    | '/crm'
     | '/design'
     | '/settings'
     | '/videoediting'
-    | '/crm/$'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/crm/'
     | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
@@ -249,14 +220,12 @@ export interface FileRouteTypes {
     | '/bookacall'
     | '/design'
     | '/videoediting'
-    | '/crm/$'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/crm'
     | '/settings'
     | '/api/public/time'
     | '/api/public/track'
@@ -269,18 +238,15 @@ export interface FileRouteTypes {
     | '/aboutus'
     | '/app'
     | '/bookacall'
-    | '/crm'
     | '/design'
     | '/settings'
     | '/videoediting'
-    | '/crm/$'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/crm/'
     | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
@@ -294,7 +260,6 @@ export interface RootRouteChildren {
   AboutusRoute: typeof AboutusRoute
   AppRoute: typeof AppRoute
   BookacallRoute: typeof BookacallRoute
-  CrmRoute: typeof CrmRouteWithChildren
   DesignRoute: typeof DesignRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   VideoeditingRoute: typeof VideoeditingRoute
@@ -327,13 +292,6 @@ declare module '@tanstack/react-router' {
       path: '/design'
       fullPath: '/design'
       preLoaderRoute: typeof DesignRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/crm': {
-      id: '/crm'
-      path: '/crm'
-      fullPath: '/crm'
-      preLoaderRoute: typeof CrmRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookacall': {
@@ -370,13 +328,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
-    }
-    '/crm/': {
-      id: '/crm/'
-      path: '/'
-      fullPath: '/crm/'
-      preLoaderRoute: typeof CrmIndexRouteImport
-      parentRoute: typeof CrmRoute
     }
     '/sign/$token': {
       id: '/sign/$token'
@@ -420,13 +371,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsAnalyticsRouteImport
       parentRoute: typeof SettingsRoute
     }
-    '/crm/$': {
-      id: '/crm/$'
-      path: '/$'
-      fullPath: '/crm/$'
-      preLoaderRoute: typeof CrmSplatRouteImport
-      parentRoute: typeof CrmRoute
-    }
     '/doc/$kind/$token': {
       id: '/doc/$kind/$token'
       path: '/doc/$kind/$token'
@@ -465,18 +409,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface CrmRouteChildren {
-  CrmSplatRoute: typeof CrmSplatRoute
-  CrmIndexRoute: typeof CrmIndexRoute
-}
-
-const CrmRouteChildren: CrmRouteChildren = {
-  CrmSplatRoute: CrmSplatRoute,
-  CrmIndexRoute: CrmIndexRoute,
-}
-
-const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
-
 interface SettingsRouteChildren {
   SettingsAnalyticsRoute: typeof SettingsAnalyticsRoute
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
@@ -504,7 +436,6 @@ const rootRouteChildren: RootRouteChildren = {
   AboutusRoute: AboutusRoute,
   AppRoute: AppRoute,
   BookacallRoute: BookacallRoute,
-  CrmRoute: CrmRouteWithChildren,
   DesignRoute: DesignRoute,
   SettingsRoute: SettingsRouteWithChildren,
   VideoeditingRoute: VideoeditingRoute,
