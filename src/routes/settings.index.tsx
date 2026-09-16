@@ -65,8 +65,6 @@ function AdminHome() {
     refetchInterval: 20_000,
   });
 
-  const p = profileQ.data;
-  const greetingName = p?.firstName?.trim() || p?.username || "";
   const k = dayQ.data?.kpis;
 
   const totalVisitsToday = dayQ.data?.timeseries.reduce((s, b) => s + b.visits, 0) ?? 0;
