@@ -96,6 +96,8 @@ export function SiteAdminPanel() {
   const [projectPreviews, setProjectPreviews] = useState<{ image: string | null; avatar: string | null }[]>([]);
   const [serviceHeaderPreview, setServiceHeaderPreview] = useState<string | null>(null);
   const [serviceCardPreviews, setServiceCardPreviews] = useState<(string | null)[]>([]);
+  const [clientCarouselTopPreviews, setClientCarouselTopPreviews] = useState<(string | null)[]>([]);
+  const [clientCarouselBottomPreviews, setClientCarouselBottomPreviews] = useState<(string | null)[]>([]);
   const [folders, setFolders] = useState<HomeFolder[]>([]);
   const [videos, setVideos] = useState<HomeVideo[]>([]);
   const [activeFolder, setActiveFolder] = useState<string | null>(null);
@@ -117,6 +119,8 @@ export function SiteAdminPanel() {
       setProjectPreviews(res.projectPreviews ?? []);
       setServiceHeaderPreview(res.serviceHeaderPreview ?? null);
       setServiceCardPreviews(res.serviceCardPreviews ?? []);
+      setClientCarouselTopPreviews(res.clientCarouselTopPreviews ?? []);
+      setClientCarouselBottomPreviews(res.clientCarouselBottomPreviews ?? []);
       setFolders(res.folders as HomeFolder[]);
       setVideos(res.videos as HomeVideo[]);
       setActiveFolder((cur) => cur ?? res.folders[0]?.id ?? null);
@@ -191,6 +195,8 @@ export function SiteAdminPanel() {
             secondaryCta: settings.serviceHeader.secondaryCta,
             secondaryLink: settings.serviceHeader.secondaryLink,
           },
+          clientCarouselTop: settings.clientCarouselTop,
+          clientCarouselBottom: settings.clientCarouselBottom,
         },
       });
       await Promise.all(
@@ -284,6 +290,19 @@ export function SiteAdminPanel() {
   function patchServiceHeader(patch: Partial<HomeSettings["serviceHeader"]>) {
     setSettings((s) => (s ? { ...s, serviceHeader: { ...s.serviceHeader, ...patch } } : s));
     setDirty(true);
+  }
+  function moveClientImage(kind: "clientCarouselTop" | "clientCarouselBottom", index: number, direction: -1 | 1) {
+    const target = index + direction;
+    if (target < 0 || target >= settings[kind].length) return;
+    const images = [...settings[kind]];
+    [images[index], images[target]] = [images[target], images[index]];
+    patchSettings({ [kind]: images });
+    const setPreviews = kind === "clientCarouselTop" ? setClientCarouselTopPreviews : setClientCarouselBottomPreviews;
+    setPreviews((current) => {
+      const next = [...current];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
   }
 
   async function addFolder() {
@@ -393,6 +412,86 @@ export function SiteAdminPanel() {
           Enregistrer
         </button>
       </header>
+
+      <section className={`${card} mb-6`}>
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">Fond de l’espace client</h2>
+          <p className="mt-1 text-xs text-neutral-500">Miniatures des deux rangées qui défilent derrière la connexion.</p>
+        </div>
+        {(["clientCarouselTop", "clientCarouselBottom"] as const).map((kind, rowIndex) => {
+          const previews = rowIndex === 0 ? clientCarouselTopPreviews : clientCarouselBottomPreviews;
+          const setPreviews = rowIndex === 0 ? setClientCarouselTopPreviews : setClientCarouselBottomPreviews;
+          return (
+            <div key={kind} className="mt-5 border-t border-white/10 pt-5 first:border-0 first:pt-0">
+              <div className="flex items-center justify-between gap-3">
+                <h3 className="text-sm font-medium text-white">Rangée {rowIndex + 1}</h3>
+                <button
+                  type="button"
+                  disabled={settings[kind].length >= 16}
+                  onClick={() => {
+                    patchSettings({ [kind]: [...settings[kind], null] });
+                    setPreviews((items) => [...items, null]);
+                  }}
+                  className={`${btn} border border-white/10 text-white hover:bg-white/10`}
+                >
+                  <Plus className="h-4 w-4" /> Ajouter une image
+                </button>
+              </div>
+              <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {settings[kind].map((image, i) => (
+                  <div key={`${kind}-${i}`} className="flex items-center gap-3 rounded-xl border border-white/10 bg-black/20 p-3">
+                    <button
+                      type="button"
+                      aria-label={`Image ${i + 1} de la rangée ${rowIndex + 1}`}
+                      onClick={() => fileRefs.current[`${kind}-${i}`]?.click()}
+                      className="grid h-16 w-24 shrink-0 place-items-center overflow-hidden rounded-lg border border-white/15 bg-white/5 text-neutral-400 hover:border-red-600/40"
+                    >
+                      {previews[i] ? <img src={previews[i] ?? ""} alt="" className="h-full w-full object-cover" /> : <ImagePlus className="h-5 w-5" />}
+                    </button>
+                    <input
+                      ref={(el) => { fileRefs.current[`${kind}-${i}`] = el; }}
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={async (event) => {
+                        const file = event.target.files?.[0];
+                        event.target.value = "";
+                        if (!file) return;
+                        try {
+                          const reference = await uploadAsset(file);
+                          patchSettings({ [kind]: settings[kind].map((item, index) => index === i ? reference : item) });
+                          setPreviews((items) => items.map((item, index) => index === i ? URL.createObjectURL(file) : item));
+                        } catch (error) {
+                          toast.error(error instanceof Error ? error.message : "Upload échoué");
+                        }
+                      }}
+                    />
+                    <div className="ml-auto flex shrink-0 items-center gap-2">
+                      <ClearImage show={previews[i]} onClear={() => {
+                        patchSettings({ [kind]: settings[kind].map((item, index) => index === i ? null : item) });
+                        setPreviews((items) => items.map((item, index) => index === i ? null : item));
+                      }} />
+                      <div className="flex flex-col gap-1">
+                        <button type="button" aria-label="Monter" onClick={() => moveClientImage(kind, i, -1)} className="text-neutral-500 hover:text-white"><ArrowUp className="h-3.5 w-3.5" /></button>
+                        <button type="button" aria-label="Descendre" onClick={() => moveClientImage(kind, i, 1)} className="text-neutral-500 hover:text-white"><ArrowDown className="h-3.5 w-3.5" /></button>
+                      </div>
+                      <button
+                        type="button"
+                        aria-label="Supprimer"
+                        onClick={() => {
+                          patchSettings({ [kind]: settings[kind].filter((_, index) => index !== i) });
+                          setPreviews((items) => items.filter((_, index) => index !== i));
+                        }}
+                        className="text-neutral-500 hover:text-red-400"
+                      ><Trash2 className="h-4 w-4" /></button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </section>
 
 
       {/* Logos du bas de page */}

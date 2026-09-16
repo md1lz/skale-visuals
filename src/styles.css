@@ -29,6 +29,16 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-client-background: var(--client-background);
+  --color-client-foreground: var(--client-foreground);
+  --color-client-muted: var(--client-muted);
+  --color-client-panel: var(--client-panel);
+  --color-client-control: var(--client-control);
+  --color-client-control-hover: var(--client-control-hover);
+  --color-client-border: var(--client-border);
+  --color-client-segment: var(--client-segment);
+  --color-client-segment-hover: var(--client-segment-hover);
+  --color-client-segment-foreground: var(--client-segment-foreground);
   --font-sans: "Codec Pro", ui-sans-serif, system-ui, sans-serif;
 }
 
@@ -55,6 +65,16 @@
   --border: oklch(0.27 0.02 280);
   --input: oklch(0.27 0.02 280);
   --ring: oklch(0.63 0.21 25);
+  --client-background: oklch(0.05 0 0);
+  --client-foreground: oklch(0.98 0 0);
+  --client-muted: oklch(0.64 0 0);
+  --client-panel: oklch(0.1 0 0 / 0.9);
+  --client-control: oklch(0.16 0 0 / 0.78);
+  --client-control-hover: oklch(0.22 0 0 / 0.9);
+  --client-border: oklch(1 0 0 / 0.1);
+  --client-segment: oklch(0.96 0 0);
+  --client-segment-hover: oklch(0.88 0 0);
+  --client-segment-foreground: oklch(0.08 0 0);
 }
 
 .dark { color-scheme: dark; }
@@ -196,6 +216,39 @@
 @keyframes marquee-reverse {
   from { transform: translateX(-50%); }
   to { transform: translateX(0); }
+}
+@keyframes client-marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+@keyframes client-marquee-reverse {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
+
+.client-space-root { background: var(--client-background); color: var(--client-foreground); }
+.client-carousel-backdrop { position: absolute; inset: 0; overflow: hidden; background: var(--client-background); }
+.client-carousel-rows { position: absolute; inset: 0; display: flex; flex-direction: column; justify-content: center; gap: 1rem; }
+.client-carousel-row { width: 100%; overflow: hidden; }
+.client-carousel-track,
+.client-carousel-track-reverse { display: flex; width: max-content; gap: 1rem; padding-inline: 0.5rem; will-change: transform; }
+.client-carousel-track { animation: client-marquee 48s linear infinite; }
+.client-carousel-track-reverse { animation: client-marquee-reverse 52s linear infinite; }
+.client-carousel-thumbnail { width: clamp(14rem, 24vw, 20rem); aspect-ratio: 16 / 10; flex: none; border-radius: 0.75rem; object-fit: cover; }
+.client-carousel-shade { position: absolute; inset: 0; background: oklch(0 0 0 / 0.54); }
+.client-auth-panel { background: var(--client-panel); border: 1px solid var(--client-border); box-shadow: 0 24px 60px -24px oklch(0 0 0 / 0.8); backdrop-filter: blur(14px) saturate(115%); }
+.client-auth-input { background: var(--client-control); border: 1px solid var(--client-border); color: var(--client-foreground); }
+.client-auth-input::placeholder { color: var(--client-muted); }
+.client-auth-input:focus { border-color: oklch(1 0 0 / 0.24); background: var(--client-control-hover); }
+
+@media (max-width: 640px) {
+  .client-carousel-rows { gap: 0.75rem; transform: rotate(-4deg) scale(1.14); }
+  .client-carousel-thumbnail { width: 13rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .client-carousel-track,
+  .client-carousel-track-reverse { animation-play-state: paused; }
 }
 @keyframes marquee-y {
   from { transform: translateY(0); }

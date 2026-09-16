@@ -1,52 +1,24 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useState } from "react";
-import { ArrowUpRight, Eye, EyeOff, Loader2, MailCheck } from "lucide-react";
+import { Eye, EyeOff, Loader2, MailCheck } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { ClientBackdrop } from "@/components/client/ClientBackdrop";
-import skaleLogo from "@/assets/skale-logo-dark.png.asset.json";
+import { Button } from "@/components/ui/button";
+import { DEFAULT_HOME_SETTINGS, getHomeContent, type HomeSettings } from "@/lib/home-content.functions";
+import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
 
 type Mode = "signin" | "signup" | "forgot";
 
-const SITE_URL = "https://skalevisuals.com";
-
 const inputClass =
-  "w-full rounded-2xl border border-white/10 bg-white/[0.06] px-4 py-3 text-[15px] text-white outline-none transition-all placeholder:text-white/35 focus:border-white/25 focus:bg-white/[0.09] disabled:opacity-60";
+  "client-auth-input w-full rounded-xl px-4 py-3.5 text-[15px] outline-none transition disabled:opacity-60";
 
-function Menu() {
+function Shell({ children, settings }: { children: React.ReactNode; settings: HomeSettings }) {
   return (
-    <header className="pointer-events-auto absolute inset-x-0 top-0 z-20 flex justify-center px-4 pt-4">
-      <nav className="flex w-full max-w-3xl items-center justify-between rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 backdrop-blur-xl">
-        <a href={SITE_URL} className="flex items-center gap-2 pl-1">
-          <img src={skaleLogo.url} alt="Skale Visuals" className="h-7 w-auto rounded-md" />
-        </a>
-        <div className="flex items-center gap-1">
-          <a
-            href={SITE_URL}
-            className="rounded-full px-3 py-1.5 text-[13px] text-white/70 transition-colors hover:bg-white/10 hover:text-white"
-          >
-            Le site
-          </a>
-          <a
-            href={`${SITE_URL}/bookacall`}
-            className="flex items-center gap-1 rounded-full bg-white px-3.5 py-1.5 text-[13px] font-medium text-black transition-transform hover:scale-[1.03]"
-          >
-            Réserver un appel
-            <ArrowUpRight className="h-3.5 w-3.5" />
-          </a>
-        </div>
-      </nav>
-    </header>
-  );
-}
-
-function Shell({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden bg-black px-4 py-24">
-      <ClientBackdrop />
-      <Menu />
+    <div className="client-space-root relative flex min-h-[100dvh] items-center justify-center overflow-hidden px-4 py-8 sm:py-12">
+      <ClientBackdrop top={settings.clientCarouselTop} bottom={settings.clientCarouselBottom} />
       <div className="relative z-10 w-full">{children}</div>
     </div>
   );
@@ -58,7 +30,7 @@ function Panel({ children, className = "" }: { children: React.ReactNode; classN
       initial={{ opacity: 0, y: 18, scale: 0.98 }}
       animate={{ opacity: 1, y: 0, scale: 1 }}
       transition={{ type: "spring", stiffness: 240, damping: 24 }}
-      className={`mx-auto w-full max-w-[26rem] rounded-[28px] border border-white/12 bg-white/[0.07] p-7 shadow-[0_30px_80px_-20px_rgba(0,0,0,0.9)] backdrop-blur-2xl ${className}`}
+      className={`client-auth-panel mx-auto w-full max-w-[24.5rem] rounded-[2rem] p-7 sm:p-8 ${className}`}
     >
       {children}
     </motion.div>
@@ -68,6 +40,7 @@ function Panel({ children, className = "" }: { children: React.ReactNode; classN
 export function ClientSpace() {
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<Session | null>(null);
+  const [settings, setSettings] = useState<HomeSettings>(DEFAULT_HOME_SETTINGS);
 
   useEffect(() => {
     let mounted = true;
@@ -86,17 +59,21 @@ export function ClientSpace() {
     };
   }, []);
 
+  useEffect(() => {
+    getHomeContent().then((content) => setSettings(content.settings)).catch(() => {});
+  }, []);
+
   if (loading) {
     return (
-      <Shell>
+      <Shell settings={settings}>
         <div className="flex justify-center">
-          <Loader2 className="h-6 w-6 animate-spin text-white/50" />
+          <Loader2 className="h-6 w-6 animate-spin text-client-muted" />
         </div>
       </Shell>
     );
   }
 
-  return <Shell>{session ? <ClientHome /> : <AuthCard />}</Shell>;
+  return <Shell settings={settings}>{session ? <ClientHome /> : <AuthCard />}</Shell>;
 }
 
 function ClientHome() {
@@ -127,20 +104,22 @@ function ClientHome() {
   }, []);
 
   return (
-    <Panel className="text-center">
-      <p className="text-[11px] uppercase tracking-[0.22em] text-white/45">Espace client</p>
-      <h1 className="mt-3 text-[28px] font-semibold leading-tight tracking-tight text-white">
+    <Panel className="text-center text-client-foreground">
+      <p className="text-[11px] uppercase text-client-muted">Espace client</p>
+      <h1 className="mt-3 text-[28px] font-semibold leading-tight">
         Bonjour {name || "👋"}
       </h1>
-      <p className="mt-3 text-sm leading-relaxed text-white/55">
+      <p className="mt-3 text-sm leading-relaxed text-client-muted">
         Votre espace est prêt. Vos projets et livrables apparaîtront ici très bientôt.
       </p>
-      <button
+      <Button
+        type="button"
+        variant="outline"
         onClick={() => supabase.auth.signOut()}
-        className="mt-7 w-full rounded-2xl border border-white/12 px-4 py-3 text-sm text-white/75 transition-colors hover:bg-white/10 hover:text-white"
+        className="mt-7 h-12 w-full rounded-xl border-client-border bg-client-control text-client-foreground hover:bg-client-control-hover hover:text-client-foreground"
       >
         Se déconnecter
-      </button>
+      </Button>
     </Panel>
   );
 }
@@ -151,25 +130,26 @@ function Segmented({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void
     { key: "signup", label: "Inscription" },
   ];
   return (
-    <div className="mb-6 flex rounded-2xl border border-white/10 bg-black/30 p-1">
+    <div className="relative mb-7 flex rounded-2xl bg-client-control p-1">
       {items.map((item) => (
-        <button
+        <Button
           key={item.key}
           type="button"
           onClick={() => onChange(item.key)}
-          className="relative flex-1 rounded-xl px-3 py-2 text-[13px] font-medium transition-colors"
+          variant="ghost"
+          className="relative h-9 flex-1 rounded-xl px-3 text-[13px] font-medium hover:bg-transparent"
         >
           {mode === item.key && (
             <motion.span
               layoutId="client-seg"
               transition={{ type: "spring", stiffness: 420, damping: 34 }}
-              className="absolute inset-0 rounded-xl bg-white/90"
+              className="absolute inset-0 rounded-xl bg-client-segment shadow-sm"
             />
           )}
-          <span className={`relative ${mode === item.key ? "text-black" : "text-white/60"}`}>
+           <span className={`relative ${mode === item.key ? "text-client-segment-foreground" : "text-client-muted"}`}>
             {item.label}
           </span>
-        </button>
+        </Button>
       ))}
     </div>
   );
@@ -259,33 +239,39 @@ function AuthCard() {
   if (info) {
     return (
       <Panel className="text-center">
-        <span className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-white/10 text-white">
+        <span className="mx-auto mb-4 grid h-12 w-12 place-items-center rounded-2xl bg-client-control text-client-foreground">
           <MailCheck className="h-5 w-5" />
         </span>
-        <p className="text-sm leading-relaxed text-white/70">{info}</p>
-        <button
+        <p className="text-sm leading-relaxed text-client-muted">{info}</p>
+        <Button
+          type="button"
+          variant="outline"
           onClick={() => {
             setInfo(null);
             setMode("signin");
           }}
-          className="mt-6 w-full rounded-2xl border border-white/12 px-4 py-3 text-sm text-white/75 transition-colors hover:bg-white/10 hover:text-white"
+          className="mt-6 h-12 w-full rounded-xl border-client-border bg-client-control text-client-foreground hover:bg-client-control-hover hover:text-client-foreground"
         >
           Retour à la connexion
-        </button>
+        </Button>
       </Panel>
     );
   }
 
   return (
     <Panel>
-      <div className="mb-6 text-center">
-        <h1 className="text-[26px] font-semibold tracking-tight text-white">
-          {mode === "forgot" ? "Mot de passe oublié" : "Espace client"}
+      <div className="mb-9 text-center text-client-foreground">
+        <div className="mb-7 flex items-center justify-center gap-2.5">
+          <span className="grid h-8 w-8 place-items-center overflow-hidden rounded-lg bg-client-segment">
+            <img src={skaleSymbol.url} alt="" className="h-7 w-7 object-contain" />
+          </span>
+          <span className="text-xl font-semibold">Skale</span>
+        </div>
+        <h1 className="text-[26px] font-medium leading-tight">
+          {mode === "forgot" ? "Mot de passe oublié" : <>Bienvenue sur votre<br />espace client</>}
         </h1>
-        <p className="mt-2 text-[13px] leading-relaxed text-white/50">
-          {mode === "signin" && "Connectez-vous pour suivre vos projets."}
-          {mode === "signup" && "Créez votre compte en quelques secondes."}
-          {mode === "forgot" && "Recevez un lien pour choisir un nouveau mot de passe."}
+        <p className="mt-2 text-sm leading-relaxed text-client-muted">
+          {mode === "forgot" ? "Recevez un lien pour choisir un nouveau mot de passe." : "Accédez à votre projet"}
         </p>
       </div>
 
@@ -299,9 +285,17 @@ function AuthCard() {
         />
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-3">
-        {mode === "signup" && (
-          <>
+      <form onSubmit={handleSubmit}>
+        <AnimatePresence mode="popLayout" initial={false}>
+          {mode === "signup" && (
+            <motion.div
+              key="signup-fields"
+              initial={{ opacity: 0, height: 0, y: -8 }}
+              animate={{ opacity: 1, height: "auto", y: 0 }}
+              exit={{ opacity: 0, height: 0, y: -8 }}
+              transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+              className="space-y-3 overflow-hidden pb-3"
+            >
             <input
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
@@ -319,8 +313,9 @@ function AuthCard() {
               placeholder="Société (facultatif)"
               className={inputClass}
             />
-          </>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <input
           type="email"
@@ -334,7 +329,8 @@ function AuthCard() {
         />
 
         {mode !== "forgot" && (
-          <div className="relative">
+          <div className="mt-3">
+            <div className="relative">
             <input
               type={showPassword ? "text" : "password"}
               value={password}
@@ -346,25 +342,38 @@ function AuthCard() {
               placeholder="Mot de passe"
               className={`${inputClass} pr-11`}
             />
-            <button
+            <Button
               type="button"
               tabIndex={-1}
               onClick={() => setShowPassword((v) => !v)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-white/40 transition-colors hover:text-white"
+              variant="ghost"
+              size="icon"
+              className="absolute right-1.5 top-1/2 h-9 w-9 -translate-y-1/2 text-client-muted hover:bg-transparent hover:text-client-foreground"
               aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
             >
               {showPassword ? <EyeOff size={17} /> : <Eye size={17} />}
-            </button>
+            </Button>
+            </div>
+            {mode === "signin" && (
+              <Button
+                type="button"
+                variant="link"
+                onClick={() => { reset(); setMode("forgot"); }}
+                className="mt-1.5 h-auto px-1 py-0 text-[12px] text-client-muted hover:text-client-foreground"
+              >
+                Mot de passe oublié ?
+              </Button>
+            )}
           </div>
         )}
 
         {mode === "signup" && (
-          <label className="flex cursor-pointer items-start gap-2.5 pt-1 text-[12px] leading-relaxed text-white/50">
+          <label className="mt-3 flex cursor-pointer items-start gap-2.5 pt-1 text-[12px] leading-relaxed text-client-muted">
             <input
               type="checkbox"
               checked={marketing}
               onChange={(e) => setMarketing(e.target.checked)}
-              className="mt-0.5 h-4 w-4 accent-white"
+              className="mt-0.5 h-4 w-4 accent-client-segment"
             />
             <span>Je souhaite recevoir les actualités et offres de Skale Visuals par e-mail.</span>
           </label>
@@ -376,20 +385,14 @@ function AuthCard() {
               initial={{ opacity: 0, y: -4 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0 }}
-              className="text-[12.5px] text-red-400"
+               className="mt-3 text-[12.5px] text-destructive"
             >
               {error}
             </motion.p>
           )}
         </AnimatePresence>
 
-        <motion.button
-          type="submit"
-          disabled={pending}
-          whileHover={pending ? undefined : { scale: 1.015 }}
-          whileTap={pending ? undefined : { scale: 0.98 }}
-          className="!mt-5 w-full rounded-2xl bg-white px-4 py-3 text-[15px] font-medium text-black transition-colors hover:bg-white/90 disabled:opacity-60"
-        >
+        <Button type="submit" disabled={pending} className="mt-5 h-12 w-full rounded-xl bg-client-segment text-[15px] font-medium text-client-segment-foreground hover:bg-client-segment-hover">
           {pending
             ? "Un instant…"
             : mode === "signin"
@@ -397,54 +400,45 @@ function AuthCard() {
               : mode === "signup"
                 ? "Créer mon compte"
                 : "Envoyer le lien"}
-        </motion.button>
+        </Button>
       </form>
 
       {mode !== "forgot" && (
         <>
           <div className="my-5 flex items-center gap-3">
-            <span className="h-px flex-1 bg-white/10" />
-            <span className="text-[10px] uppercase tracking-[0.2em] text-white/35">ou</span>
-            <span className="h-px flex-1 bg-white/10" />
+            <span className="h-px flex-1 bg-client-border" />
+            <span className="text-[10px] uppercase text-client-muted">ou</span>
+            <span className="h-px flex-1 bg-client-border" />
           </div>
           <div>
-            <button
+            <Button
               type="button"
               onClick={() => oauth()}
-              className="flex w-full items-center justify-center gap-2 rounded-2xl border border-white/12 bg-white/[0.06] px-4 py-3 text-[14px] text-white transition-colors hover:bg-white/12"
+              variant="outline"
+              className="h-12 w-full rounded-xl border-client-border bg-client-control text-[14px] text-client-foreground hover:bg-client-control-hover hover:text-client-foreground"
             >
               <GoogleIcon /> Continuer avec Google
-            </button>
+            </Button>
           </div>
         </>
       )}
 
-      <div className="mt-6 text-center text-[12.5px] text-white/45">
-        {mode === "signin" ? (
-          <button
+      <div className="mt-6 text-center text-[12.5px] text-client-muted">
+        {mode === "forgot" ? (
+          <Button
             type="button"
-            onClick={() => {
-              reset();
-              setMode("forgot");
-            }}
-            className="transition-colors hover:text-white"
-          >
-            Mot de passe oublié ?
-          </button>
-        ) : mode === "forgot" ? (
-          <button
-            type="button"
+            variant="link"
             onClick={() => {
               reset();
               setMode("signin");
             }}
-            className="transition-colors hover:text-white"
+            className="h-auto p-0 text-client-muted hover:text-client-foreground"
           >
             Retour à la connexion
-          </button>
-        ) : (
+          </Button>
+        ) : mode === "signup" ? (
           <span>En créant un compte, vous acceptez nos conditions d'utilisation.</span>
-        )}
+        ) : null}
       </div>
     </Panel>
   );
