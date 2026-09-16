@@ -146,8 +146,7 @@ function RootInner() {
   const loaderData = Route.useLoaderData();
   const isAdmin =
     pathname.startsWith("/settings") ||
-    pathname.startsWith("/app") ||
-    pathname.startsWith("/crm");
+    pathname.startsWith("/app");
 
   useEffect(() => {
     initTracker();
