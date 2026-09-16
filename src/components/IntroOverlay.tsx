@@ -5,8 +5,8 @@ import mobileIntroAsset from "@/assets/skale-logo-reveal-mobile.mp4.asset.json";
 const CHROMA_START_TIME = 3.2; // secondes avant l'activation du chroma key
 const CHROMA_THRESHOLD = 40; // seuil en dessous duquel un pixel noir devient transparent
 const MOBILE_BREAKPOINT = 768;
-const MAX_CANVAS_WIDTH = 1280; // résolution de traitement (perf Safari/Mac)
-const MAX_MOBILE_CANVAS_WIDTH = 768;
+const MAX_DPR = 2; // densité maximale (écrans Retina)
+const MAX_CANVAS_WIDTH = 2560; // garde-fou pour les très grands écrans
 
 function isMobileDevice() {
   if (typeof window === "undefined") return true;
@@ -51,11 +51,15 @@ function IntroCanvas({
     video.preload = "auto";
     video.src = mobile ? mobileIntroAsset.url : "/intro-animation.mp4";
 
+    // Rendu en pleine résolution d'écran (x2 sur Retina) pour la meilleure qualité.
     const resize = () => {
-      const maxWidth = mobile ? MAX_MOBILE_CANVAS_WIDTH : MAX_CANVAS_WIDTH;
-      const s = Math.min(1, maxWidth / Math.max(1, window.innerWidth));
-      canvas.width = Math.max(1, Math.round(window.innerWidth * s));
-      canvas.height = Math.max(1, Math.round(window.innerHeight * s));
+      const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
+      const w = window.innerWidth * dpr;
+      const s = Math.min(1, MAX_CANVAS_WIDTH / Math.max(1, w));
+      canvas.width = Math.max(1, Math.round(w * s));
+      canvas.height = Math.max(1, Math.round(window.innerHeight * dpr * s));
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
     };
     resize();
     window.addEventListener("resize", resize);
