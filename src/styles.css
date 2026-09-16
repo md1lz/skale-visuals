@@ -242,8 +242,10 @@
 .client-auth-input:focus { border-color: oklch(1 0 0 / 0.24); background: var(--client-control-hover); }
 
 @media (max-width: 640px) {
+  .client-carousel-row { padding: 0.4rem 0; }
   .client-carousel-track,
-  .client-carousel-track-reverse { gap: 0.5rem; }
+  .client-carousel-track-reverse { gap: 0.4rem; }
+  .client-carousel-thumbnail { border-radius: 0.6rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
