@@ -299,14 +299,18 @@ export function SiteNavbar() {
         </AnimatePresence>
 
         <div className="pointer-events-auto hidden items-center gap-3 md:flex">
-          <button
-            type="button"
-            onClick={() => undefined}
-            className="font-codec-bold flex items-center gap-1.5 text-sm tracking-[-0.04em] text-foreground transition-colors duration-200 hover:text-foreground/80 uppercase"
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            transition={{ type: "spring", stiffness: 400, damping: 22 }}
           >
-            espace client
-            <User className="h-3.5 w-3.5" strokeWidth={2.5} />
-          </button>
+            <Link
+              to="/app"
+              className="font-codec-bold flex items-center gap-1.5 text-sm tracking-[-0.04em] text-foreground transition-colors duration-200 hover:text-foreground/80 uppercase"
+            >
+              espace client
+              <User className="h-3.5 w-3.5" strokeWidth={2.5} />
+            </Link>
+          </motion.div>
 
           <motion.div
             whileHover={{ scale: 1.02 }}
