@@ -59,7 +59,7 @@ const NAV: {
   { to: "/settings", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/settings/analytics", label: "Analytiques", icon: BarChart3 },
   { to: "/settings/calls", label: "Book a Call", icon: CalendarClock },
-  { to: "/settings/account", label: "Mon compte", icon: UserCircle2 },
+  
   { to: "/settings/appearance", label: "Apparence", icon: Palette },
   { to: "/settings/connections", label: "Connexions", icon: Plug },
   { to: "/settings/availability", label: "Disponibilités", icon: CalendarCheck },
