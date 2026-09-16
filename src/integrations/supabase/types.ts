@@ -188,6 +188,33 @@ export type Database = {
         }
         Relationships: []
       }
+      client_profiles: {
+        Row: {
+          company: string | null
+          created_at: string
+          full_name: string
+          id: string
+          marketing_opt_in: boolean
+          updated_at: string
+        }
+        Insert: {
+          company?: string | null
+          created_at?: string
+          full_name?: string
+          id: string
+          marketing_opt_in?: boolean
+          updated_at?: string
+        }
+        Update: {
+          company?: string | null
+          created_at?: string
+          full_name?: string
+          id?: string
+          marketing_opt_in?: boolean
+          updated_at?: string
+        }
+        Relationships: []
+      }
       clients: {
         Row: {
           budget: number | null
