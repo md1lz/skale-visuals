@@ -144,36 +144,6 @@ export const updateAdminProfile = createServerFn({ method: "POST" })
   });
 
 
-export const tryAutoLoginByIp = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    z.object({ source: z.enum(["web", "app"]).optional().default("web") }).parse(d ?? {}),
-  )
-  .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const ip = getClientIp();
-    if (!ip) return { ok: false as const };
-
-    const { data: rows } = await supabaseAdmin
-      .from("admin_remembered_ips")
-      .select("id, username, owner_type, owner_id")
-      .eq("ip", ip)
-      .eq("source", data.source)
-      .order("last_seen_at", { ascending: false })
-      .limit(1);
-
-    const row = rows?.[0];
-    if (!row?.username) return { ok: false as const };
-
-    await supabaseAdmin
-      .from("admin_remembered_ips")
-      .update({ last_seen_at: new Date().toISOString() })
-      .eq("id", row.id);
-
-    const session = await useSession<AdminSessionData>(sessionConfig());
-    await session.update({ user: row.username, loggedInAt: Date.now() });
-
-    return { ok: true as const, user: row.username };
-  });
 
 
 export const getAdminSessionFn = createServerFn({ method: "GET" }).handler(async () => {
