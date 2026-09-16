@@ -15,18 +15,15 @@ import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as McpRouteImport } from './routes/mcp'
 import { Route as DesignRouteImport } from './routes/design'
 import { Route as BookacallRouteImport } from './routes/bookacall'
-import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
-import { Route as AppIndexRouteImport } from './routes/app.index'
 import { Route as SignTokenRouteImport } from './routes/sign.$token'
 import { Route as SettingsWebsiteRouteImport } from './routes/settings.website'
 import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
 import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
-import { Route as AppResetPasswordRouteImport } from './routes/app.reset-password'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -66,11 +63,6 @@ const BookacallRoute = BookacallRouteImport.update({
   path: '/bookacall',
   getParentRoute: () => rootRouteImport,
 } as any)
-const AppRoute = AppRouteImport.update({
-  id: '/app',
-  path: '/app',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AboutusRoute = AboutusRouteImport.update({
   id: '/aboutus',
   path: '/aboutus',
@@ -85,11 +77,6 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRoute,
-} as any)
-const AppIndexRoute = AppIndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => AppRoute,
 } as any)
 const SignTokenRoute = SignTokenRouteImport.update({
   id: '/sign/$token',
@@ -120,11 +107,6 @@ const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
   getParentRoute: () => SettingsRoute,
-} as any)
-const AppResetPasswordRoute = AppResetPasswordRouteImport.update({
-  id: '/reset-password',
-  path: '/reset-password',
-  getParentRoute: () => AppRoute,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
@@ -173,7 +155,6 @@ const ApiPublicHooksBookingRemindersRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aboutus': typeof AboutusRoute
-  '/app': typeof AppRouteWithChildren
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
   '/mcp': typeof McpRoute
@@ -181,14 +162,12 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/app/reset-password': typeof AppResetPasswordRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/app/': typeof AppIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -207,14 +186,12 @@ export interface FileRoutesByTo {
   '/reset-password': typeof ResetPasswordRoute
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/app/reset-password': typeof AppResetPasswordRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/app': typeof AppIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -228,7 +205,6 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/aboutus': typeof AboutusRoute
-  '/app': typeof AppRouteWithChildren
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
   '/mcp': typeof McpRoute
@@ -236,14 +212,12 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
-  '/app/reset-password': typeof AppResetPasswordRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/app/': typeof AppIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -258,7 +232,6 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/aboutus'
-    | '/app'
     | '/bookacall'
     | '/design'
     | '/mcp'
@@ -266,14 +239,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
-    | '/app/reset-password'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/app/'
     | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
@@ -292,14 +263,12 @@ export interface FileRouteTypes {
     | '/reset-password'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
-    | '/app/reset-password'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/app'
     | '/settings'
     | '/api/public/time'
     | '/api/public/track'
@@ -312,7 +281,6 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/aboutus'
-    | '/app'
     | '/bookacall'
     | '/design'
     | '/mcp'
@@ -320,14 +288,12 @@ export interface FileRouteTypes {
     | '/settings'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
-    | '/app/reset-password'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/app/'
     | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
@@ -341,7 +307,6 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutusRoute: typeof AboutusRoute
-  AppRoute: typeof AppRouteWithChildren
   BookacallRoute: typeof BookacallRoute
   DesignRoute: typeof DesignRoute
   McpRoute: typeof McpRoute
@@ -403,13 +368,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookacallRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/app': {
-      id: '/app'
-      path: '/app'
-      fullPath: '/app'
-      preLoaderRoute: typeof AppRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/aboutus': {
       id: '/aboutus'
       path: '/aboutus'
@@ -430,13 +388,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
-    }
-    '/app/': {
-      id: '/app/'
-      path: '/'
-      fullPath: '/app/'
-      preLoaderRoute: typeof AppIndexRouteImport
-      parentRoute: typeof AppRoute
     }
     '/sign/$token': {
       id: '/sign/$token'
@@ -479,13 +430,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/analytics'
       preLoaderRoute: typeof SettingsAnalyticsRouteImport
       parentRoute: typeof SettingsRoute
-    }
-    '/app/reset-password': {
-      id: '/app/reset-password'
-      path: '/reset-password'
-      fullPath: '/app/reset-password'
-      preLoaderRoute: typeof AppResetPasswordRouteImport
-      parentRoute: typeof AppRoute
     }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
@@ -546,18 +490,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AppRouteChildren {
-  AppResetPasswordRoute: typeof AppResetPasswordRoute
-  AppIndexRoute: typeof AppIndexRoute
-}
-
-const AppRouteChildren: AppRouteChildren = {
-  AppResetPasswordRoute: AppResetPasswordRoute,
-  AppIndexRoute: AppIndexRoute,
-}
-
-const AppRouteWithChildren = AppRoute._addFileChildren(AppRouteChildren)
-
 interface SettingsRouteChildren {
   SettingsAnalyticsRoute: typeof SettingsAnalyticsRoute
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
@@ -583,7 +515,6 @@ const SettingsRouteWithChildren = SettingsRoute._addFileChildren(
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutusRoute: AboutusRoute,
-  AppRoute: AppRouteWithChildren,
   BookacallRoute: BookacallRoute,
   DesignRoute: DesignRoute,
   McpRoute: McpRoute,
