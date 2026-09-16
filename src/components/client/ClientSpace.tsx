@@ -262,10 +262,8 @@ function AuthCard() {
     <Panel>
       <div className="mb-9 text-center text-client-foreground">
         <div className="mb-7 flex items-center justify-center gap-2.5">
-          <span className="grid h-8 w-8 place-items-center overflow-hidden rounded-lg bg-client-segment">
-            <img src={skaleSymbol.url} alt="" className="h-7 w-7 object-contain" />
-          </span>
-          <span className="text-xl font-semibold">Skale</span>
+          <img src={skaleSymbol.url} alt="" className="h-8 w-8 object-contain" />
+          <span className="font-codec-bold mt-1 text-[1.55rem] leading-none tracking-[-0.06em]">skale</span>
         </div>
         <h1 className="text-[26px] font-medium leading-tight">
           {mode === "forgot" ? "Mot de passe oublié" : <>Bienvenue sur votre<br />espace client</>}
