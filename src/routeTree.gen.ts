@@ -25,7 +25,6 @@ import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
 import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
-import { Route as SettingsAdminsRouteImport } from './routes/settings.admins'
 import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -113,11 +112,6 @@ const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   path: '/analytics',
   getParentRoute: () => SettingsRoute,
 } as any)
-const SettingsAdminsRoute = SettingsAdminsRouteImport.update({
-  id: '/admins',
-  path: '/admins',
-  getParentRoute: () => SettingsRoute,
-} as any)
 const CrmSplatRoute = CrmSplatRouteImport.update({
   id: '/$',
   path: '/$',
@@ -161,7 +155,6 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -184,7 +177,6 @@ export interface FileRoutesByTo {
   '/design': typeof DesignRoute
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -210,7 +202,6 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -237,7 +228,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/videoediting'
     | '/crm/$'
-    | '/settings/admins'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -260,7 +250,6 @@ export interface FileRouteTypes {
     | '/design'
     | '/videoediting'
     | '/crm/$'
-    | '/settings/admins'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -285,7 +274,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/videoediting'
     | '/crm/$'
-    | '/settings/admins'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -432,13 +420,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsAnalyticsRouteImport
       parentRoute: typeof SettingsRoute
     }
-    '/settings/admins': {
-      id: '/settings/admins'
-      path: '/admins'
-      fullPath: '/settings/admins'
-      preLoaderRoute: typeof SettingsAdminsRouteImport
-      parentRoute: typeof SettingsRoute
-    }
     '/crm/$': {
       id: '/crm/$'
       path: '/$'
@@ -497,7 +478,6 @@ const CrmRouteChildren: CrmRouteChildren = {
 const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
 
 interface SettingsRouteChildren {
-  SettingsAdminsRoute: typeof SettingsAdminsRoute
   SettingsAnalyticsRoute: typeof SettingsAnalyticsRoute
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
   SettingsAvailabilityRoute: typeof SettingsAvailabilityRoute
@@ -507,7 +487,6 @@ interface SettingsRouteChildren {
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
-  SettingsAdminsRoute: SettingsAdminsRoute,
   SettingsAnalyticsRoute: SettingsAnalyticsRoute,
   SettingsAppearanceRoute: SettingsAppearanceRoute,
   SettingsAvailabilityRoute: SettingsAvailabilityRoute,
