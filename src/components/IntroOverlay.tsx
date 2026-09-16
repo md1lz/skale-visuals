@@ -1,21 +1,29 @@
 import { useEffect, useRef, useState } from "react";
+import mobileIntroAsset from "@/assets/skale-logo-reveal-mobile.mp4.asset.json";
 
 // Réglages de l'effet
 const CHROMA_START_TIME = 3.2; // secondes avant l'activation du chroma key
 const CHROMA_THRESHOLD = 40; // seuil en dessous duquel un pixel noir devient transparent
 const MOBILE_BREAKPOINT = 768;
 const MAX_CANVAS_WIDTH = 1280; // résolution de traitement (perf Safari/Mac)
+const MAX_MOBILE_CANVAS_WIDTH = 768;
 
 function isMobileDevice() {
   if (typeof window === "undefined") return true;
-  const narrow = window.innerWidth < MOBILE_BREAKPOINT;
+  const narrow = window.innerWidth <= MOBILE_BREAKPOINT;
   const ua = /Android|iPhone|iPod|Opera Mini|IEMobile|Mobile/i.test(
     navigator.userAgent,
   );
   return narrow || ua;
 }
 
-function IntroCanvas({ onDone }: { onDone: () => void }) {
+function IntroCanvas({
+  onDone,
+  mobile,
+}: {
+  onDone: () => void;
+  mobile: boolean;
+}) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const [blackout, setBlackout] = useState(true);
 
@@ -41,10 +49,11 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
     video.setAttribute("playsinline", "");
     video.setAttribute("webkit-playsinline", "");
     video.preload = "auto";
-    video.src = "/intro-animation.mp4";
+    video.src = mobile ? mobileIntroAsset.url : "/intro-animation.mp4";
 
     const resize = () => {
-      const s = Math.min(1, MAX_CANVAS_WIDTH / Math.max(1, window.innerWidth));
+      const maxWidth = mobile ? MAX_MOBILE_CANVAS_WIDTH : MAX_CANVAS_WIDTH;
+      const s = Math.min(1, maxWidth / Math.max(1, window.innerWidth));
       canvas.width = Math.max(1, Math.round(window.innerWidth * s));
       canvas.height = Math.max(1, Math.round(window.innerHeight * s));
     };
@@ -165,7 +174,7 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
       video.removeAttribute("src");
       video.load();
     };
-  }, [onDone]);
+  }, [mobile, onDone]);
 
   return (
     <div className="pointer-events-none fixed inset-0 z-[9999]">
@@ -177,17 +186,24 @@ function IntroCanvas({ onDone }: { onDone: () => void }) {
 
 export function IntroOverlay() {
   const [active, setActive] = useState(false);
+  const [mobile, setMobile] = useState(false);
 
   useEffect(() => {
-    if (isMobileDevice()) return;
+    setMobile(isMobileDevice());
     setActive(true);
     const onResize = () => {
-      if (window.innerWidth < MOBILE_BREAKPOINT) setActive(false);
+      setMobile(isMobileDevice());
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
   if (!active) return null;
-  return <IntroCanvas onDone={() => setActive(false)} />;
+  return (
+    <IntroCanvas
+      key={mobile ? "mobile" : "desktop"}
+      mobile={mobile}
+      onDone={() => setActive(false)}
+    />
+  );
 }
