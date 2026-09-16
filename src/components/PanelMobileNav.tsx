@@ -88,23 +88,27 @@ export function PanelMobileNav({
           >
             <div className="mb-6 flex items-start justify-between gap-3">
               <div className="flex min-w-0 items-center gap-3">
-                <span className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-red-600 to-red-800 ring-1 ring-white/15">
-                  {profile?.avatarUrl ? (
-                    <img src={profile.avatarUrl} alt="" className="h-full w-full object-cover" />
-                  ) : (
-                    <span className="text-base font-semibold text-white">
-                      {initials(profile?.name ?? title)}
+                {profile ? (
+                  <>
+                    <span className="grid h-14 w-14 shrink-0 place-items-center overflow-hidden rounded-full bg-gradient-to-br from-red-600 to-red-800 ring-1 ring-white/15">
+                      {profile.avatarUrl ? (
+                        <img src={profile.avatarUrl} alt="" className="h-full w-full object-cover" />
+                      ) : (
+                        <span className="text-base font-semibold text-white">
+                          {initials(profile.name)}
+                        </span>
+                      )}
                     </span>
-                  )}
-                </span>
-                <div className="min-w-0">
-                  <p className="truncate text-lg font-semibold text-white">
-                    {profile?.name ?? title}
-                  </p>
-                  <p className="truncate text-xs uppercase tracking-wider text-neutral-500">
-                    {profile?.role ?? title}
-                  </p>
-                </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-lg font-semibold text-white">{profile.name}</p>
+                      <p className="truncate text-xs uppercase tracking-wider text-neutral-500">
+                        {profile.role}
+                      </p>
+                    </div>
+                  </>
+                ) : (
+                  <p className="truncate text-lg font-semibold text-white">{title}</p>
+                )}
               </div>
               <button
                 onClick={() => setOpen(false)}

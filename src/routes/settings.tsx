@@ -7,15 +7,13 @@ import {
   Palette,
   Plug,
   Globe,
-  UserCircle2,
+  LogOut,
   BarChart3,
   CalendarClock,
   CalendarCheck,
 } from "lucide-react";
-import { useQuery } from "@tanstack/react-query";
 import { useServerFn } from "@tanstack/react-start";
-import { getAdminSessionFn, getAdminProfile } from "@/lib/admin-auth.functions";
-import { AdminProfileMenu } from "@/components/AdminProfileMenu";
+import { getAdminSessionFn, logoutAdminFn } from "@/lib/admin-auth.functions";
 import { AdminPrefsProvider, ThemeStyleInjector, useAdminPrefs } from "@/components/admin-prefs";
 import { BackToSiteLink } from "@/components/BackToSiteLink";
 import { ConnectionHeartbeat } from "@/components/ConnectionHeartbeat";
@@ -61,7 +59,7 @@ const NAV: {
   { to: "/settings", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/settings/analytics", label: "Analytiques", icon: BarChart3 },
   { to: "/settings/calls", label: "Book a Call", icon: CalendarClock },
-  { to: "/settings/account", label: "Mon compte", icon: UserCircle2 },
+  
   { to: "/settings/appearance", label: "Apparence", icon: Palette },
   { to: "/settings/connections", label: "Connexions", icon: Plug },
   { to: "/settings/availability", label: "Disponibilités", icon: CalendarCheck },
@@ -82,13 +80,30 @@ function SettingsLayout() {
   );
 }
 
+function LogoutButton() {
+  const logout = useServerFn(logoutAdminFn);
+  return (
+    <button
+      type="button"
+      onClick={async () => {
+        try {
+          await logout();
+        } finally {
+          window.location.replace("/settings");
+        }
+      }}
+      className="flex w-full items-center gap-2 rounded-xl px-3 py-2.5 text-[13px] text-neutral-300 transition-colors hover:bg-white/[0.05] hover:text-white"
+    >
+      <LogOut className="h-[17px] w-[17px] text-neutral-500" />
+      Se déconnecter
+    </button>
+  );
+}
+
 function SettingsLayoutInner() {
-  const session = Route.useRouteContext().session;
   const pathname = useRouterState({ select: (s) => s.location.pathname });
   const { background, mode } = useAdminPrefs();
-  const fetchProfile = useServerFn(getAdminProfile);
-  const profileQ = useQuery({ queryKey: ["admin", "profile"], queryFn: () => fetchProfile() });
-  const profile = profileQ.data;
+
 
   return (
     <div
@@ -127,9 +142,10 @@ function SettingsLayoutInner() {
             <BackToSiteLink />
           </div>
 
-          <div className="mx-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-2">
-            {session?.user && <AdminProfileMenu initialUsername={session.user} />}
+          <div className="mx-4 rounded-2xl border border-white/[0.07] bg-white/[0.03] p-1">
+            <LogoutButton />
           </div>
+
 
           <nav className="flex-1 px-3 py-5 space-y-1">
             {NAV.map((item) => {
@@ -162,16 +178,8 @@ function SettingsLayoutInner() {
         </aside>
 
         <main className="flex-1 min-w-0 overflow-x-hidden">
-          <PanelMobileNav
-            title="Skale Settings"
-            items={NAV}
-            profile={{
-              name: profile?.firstName?.trim() || profile?.username || session?.user || "Admin",
-              role: "Administrateur",
-              avatarUrl: profile?.avatarUrl ?? null,
-            }}
-          >
-            {session?.user && <AdminProfileMenu initialUsername={session.user} />}
+          <PanelMobileNav title="Skale Settings" items={NAV}>
+            <LogoutButton />
           </PanelMobileNav>
           <AnimatePresence mode="wait">
             <motion.div

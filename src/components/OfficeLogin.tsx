@@ -2,18 +2,16 @@ import { useServerFn } from "@tanstack/react-start";
 import { AnimatePresence, motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
-import { loginAdmin, getAdminSessionFn, tryAutoLoginByIp } from "@/lib/admin-auth.functions";
+import { loginAdmin, getAdminSessionFn } from "@/lib/admin-auth.functions";
 
 /** Écran de connexion de /settings. */
 export function OfficeLogin() {
   const login = useServerFn(loginAdmin);
   const fetchAdmin = useServerFn(getAdminSessionFn);
-  const autoLogin = useServerFn(tryAutoLoginByIp);
 
   const [checking, setChecking] = useState(true);
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [remember, setRemember] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
 
@@ -27,12 +25,6 @@ export function OfficeLogin() {
           window.location.replace("/settings");
           return;
         }
-        const auto = await autoLogin({ data: { source: "web" } });
-        if (cancelled) return;
-        if (auto.ok) {
-          window.location.replace("/settings");
-          return;
-        }
       } catch {
         /* noop */
       }
@@ -41,7 +33,7 @@ export function OfficeLogin() {
     return () => {
       cancelled = true;
     };
-  }, [fetchAdmin, autoLogin]);
+  }, [fetchAdmin]);
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -49,7 +41,7 @@ export function OfficeLogin() {
     setPending(true);
     setError(null);
     try {
-      const res = await login({ data: { password, remember, source: "web" } });
+      const res = await login({ data: { password, source: "web" } });
       if (!res.ok) {
         setError("Mot de passe incorrect.");
         return;
@@ -114,16 +106,6 @@ export function OfficeLogin() {
           </button>
         </div>
 
-        <label className="mb-4 flex cursor-pointer select-none items-center gap-2 text-xs text-neutral-300">
-          <input
-            type="checkbox"
-            checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
-            disabled={pending}
-            className="h-3.5 w-3.5 cursor-pointer accent-red-600"
-          />
-          Se souvenir de moi sur cet appareil
-        </label>
 
         <AnimatePresence>
           {error && (

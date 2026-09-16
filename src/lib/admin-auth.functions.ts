@@ -8,7 +8,6 @@ type AdminSessionData = {
 };
 
 const SESSION_NAME = "skale_admin";
-const SESSION_MAX_AGE = 60 * 60 * 8; // 8h
 
 function sessionConfig() {
   const password = process.env.ADMIN_SESSION_SECRET;
@@ -18,7 +17,7 @@ function sessionConfig() {
   return {
     password,
     name: SESSION_NAME,
-    maxAge: SESSION_MAX_AGE,
+    // No maxAge: pure session cookie, cleared when the browser session ends.
     cookie: {
       httpOnly: true,
       secure: true,
@@ -30,7 +29,6 @@ function sessionConfig() {
 
 const loginSchema = z.object({
   password: z.string().min(1).max(256),
-  remember: z.boolean().optional().default(false),
   source: z.enum(["web", "app"]).optional().default("web"),
 });
 
@@ -76,19 +74,6 @@ export const loginAdmin = createServerFn({ method: "POST" })
     });
 
     if (!ok) return { ok: false as const };
-
-    if (data.remember && ip) {
-      await supabaseAdmin.from("admin_remembered_ips").upsert(
-        {
-          ip,
-          username: SESSION_USER,
-          source: data.source,
-          owner_type: "admin",
-          last_seen_at: new Date().toISOString(),
-        },
-        { onConflict: "ip,source,owner_type,username" },
-      );
-    }
 
     const session = await useSession<AdminSessionData>(sessionConfig());
     await session.update({ user: SESSION_USER, loggedInAt: Date.now() });
@@ -159,36 +144,6 @@ export const updateAdminProfile = createServerFn({ method: "POST" })
   });
 
 
-export const tryAutoLoginByIp = createServerFn({ method: "POST" })
-  .inputValidator((d: unknown) =>
-    z.object({ source: z.enum(["web", "app"]).optional().default("web") }).parse(d ?? {}),
-  )
-  .handler(async ({ data }) => {
-    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
-    const ip = getClientIp();
-    if (!ip) return { ok: false as const };
-
-    const { data: rows } = await supabaseAdmin
-      .from("admin_remembered_ips")
-      .select("id, username, owner_type, owner_id")
-      .eq("ip", ip)
-      .eq("source", data.source)
-      .order("last_seen_at", { ascending: false })
-      .limit(1);
-
-    const row = rows?.[0];
-    if (!row?.username) return { ok: false as const };
-
-    await supabaseAdmin
-      .from("admin_remembered_ips")
-      .update({ last_seen_at: new Date().toISOString() })
-      .eq("id", row.id);
-
-    const session = await useSession<AdminSessionData>(sessionConfig());
-    await session.update({ user: row.username, loggedInAt: Date.now() });
-
-    return { ok: true as const, user: row.username };
-  });
 
 
 export const getAdminSessionFn = createServerFn({ method: "GET" }).handler(async () => {
