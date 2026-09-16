@@ -6,7 +6,7 @@ import type { Session } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { ClientBackdrop } from "@/components/client/ClientBackdrop";
-import skaleLogo from "@/assets/skale-logo-light.png.asset.json";
+import skaleLogo from "@/assets/skale-logo-dark.png.asset.json";
 
 type Mode = "signin" | "signup" | "forgot";
 
