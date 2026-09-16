@@ -178,16 +178,8 @@ function SettingsLayoutInner() {
         </aside>
 
         <main className="flex-1 min-w-0 overflow-x-hidden">
-          <PanelMobileNav
-            title="Skale Settings"
-            items={NAV}
-            profile={{
-              name: profile?.firstName?.trim() || profile?.username || session?.user || "Admin",
-              role: "Administrateur",
-              avatarUrl: profile?.avatarUrl ?? null,
-            }}
-          >
-            {session?.user && <AdminProfileMenu initialUsername={session.user} />}
+          <PanelMobileNav title="Skale Settings" items={NAV}>
+            <LogoutButton />
           </PanelMobileNav>
           <AnimatePresence mode="wait">
             <motion.div
