@@ -292,6 +292,7 @@ export function SiteAdminPanel() {
     setDirty(true);
   }
   function moveClientImage(kind: "clientCarouselTop" | "clientCarouselBottom", index: number, direction: -1 | 1) {
+    if (!settings) return;
     const target = index + direction;
     if (target < 0 || target >= settings[kind].length) return;
     const images = [...settings[kind]];
