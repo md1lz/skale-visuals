@@ -17,14 +17,12 @@ import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
-import { Route as CrmIndexRouteImport } from './routes/crm.index'
 import { Route as SignTokenRouteImport } from './routes/sign.$token'
 import { Route as SettingsWebsiteRouteImport } from './routes/settings.website'
 import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
 import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
-import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
 import { Route as ApiPublicTimeRouteImport } from './routes/api/public/time'
@@ -71,11 +69,6 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   path: '/',
   getParentRoute: () => SettingsRoute,
 } as any)
-const CrmIndexRoute = CrmIndexRouteImport.update({
-  id: '/crm/',
-  path: '/crm/',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const SignTokenRoute = SignTokenRouteImport.update({
   id: '/sign/$token',
   path: '/sign/$token',
@@ -105,11 +98,6 @@ const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
   getParentRoute: () => SettingsRoute,
-} as any)
-const CrmSplatRoute = CrmSplatRouteImport.update({
-  id: '/crm/$',
-  path: '/crm/$',
-  getParentRoute: () => rootRouteImport,
 } as any)
 const DocKindTokenRoute = DocKindTokenRouteImport.update({
   id: '/doc/$kind/$token',
@@ -147,14 +135,12 @@ export interface FileRoutesByFullPath {
   '/design': typeof DesignRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
-  '/crm/$': typeof CrmSplatRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/crm/': typeof CrmIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -169,14 +155,12 @@ export interface FileRoutesByTo {
   '/bookacall': typeof BookacallRoute
   '/design': typeof DesignRoute
   '/videoediting': typeof VideoeditingRoute
-  '/crm/$': typeof CrmSplatRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/crm': typeof CrmIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -193,14 +177,12 @@ export interface FileRoutesById {
   '/design': typeof DesignRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
-  '/crm/$': typeof CrmSplatRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
-  '/crm/': typeof CrmIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -218,14 +200,12 @@ export interface FileRouteTypes {
     | '/design'
     | '/settings'
     | '/videoediting'
-    | '/crm/$'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/crm/'
     | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
@@ -240,14 +220,12 @@ export interface FileRouteTypes {
     | '/bookacall'
     | '/design'
     | '/videoediting'
-    | '/crm/$'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/crm'
     | '/settings'
     | '/api/public/time'
     | '/api/public/track'
@@ -263,14 +241,12 @@ export interface FileRouteTypes {
     | '/design'
     | '/settings'
     | '/videoediting'
-    | '/crm/$'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
     | '/settings/website'
     | '/sign/$token'
-    | '/crm/'
     | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
@@ -287,9 +263,7 @@ export interface RootRouteChildren {
   DesignRoute: typeof DesignRoute
   SettingsRoute: typeof SettingsRouteWithChildren
   VideoeditingRoute: typeof VideoeditingRoute
-  CrmSplatRoute: typeof CrmSplatRoute
   SignTokenRoute: typeof SignTokenRoute
-  CrmIndexRoute: typeof CrmIndexRoute
   ApiPublicTimeRoute: typeof ApiPublicTimeRoute
   ApiPublicTrackRoute: typeof ApiPublicTrackRoute
   DocKindTokenRoute: typeof DocKindTokenRoute
@@ -355,13 +329,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
     }
-    '/crm/': {
-      id: '/crm/'
-      path: '/crm'
-      fullPath: '/crm/'
-      preLoaderRoute: typeof CrmIndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/sign/$token': {
       id: '/sign/$token'
       path: '/sign/$token'
@@ -403,13 +370,6 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/analytics'
       preLoaderRoute: typeof SettingsAnalyticsRouteImport
       parentRoute: typeof SettingsRoute
-    }
-    '/crm/$': {
-      id: '/crm/$'
-      path: '/crm/$'
-      fullPath: '/crm/$'
-      preLoaderRoute: typeof CrmSplatRouteImport
-      parentRoute: typeof rootRouteImport
     }
     '/doc/$kind/$token': {
       id: '/doc/$kind/$token'
@@ -479,9 +439,7 @@ const rootRouteChildren: RootRouteChildren = {
   DesignRoute: DesignRoute,
   SettingsRoute: SettingsRouteWithChildren,
   VideoeditingRoute: VideoeditingRoute,
-  CrmSplatRoute: CrmSplatRoute,
   SignTokenRoute: SignTokenRoute,
-  CrmIndexRoute: CrmIndexRoute,
   ApiPublicTimeRoute: ApiPublicTimeRoute,
   ApiPublicTrackRoute: ApiPublicTrackRoute,
   DocKindTokenRoute: DocKindTokenRoute,
