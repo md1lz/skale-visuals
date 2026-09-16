@@ -3,7 +3,6 @@ import { AnimatePresence, motion } from "framer-motion";
 
 import {
   LayoutDashboard,
-  Users,
   Palette,
   Globe,
   LogOut,
@@ -51,7 +50,7 @@ export const Route = createFileRoute("/settings")({
 const NAV: {
   to: string;
   label: string;
-  icon: typeof Users;
+  icon: typeof LayoutDashboard;
   exact?: boolean;
   desktopOnly?: boolean;
 }[] = [
@@ -62,7 +61,6 @@ const NAV: {
   { to: "/settings/appearance", label: "Apparence", icon: Palette },
   { to: "/settings/availability", label: "Disponibilités", icon: CalendarCheck },
   { to: "/settings/website", label: "Gestion du site web", icon: Globe },
-  { to: "/settings/admins", label: "Comptes admin", icon: Users },
 ];
 
 function SettingsLayout() {
