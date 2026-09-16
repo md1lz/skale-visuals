@@ -27,7 +27,6 @@ import { Route as SettingsAvailabilityRouteImport } from './routes/settings.avai
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
 import { Route as SettingsAdminsRouteImport } from './routes/settings.admins'
-import { Route as SettingsAccountRouteImport } from './routes/settings.account'
 import { Route as CrmSplatRouteImport } from './routes/crm.$'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -125,11 +124,6 @@ const SettingsAdminsRoute = SettingsAdminsRouteImport.update({
   path: '/admins',
   getParentRoute: () => SettingsRoute,
 } as any)
-const SettingsAccountRoute = SettingsAccountRouteImport.update({
-  id: '/account',
-  path: '/account',
-  getParentRoute: () => SettingsRoute,
-} as any)
 const CrmSplatRoute = CrmSplatRouteImport.update({
   id: '/$',
   path: '/$',
@@ -173,7 +167,6 @@ export interface FileRoutesByFullPath {
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/settings/account': typeof SettingsAccountRoute
   '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -198,7 +191,6 @@ export interface FileRoutesByTo {
   '/design': typeof DesignRoute
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/settings/account': typeof SettingsAccountRoute
   '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -226,7 +218,6 @@ export interface FileRoutesById {
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/crm/$': typeof CrmSplatRoute
-  '/settings/account': typeof SettingsAccountRoute
   '/settings/admins': typeof SettingsAdminsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
@@ -255,7 +246,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/videoediting'
     | '/crm/$'
-    | '/settings/account'
     | '/settings/admins'
     | '/settings/analytics'
     | '/settings/appearance'
@@ -280,7 +270,6 @@ export interface FileRouteTypes {
     | '/design'
     | '/videoediting'
     | '/crm/$'
-    | '/settings/account'
     | '/settings/admins'
     | '/settings/analytics'
     | '/settings/appearance'
@@ -307,7 +296,6 @@ export interface FileRouteTypes {
     | '/settings'
     | '/videoediting'
     | '/crm/$'
-    | '/settings/account'
     | '/settings/admins'
     | '/settings/analytics'
     | '/settings/appearance'
@@ -470,13 +458,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsAdminsRouteImport
       parentRoute: typeof SettingsRoute
     }
-    '/settings/account': {
-      id: '/settings/account'
-      path: '/account'
-      fullPath: '/settings/account'
-      preLoaderRoute: typeof SettingsAccountRouteImport
-      parentRoute: typeof SettingsRoute
-    }
     '/crm/$': {
       id: '/crm/$'
       path: '/$'
@@ -535,7 +516,6 @@ const CrmRouteChildren: CrmRouteChildren = {
 const CrmRouteWithChildren = CrmRoute._addFileChildren(CrmRouteChildren)
 
 interface SettingsRouteChildren {
-  SettingsAccountRoute: typeof SettingsAccountRoute
   SettingsAdminsRoute: typeof SettingsAdminsRoute
   SettingsAnalyticsRoute: typeof SettingsAnalyticsRoute
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
@@ -547,7 +527,6 @@ interface SettingsRouteChildren {
 }
 
 const SettingsRouteChildren: SettingsRouteChildren = {
-  SettingsAccountRoute: SettingsAccountRoute,
   SettingsAdminsRoute: SettingsAdminsRoute,
   SettingsAnalyticsRoute: SettingsAnalyticsRoute,
   SettingsAppearanceRoute: SettingsAppearanceRoute,
