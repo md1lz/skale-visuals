@@ -1,0 +1,81 @@
+{
+  "version": 1,
+  "sdk_version": "2.2.0",
+  "path": "/mcp",
+  "auth": {
+    "type": "none"
+  },
+  "mcp": {
+    "server": {
+      "name": "skale-visuals",
+      "version": "0.1.0",
+      "title": "Skale Visuals"
+    },
+    "tools": [
+      {
+        "name": "get_services",
+        "title": "Services de l'agence",
+        "description": "Lit les services publics de Skale Visuals (montage vidéo, clipping) tels qu'affichés sur le site.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_projects",
+        "title": "Projets mis en avant",
+        "description": "Liste les projets mis en avant sur la page d'accueil de Skale Visuals, avec le témoignage client public.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_about",
+        "title": "À propos de l'agence",
+        "description": "Renvoie la présentation publique de Skale Visuals et de ses fondateurs (page « À propos »).",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      },
+      {
+        "name": "get_booking_availability",
+        "title": "Disponibilités d'appel",
+        "description": "Renvoie les disponibilités publiques pour réserver un appel de consultation avec Skale Visuals.",
+        "annotations": {
+          "readOnlyHint": true,
+          "idempotentHint": true,
+          "openWorldHint": false
+        },
+        "inputSchema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "object",
+          "properties": {}
+        },
+        "outputSchema": null
+      }
+    ]
+  }
+}
