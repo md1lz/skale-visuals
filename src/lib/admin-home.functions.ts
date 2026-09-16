@@ -51,6 +51,8 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
   );
   const serviceHeaderPreview = await signAsset(settings.serviceHeader.image);
   const serviceCardPreviews = await Promise.all(settings.serviceCards.map((c) => signAsset(c.image)));
+  const clientCarouselTopPreviews = await Promise.all(settings.clientCarouselTop.map((image) => signAsset(image)));
+  const clientCarouselBottomPreviews = await Promise.all(settings.clientCarouselBottom.map((image) => signAsset(image)));
 
   return {
     settings,
@@ -61,6 +63,8 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     projectPreviews,
     serviceHeaderPreview,
     serviceCardPreviews,
+    clientCarouselTopPreviews,
+    clientCarouselBottomPreviews,
     folders: foldersRes.data ?? [],
     videos: videosRes.data ?? [],
   } as HomeContent & {
@@ -71,6 +75,8 @@ export const getHomeAdminContent = createServerFn({ method: "GET" }).handler(asy
     projectPreviews: { image: string | null; avatar: string | null }[];
     serviceHeaderPreview: string | null;
     serviceCardPreviews: (string | null)[];
+    clientCarouselTopPreviews: (string | null)[];
+    clientCarouselBottomPreviews: (string | null)[];
   };
 });
 
@@ -133,6 +139,8 @@ const settingsSchema = z.object({
     secondaryCta: z.string().trim().max(60),
     secondaryLink: z.string().trim().max(200),
   }),
+  clientCarouselTop: z.array(z.string().trim().max(500).nullable()).max(16).default([]),
+  clientCarouselBottom: z.array(z.string().trim().max(500).nullable()).max(16).default([]),
 });
 
 export const saveHomeSettings = createServerFn({ method: "POST" })

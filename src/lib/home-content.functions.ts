@@ -44,6 +44,8 @@ export type HomeSettings = {
   projects: ProjectRecap[];
   serviceCards: ServiceCard[];
   serviceHeader: ServiceHeader;
+  clientCarouselTop: (string | null)[];
+  clientCarouselBottom: (string | null)[];
 };
 
 export type HomeFolder = { id: string; label: string; position: number };
@@ -116,6 +118,8 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
     secondaryCta: "Voir nos projets",
     secondaryLink: "/#projets",
   },
+  clientCarouselTop: [],
+  clientCarouselBottom: [],
 };
 
 export function normalizeHomeSettings(raw: unknown): HomeSettings {
@@ -128,6 +132,8 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
   const projects = Array.isArray(v.projects) ? v.projects.slice(0, 2) : [];
   while (projects.length < 2) projects.push({ ...DEFAULT_HOME_SETTINGS.projects[projects.length] });
   const serviceCards = Array.isArray(v.serviceCards) ? v.serviceCards.slice(0, 2) : [];
+  const clientCarouselTop = Array.isArray(v.clientCarouselTop) ? v.clientCarouselTop.slice(0, 16) : [];
+  const clientCarouselBottom = Array.isArray(v.clientCarouselBottom) ? v.clientCarouselBottom.slice(0, 16) : [];
   while (serviceCards.length < 2)
     serviceCards.push({ ...DEFAULT_HOME_SETTINGS.serviceCards[serviceCards.length] });
   return {
@@ -183,6 +189,8 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
       secondaryCta: ((v.serviceHeader as ServiceHeader | undefined)?.secondaryCta ?? DEFAULT_HOME_SETTINGS.serviceHeader.secondaryCta).toString(),
       secondaryLink: ((v.serviceHeader as ServiceHeader | undefined)?.secondaryLink ?? DEFAULT_HOME_SETTINGS.serviceHeader.secondaryLink).toString(),
     },
+    clientCarouselTop: clientCarouselTop.map((image) => image?.toString() ?? null),
+    clientCarouselBottom: clientCarouselBottom.map((image) => image?.toString() ?? null),
   };
 }
 
@@ -253,6 +261,12 @@ export const getHomeContent = createServerFn({ method: "GET" }).handler(async ()
     ...settings.serviceHeader,
     image: await signAsset(settings.serviceHeader.image),
   };
+  settings.clientCarouselTop = await Promise.all(
+    settings.clientCarouselTop.map((image) => signAsset(image)),
+  );
+  settings.clientCarouselBottom = await Promise.all(
+    settings.clientCarouselBottom.map((image) => signAsset(image)),
+  );
 
   return { settings, folders: (foldersRes.data ?? []) as HomeFolder[], videos };
 });
