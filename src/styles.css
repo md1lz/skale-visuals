@@ -229,12 +229,12 @@
 .client-space-root { background: var(--client-background); color: var(--client-foreground); }
 .client-carousel-backdrop { position: absolute; inset: 0; overflow: hidden; background: var(--client-background); }
 .client-carousel-rows { position: absolute; inset: 0; display: grid; grid-template-rows: repeat(2, minmax(0, 1fr)); }
-.client-carousel-row { width: 100%; min-height: 0; overflow: hidden; }
+.client-carousel-row { width: 100%; min-height: 0; overflow: hidden; padding: 0.6rem 0; }
 .client-carousel-track,
-.client-carousel-track-reverse { display: flex; width: max-content; height: 100%; gap: 0.75rem; will-change: transform; }
+.client-carousel-track-reverse { display: flex; width: max-content; height: 100%; gap: 0.6rem; will-change: transform; }
 .client-carousel-track { animation: client-marquee 48s linear infinite; }
 .client-carousel-track-reverse { animation: client-marquee-reverse 52s linear infinite; }
-.client-carousel-thumbnail { width: auto; height: 100%; aspect-ratio: 16 / 10; flex: none; object-fit: cover; }
+.client-carousel-thumbnail { width: auto; height: 100%; aspect-ratio: 16 / 10; flex: none; object-fit: cover; border-radius: 0.9rem; }
 .client-carousel-shade { position: absolute; inset: 0; background: oklch(0 0 0 / 0.54); }
 .client-auth-panel { background: var(--client-panel); border: 1px solid var(--client-border); box-shadow: 0 24px 60px -24px oklch(0 0 0 / 0.8); backdrop-filter: blur(14px) saturate(115%); }
 .client-auth-input { background: var(--client-control); border: 1px solid var(--client-border); color: var(--client-foreground); }
