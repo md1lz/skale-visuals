@@ -10,7 +10,7 @@ export default defineTool({
   inputSchema: {},
   annotations: { readOnlyHint: true, idempotentHint: true, openWorldHint: false },
   handler: async () => {
-    const availability = (await readSiteSetting("booking_availability")) ?? null;
+    const availability = JSON.parse(JSON.stringify((await readSiteSetting("booking_availability")) ?? null)) as unknown as Record<string, never> | null;
     const payload = {
       availability,
       bookingUrl: "https://skalevisuals.com/bookacall",
