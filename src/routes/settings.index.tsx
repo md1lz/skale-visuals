@@ -27,7 +27,7 @@ import {
   Trash2,
 } from "lucide-react";
 import { getSiteAnalytics, getRecentActivity } from "@/lib/admin-analytics.functions";
-import { getAdminProfile } from "@/lib/admin-auth.functions";
+
 import { MaintenanceCard } from "@/components/MaintenanceCard";
 
 export const Route = createFileRoute("/settings/")({
