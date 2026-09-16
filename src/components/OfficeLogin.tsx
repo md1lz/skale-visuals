@@ -106,16 +106,6 @@ export function OfficeLogin() {
           </button>
         </div>
 
-        <label className="mb-4 flex cursor-pointer select-none items-center gap-2 text-xs text-neutral-300">
-          <input
-            type="checkbox"
-            checked={remember}
-            onChange={(e) => setRemember(e.target.checked)}
-            disabled={pending}
-            className="h-3.5 w-3.5 cursor-pointer accent-red-600"
-          />
-          Se souvenir de moi sur cet appareil
-        </label>
 
         <AnimatePresence>
           {error && (
