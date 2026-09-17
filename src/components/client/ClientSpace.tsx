@@ -124,36 +124,9 @@ function ClientHome() {
   );
 }
 
-function Segmented({ mode, onChange }: { mode: Mode; onChange: (m: Mode) => void }) {
-  const items: { key: Mode; label: string }[] = [
-    { key: "signin", label: "Connexion" },
-    { key: "signup", label: "Inscription" },
-  ];
-  return (
-    <div className="relative mb-7 flex rounded-2xl bg-client-control p-1">
-      {items.map((item) => (
-        <Button
-          key={item.key}
-          type="button"
-          onClick={() => onChange(item.key)}
-          variant="ghost"
-          className="relative h-9 flex-1 rounded-xl px-3 text-[13px] font-medium hover:bg-transparent"
-        >
-          {mode === item.key && (
-            <motion.span
-              layoutId="client-seg"
-              transition={{ type: "spring", stiffness: 420, damping: 34 }}
-              className="absolute inset-0 rounded-xl bg-client-segment shadow-sm"
-            />
-          )}
-           <span className={`relative ${mode === item.key ? "text-client-segment-foreground" : "text-client-muted"}`}>
-            {item.label}
-          </span>
-        </Button>
-      ))}
-    </div>
-  );
-}
+const WHATSAPP_URL =
+  "https://wa.me/33766766153?text=" +
+  encodeURIComponent("Bonjour, j'ai un problème avec mon identifiant pour l'espace client Skale.");
 
 function AuthCard() {
   const [mode, setMode] = useState<Mode>("signin");
