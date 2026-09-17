@@ -24,13 +24,13 @@ export const Route = createFileRoute("/espace")({
   component: ClientAreaLayout,
 });
 
-const NAV = [
+const NAV: { to: "/espace" | "/espace/projets" | "/espace/factures" | "/espace/profil" | "/espace/aide"; label: string; icon: typeof Home; exact?: boolean }[] = [
   { to: "/espace", label: "Accueil", icon: Home, exact: true },
   { to: "/espace/projets", label: "Mes projets", icon: FolderKanban },
   { to: "/espace/factures", label: "Devis & factures", icon: ReceiptText },
   { to: "/espace/profil", label: "Profil", icon: UserRound },
   { to: "/espace/aide", label: "Aide", icon: LifeBuoy },
-] as const;
+];
 
 function ClientAreaLayout() {
   const navigate = useNavigate();
