@@ -9,6 +9,7 @@ import {
   BarChart3,
   CalendarClock,
   CalendarCheck,
+  Users,
 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { getAdminSessionFn, logoutAdminFn } from "@/lib/admin-auth.functions";
@@ -57,6 +58,7 @@ const NAV: {
   { to: "/settings", label: "Tableau de bord", icon: LayoutDashboard, exact: true },
   { to: "/settings/analytics", label: "Analytiques", icon: BarChart3 },
   { to: "/settings/calls", label: "Book a Call", icon: CalendarClock },
+  { to: "/settings/clients", label: "Espace client", icon: Users },
   
   { to: "/settings/appearance", label: "Apparence", icon: Palette },
   { to: "/settings/availability", label: "Disponibilités", icon: CalendarCheck },
