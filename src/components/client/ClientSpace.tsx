@@ -1,16 +1,14 @@
 import { AnimatePresence, motion } from "framer-motion";
-import { useCallback, useEffect, useState } from "react";
-import { Eye, EyeOff, Loader2, MailCheck } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Loader2, MailCheck } from "lucide-react";
 import type { Session } from "@supabase/supabase-js";
 
 import { supabase } from "@/integrations/supabase/client";
-import { lovable } from "@/integrations/lovable/index";
 import { ClientBackdrop } from "@/components/client/ClientBackdrop";
 import { Button } from "@/components/ui/button";
 import { DEFAULT_HOME_SETTINGS, getHomeContent, type HomeSettings } from "@/lib/home-content.functions";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
 
-type Mode = "signin" | "signup" | "forgot";
 
 const inputClass =
   "client-auth-input w-full rounded-xl px-4 py-3.5 text-[15px] outline-none transition disabled:opacity-60";
