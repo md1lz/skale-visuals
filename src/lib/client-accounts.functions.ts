@@ -79,6 +79,46 @@ export const listClientAccounts = createServerFn({ method: "GET" }).handler(asyn
     .sort((a, b) => (a.created_at < b.created_at ? 1 : -1));
 });
 
+/** Creates a one-time setup link and mails it to the client. */
+async function issueSetupEmail(userId: string, email: string, fullName: string) {
+  const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+  const { hashToken, randomToken, SETUP_TTL_MS } = await import("@/lib/client-auth.server");
+  const { CLIENT_APP_URL } = await import("@/lib/app-host");
+
+  const token = randomToken();
+  await supabaseAdmin.from("client_auth_tokens").insert({
+    user_id: userId,
+    email,
+    kind: "setup",
+    token_hash: await hashToken(token),
+    expires_at: new Date(Date.now() + SETUP_TTL_MS).toISOString(),
+  });
+
+  const { sendTemplateEmail } = await import("@/lib/email-templates/send-email");
+  await sendTemplateEmail("client-password-setup", email, {
+    templateData: {
+      name: fullName,
+      setupUrl: `${CLIENT_APP_URL}/creer-mot-de-passe?token=${token}`,
+    },
+  });
+}
+
+export const sendClientSetupEmail = createServerFn({ method: "POST" })
+  .inputValidator((d: unknown) => z.object({ id: z.string().uuid() }).parse(d))
+  .handler(async ({ data }) => {
+    await requireAdmin();
+    const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
+    const { data: found, error } = await supabaseAdmin.auth.admin.getUserById(data.id);
+    if (error || !found.user?.email) throw new Error("Client introuvable");
+    const { data: profile } = await supabaseAdmin
+      .from("client_profiles")
+      .select("full_name")
+      .eq("id", data.id)
+      .maybeSingle();
+    await issueSetupEmail(data.id, found.user.email, profile?.full_name ?? "");
+    return { ok: true as const };
+  });
+
 export const createClientAccount = createServerFn({ method: "POST" })
   .inputValidator((d: unknown) =>
     z
@@ -101,6 +141,12 @@ export const createClientAccount = createServerFn({ method: "POST" })
     await supabaseAdmin
       .from("client_profiles")
       .upsert({ id, full_name: data.full_name, company: data.company }, { onConflict: "id" });
+
+    try {
+      await issueSetupEmail(id, data.email, data.full_name);
+    } catch {
+      // l'e-mail pourra être renvoyé manuellement depuis /settings
+    }
 
     return { id };
   });

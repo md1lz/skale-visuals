@@ -13,11 +13,15 @@ import { Route as VideoeditingRouteImport } from './routes/videoediting'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ResetPasswordRouteImport } from './routes/reset-password'
 import { Route as McpRouteImport } from './routes/mcp'
+import { Route as LoginRouteImport } from './routes/login'
+import { Route as EspaceRouteImport } from './routes/espace'
 import { Route as DesignRouteImport } from './routes/design'
+import { Route as CreerMotDePasseRouteImport } from './routes/creer-mot-de-passe'
 import { Route as BookacallRouteImport } from './routes/bookacall'
 import { Route as AboutusRouteImport } from './routes/aboutus'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
+import { Route as EspaceIndexRouteImport } from './routes/espace.index'
 import { Route as SignTokenRouteImport } from './routes/sign.$token'
 import { Route as SettingsWebsiteRouteImport } from './routes/settings.website'
 import { Route as SettingsClientsRouteImport } from './routes/settings.clients'
@@ -25,6 +29,10 @@ import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
 import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
 import { Route as SettingsAnalyticsRouteImport } from './routes/settings.analytics'
+import { Route as EspaceProjetsRouteImport } from './routes/espace.projets'
+import { Route as EspaceProfilRouteImport } from './routes/espace.profil'
+import { Route as EspaceFacturesRouteImport } from './routes/espace.factures'
+import { Route as EspaceAideRouteImport } from './routes/espace.aide'
 import { Route as Char91DotwellKnownChar93OauthProtectedResourceRouteImport } from './routes/[.well-known]/oauth-protected-resource'
 import { Route as DocKindTokenRouteImport } from './routes/doc.$kind.$token'
 import { Route as ApiPublicTrackRouteImport } from './routes/api/public/track'
@@ -54,9 +62,24 @@ const McpRoute = McpRouteImport.update({
   path: '/mcp',
   getParentRoute: () => rootRouteImport,
 } as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const EspaceRoute = EspaceRouteImport.update({
+  id: '/espace',
+  path: '/espace',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DesignRoute = DesignRouteImport.update({
   id: '/design',
   path: '/design',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CreerMotDePasseRoute = CreerMotDePasseRouteImport.update({
+  id: '/creer-mot-de-passe',
+  path: '/creer-mot-de-passe',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookacallRoute = BookacallRouteImport.update({
@@ -78,6 +101,11 @@ const SettingsIndexRoute = SettingsIndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => SettingsRoute,
+} as any)
+const EspaceIndexRoute = EspaceIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => EspaceRoute,
 } as any)
 const SignTokenRoute = SignTokenRouteImport.update({
   id: '/sign/$token',
@@ -113,6 +141,26 @@ const SettingsAnalyticsRoute = SettingsAnalyticsRouteImport.update({
   id: '/analytics',
   path: '/analytics',
   getParentRoute: () => SettingsRoute,
+} as any)
+const EspaceProjetsRoute = EspaceProjetsRouteImport.update({
+  id: '/projets',
+  path: '/projets',
+  getParentRoute: () => EspaceRoute,
+} as any)
+const EspaceProfilRoute = EspaceProfilRouteImport.update({
+  id: '/profil',
+  path: '/profil',
+  getParentRoute: () => EspaceRoute,
+} as any)
+const EspaceFacturesRoute = EspaceFacturesRouteImport.update({
+  id: '/factures',
+  path: '/factures',
+  getParentRoute: () => EspaceRoute,
+} as any)
+const EspaceAideRoute = EspaceAideRouteImport.update({
+  id: '/aide',
+  path: '/aide',
+  getParentRoute: () => EspaceRoute,
 } as any)
 const Char91DotwellKnownChar93OauthProtectedResourceRoute =
   Char91DotwellKnownChar93OauthProtectedResourceRouteImport.update({
@@ -162,12 +210,19 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aboutus': typeof AboutusRoute
   '/bookacall': typeof BookacallRoute
+  '/creer-mot-de-passe': typeof CreerMotDePasseRoute
   '/design': typeof DesignRoute
+  '/espace': typeof EspaceRouteWithChildren
+  '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/espace/aide': typeof EspaceAideRoute
+  '/espace/factures': typeof EspaceFacturesRoute
+  '/espace/profil': typeof EspaceProfilRoute
+  '/espace/projets': typeof EspaceProjetsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -175,6 +230,7 @@ export interface FileRoutesByFullPath {
   '/settings/clients': typeof SettingsClientsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
+  '/espace/': typeof EspaceIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -188,11 +244,17 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aboutus': typeof AboutusRoute
   '/bookacall': typeof BookacallRoute
+  '/creer-mot-de-passe': typeof CreerMotDePasseRoute
   '/design': typeof DesignRoute
+  '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/espace/aide': typeof EspaceAideRoute
+  '/espace/factures': typeof EspaceFacturesRoute
+  '/espace/profil': typeof EspaceProfilRoute
+  '/espace/projets': typeof EspaceProjetsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -200,6 +262,7 @@ export interface FileRoutesByTo {
   '/settings/clients': typeof SettingsClientsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
+  '/espace': typeof EspaceIndexRoute
   '/settings': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -214,12 +277,19 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/aboutus': typeof AboutusRoute
   '/bookacall': typeof BookacallRoute
+  '/creer-mot-de-passe': typeof CreerMotDePasseRoute
   '/design': typeof DesignRoute
+  '/espace': typeof EspaceRouteWithChildren
+  '/login': typeof LoginRoute
   '/mcp': typeof McpRoute
   '/reset-password': typeof ResetPasswordRoute
   '/settings': typeof SettingsRouteWithChildren
   '/videoediting': typeof VideoeditingRoute
   '/.well-known/oauth-protected-resource': typeof Char91DotwellKnownChar93OauthProtectedResourceRoute
+  '/espace/aide': typeof EspaceAideRoute
+  '/espace/factures': typeof EspaceFacturesRoute
+  '/espace/profil': typeof EspaceProfilRoute
+  '/espace/projets': typeof EspaceProjetsRoute
   '/settings/analytics': typeof SettingsAnalyticsRoute
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
@@ -227,6 +297,7 @@ export interface FileRoutesById {
   '/settings/clients': typeof SettingsClientsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
+  '/espace/': typeof EspaceIndexRoute
   '/settings/': typeof SettingsIndexRoute
   '/api/public/time': typeof ApiPublicTimeRoute
   '/api/public/track': typeof ApiPublicTrackRoute
@@ -242,12 +313,19 @@ export interface FileRouteTypes {
     | '/'
     | '/aboutus'
     | '/bookacall'
+    | '/creer-mot-de-passe'
     | '/design'
+    | '/espace'
+    | '/login'
     | '/mcp'
     | '/reset-password'
     | '/settings'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
+    | '/espace/aide'
+    | '/espace/factures'
+    | '/espace/profil'
+    | '/espace/projets'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -255,6 +333,7 @@ export interface FileRouteTypes {
     | '/settings/clients'
     | '/settings/website'
     | '/sign/$token'
+    | '/espace/'
     | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
@@ -268,11 +347,17 @@ export interface FileRouteTypes {
     | '/'
     | '/aboutus'
     | '/bookacall'
+    | '/creer-mot-de-passe'
     | '/design'
+    | '/login'
     | '/mcp'
     | '/reset-password'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
+    | '/espace/aide'
+    | '/espace/factures'
+    | '/espace/profil'
+    | '/espace/projets'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -280,6 +365,7 @@ export interface FileRouteTypes {
     | '/settings/clients'
     | '/settings/website'
     | '/sign/$token'
+    | '/espace'
     | '/settings'
     | '/api/public/time'
     | '/api/public/track'
@@ -293,12 +379,19 @@ export interface FileRouteTypes {
     | '/'
     | '/aboutus'
     | '/bookacall'
+    | '/creer-mot-de-passe'
     | '/design'
+    | '/espace'
+    | '/login'
     | '/mcp'
     | '/reset-password'
     | '/settings'
     | '/videoediting'
     | '/.well-known/oauth-protected-resource'
+    | '/espace/aide'
+    | '/espace/factures'
+    | '/espace/profil'
+    | '/espace/projets'
     | '/settings/analytics'
     | '/settings/appearance'
     | '/settings/availability'
@@ -306,6 +399,7 @@ export interface FileRouteTypes {
     | '/settings/clients'
     | '/settings/website'
     | '/sign/$token'
+    | '/espace/'
     | '/settings/'
     | '/api/public/time'
     | '/api/public/track'
@@ -320,7 +414,10 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutusRoute: typeof AboutusRoute
   BookacallRoute: typeof BookacallRoute
+  CreerMotDePasseRoute: typeof CreerMotDePasseRoute
   DesignRoute: typeof DesignRoute
+  EspaceRoute: typeof EspaceRouteWithChildren
+  LoginRoute: typeof LoginRoute
   McpRoute: typeof McpRoute
   ResetPasswordRoute: typeof ResetPasswordRoute
   SettingsRoute: typeof SettingsRouteWithChildren
@@ -366,11 +463,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof McpRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/espace': {
+      id: '/espace'
+      path: '/espace'
+      fullPath: '/espace'
+      preLoaderRoute: typeof EspaceRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/design': {
       id: '/design'
       path: '/design'
       fullPath: '/design'
       preLoaderRoute: typeof DesignRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/creer-mot-de-passe': {
+      id: '/creer-mot-de-passe'
+      path: '/creer-mot-de-passe'
+      fullPath: '/creer-mot-de-passe'
+      preLoaderRoute: typeof CreerMotDePasseRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/bookacall': {
@@ -400,6 +518,13 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/'
       preLoaderRoute: typeof SettingsIndexRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/espace/': {
+      id: '/espace/'
+      path: '/'
+      fullPath: '/espace/'
+      preLoaderRoute: typeof EspaceIndexRouteImport
+      parentRoute: typeof EspaceRoute
     }
     '/sign/$token': {
       id: '/sign/$token'
@@ -449,6 +574,34 @@ declare module '@tanstack/react-router' {
       fullPath: '/settings/analytics'
       preLoaderRoute: typeof SettingsAnalyticsRouteImport
       parentRoute: typeof SettingsRoute
+    }
+    '/espace/projets': {
+      id: '/espace/projets'
+      path: '/projets'
+      fullPath: '/espace/projets'
+      preLoaderRoute: typeof EspaceProjetsRouteImport
+      parentRoute: typeof EspaceRoute
+    }
+    '/espace/profil': {
+      id: '/espace/profil'
+      path: '/profil'
+      fullPath: '/espace/profil'
+      preLoaderRoute: typeof EspaceProfilRouteImport
+      parentRoute: typeof EspaceRoute
+    }
+    '/espace/factures': {
+      id: '/espace/factures'
+      path: '/factures'
+      fullPath: '/espace/factures'
+      preLoaderRoute: typeof EspaceFacturesRouteImport
+      parentRoute: typeof EspaceRoute
+    }
+    '/espace/aide': {
+      id: '/espace/aide'
+      path: '/aide'
+      fullPath: '/espace/aide'
+      preLoaderRoute: typeof EspaceAideRouteImport
+      parentRoute: typeof EspaceRoute
     }
     '/.well-known/oauth-protected-resource': {
       id: '/.well-known/oauth-protected-resource'
@@ -509,6 +662,25 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface EspaceRouteChildren {
+  EspaceAideRoute: typeof EspaceAideRoute
+  EspaceFacturesRoute: typeof EspaceFacturesRoute
+  EspaceProfilRoute: typeof EspaceProfilRoute
+  EspaceProjetsRoute: typeof EspaceProjetsRoute
+  EspaceIndexRoute: typeof EspaceIndexRoute
+}
+
+const EspaceRouteChildren: EspaceRouteChildren = {
+  EspaceAideRoute: EspaceAideRoute,
+  EspaceFacturesRoute: EspaceFacturesRoute,
+  EspaceProfilRoute: EspaceProfilRoute,
+  EspaceProjetsRoute: EspaceProjetsRoute,
+  EspaceIndexRoute: EspaceIndexRoute,
+}
+
+const EspaceRouteWithChildren =
+  EspaceRoute._addFileChildren(EspaceRouteChildren)
+
 interface SettingsRouteChildren {
   SettingsAnalyticsRoute: typeof SettingsAnalyticsRoute
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
@@ -537,7 +709,10 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutusRoute: AboutusRoute,
   BookacallRoute: BookacallRoute,
+  CreerMotDePasseRoute: CreerMotDePasseRoute,
   DesignRoute: DesignRoute,
+  EspaceRoute: EspaceRouteWithChildren,
+  LoginRoute: LoginRoute,
   McpRoute: McpRoute,
   ResetPasswordRoute: ResetPasswordRoute,
   SettingsRoute: SettingsRouteWithChildren,

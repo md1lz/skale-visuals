@@ -5,6 +5,7 @@ import { Loader2, Plus, Trash2, UserRound, X } from "lucide-react";
 import {
   createClientAccount,
   deleteClientAccount,
+  sendClientSetupEmail,
   listClientAccounts,
   updateClientAccount,
   type ClientAccount,
@@ -58,6 +59,16 @@ function ClientsPage() {
       setError(err instanceof Error ? err.message : "Enregistrement impossible.");
     } finally {
       setPending(false);
+    }
+  }
+
+  async function resend(id: string) {
+    try {
+      await sendClientSetupEmail({ data: { id } });
+      setError(null);
+      window.alert("E-mail de création de mot de passe renvoyé.");
+    } catch {
+      setError("Envoi impossible.");
     }
   }
 
@@ -180,6 +191,13 @@ function ClientsPage() {
                   className="rounded-full border border-white/10 px-3 py-1.5 text-[12px] text-neutral-300 hover:text-white"
                 >
                   Modifier
+                </button>
+                <button
+                  type="button"
+                  onClick={() => resend(row.id)}
+                  className="rounded-full border border-white/10 px-3 py-1.5 text-[12px] text-neutral-300 hover:text-white"
+                >
+                  Renvoyer l'e-mail
                 </button>
                 <button
                   type="button"

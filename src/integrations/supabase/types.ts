@@ -188,6 +188,42 @@ export type Database = {
         }
         Relationships: []
       }
+      client_auth_tokens: {
+        Row: {
+          attempts: number
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          kind: string
+          token_hash: string
+          used_at: string | null
+          user_id: string
+        }
+        Insert: {
+          attempts?: number
+          created_at?: string
+          email: string
+          expires_at: string
+          id?: string
+          kind: string
+          token_hash: string
+          used_at?: string | null
+          user_id: string
+        }
+        Update: {
+          attempts?: number
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          kind?: string
+          token_hash?: string
+          used_at?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       client_profiles: {
         Row: {
           company: string | null
