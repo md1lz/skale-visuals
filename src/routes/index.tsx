@@ -1082,7 +1082,7 @@ function FooterLogoMarquee({ settings }: { settings: HomeContent["settings"] }) 
 function SiteFooter({ settings }: { settings: HomeContent["settings"] }) {
   return (
     <footer className="relative z-10 w-full">
-      <div className="relative w-full overflow-hidden rounded-t-[2.5rem] border-8 border-white/10 bg-[#030303] px-8 pt-10 pb-36 sm:rounded-t-[3rem] sm:pb-44 lg:rounded-t-[4rem] lg:px-14 lg:pt-12 lg:pb-52">
+      <div className="relative w-full overflow-hidden rounded-t-[2.5rem] bg-[#030303] px-8 pt-10 pb-36 sm:rounded-t-[3rem] sm:pb-44 lg:rounded-t-[4rem] lg:px-14 lg:pt-12 lg:pb-52">
         <div className="relative z-10 flex flex-col items-start gap-6 sm:flex-row sm:items-start sm:justify-between">
           <FooterLogo />
           <FooterTimezones />
