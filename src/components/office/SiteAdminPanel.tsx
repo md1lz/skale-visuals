@@ -197,6 +197,7 @@ export function SiteAdminPanel() {
           },
           clientCarouselTop: settings.clientCarouselTop,
           clientCarouselBottom: settings.clientCarouselBottom,
+          clientPromo: settings.clientPromo,
         },
       });
       await Promise.all(
@@ -413,6 +414,47 @@ export function SiteAdminPanel() {
           Enregistrer
         </button>
       </header>
+
+      <section className={`${card} mb-6`}>
+        <div>
+          <h2 className="text-sm font-semibold uppercase tracking-wider text-neutral-400">Pastille de pub (espace client)</h2>
+          <p className="mt-1 text-xs text-neutral-500">Encart affiché en bas du menu de l'espace client.</p>
+        </div>
+        <label className="mt-4 flex items-center gap-2 text-[13px] text-neutral-300">
+          <input
+            type="checkbox"
+            checked={settings.clientPromo.enabled}
+            onChange={(e) => patchSettings({ clientPromo: { ...settings.clientPromo, enabled: e.target.checked } })}
+          />
+          Afficher la pastille
+        </label>
+        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+          <input
+            className={input}
+            placeholder="Titre"
+            value={settings.clientPromo.title}
+            onChange={(e) => patchSettings({ clientPromo: { ...settings.clientPromo, title: e.target.value } })}
+          />
+          <input
+            className={input}
+            placeholder="Texte du bouton"
+            value={settings.clientPromo.cta}
+            onChange={(e) => patchSettings({ clientPromo: { ...settings.clientPromo, cta: e.target.value } })}
+          />
+          <input
+            className={`${input} sm:col-span-2`}
+            placeholder="Description"
+            value={settings.clientPromo.text}
+            onChange={(e) => patchSettings({ clientPromo: { ...settings.clientPromo, text: e.target.value } })}
+          />
+          <input
+            className={`${input} sm:col-span-2`}
+            placeholder="Lien (https://…)"
+            value={settings.clientPromo.link}
+            onChange={(e) => patchSettings({ clientPromo: { ...settings.clientPromo, link: e.target.value } })}
+          />
+        </div>
+      </section>
 
       <section className={`${card} mb-6`}>
         <div>

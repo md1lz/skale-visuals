@@ -1,11 +1,10 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { AnimatePresence, motion, useInView, useScroll, useSpring, useTransform } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Mail, Instagram, Linkedin, Check, ArrowUpRight, BarChart3, Zap, PartyPopper } from "lucide-react";
 
 import { supabase } from "@/integrations/supabase/client";
 import { getIsClientAppHost } from "@/lib/app-host";
-import { ClientSpace } from "@/components/client/ClientSpace";
 import { SiteNavbar, SlotMachineText, scrollTo } from "@/components/SiteNavbar";
 import skaleSymbol from "@/assets/skale-symbol.png.asset.json";
 import skaleRedPill from "@/assets/skale-red-pill.png.asset.json";
@@ -53,8 +52,19 @@ export const Route = createFileRoute("/")({
 /** app.skalevisuals.com sert l'espace client ; le domaine principal sert le site. */
 function RootPage() {
   const { isClientApp } = Route.useRouteContext();
-  if (isClientApp) return <ClientSpace />;
+  if (isClientApp) return <ClientAppEntry />;
   return <Home />;
+}
+
+/** Sur le domaine client : /login si déconnecté, sinon l'espace client. */
+function ClientAppEntry() {
+  const navigate = useNavigate();
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      void navigate({ to: data.session ? "/espace" : "/login", replace: true });
+    });
+  }, [navigate]);
+  return <div className="min-h-[100dvh] bg-black" />;
 }
 
 /* ---------------- theme (clair uniquement) ---------------- */

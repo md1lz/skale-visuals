@@ -32,6 +32,14 @@ export type ServiceHeader = {
   secondaryLink: string;
 };
 
+export type ClientPromo = {
+  enabled: boolean;
+  title: string;
+  text: string;
+  cta: string;
+  link: string;
+};
+
 export type HomeSettings = {
   videosCount: number;
   clientsCount: number;
@@ -46,6 +54,7 @@ export type HomeSettings = {
   serviceHeader: ServiceHeader;
   clientCarouselTop: (string | null)[];
   clientCarouselBottom: (string | null)[];
+  clientPromo: ClientPromo;
 };
 
 export type HomeFolder = { id: string; label: string; position: number };
@@ -120,6 +129,13 @@ export const DEFAULT_HOME_SETTINGS: HomeSettings = {
   },
   clientCarouselTop: [],
   clientCarouselBottom: [],
+  clientPromo: {
+    enabled: true,
+    title: "Besoin de plus de contenu ?",
+    text: "Ajoutez un pack de montages à votre offre et publiez encore plus vite.",
+    cta: "Réserver un appel",
+    link: "https://skalevisuals.com/bookacall",
+  },
 };
 
 export function normalizeHomeSettings(raw: unknown): HomeSettings {
@@ -191,6 +207,13 @@ export function normalizeHomeSettings(raw: unknown): HomeSettings {
     },
     clientCarouselTop: clientCarouselTop.map((image) => image?.toString() ?? null),
     clientCarouselBottom: clientCarouselBottom.map((image) => image?.toString() ?? null),
+    clientPromo: {
+      enabled: (v.clientPromo as ClientPromo | undefined)?.enabled ?? DEFAULT_HOME_SETTINGS.clientPromo.enabled,
+      title: ((v.clientPromo as ClientPromo | undefined)?.title ?? DEFAULT_HOME_SETTINGS.clientPromo.title).toString(),
+      text: ((v.clientPromo as ClientPromo | undefined)?.text ?? DEFAULT_HOME_SETTINGS.clientPromo.text).toString(),
+      cta: ((v.clientPromo as ClientPromo | undefined)?.cta ?? DEFAULT_HOME_SETTINGS.clientPromo.cta).toString(),
+      link: ((v.clientPromo as ClientPromo | undefined)?.link ?? DEFAULT_HOME_SETTINGS.clientPromo.link).toString(),
+    },
   };
 }
 

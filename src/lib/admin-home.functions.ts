@@ -141,6 +141,15 @@ const settingsSchema = z.object({
   }),
   clientCarouselTop: z.array(z.string().trim().max(500).nullable()).max(16).default([]),
   clientCarouselBottom: z.array(z.string().trim().max(500).nullable()).max(16).default([]),
+  clientPromo: z
+    .object({
+      enabled: z.boolean(),
+      title: z.string().trim().max(80),
+      text: z.string().trim().max(240),
+      cta: z.string().trim().max(60),
+      link: z.string().trim().max(300),
+    })
+    .default({ enabled: true, title: "", text: "", cta: "", link: "" }),
 });
 
 export const saveHomeSettings = createServerFn({ method: "POST" })
