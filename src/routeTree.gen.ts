@@ -20,6 +20,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings.index'
 import { Route as SignTokenRouteImport } from './routes/sign.$token'
 import { Route as SettingsWebsiteRouteImport } from './routes/settings.website'
+import { Route as SettingsClientsRouteImport } from './routes/settings.clients'
 import { Route as SettingsCallsRouteImport } from './routes/settings.calls'
 import { Route as SettingsAvailabilityRouteImport } from './routes/settings.availability'
 import { Route as SettingsAppearanceRouteImport } from './routes/settings.appearance'
@@ -86,6 +87,11 @@ const SignTokenRoute = SignTokenRouteImport.update({
 const SettingsWebsiteRoute = SettingsWebsiteRouteImport.update({
   id: '/website',
   path: '/website',
+  getParentRoute: () => SettingsRoute,
+} as any)
+const SettingsClientsRoute = SettingsClientsRouteImport.update({
+  id: '/clients',
+  path: '/clients',
   getParentRoute: () => SettingsRoute,
 } as any)
 const SettingsCallsRoute = SettingsCallsRouteImport.update({
@@ -166,6 +172,7 @@ export interface FileRoutesByFullPath {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
+  '/settings/clients': typeof SettingsClientsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
   '/settings/': typeof SettingsIndexRoute
@@ -190,6 +197,7 @@ export interface FileRoutesByTo {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
+  '/settings/clients': typeof SettingsClientsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
   '/settings': typeof SettingsIndexRoute
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/settings/appearance': typeof SettingsAppearanceRoute
   '/settings/availability': typeof SettingsAvailabilityRoute
   '/settings/calls': typeof SettingsCallsRoute
+  '/settings/clients': typeof SettingsClientsRoute
   '/settings/website': typeof SettingsWebsiteRoute
   '/sign/$token': typeof SignTokenRoute
   '/settings/': typeof SettingsIndexRoute
@@ -243,6 +252,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
+    | '/settings/clients'
     | '/settings/website'
     | '/sign/$token'
     | '/settings/'
@@ -267,6 +277,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
+    | '/settings/clients'
     | '/settings/website'
     | '/sign/$token'
     | '/settings'
@@ -292,6 +303,7 @@ export interface FileRouteTypes {
     | '/settings/appearance'
     | '/settings/availability'
     | '/settings/calls'
+    | '/settings/clients'
     | '/settings/website'
     | '/sign/$token'
     | '/settings/'
@@ -403,6 +415,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsWebsiteRouteImport
       parentRoute: typeof SettingsRoute
     }
+    '/settings/clients': {
+      id: '/settings/clients'
+      path: '/clients'
+      fullPath: '/settings/clients'
+      preLoaderRoute: typeof SettingsClientsRouteImport
+      parentRoute: typeof SettingsRoute
+    }
     '/settings/calls': {
       id: '/settings/calls'
       path: '/calls'
@@ -495,6 +514,7 @@ interface SettingsRouteChildren {
   SettingsAppearanceRoute: typeof SettingsAppearanceRoute
   SettingsAvailabilityRoute: typeof SettingsAvailabilityRoute
   SettingsCallsRoute: typeof SettingsCallsRoute
+  SettingsClientsRoute: typeof SettingsClientsRoute
   SettingsWebsiteRoute: typeof SettingsWebsiteRoute
   SettingsIndexRoute: typeof SettingsIndexRoute
 }
@@ -504,6 +524,7 @@ const SettingsRouteChildren: SettingsRouteChildren = {
   SettingsAppearanceRoute: SettingsAppearanceRoute,
   SettingsAvailabilityRoute: SettingsAvailabilityRoute,
   SettingsCallsRoute: SettingsCallsRoute,
+  SettingsClientsRoute: SettingsClientsRoute,
   SettingsWebsiteRoute: SettingsWebsiteRoute,
   SettingsIndexRoute: SettingsIndexRoute,
 }
