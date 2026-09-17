@@ -9,6 +9,7 @@ import {
   BarChart3,
   CalendarClock,
   CalendarCheck,
+  Users,
 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { getAdminSessionFn, logoutAdminFn } from "@/lib/admin-auth.functions";
