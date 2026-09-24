@@ -124,7 +124,8 @@ export function SiteNavbar() {
             <div key={k} aria-hidden={k === 1} className="flex shrink-0">
               {[0, 1, 2].flatMap((i) =>
                 [
-                  "Le site est en cours de modification mais reste ouvert et entièrement visitable — de nombreuses améliorations arrivent très prochainement.",
+                  "Le site est en cours de modification mais reste ouvert et entièrement visitable.",
+                  "De nombreuses améliorations arrivent très prochainement.",
                   "Le site pourra être placé régulièrement en maintenance pour des durées indéterminées.",
                 ].map((t, j) => (
                   <span key={`${i}-${j}`} className="font-codec flex items-center whitespace-nowrap text-xs tracking-[-0.02em] text-black/80">
