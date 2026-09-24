@@ -118,7 +118,7 @@ export function SiteNavbar() {
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full pb-3 md:pb-4">
-      <div className="pointer-events-auto mb-3 w-full overflow-hidden border-b border-yellow-500/40 bg-yellow-300 py-1.5 md:mb-4">
+      <div className="pointer-events-auto relative z-50 mb-3 w-full overflow-hidden border-b border-yellow-500/40 bg-yellow-300 py-2.5 md:py-3 md:mb-4">
         <div className="flex w-max animate-[marquee_110s_linear_infinite] motion-reduce:animate-none">
           {[0, 1].map((k) => (
             <div key={k} aria-hidden={k === 1} className="flex shrink-0">
@@ -128,7 +128,7 @@ export function SiteNavbar() {
                   "De nombreuses améliorations arrivent très prochainement.",
                   "Le site pourra être placé régulièrement en maintenance pour des durées indéterminées.",
                 ].map((t, j) => (
-                  <span key={`${i}-${j}`} className="font-codec flex items-center whitespace-nowrap text-xs tracking-[-0.02em] text-black/80">
+                  <span key={`${i}-${j}`} className="font-codec flex items-center whitespace-nowrap text-sm md:text-base tracking-[-0.02em] text-black/80">
                     <span>{t}</span>
                     <span aria-hidden="true" className="w-16 text-center">•</span>
                   </span>
