@@ -117,7 +117,20 @@ export function SiteNavbar() {
   };
 
   return (
-    <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full py-3 md:py-4">
+    <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full pb-3 md:pb-4">
+      <div className="pointer-events-auto mb-3 w-full overflow-hidden border-b border-black/10 bg-white py-1.5 md:mb-4">
+        <div className="flex w-max animate-[marquee_60s_linear_infinite] motion-reduce:animate-none">
+          {[0, 1].map((k) => (
+            <div key={k} aria-hidden={k === 1} className="flex shrink-0">
+              {[0, 1, 2].map((i) => (
+                <span key={i} className="font-codec whitespace-nowrap px-8 text-xs tracking-[-0.02em] text-black/80">
+                  Le site est en cours de modification mais reste ouvert et entièrement visitable — de nombreuses améliorations arrivent très prochainement. • Le site pourra être placé régulièrement en maintenance pour des durées indéterminées. •
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
       <motion.div
         animate={{ y: headerHidden ? "-120%" : "0%" }}
         transition={{ type: "spring", stiffness: 300, damping: 26 }}
