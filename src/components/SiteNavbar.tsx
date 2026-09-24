@@ -122,11 +122,17 @@ export function SiteNavbar() {
         <div className="flex w-max animate-[marquee_110s_linear_infinite] motion-reduce:animate-none">
           {[0, 1].map((k) => (
             <div key={k} aria-hidden={k === 1} className="flex shrink-0">
-              {[0, 1, 2].map((i) => (
-                <span key={i} className="font-codec whitespace-nowrap px-8 text-xs tracking-[-0.02em] text-black/80">
-                  Le site est en cours de modification mais reste ouvert et entièrement visitable — de nombreuses améliorations arrivent très prochainement. • Le site pourra être placé régulièrement en maintenance pour des durées indéterminées. •
-                </span>
-              ))}
+              {[0, 1, 2].flatMap((i) =>
+                [
+                  "Le site est en cours de modification mais reste ouvert et entièrement visitable — de nombreuses améliorations arrivent très prochainement.",
+                  "Le site pourra être placé régulièrement en maintenance pour des durées indéterminées.",
+                ].map((t, j) => (
+                  <span key={`${i}-${j}`} className="font-codec flex items-center whitespace-nowrap text-xs tracking-[-0.02em] text-black/80">
+                    <span>{t}</span>
+                    <span aria-hidden="true" className="w-16 text-center">•</span>
+                  </span>
+                )),
+              )}
             </div>
           ))}
         </div>
