@@ -118,8 +118,8 @@ export function SiteNavbar() {
 
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-40 w-full pb-3 md:pb-4">
-      <div className="pointer-events-auto mb-3 w-full overflow-hidden border-b border-black/10 bg-white py-1.5 md:mb-4">
-        <div className="flex w-max animate-[marquee_60s_linear_infinite] motion-reduce:animate-none">
+      <div className="pointer-events-auto mb-3 w-full overflow-hidden border-b border-yellow-500/40 bg-yellow-300 py-1.5 md:mb-4">
+        <div className="flex w-max animate-[marquee_110s_linear_infinite] motion-reduce:animate-none">
           {[0, 1].map((k) => (
             <div key={k} aria-hidden={k === 1} className="flex shrink-0">
               {[0, 1, 2].map((i) => (
